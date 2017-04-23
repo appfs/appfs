@@ -31,3 +31,7 @@
 # Debug files
 *.dSYM/
 *.su
+/ex1/
+
+# large example files
+ex*.dat
