@@ -6,7 +6,7 @@
 
 namespace {
 
-const char* DEFAULT_FILE_NAME = "ex1.dat";
+const char* DEFAULT_FILE_NAME = "ex100.dat";
 const char* SEPERATOR = "; ";
 const char* COMMENT_SIGN = "#";
 
@@ -43,8 +43,8 @@ int main(int argn, char *argv[]) {
 		filename = argv[1];
 	}
 
-	if ( (fileStream.rdstate() & ifstream::badbit ) != 0 ){
-	    cerr << "ERROR: Could not open the file " << DEFAULT_FILE_NAME << endl;
+	if ( (fileStream.rdstate()) != 0 ){
+	    perror("Encoutered Problem");
 	    return 0;
 	}
 
@@ -63,6 +63,7 @@ int main(int argn, char *argv[]) {
 		getline(fileStream, line);
 
 		lineCount++;
+
 
 		if(line.find(COMMENT_SIGN) == 0){
 			continue;
