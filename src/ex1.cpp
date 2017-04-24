@@ -29,7 +29,7 @@ void addLine(const string line, const string::size_type indexOfSecondSeperator, 
 
 void inline printValues(LocationValues valuesLocation) {
 	cout << "Valid values Loc1: " << valuesLocation.size() << " with GeoMean: "
-			<< setprecision(4) << valuesLocation.getGeoMean() << endl;
+			<< fixed << setprecision(4) << valuesLocation.getGeoMean() << endl;
 }
 
 string inline openFile(const int argn, char* argv[], fstream& fileStream) {
