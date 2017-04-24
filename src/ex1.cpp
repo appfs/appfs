@@ -3,10 +3,11 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include "LocationValues.h"
 
 namespace {
 
-const char* DEFAULT_FILE_NAME = "ex100.dat";
+const char* DEFAULT_FILE_NAME = "ex1.dat";
 const char* SEPERATOR = "; ";
 const char* COMMENT_SIGN = "#";
 
@@ -15,33 +16,38 @@ const char* COMMENT_SIGN = "#";
 using namespace std;
 
 /** Check if the value is greater 0. If this is correct, the line is added. */
-void addLineIfValid(const string line, const string::size_type indexOfSecondSeperator, istringstream& strin,
-		int& countValidLocation1, double& valueLocation1) {
+void addLine(const string line, const string::size_type indexOfSecondSeperator, istringstream& strin,
+		LocationValues& locationValues) {
 	string valueString = line.substr(indexOfSecondSeperator);
 	valueString.replace(0,2,"");
 	double value;
 	strin.str(valueString);
 	strin >> value;
-	if (value > 0) {
-		countValidLocation1++;
-		valueLocation1 += value;
-	}
+	locationValues.push_back(value);
 	strin.clear();
+}
+
+void inline printValues(LocationValues valuesLocation) {
+	cout << "Valid values Loc1: " << valuesLocation.size() << " with GeoMean: "
+			<< setprecision(4) << valuesLocation.getGeoMean() << endl;
+}
+
+string inline openFile(const int argn, char* argv[], fstream& fileStream) {
+	if (argn <= 1) {
+		cout << "There was no filename. The standard " << DEFAULT_FILE_NAME
+				<< " will be used." << endl;
+		fileStream.open(DEFAULT_FILE_NAME, ios::in);
+		return DEFAULT_FILE_NAME;
+	} else {
+		fileStream.open(argv[1], ios::in);
+		return argv[1];
+	}
 }
 
 int main(int argn, char *argv[]) {
 
 	fstream fileStream;
-	string filename;
-
-	if(argn <= 1){
-		cout << "There was no filename. The standard "<< DEFAULT_FILE_NAME << " will be used." << endl;
-		fileStream.open(DEFAULT_FILE_NAME, ios::in);
-		filename = DEFAULT_FILE_NAME;
-	} else {
-		fileStream.open(argv[1], ios::in);
-		filename = argv[1];
-	}
+	const string filename = openFile(argn, argv, fileStream);
 
 	if ( (fileStream.rdstate()) != 0 ){
 	    perror("Encoutered Problem");
@@ -53,17 +59,13 @@ int main(int argn, char *argv[]) {
 
 	int lineCount = 0;
 
-	int countValidLocation1 = 0;
-	double valueLocation1 = 0.;
-
-	int countValidLocation2 = 0;
-	double valueLocation2 = 0.;
+	LocationValues valuesLocation1 = LocationValues();
+	LocationValues valuesLocation2 = LocationValues();
 
 	while (!fileStream.eof()){
 		getline(fileStream, line);
 
 		lineCount++;
-
 
 		if(line.find(COMMENT_SIGN) == 0){
 			continue;
@@ -83,22 +85,21 @@ int main(int argn, char *argv[]) {
 		strin.str(locationString);
 		strin >> location;
 		strin.clear();
+
 		if(location == 1){
-			addLineIfValid(line, indexOfSecondSeperator, strin, countValidLocation1,
-					valueLocation1);
+			addLine(line, indexOfSecondSeperator, strin, valuesLocation1);
 		}
 
 		if(location == 2){
-			addLineIfValid(line, indexOfSecondSeperator, strin, countValidLocation2,
-					valueLocation2);
+			addLine(line, indexOfSecondSeperator, strin, valuesLocation2);
 		}
 
 	}
 
 	cout << "File: " << filename << " with " << lineCount << " lines" << endl;
 
-	cout << "Valid values Loc1: " << countValidLocation1 << " with GeoMean: " << fixed << setw(8) << setprecision(4) << valueLocation1/countValidLocation1 << endl;
-	cout << "Valid values Loc2: " << countValidLocation2 << " with GeoMean: " << fixed << setw(8) << setprecision(4) << valueLocation2/countValidLocation2  << endl;
+	printValues(valuesLocation1);
+	printValues(valuesLocation2);
 
 	fileStream.close();
 
