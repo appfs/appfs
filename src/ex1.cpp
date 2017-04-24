@@ -27,11 +27,13 @@ void addLine(const string line, const string::size_type indexOfSecondSeperator, 
 	strin.clear();
 }
 
+/** Print the size and the geometric mean of LocationValues */
 void inline printValues(LocationValues valuesLocation) {
 	cout << "Valid values Loc1: " << valuesLocation.size() << " with GeoMean: "
 			<< fixed << setprecision(4) << valuesLocation.getGeoMean() << endl;
 }
 
+/** Opens either a file, which was given by invocation, or the default file, which is hard-coded. */
 string inline openFile(const int argn, char* argv[], fstream& fileStream) {
 	if (argn <= 1) {
 		cout << "There was no filename. The standard " << DEFAULT_FILE_NAME
@@ -43,7 +45,7 @@ string inline openFile(const int argn, char* argv[], fstream& fileStream) {
 		return argv[1];
 	}
 }
-
+ /** Opens a file, parse the values and returns the geometric means of the locations */
 int main(int argn, char *argv[]) {
 
 	fstream fileStream;
@@ -103,6 +105,6 @@ int main(int argn, char *argv[]) {
 
 	fileStream.close();
 
-	return 0;
+	return 1;
 
 }
