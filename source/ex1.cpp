@@ -8,7 +8,9 @@
 using namespace std;
 
 
-
+/**
+ * Prueft, ob die Zeile ausgewertet werden soll
+ */
 bool lineIsValid(string line){
 	if (line.empty()){
 		return false;
@@ -19,38 +21,51 @@ bool lineIsValid(string line){
 	return true;
 }
 
+/**
+ * ermittelt die Location einer Zeile
+ */
 int getLocation(string line){
 	int location = 0;
 	size_t pos = line.find_first_of(';');
+	stringstream loc;
 	if (pos != string::npos){
 		line = line.substr(pos + 2);
+		pos = line.find_first_of(';');
 		if (pos != string::npos){
-			pos = line.find_first_of(';');
-			stringstream loc(line.substr(0, pos));
+			loc.str(line.substr(0, pos));
 			loc >> location;
+			loc.clear();
 		}
 	}
 	return location;
 }
 
-float getValue(string line){
-	float value = 0;
+/*
+ * ermittelt den Wert einer Zeile
+ */
+double getValue(string line){
+	double value = 0;
 	size_t pos = line.find_first_of(';');
+	stringstream val;
 	if (pos != string::npos){
 		line = line.substr(pos + 2);
+		pos = line.find_first_of(';');
 		if (pos != string::npos){
-			pos = line.find_first_of(';');
-			stringstream val(line.substr(pos + 2));
+			val.str(line.substr(pos + 2));
 			val >> value;
+			val.clear();
 		}
 	}
 	return value;
 }
 
 
-float geoMean(vector<float> vec, long length){
-	float sum = 0.f;
-	for (long i = 0; i < length; ++ i) {
+/*
+ * berechnet das geometrische Mittel eines Vektors
+ */
+double geoMean(vector<double> vec, int length){
+	double sum = 0.;
+	for (int i = 0; i < length; ++i) {
 		sum += log(vec.at(i));
 	}
 	sum /= length;
@@ -60,39 +75,51 @@ float geoMean(vector<float> vec, long length){
 
 
 
-int main(){
-	ifstream infile("ex1.dat", ios::in);
+int main(int argc, char* argv[]){
+	ifstream infile;
+
+	if(argc <=1){
+		infile.open("ex1.dat", ios::in);
+	}
+	else {
+		infile.open(argv[1], ios::in);
+	}
+
 	if (!infile){
 		cout << "Datei konnte nicht geöffnet werden" << endl;
 		return 1;
 	}
 
 	string line;
-	vector<float> loc1;
-	vector<float> loc2;
+	int lineCount=0;
+	vector<double> loc1;
+	vector<double> loc2;
 
 
 	while (getline(infile, line)){
+		lineCount++;
 		if (lineIsValid(line)){
 			int location = getLocation(line);
-			float value = getValue(line);
-			if (location == 1){
-				loc1.push_back(value);
-			} if (location == 2) {
-				loc2.push_back(value);
+			double value = getValue(line);
+			if (value > 0){
+				if (location == 1){
+					loc1.push_back(value);
+				}else if (location == 2) {
+					loc2.push_back(value);
+				}
 			}
 		}
 	}
 
-	long sizeLoc1 = loc1.size();
-	long sizeLoc2 = loc2.size();
+	int sizeLoc1 = loc1.size();
+	int sizeLoc2 = loc2.size();
 
 
-	cout << "File: ex1.dat with " << sizeLoc1 + sizeLoc2 << " lines" << endl;
+	cout << "File: ex1.dat with " << lineCount << " lines" << endl;
 	cout << "Valid values Loc1: " << sizeLoc1 << " with GeoMean: " << geoMean(loc1, sizeLoc1) << endl;
 	cout << "Valid values Loc2: " << sizeLoc2 << " with GeoMean: " << geoMean(loc2, sizeLoc2) << endl;
 
-	return 0;
+	return 1;
  }
 
 
