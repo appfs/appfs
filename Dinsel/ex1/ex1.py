@@ -9,8 +9,8 @@ Get the geometric mean of a list of nums.
 
 import numpy as np
 import sys
-import time, datetime
-
+import time
+import datetime
 
 
 def getData(fname):
@@ -57,6 +57,8 @@ def hTime(num):
 def getGMean(args):
     """Calculate the geometric mean of file."""
     # start timing
+    cython = False
+    t0 = time.time()
     if args.cython:
         try:
             import cGetData
@@ -69,8 +71,7 @@ def getGMean(args):
             # import cGetData
             # cython = True
 
-    t0 = time.time()
-    if cython:
+    # if cython:
         vals1, vals2 = cGetData.getData(args.file)
     else:
         vals1, vals2 = getData(args.file)

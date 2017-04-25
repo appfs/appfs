@@ -1,4 +1,5 @@
 /build/
 ex1_gen
-ex10k.dat
+*.dat
 cGetData.c
+ex1.c
