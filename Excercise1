@@ -3,11 +3,11 @@
 
     ./ex1_gen 100000000 > ex1.dat.
     
-   This generates a file ex1.dat which should then contain roughly 100 million	lines. You can check it with the shell command:
+   This generates a file ex1.dat, which should encompass around 100 million lines. You can check it with the shell command:
    
     wc -l ex1.dat
     
-   The size of the file should be around 2GB. If you use Windows or Mac you cannot execute the ex1_gen, but you can directly download
+   The size of the file should be around 2GB. If you use Windows or Mac, you cannot execute the ex1_gen, but you can directly download
    the generated file from the course website: https://www.zib.de/koch/lectures/ss2017_appfs.php
    Each	line of ex1.dat	should consist of
    • a	sequence-number,
