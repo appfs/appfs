@@ -1,0 +1,30 @@
+bzfschlo@opt55:[25.04.17 - 16:46:48] ~/localprojects/appfs/schloesser (master)
+>> time ./exercise1.py 
+File: ex1-6.dat with 1000016 lines
+Valid values Loc0: 999994 with GeoMean: 36.7535952038
+Valid values Loc1: 999998 with GeoMean: 1.41428610348
+
+real    0m1.857s
+user    0m1.816s
+sys 0m0.036s
+
+bzfschlo@opt55:[25.04.17 - 16:47:01] ~/localprojects/appfs/schloesser (master)
+>> time ./exercise1.py 
+File: ex1-7.dat with 10000128 lines
+Valid values Loc0: 9999961 with GeoMean: 36.7742311079
+Valid values Loc1: 9999967 with GeoMean: 1.41435448197
+
+real    0m17.443s
+user    0m17.320s
+sys 0m0.116s
+
+bzfschlo@opt55:[25.04.17 - 16:47:55] ~/localprojects/appfs/schloesser (master)
+>> time ./exercise1.py 
+File: ex1-8.dat with 100001235 lines
+Valid values Loc0: 99999522 with GeoMean: 36.782181684
+Valid values Loc1: 99999653 with GeoMean: 1.41416499615
+
+real    2m57.863s
+user    2m56.624s
+sys 0m1.204s
+
