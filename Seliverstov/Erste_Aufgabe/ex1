@@ -20,7 +20,7 @@
 BEGIN \
 {
   FS=";"  # Feldtrenner
-  Teilsummenanzahl = 1
+  Teilsummenanzahl = 1000
   Zeilenanzahl[1] = 0
   Zeilenanzahl[2] = 0
   Logarithmen_Teilsumme[1][0] = 0 # zweidimensionales Feld anlegen
@@ -115,6 +115,6 @@ END \
 #Valid values Loc1: 50004466 with GeoMean: 36.781736117270
 #Valid values Loc2: 49994581 with GeoMean: 36.782583200332
 
-#real    5m41.848s
-#user    5m41.536s
-#sys     0m0.292s
+#real    5m34.318s
+#user    5m34.096s
+#sys     0m0.208s
