@@ -31,3 +31,7 @@
 # Debug files
 *.dSYM/
 *.su
+
+# Datafiles
+ex*.dat
+/ex1/
