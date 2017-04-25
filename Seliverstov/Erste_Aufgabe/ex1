@@ -3,8 +3,8 @@
 # Programm für die erste Aufgabe der Vorlesung "Advanced practical Programming
 # for Scientists"
 
-# Besonderheit: Das geometrische Mittel wird duch Bilden des arithmetischen Mittels
-# der Logarithmen gebildet. Das führt bei sehr vielen Eingabedaten dazu, dass viele
+# Besonderheit: Das geometrische Mittel wird durch Bilden des arithmetischen Mittels
+# des Logarithmus gebildet. Das führt bei sehr vielen Eingabedaten dazu, dass viele
 # kleine Zahlen (~10) zu einer immer größer werdenden Zahl addiert werden (~10^8).
 # Darunter leidet die Genauigkeit, insbesondere, da mit dem arithmetischen Mittel
 # potenziert wird. Darum lege ich eine Anzahl von Teilsummen an, die jede
@@ -23,8 +23,8 @@ BEGIN \
   Teilsummenanzahl = 1000
   Zeilenanzahl[1] = 0
   Zeilenanzahl[2] = 0
-  Logarithmen_Teilsumme[1][0] = 0 # zweidimensionales Feld anlegen
-  Logarithmen_Teilsumme[2][0] = 0
+  Logarithmen_Teilsumme[1][0] = 0 # Zweidimensionales Feld anlegen.
+  Logarithmen_Teilsumme[2][0] = 0 # Die Elemente sind mit Null vorgelegt.
   Logarithmensumme[1] = 0
   Logarithmensumme[2] = 0
   geom_Mittelwert[1] = 0
@@ -36,46 +36,37 @@ BEGIN \
 
 # AWK geht alle Zeilen durch.
 {
-  #TEST: speichere die Originalzeile.
-  Zeile_original = $0
-
-  # Bereite die Zeile vor. Achte darauf, ungültige Daten nicht aus Versehen
-  # gültig zu machen, indem Leerzeichen innerhalb einer Zahl gelöscht werden.
+  # Bereite die Zeile vor. Ich könnte die Leerzeichen am Anfang und Ende
+  # der Zeilen und vor und nach den Semikola löschen, aber das würde den
+  # Kode viel langsamer machen, als wenn ich die Leerzeichen in den
+  # regulären Ausdrücken ignorierte.
   #
-  # Entfern Leerzeichen vor und nach Semikola, damit sie in den regulären Ausdrücken
-  # nicht stören. Fehlerverursachende Leerzeichen in den Zahlen bleiben erhalten!
-  #{ gsub ("[[:space:]]*;[[:space:]]*", ";", $0); }
-  #
-  # Entfern Leerzeichen am Anfang und Ende der Zeile.
   # Entfern alles nach einer Raute, weil sie einen Kommentar einleitet.
-  #{ gsub ("(^[[:space:]]*)|([[:space:]]*$)|(#.*$)", "", $0) }
-  #{ gsub ("^[[:space:]]*", "", $0) }
-  #{ gsub ("[[:space:]]*$", "", $0) }
-  { gsub ("#.*$", "", $0); }
+  gsub ("#.*$", "", $0);
 
   # Jede Zeile muss aus drei Datenfeldern bestehen.
   if(NF != 3) next;
 
-  # Prüf die erste Zahl: muss natürliche Zahl sein.
+  # Prüf das erste Datenfeld: muss natürliche Zahl sein.
   # Ich prüfe nicht, ob sie tatsächlich fortlaufend ist.
   if($1 !~ "^[[:space:]]*[0-9]+[[:space:]]*$") next;
-  
-  # Prüf die zweite Zahl.
-  if($2 ~ "^[[:space:]]*[12][[:space:]]*$") \
-  {
-    Position = $2 + 0 # Da es Leerzeichen gibt, mit " + 0" in eine Zahl umwandeln.
-  } else next;
 
-  # Prüf die dritte Zahl. Nichtnegativ durch regulären Ausdruck.
+  # Prüf zweites Datenfeld.
+  if($2 ~ "^[[:space:]]*[12][[:space:]]*$") \
+    Position = $2 + 0 # Da es Leerzeichen gibt, mit " + 0" in eine Zahl umwandeln.
+  else
+    next;
+
+  # Prüf drittes Datenfeld. Nichtnegative Gleitkommazahl durch regulären Ausdruck.
   if($3 ~ "^[[:space:]]*[0-9]*(\\.[0-9]*)?([Ee][+-]?[0-9]+)?[[:space:]]*$") \
-  {
-    aktuelle_Zahl = $3 + 0.0
-  } else next;
+    aktuelle_Zahl = $3 + 0.0  # "0.0" für Gleitkommazahl.
+  else
+    next;
 
   # Diese Zeile scheint in Ordnung zu sein.
   Zeilenanzahl[Position]++;
   # Vereinfachung: arithmetisches Mittel der Logarithmen ist der
-  #                Logarithmus des geometrischen Mittels.
+  # Logarithmus des geometrischen Mittels.
   # Addiere zu jener Teilsumme, die der Zeilennummer modulo Anzahl entspricht.
   Nummer_Teilsumme = Zeilenanzahl[Position] % Teilsummenanzahl;
   Logarithmen_Teilsumme[Position][Nummer_Teilsumme] += log(aktuelle_Zahl);
@@ -84,22 +75,22 @@ BEGIN \
 END \
 {
   # Aufsummieren der Teilsummen
-  for(i = 0; i < Teilsummenanzahl; i++) \
+  for(i = 0; i < Teilsummenanzahl; i++)
   {
     Logarithmensumme[1] += Logarithmen_Teilsumme[1][i];
     Logarithmensumme[2] += Logarithmen_Teilsumme[2][i];
   }
 
   # Umrechnen des Mittelwertes der Logarithmen in geometrischen Mittelwert.
-  if(Zeilenanzahl[1] >= 1) \
-  {
-    geom_Mittelwert[1] = exp(Logarithmensumme[1] / Zeilenanzahl[1])
-  } else Mittelwert_transformiert[1] = 0
+  if(Zeilenanzahl[1] >= 1)
+    geom_Mittelwert[1] = exp(Logarithmensumme[1] / Zeilenanzahl[1]);
+  else
+    geom_Mittelwert[1] = 0;
 
-  if(Zeilenanzahl[2] >= 1) \
-  {
-    geom_Mittelwert[2] = exp(Logarithmensumme[2] / Zeilenanzahl[2])
-  } else Mittelwert_transformiert[2] = 0
+  if(Zeilenanzahl[2] >= 1)
+    geom_Mittelwert[2] = exp(Logarithmensumme[2] / Zeilenanzahl[2]);
+  else
+    geom_Mittelwert[2] = 0
 
   # Ausgabe
   #--------
@@ -115,6 +106,6 @@ END \
 #Valid values Loc1: 50004466 with GeoMean: 36.781736117270
 #Valid values Loc2: 49994581 with GeoMean: 36.782583200332
 
-#real    5m34.318s
-#user    5m34.096s
-#sys     0m0.208s
+#real    5m31.150s
+#user    5m30.904s
+#sys     0m0.232s
