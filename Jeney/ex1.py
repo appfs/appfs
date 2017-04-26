@@ -63,12 +63,10 @@ def updateGeometricAverage(avg,n,sample):
 #The root is not taken in the end but in every step via a update
 #to prevent overflow of the variables
 #
-#set initial values for geometric averages and numbers of samples
+#set initial values for geometric averages 
 #for each Locations respectively
 geoAvg1=1   
 geoAvg2=1
-N1=0
-N2=0
 
 #initialize linenumber
 lineNum=0
@@ -76,6 +74,10 @@ lineNum=0
 #Initalize temporary values for line entries.
 location=0
 value=0
+
+#initialize lists of values of location 1 and 2
+valueList1=[]
+valueList2=[]
 
 #initialize filename
 filename=sys.argv[1]
@@ -94,22 +96,28 @@ with open(filename,'r') as csvfile:
             #skip line
             continue
         else:
-            #otherwise we update the geometric average and number of 
-            #samples depending on the Location
+            #otherwise we save the values in the corresponding list
             location=int(row[1])
             value=float(row[2])
             if(location==1):
                 #Location = 1 here
-                geoAvg1=updateGeometricAverage(geoAvg1,N1,value)
-                N1=N1+1
+                valueList1.append(value)
             elif(location==2):
                 #and here Location = 2
-                geoAvg2=updateGeometricAverage(geoAvg2,N2,value)
-                N2=N2+1
+                valueList2.append(value)
+    
+#now the geometric averages are computed
+#location 1
+for n,value in enumerate(valueList1):
+    geoAvg1=updateGeometricAverage(geoAvg1,n,value)
+        
+#location 2
+for n,value in enumerate(valueList2):
+    geoAvg2=updateGeometricAverage(geoAvg2,n,value)
 
- #produce output
+#produce output
 print('File: {:s} with {:d} lines'.format(filename,lineNum))
 print('Valid values Loc1: {out1:d} with GeoMean: {out2:.4f}'.\
-      format(out1=N1,out2=geoAvg1))
+      format(out1=len(valueList1),out2=geoAvg1))
 print('Valid values Loc2: {out1:d} with GeoMean: {out2:.4f}'.\
-      format(out1=N2,out2=geoAvg2))
+      format(out1=len(valueList2),out2=geoAvg2))
