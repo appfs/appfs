@@ -9,8 +9,8 @@
 # Darunter leidet die Genauigkeit, insbesondere, da mit dem arithmetischen Mittel
 # potenziert wird. Darum lege ich eine Anzahl von Teilsummen an, die jede
 # für sich nicht so groß werden. Die Gesamtsumme wird am Ende berechnet.
-# Der Test zeigt, dass sich bei 1000 Teilsummen die Genauigkeit ab der 13.
-# Nachkommastelle erhöht. Speicherverbrauch: 16kB.
+# Der Test zeigt, dass sich bei 10.000 Teilsummen die Genauigkeit ab der 13.
+# Nachkommastelle erhöht.
 
 # Eingabe erfolgt implizit durch Dateinamen nach Aufruf.
 #-------------------------------------------------------
@@ -19,16 +19,10 @@
 #---------------
 BEGIN \
 {
-  FS=";"  # Feldtrenner
-  Teilsummenanzahl = 1000
-  Zeilenanzahl[1] = 0
-  Zeilenanzahl[2] = 0
-  Logarithmen_Teilsumme[1][0] = 0 # Zweidimensionales Feld anlegen.
-  Logarithmen_Teilsumme[2][0] = 0 # Die Elemente sind mit Null vorgelegt.
-  Logarithmensumme[1] = 0
-  Logarithmensumme[2] = 0
-  geom_Mittelwert[1] = 0
-  geom_Mittelwert[2] = 0
+  FS = ";"  # Feldtrenner
+  Teilsummenanzahl = 10000
+  # Weitere Variablen müssen nicht deklariert werden, weil sie bei der
+  # ersten Verwendung mit Null vorbelegt werden.
 }
 
 # Verarbeitung
@@ -52,45 +46,47 @@ BEGIN \
   if($1 !~ "^[[:space:]]*[0-9]+[[:space:]]*$") next;
 
   # Prüf zweites Datenfeld.
-  if($2 ~ "^[[:space:]]*[12][[:space:]]*$") \
-    Position = $2 + 0 # Da es Leerzeichen gibt, mit " + 0" in eine Zahl umwandeln.
+  if($2 ~ "^[[:space:]]*[12][[:space:]]*$")
+    Position = $2 + 0 # Da es Leerzeichen geben kann, mit " + 0" in Zahl umwandeln.
   else
     next;
 
   # Prüf drittes Datenfeld. Nichtnegative Gleitkommazahl durch regulären Ausdruck.
-  if($3 ~ "^[[:space:]]*[0-9]*(\\.[0-9]*)?([Ee][+-]?[0-9]+)?[[:space:]]*$") \
-    aktuelle_Zahl = $3 + 0.0  # "0.0" für Gleitkommazahl.
+  if($3 ~ "^[[:space:]]*[0-9]*(\\.[0-9]*)?([Ee][+-]?[0-9]+)?[[:space:]]*$")
+    aktuelle_Zahl = $3 + 0
   else
     next;
+  # Diese Zahl könnte immer noch gleich Null sein, was nicht sein darf.
+  if(aktuelle_Zahl == 0) next;
 
   # Diese Zeile scheint in Ordnung zu sein.
   Zeilenanzahl[Position]++;
-  # Vereinfachung: arithmetisches Mittel der Logarithmen ist der
-  # Logarithmus des geometrischen Mittels.
-  # Addiere zu jener Teilsumme, die der Zeilennummer modulo Anzahl entspricht.
-  Nummer_Teilsumme = Zeilenanzahl[Position] % Teilsummenanzahl;
-  Logarithmen_Teilsumme[Position][Nummer_Teilsumme] += log(aktuelle_Zahl);
+  Zahlen[Position][Zeilenanzahl[Position]] = aktuelle_Zahl;
 }
 
 END \
 {
-  # Aufsummieren der Teilsummen
-  for(i = 0; i < Teilsummenanzahl; i++)
+  for(Position = 1; Position <= 2; Position++)
   {
-    Logarithmensumme[1] += Logarithmen_Teilsumme[1][i];
-    Logarithmensumme[2] += Logarithmen_Teilsumme[2][i];
+    # Aufsummieren der Zahlen. Arithmetisches Mittel der Logarithmen ist der
+    # Logarithmus des geometrischen Mittels.
+    # Addiere zu jener Teilsumme, die der Zeilennummer modulo Anzahl entspricht.
+    for(Index in Zahlen[Position])
+    {
+      Nummer_Teilsumme = Index % Teilsummenanzahl;
+      Logarithmen_Teilsumme[Position][Nummer_Teilsumme] += log(Zahlen[Position][Index]);
+    }
+
+    # Aufsummieren der Teilsummen
+    for(i = 0; i < Teilsummenanzahl; i++)
+      Logarithmensumme[Position] += Logarithmen_Teilsumme[Position][i];
+
+    # Umrechnen des Mittelwertes der Logarithmen in geometrischen Mittelwert.
+    if(Zeilenanzahl[Position] >= 1)
+      geom_Mittelwert[Position] = exp(Logarithmensumme[Position] / Zeilenanzahl[Position]);
+    else
+      geom_Mittelwert[Position] = 0;
   }
-
-  # Umrechnen des Mittelwertes der Logarithmen in geometrischen Mittelwert.
-  if(Zeilenanzahl[1] >= 1)
-    geom_Mittelwert[1] = exp(Logarithmensumme[1] / Zeilenanzahl[1]);
-  else
-    geom_Mittelwert[1] = 0;
-
-  if(Zeilenanzahl[2] >= 1)
-    geom_Mittelwert[2] = exp(Logarithmensumme[2] / Zeilenanzahl[2]);
-  else
-    geom_Mittelwert[2] = 0
 
   # Ausgabe
   #--------
