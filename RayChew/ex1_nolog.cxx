@@ -2,7 +2,6 @@
 #include <iostream> // cout
 #include <fstream> // ifstream
 #include <sstream> // istringstream
-#include <math.h> // log;exp
 using namespace std;
 
 int main(){
