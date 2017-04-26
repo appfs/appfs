@@ -1,5 +1,6 @@
 /build/
 ex1_gen
+setup.py
 *.dat
-cGetData.c
-ex1.c
+*.pyx
+*.c

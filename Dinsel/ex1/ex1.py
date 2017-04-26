@@ -57,24 +57,24 @@ def hTime(num):
 def getGMean(args):
     """Calculate the geometric mean of file."""
     # start timing
-    cython = False
+    # cython = False
     t0 = time.time()
-    if args.cython:
-        try:
-            import cGetData
-            cython = True
-        except ImportError:
-            print("could not upload the compiled .so... but i could compile")
-            cython = False
-            # import os
-            # os.system('python setup.py build_ext --inplace')
-            # import cGetData
-            # cython = True
-
-    # if cython:
-        vals1, vals2 = cGetData.getData(args.file)
-    else:
-        vals1, vals2 = getData(args.file)
+    # if args.cython:
+    #     try:
+    #         import cGetData
+    #         cython = True
+    #     except ImportError:
+    #         print("could not upload the compiled .so... but i could compile")
+    #         cython = False
+    #         # import os
+    #         # os.system('python setup.py build_ext --inplace')
+    #         # import cGetData
+    #         # cython = True
+    #
+    # # if cython:
+    #     vals1, vals2 = cGetData.getData(args.file)
+    # else:
+    vals1, vals2 = getData(args.file)
     print("got arrays in {}".format(hTime(time.time() - t0)))
 
     print("{} valid values of loc1 with GeoMean: {}".format(vals1[1], np.exp(vals1[0]/vals1[1])))
@@ -102,7 +102,7 @@ def main(argv):
 
     parser.add_argument('file', help='file to read', action='store')
 
-    parser.add_argument('-c', '--cython', help='use the cython lib (not as fast as expected)', action='store_true', dest='cython')
+    # parser.add_argument('-c', '--cython', help='use the cython lib (not as fast as expected)', action='store_true', dest='cython')
 
     getGMean(parser.parse_args())
 
