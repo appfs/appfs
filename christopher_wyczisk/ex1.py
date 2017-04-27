@@ -17,7 +17,7 @@ class GeometrischesMittelDerWerteZweiterLocations(object):
         for line in fobj:
             self.countAllRows += 1
             inhaltDerLineAlsSplit = line.rstrip().split(";")
-            if len(inhaltDerLineAlsSplit) == 3:
+            if line[0] != '#' and len(inhaltDerLineAlsSplit) == 3:
                 try:
                     value = float(inhaltDerLineAlsSplit[2])
                     if inhaltDerLineAlsSplit[1].strip() == '1':
