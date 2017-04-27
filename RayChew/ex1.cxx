@@ -53,7 +53,7 @@ int main(int argc, char* argv[]){
     });
    
    // output results.
-    cout << "File: ex1.dat with " <<  i << " lines" << endl;
+    cout << "File: " << argv[1] << " with " <<  i << " lines" << endl;
     cout << "Valid values Loc1: " << vectorLoc1.size() << " with GeoMean: " << exp((logval1+log(val1))/vectorLoc1.size()) << endl;
     cout << "Valid values Loc2: " << vectorLoc2.size() << " with GeoMean: " << exp((logval2+log(val2))/vectorLoc2.size()) << endl;
     return 0;
