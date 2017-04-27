@@ -9,6 +9,8 @@ public class Ex1 {
 		long start = System.currentTimeMillis(); 
 		double[] averages = new double[2];
 		long[] index = new long[2]; 
+		int group; 
+		Double val;
 
 		System.out.println("Reading file and calculating means..."); 
 
@@ -25,11 +27,16 @@ public class Ex1 {
 	          		if(parts.length == 3){
 	     				if(!(parts[1].equals("1") || parts[1].equals("2")))continue;
 	     				if(parts[2].contains(" "))continue;
-	          			int group = Integer.parseInt(parts[1]);
+	          			group = Integer.parseInt(parts[1]);
+	          			val = Double.parseDouble(parts[2]);
 
-	          			averages[group-1] = (averages[group-1]*index[group-1] + Double.parseDouble(parts[2]))/(index[group-1]+1);
-	          			//System.out.println(averages[0]);
-	          			//System.out.println(averages[1]);
+	          			if(val.isNaN())continue; 
+
+	          			averages[group-1] = (averages[group-1]*index[group-1] + val)/(index[group-1]+1);
+	          			
+	          			//System.out.println("Valid values Loc1: " + String.valueOf(index[0]) + " with GeoMean: " + String.valueOf(averages[0])); 
+	    				//System.out.println("Valid values Loc2: " + String.valueOf(index[1]) + " with GeoMean: " + String.valueOf(averages[1])); 
+
 	          			index[group-1]++; 
 	          		}
 	           }
