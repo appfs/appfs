@@ -1,5 +1,4 @@
 /build/
-ex1_gen
 setup.py
 *.dat
 *.pyx
