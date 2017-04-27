@@ -58,3 +58,4 @@ int main(int argc, char* argv[]){
     cout << "Valid values Loc2: " << vectorLoc2.size() << " with GeoMean: " << exp((logval2+log(val2))/vectorLoc2.size()) << endl;
     return 0;
 }
+
