@@ -6,8 +6,6 @@ import math, types
 class GeometrischesMittelDerWerteZweiterLocations(object):
     
     def __init__(self):
-        self.__productFromValuesOfLocation1 = 1.0
-        self.__productFromValuesOfLocation2 = 1.0
         self.__values1 = []
         self.__values2 = []
         self.countRowsOfLocation1 = 0
