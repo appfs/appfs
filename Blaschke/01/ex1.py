@@ -7,7 +7,7 @@ Created on Wed Apr 26 16:34:16 2017
 import sys
 import csv
 
-def checkRow(row):
+def checkRow(row, seqNr):
     # check if a row has 3 entries before any comments
 
     # empty lines are ok
@@ -17,18 +17,19 @@ def checkRow(row):
     # if not empty, line must have 3 entries with
     # 1.) sequence number 2.) location {1,2} 3.) float > 0
     if len(row) == 3:
+        seq = checkSeq(row[0], seqNr)
         loc = checkLoc(row[1])
         val = checkVal(row[2])
-        if checkRow(row[0]) and loc and val:
-            return [1, loc, val]
+        if seq and loc and val:
+            return [seq, loc, val]
     
     return 0
     
     
-def checkSeq(entry):
-    # try if first entry is a (positive) sequence number
+def checkSeq(entry, seqNr):
+    # try if first entry is the next sequence number (or the first at all)
     try:
-        if int(entry) > 0:
+        if seqNr == 0 or int(entry) == seqNr + 1:
             return int(entry)
     except:
         return 0
@@ -59,29 +60,25 @@ def gMeanUpdate(currMean, value, n):
 
 
 
-filename = sys.argv[1]#'ex1.dat'
+filename = 'ex1.dat'
 
 nrRow = 0
 nrLoc = [0, 0]
 gMean = [1., 1.]
+seqNr = 0
 
 
 with open(filename, 'r') as dat:
     dat = csv.reader(dat, delimiter = ';')
-    for row in dat:
-        row = checkRow(row)
+    for nrow in dat:
+        row = checkRow(nrow, seqNr)
         if row:
             nrRow = nrRow + 1
             if row[0]:
+                seqNr = row[0]
                 loc = row[1] - 1
                 nrLoc[loc] = nrLoc[loc] + 1
                 gMean[loc] = gMeanUpdate(gMean[loc], row[2], nrLoc[loc])
-#            loc = checkLoc(row[1])
-#            if loc and checkSeq(row[0]):
-#                val = checkVal(row[2])
-#                if val:
-#                    nrLoc[loc-1] = nrLoc[loc-1] + 1
-#                    gMean[loc-1] = gMeanUpdate(gMean[loc-1], val, nrLoc[loc-1])
 
 print 'File: %s with %i valid lines'%(filename, nrRow)
 print 'Valid values	Loc1: %i with GeoMean: %.3f' %(nrLoc[0], gMean[0])
