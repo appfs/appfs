@@ -4,6 +4,7 @@ f = open(filename)
 valid = [0,0,0]
 mean = [0.0,0.0]
 for (index, line) in enumerate(eachline(f))
+    valid[3] = valid[3]+1
 	tmp = split( split( split( line, "\n")[1], "#")[1], "; ")
     if length(tmp) < 3
         continue
@@ -18,7 +19,6 @@ for (index, line) in enumerate(eachline(f))
     catch err
         continue
     end
-    valid[3] = valid[3]+1
 end
 
 println("File: " * string(filename) * " with " * string(valid[3]) * " lines")

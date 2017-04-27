@@ -9,7 +9,7 @@ filename = sys.argv[1]
 
 # open file
 with open(filename, "r") as f:
-    # store [number of correct lines, number of positions in location1, number of positions in location2]
+    # store [number of lines, number of positions in location1, number of positions in location2]
     valid = [0,0,0]
     # store values in loc1, loc2 respectively
     loc = [[],[]]
@@ -20,6 +20,8 @@ with open(filename, "r") as f:
     for i, line in enumerate(f):
     	# split the lines into the 3 values we are interested in
         tmp = line.split("\n")[0].split("#")[0].split("; ")
+        # increase number of lines
+        valid[0] = valid[0]+1
         # line broken if we get back less than three values
         if len(tmp) < 3:
         	# next line
@@ -34,8 +36,6 @@ with open(filename, "r") as f:
         # if something fails, then the line was broken
         except ValueError:
             continue
-        # increase number of correct lines
-        valid[0] = valid[0]+1
 
 # output information
 print("File: " + str(filename) + " with " + str(valid[0]) + " lines")

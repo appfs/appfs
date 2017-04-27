@@ -32,5 +32,6 @@
 *.dSYM/
 *.su
 
-# BIG DATA
-*.dat
+# generated files
+hark/ex1.dat
+.idea/

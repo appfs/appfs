@@ -10,6 +10,7 @@ with open(filename, "r") as f:
 	mean = [0,0]
 	for i, line in enumerate(f):
 	    tmp = line.split("\n")[0].split("#")[0].split("; ")
+	    valid[0] = valid[0]+1
 	    if len(tmp) < 3:
 	        continue
 	    try:
@@ -20,7 +21,6 @@ with open(filename, "r") as f:
 	            valid[pos] = valid[pos]+1
 	    except ValueError:
 	        continue
-	    valid[0] = valid[0]+1
 
 print("File: " + str(filename) + " with " + str(valid[0]) + " lines")
 for i in range(2):
