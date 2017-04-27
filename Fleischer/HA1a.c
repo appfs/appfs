@@ -1,30 +1,34 @@
+#define _GNU_SOURCE
 #include<stdio.h>
 #include<stdlib.h>
 #include <string.h>
 #include <math.h> 
+
 #define MAX_LINE_LEN 512
 
 
-void main(int argc[], char *argv[]){
+
+int main(int argc, char *argv[]){
 FILE *fp;
-    char *line = malloc(sizeof(char*));
+    char *line = (char*) malloc(MAX_LINE_LEN * sizeof(char));
     size_t len = 0;
-    long double loc1 = 1;
-    long double loc2 = 1;
+    double loc1 = 1;
+    double loc2 = 1;
     long int often1 = 0;
     long int often2 = 0;
-    long double temp;
+    double temp;
     char delimiter[] = " ;";
     char *ptr;
     long int counter = 0;
     char *bla;
+    int lol;
     
 
    fp = fopen(argv[1], "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
 
-   while ((getline(&line, &len, fp)) != -1) {
+   while ((lol=getline(&line, &len, fp)) != -1) {
 	counter++;
 	
 	if (*(line) != '\n' &&*(line) != '#'){
@@ -70,10 +74,11 @@ FILE *fp;
     	}
     }
    printf("%s has %li lines \n",argv[1], counter);	
-   printf("Valid values Loc1: %li, with with GeoMean: %Lf \n",often1, loc1);
-   printf("Valid values Loc2: %li, with with GeoMean: %Lf \n",often2, loc2);
+   printf("Valid values Loc1: %li, with with GeoMean: %f \n",often1, loc1);
+   printf("Valid values Loc2: %li, with with GeoMean: %f \n",often2, loc2);
    
    free(line);
     exit(EXIT_SUCCESS);
+    return argc;
 
 }
