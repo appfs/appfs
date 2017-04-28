@@ -1,6 +1,6 @@
 ex1-n.dat contains about 10^n lines
 
->> time ./exercise1.py ex1-6.dat 
+:>> time ./ex1 ex1-6.dat 
 File: ex1-6.dat with 999992 lines
 Valid values Loc0: 499922 with GeoMean: 36.7413057894
 Valid values Loc1: 500070 with GeoMean: 36.7658003474
@@ -9,7 +9,7 @@ real    0m1.616s
 user    0m1.596s
 sys 0m0.016s
 
->> time ./exercise1.py ex1-7.dat 
+>> time ./ex1 ex1-7.dat 
 File: ex1-7.dat with 9999954 lines
 Valid values Loc0: 4998532 with GeoMean: 36.7811769664
 Valid values Loc1: 5001407 with GeoMean: 36.7672445178
@@ -18,7 +18,7 @@ real    0m14.937s
 user    0m14.800s
 sys 0m0.132s
 
->> time ./exercise1.py ex1-8.dat 
+>> time ./ex1 ex1-8.dat 
 File: ex1-8.dat with 99999485 lines
 Valid values Loc0: 50004616 with GeoMean: 36.7817613362
 Valid values Loc1: 49994716 with GeoMean: 36.7825739226
@@ -26,32 +26,4 @@ Valid values Loc1: 49994716 with GeoMean: 36.7825739226
 real    2m31.116s
 user    2m30.036s
 sys 0m1.068s
-
-
->> time julia exercise1-logarithmic.jl ex1-6.dat 
-File: ex1-6.dat with 999992 lines
-Valid values Loc1: 499922 with GeoMean: 36.74130578938524
-Valid values Loc2: 500070 with GeoMean: 36.76580034740867
-
-real	0m2.064s
-user	0m2.064s
-sys	0m0.408s
-
->> time julia exercise1-logarithmic.jl ex1-7.dat 
-File: ex1-7.dat with 9999954 lines
-Valid values Loc1: 4998532 with GeoMean: 36.78117696634313
-Valid values Loc2: 5001407 with GeoMean: 36.76724451780395
-
-real	0m15.421s
-user	0m15.396s
-sys	0m0.392s
-
->> time julia exercise1-logarithmic.jl ex1-8.dat 
-File: ex1-8.dat with 99999485 lines
-Valid values Loc1: 50004616 with GeoMean: 36.781761336223234
-Valid values Loc2: 49994716 with GeoMean: 36.7825739226864
-
-real	2m36.683s
-user	2m36.364s
-sys	0m0.672s
 
