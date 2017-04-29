@@ -1,4 +1,4 @@
-Documentation and example file can be found in https://github.com/appfs/appfs/edit/master/exercise_2/ex2.md
+Documentation and example file can be found in https://github.com/appfs/appfs/edit/master/exercise_2/ex2.zip
 
 Write a program ex2 that reads in
 
