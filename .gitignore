@@ -32,6 +32,10 @@
 *.dSYM/
 *.su
 
-# generated files
+# User specific ignores (although it would be nice if you wouldn't push your.gitignore changes at all)
+Blaschke/01/2017-04-21-Koch-Berlin-TUB-Advanced_Programming-1.pdf
+Blaschke/01/ex1-100.dat.xz
+Blaschke/01/ex1.dat
+
 hark/ex1.dat
 .idea/
