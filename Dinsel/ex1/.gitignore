@@ -1,0 +1,5 @@
+/build/
+setup.py
+*.dat
+*.pyx
+*.c
