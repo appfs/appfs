@@ -15,3 +15,5 @@ Try to validate the XML file against the provided schema.
 The filename to be converted should be taken **from the command line**.
 The output should be to stdout, any errors to stderr.
 You may use whatever library to parse the XML file.
+
+**Deadline:   May 5, 16:00**
