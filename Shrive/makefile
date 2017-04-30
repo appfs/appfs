@@ -3,7 +3,7 @@ obj = $(src:.c=.o)
 
 LDFLAGS = -std=gnu99 -lm
 
-program_2017_04_25: $(obj)
+ex1: $(obj)
 		$(CC) -g -o $@ $^ $(LDFLAGS)
 
 .PHONY: clean
