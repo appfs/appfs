@@ -15,13 +15,14 @@
 
 namespace {
 
-const char* FilePathMeasuredXSD = "recources/measured-1-1-0.xsd";
+	const char* FILEPATHMEASUREDXSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/measured-1-1-0.xsd";
+	//const char* URLMEASUREDXSD = "http://gaslab.zib.de/kwpt/measured ../schemes/measured-1-1-0.xsd";
 
 }
 
 using namespace std;
 
-void printException(const XMLException& toCatch) {
+void inline printException(const XMLException& toCatch) {
 	char* message = XMLString::transcode(toCatch.getMessage());
 	cerr << "Exception:" << endl << message << endl;
 	XMLString::release(&message);
@@ -37,7 +38,7 @@ char* getRealPath(const char* path) {
 int main(int argn, char *argv[]) {
 
 	if (argn <= 1) {
-		cerr << "ERROR : There was no filename." << endl;
+		cerr << "ERROR : There was no filename" << endl;
 		return 1;
 	}
 
@@ -50,13 +51,15 @@ int main(int argn, char *argv[]) {
 	}
 
 	XMLParser* parser = new XMLParser();
-	if(parser->loadGrammar(getRealPath(FilePathMeasuredXSD), Grammar::GrammarType::SchemaGrammarType, true) == nullptr){
-		cerr << "ERROR : Couldn't initialize XSD-Shema."<<endl;
+
+	if(parser->loadGrammar(FILEPATHMEASUREDXSD, Grammar::GrammarType::SchemaGrammarType, true) == nullptr){
+		cerr << "ERROR : Couldn't initialize XSD-Shema for file " << FILEPATHMEASUREDXSD << endl;
 		return 1;
 	}
 
 	try {
 		parser->parse(argv[1]);
+		DOMDocument* document = parser->getDocument();
 
 		if(parser->getErrorCount() != 0){
 		  cerr << "ERROR : File doesn't match shema." << endl;
