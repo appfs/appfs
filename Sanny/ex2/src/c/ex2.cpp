@@ -16,6 +16,9 @@
 namespace {
 
 	const char* FILEPATHMEASUREDXSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/measured-1-1-0.xsd";
+	const char* FILEPATHFRAMEWORKXSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/Framework-1-1-0.xsd";
+	const char* FILEPATHPHYSICSXSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/PhysicalValues-1-1-0.xsd";
+	const char* FILEPATHTOPOXSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/Topology-1-1-0.xsd";
 	//const char* URLMEASUREDXSD = "http://gaslab.zib.de/kwpt/measured ../schemes/measured-1-1-0.xsd";
 
 }
@@ -35,6 +38,32 @@ char* getRealPath(const char* path) {
 	return ptr;
 }
 
+bool initGrammarIsSuccessfull(XMLParser* parser, const char* path) {
+	if (parser->loadGrammar(path,
+			Grammar::GrammarType::SchemaGrammarType, true) == nullptr) {
+		cerr << "ERROR : Couldn't initialize XSD-Shema for file "
+				<< path << endl;
+		return 0;
+	}
+	return 1;
+}
+
+bool initGrammarAndCheckIfSuccessfull(XMLParser* parser) {
+	if(!initGrammarIsSuccessfull(parser, FILEPATHMEASUREDXSD)){
+		return 0;
+	}
+	if(!initGrammarIsSuccessfull(parser, FILEPATHPHYSICSXSD)){
+		return 0;
+	}
+	if(!initGrammarIsSuccessfull(parser, FILEPATHFRAMEWORKXSD)){
+		return 0;
+	}
+	if(!initGrammarIsSuccessfull(parser, FILEPATHTOPOXSD)){
+		return 0;
+	}
+	return 1;
+}
+
 int main(int argn, char *argv[]) {
 
 	if (argn <= 1) {
@@ -52,8 +81,9 @@ int main(int argn, char *argv[]) {
 
 	XMLParser* parser = new XMLParser();
 
-	if(parser->loadGrammar(FILEPATHMEASUREDXSD, Grammar::GrammarType::SchemaGrammarType, true) == nullptr){
-		cerr << "ERROR : Couldn't initialize XSD-Shema for file " << FILEPATHMEASUREDXSD << endl;
+	bool success = initGrammarAndCheckIfSuccessfull(parser);
+
+	if(!success){
 		return 1;
 	}
 
@@ -67,6 +97,7 @@ int main(int argn, char *argv[]) {
 		  cerr << parser->getErrors();
 		  return 1;
 		}
+
 
 		DOMDocument* document = parser->getDocument();
 
