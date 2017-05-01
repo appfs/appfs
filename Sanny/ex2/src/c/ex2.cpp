@@ -59,12 +59,17 @@ int main(int argn, char *argv[]) {
 
 	try {
 		parser->parse(argv[1]);
-		DOMDocument* document = parser->getDocument();
 
 		if(parser->getErrorCount() != 0){
-		  cerr << "ERROR : File doesn't match shema." << endl;
+		  cerr << "ERROR : File doesn't match sheme." << endl;
+		  cerr << "There were " << parser->getErrorCount() << " errors." << endl;
+		  cerr << "Exceptions: "<< endl;
+		  cerr << parser->getErrors();
 		  return 1;
 		}
+
+		DOMDocument* document = parser->getDocument();
+
 	}
 
 	catch (const XMLException& toCatch) {

@@ -10,15 +10,16 @@
 
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/dom/DOM.hpp>
-#include <xercesc/sax/HandlerBase.hpp>
 #include <fstream>
 #include <string>
+
+#include "ParserErrorHandler.h"
 
 using namespace xercesc;
 
 class XMLParser : public XercesDOMParser{
 private:
-	ErrorHandler* errorHandler;
+	ParserErrorHandler* errorHandler;
 public:
 	XMLParser();
 	virtual ~XMLParser();
@@ -26,6 +27,7 @@ public:
 	                         const Grammar::GrammarType grammarType,
 	                         const bool toCache = false);
 	int getErrorCount();
+	string getErrors();
 };
 
 #endif /* C_XMLPARSER_H_ */

@@ -8,7 +8,7 @@
 #include "XMLParser.h"
 
 XMLParser::XMLParser() : XercesDOMParser(){
-	errorHandler = (ErrorHandler*) new HandlerBase();
+	errorHandler = new ParserErrorHandler();
 
 	XercesDOMParser::setValidationScheme(XercesDOMParser::Val_Always);
 	XercesDOMParser::setDoNamespaces(true);
@@ -30,5 +30,9 @@ Grammar* XMLParser::loadGrammar(const char* const systemId,
 
 int XMLParser::getErrorCount(){
 	return XercesDOMParser::getErrorCount();
+}
+
+string XMLParser::getErrors(){
+	return errorHandler->getExceptionsAsString();
 }
 
