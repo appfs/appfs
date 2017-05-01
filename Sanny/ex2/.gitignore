@@ -42,3 +42,4 @@ ex*.dat
 *.settings.xml
 
 /src/recources
+/appfs_exe/
