@@ -12,14 +12,14 @@
 #include <stdlib.h>
 
 #include "XMLParser.h"
+#include "DocumentToFileWriter.h"
 
 namespace {
 
-	const char* FILEPATHMEASUREDXSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/measured-1-1-0.xsd";
-	const char* FILEPATHFRAMEWORKXSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/Framework-1-1-0.xsd";
-	const char* FILEPATHPHYSICSXSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/PhysicalValues-1-1-0.xsd";
-	const char* FILEPATHTOPOXSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/Topology-1-1-0.xsd";
-	//const char* URLMEASUREDXSD = "http://gaslab.zib.de/kwpt/measured ../schemes/measured-1-1-0.xsd";
+	const char* FILEPATH_MEASURED_XSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/measured-1-1-0.xsd";
+	const char* FILEPATH_FRAMEWORK_XSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/Framework-1-1-0.xsd";
+	const char* FILEPATH_PHYSICS_XSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/PhysicalValues-1-1-0.xsd";
+	const char* FILEPATH_TOPO_XSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/Topology-1-1-0.xsd";
 
 }
 
@@ -29,13 +29,6 @@ void inline printException(const XMLException& toCatch) {
 	char* message = XMLString::transcode(toCatch.getMessage());
 	cerr << "Exception:" << endl << message << endl;
 	XMLString::release(&message);
-}
-
-char* getRealPath(const char* path) {
-	char actualpath[PATH_MAX + 1];
-	char* ptr;
-	ptr = realpath(path, actualpath);
-	return ptr;
 }
 
 bool initGrammarIsSuccessfull(XMLParser* parser, const char* path) {
@@ -49,16 +42,16 @@ bool initGrammarIsSuccessfull(XMLParser* parser, const char* path) {
 }
 
 bool initGrammarAndCheckIfSuccessfull(XMLParser* parser) {
-	if(!initGrammarIsSuccessfull(parser, FILEPATHMEASUREDXSD)){
+	if(!initGrammarIsSuccessfull(parser, FILEPATH_MEASURED_XSD)){
 		return 0;
 	}
-	if(!initGrammarIsSuccessfull(parser, FILEPATHPHYSICSXSD)){
+	if(!initGrammarIsSuccessfull(parser, FILEPATH_PHYSICS_XSD)){
 		return 0;
 	}
-	if(!initGrammarIsSuccessfull(parser, FILEPATHFRAMEWORKXSD)){
+	if(!initGrammarIsSuccessfull(parser, FILEPATH_FRAMEWORK_XSD)){
 		return 0;
 	}
-	if(!initGrammarIsSuccessfull(parser, FILEPATHTOPOXSD)){
+	if(!initGrammarIsSuccessfull(parser, FILEPATH_TOPO_XSD)){
 		return 0;
 	}
 	return 1;
@@ -95,11 +88,11 @@ int main(int argn, char *argv[]) {
 		  cerr << "There were " << parser->getErrorCount() << " errors." << endl;
 		  cerr << "Exceptions: "<< endl;
 		  cerr << parser->getErrors();
-		  return 1;
+//		  return 1;
 		}
 
-
-		DOMDocument* document = parser->getDocument();
+		DocumentToFileWriter* toFile = new DocumentToFileWriter(parser->getDocument());
+		toFile->writeDocumentToFile();
 
 	}
 
