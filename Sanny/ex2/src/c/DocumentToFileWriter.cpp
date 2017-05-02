@@ -65,8 +65,8 @@ void DocumentToFileWriter::writeGasDayToFile(DOMNode* gasDayNode, ofstream& outp
 	int startHour = 0;
 	DOMNamedNodeMap* attributeMap = gasDayNode->getAttributes();
 	date = getNodeValueAsString(attributeMap->getNamedItem(ATTR_date));
-	startHour = getNodeValueAsInt(attributeMap->getNamedItem(ATTR_gasDayLengthInHours));
-	daylength = getNodeValueAsInt(attributeMap->getNamedItem(ATTR_gasDayStartHourInUTC));
+	daylength = getNodeValueAsInt(attributeMap->getNamedItem(ATTR_gasDayLengthInHours));
+	startHour = getNodeValueAsInt(attributeMap->getNamedItem(ATTR_gasDayStartHourInUTC));
 	DOMNodeList* nodeList = gasDayNode->getChildNodes();
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		DOMNode* node = nodeList->item(i);
