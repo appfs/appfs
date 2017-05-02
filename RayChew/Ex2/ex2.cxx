@@ -70,17 +70,15 @@ private:
       << endl;
       XMLString::release(&message);
     }
-    ~ParserDocHandler();
+    ~ParserDocHandler() {
+      XMLString::release(&gasDay);
+      XMLString::release(&date);
+      XMLString::release(&time);
+      XMLString::release(&hour);
+      XMLString::release(&amtP);
+      XMLString::release(&value);
+    };
 };
-
-ParserDocHandler::~ParserDocHandler() {
-  XMLString::release(&gasDay);
-  XMLString::release(&date);
-  XMLString::release(&time);
-  XMLString::release(&hour);
-  XMLString::release(&amtP);
-  XMLString::release(&value);
-}
 
 class ParserErrorHandler : public ErrorHandler { // error handler. Took it off Xerces documentation.
 private:
