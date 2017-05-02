@@ -93,6 +93,7 @@ int main(int argn, char *argv[]) {
 
 		DocumentToFileWriter* toFile = new DocumentToFileWriter(parser->getDocument());
 		toFile->writeDocumentToFile();
+		delete toFile;
 
 	}
 
