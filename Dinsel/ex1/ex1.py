@@ -15,7 +15,7 @@ from scipy.stats.mstats import gmean
 
 
 def getData(fname):
-    """The pythonic way."""
+    """."""
     vals1 = []
     vals2 = []
     # e = 0
@@ -47,6 +47,7 @@ def hTime(num):
 def getGMean(args):
     """Calculate the geometric mean of file."""
     # start timing
+    # cython = False
     t0 = time.time()
     if args.cython:
         import cGetData
