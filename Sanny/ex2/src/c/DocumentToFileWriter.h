@@ -18,6 +18,7 @@
 #include <iomanip>
 
 using namespace xercesc;
+using namespace std;
 
 class DocumentToFileWriter {
 private:
@@ -32,6 +33,9 @@ private:
 	std::string getNodeValueAsString(DOMNode* node);
 	int getNodeValueAsInt(DOMNode* node);
 	double getNodeValueAsDouble(DOMNode* node);
+	void initNodes();
+	void initAttributes();
+
 public:
 	void writeDocumentToFile();
 	DocumentToFileWriter(DOMDocument* document);

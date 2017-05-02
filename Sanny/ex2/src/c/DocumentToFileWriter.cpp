@@ -11,66 +11,62 @@ namespace{
 	const char* OUTPUT_CSV = "output.csv";
 	const char* SEPERATOR = "; ";
 
-	const char* MEASURED_NODE = "measured";
 	const char* GASDAY_NODE = "gasDay";
 	const char* BOUNDARY_NODE = "boundaryNode";
 	const char* TIME_NODE = "time";
 	const char* AMOUNTOFPOWER_NODE = "amountOfPower";
 
-	const char* DATE_ATTRIBUTE = "date";
-	const char* STARTHOUR_ATTRIBUTE = "gasDayStartHourInUTC";
-	const char* DAYLENGTH_ATTRIBUTE = "gasDayLengthInHours";
-	const char* HOUR_ATTRIBUTE = "hour";
-	const char* VALUE_ATTRIBUTE = "value";
 }
 
+	XMLCh* NODE_gasDay;
+
+	XMLCh* ATTR_date;
+	XMLCh* ATTR_gasDayStartHourInUTC;
+	XMLCh* ATTR_gasDayLengthInHours;
+	XMLCh* ATTR_hour;
+	XMLCh* ATTR_value;
+
+
 DocumentToFileWriter::DocumentToFileWriter(DOMDocument* document){
+	XMLPlatformUtils::Initialize();
+
+	initNodes();
+	initAttributes();
+
 	this->document = document;
 }
 
+void DocumentToFileWriter::initNodes() {
+	NODE_gasDay = XMLString::transcode(GASDAY_NODE);
+}
+
+void DocumentToFileWriter::initAttributes() {
+	ATTR_date = XMLString::transcode("date");
+	ATTR_gasDayStartHourInUTC = XMLString::transcode("gasDayStartHourInUTC");
+	ATTR_gasDayLengthInHours = XMLString::transcode("gasDayLengthInHours");
+	ATTR_hour = XMLString::transcode("hour");
+	ATTR_value = XMLString::transcode("value");
+}
+
 void DocumentToFileWriter::writeDocumentToFile() {
-	std::ofstream outputFile;
+	ofstream outputFile;
 	outputFile.open(OUTPUT_CSV);
-	DOMNodeList* nodeList = document->getChildNodes();
+
+	DOMNodeList* nodeList = document->getElementsByTagName(NODE_gasDay);
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
-		DOMNode* node = nodeList->item(i);
-		if(this->getNodeName(node)==MEASURED_NODE){
-			this->writeMeasuredToFile(node, outputFile);
-		}
+		writeGasDayToFile(nodeList->item(i), outputFile);
 	}
 }
 
-void DocumentToFileWriter::writeMeasuredToFile(DOMNode* measuredNode, std::ofstream& outputFile) {
-	DOMNodeList* nodeList = measuredNode->getChildNodes();
-	for(unsigned int i = 0; i < nodeList->getLength(); i++){
-		DOMNode* node = nodeList->item(i);
-		if(this->getNodeName(node)==GASDAY_NODE){
-			this->writeGasDayToFile(node, outputFile);
-		}
-	}
-}
 
-void DocumentToFileWriter::writeGasDayToFile(DOMNode* gasDayNode, std::ofstream& outputFile) {
+void DocumentToFileWriter::writeGasDayToFile(DOMNode* gasDayNode, ofstream& outputFile) {
 	std::string date = "";
 	int daylength = 0;
 	int startHour = 0;
 	DOMNamedNodeMap* attributeMap = gasDayNode->getAttributes();
-	for(unsigned int i = 0; i < attributeMap->getLength(); i++){
-		DOMNode* attribute = attributeMap->item(i);
-		std::string attributeName = getNodeName(attribute);
-		if(attributeName == DATE_ATTRIBUTE){
-			date = getNodeValueAsString(attribute);
-			continue;
-		}
-		if(attributeName == STARTHOUR_ATTRIBUTE){
-			startHour = getNodeValueAsInt(attribute);
-			continue;
-		}
-		if(attributeName == DAYLENGTH_ATTRIBUTE){
-			daylength = getNodeValueAsInt(attribute);
-			continue;
-		}
-	}
+	date = getNodeValueAsString(attributeMap->getNamedItem(ATTR_date));
+	startHour = getNodeValueAsInt(attributeMap->getNamedItem(ATTR_gasDayLengthInHours));
+	daylength = getNodeValueAsInt(attributeMap->getNamedItem(ATTR_gasDayStartHourInUTC));
 	DOMNodeList* nodeList = gasDayNode->getChildNodes();
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		DOMNode* node = nodeList->item(i);
@@ -92,14 +88,9 @@ void DocumentToFileWriter::writeBoundaryToFile(DOMNode* boundaryNode, std::strin
 
 void DocumentToFileWriter::writeTimeToFile(DOMNode* timeNode, std::string date, int dayLength, int startHour, std::ofstream& outputFile) {
 	DOMNamedNodeMap* attributeMap = timeNode->getAttributes();
-	int hour = startHour;
-	for(unsigned int i = 0; i < attributeMap->getLength(); i++){
-		DOMNode* attribute = attributeMap->item(i);
-		std::string attributeName = getNodeName(attribute);
-		if(attributeName == HOUR_ATTRIBUTE){
-			hour = (hour + getNodeValueAsInt(attribute))%dayLength;
-		}
-	}
+	int hour = getNodeValueAsInt(attributeMap->getNamedItem(ATTR_hour));
+	hour = (startHour+hour)%dayLength;
+
 	DOMNodeList* nodeList = timeNode->getChildNodes();
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		DOMNode* node = nodeList->item(i);
@@ -112,13 +103,8 @@ void DocumentToFileWriter::writeTimeToFile(DOMNode* timeNode, std::string date, 
 }
 void DocumentToFileWriter::writeAmountOfPowerToFile(DOMNode* powerNode, const std::string date, int dayLength, int hour, std::ofstream& outputFile) {
 	DOMNamedNodeMap* attributeMap = powerNode->getAttributes();
-	for(unsigned int i = 0; i < attributeMap->getLength(); i++){
-		DOMNode* attribute = attributeMap->item(i);
-		std::string attributeName = getNodeName(attribute);
-		if(attributeName == VALUE_ATTRIBUTE){
-			outputFile << date << SEPERATOR <<std::setw(2) << hour << SEPERATOR << getNodeValueAsDouble(attribute) << std::endl;
-		}
-	}
+	double power = getNodeValueAsDouble(attributeMap->getNamedItem(ATTR_value));
+	outputFile << date << SEPERATOR <<std::setw(2) << hour << SEPERATOR << power << std::endl;
 }
 
 std::string DocumentToFileWriter::getNodeName(DOMNode* node){
@@ -158,7 +144,13 @@ double DocumentToFileWriter::getNodeValueAsDouble(DOMNode* node){
 }
 
 DocumentToFileWriter::~DocumentToFileWriter(){
-	//nop
+    XMLString::release( &NODE_gasDay );
+	XMLString::release( &ATTR_date );
+	XMLString::release( &ATTR_gasDayLengthInHours );
+	XMLString::release( &ATTR_gasDayStartHourInUTC);
+	XMLString::release( &ATTR_hour);
+	XMLString::release( &ATTR_date);
+	XMLPlatformUtils::Terminate();
 }
 
 
