@@ -1,13 +1,8 @@
+import sys
 import math
 
-filename = input("insert file name: ")
-file = []
-
-try:
-    file = open(filename)
-except:
-    print("unsupported file name")
-    filename = input("insert file name: ")
+filename = sys.argv[-1]
+file = open(filename,"r")
 
 GMean = [0,0]
 line_counter = [0,0,0]
