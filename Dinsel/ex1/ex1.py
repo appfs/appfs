@@ -58,6 +58,8 @@ def getGMean(args):
 
     print("{} valid values of loc1 with GeoMean: {}".format(len(vals1), gmean((vals1))))
     print("{} valid values of loc2 with GeoMean: {}".format(len(vals2), gmean((vals2))))
+    # print("{} valid values of loc1 with GeoMean: {}".format(vals1[1], np.exp(vals1[0]/vals1[1])))
+    # print("{} valid values of loc2 with GeoMean: {}".format(vals2[1], np.exp(vals2[0]/vals2[1])))
 
     t1 = time.time()
     print("{} took {} to solve.".format(">"*10, hTime(t1-t0)))
