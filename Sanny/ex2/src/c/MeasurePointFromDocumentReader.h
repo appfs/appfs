@@ -11,11 +11,13 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
 
-#include <fstream>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <vector>
+
+#include "MeasurePoint.h"
 
 using namespace xercesc;
 using namespace std;
@@ -23,20 +25,31 @@ using namespace std;
 class MeasurePointFromDocumentReader {
 private:
 	DOMDocument* document;
-	std::istringstream strin;
-	void writeMeasuredToFile(DOMNode* measuredNode, std::ofstream& outputFile);
-	void writeBoundaryToFile(DOMNode* boundaryNode, std::string date, int dayLength, int startHour, std::ofstream& outputFile);
-	void writeTimeToFile(DOMNode* timeNode, std::string date, int dayLength, int startHour, std::ofstream& outputFile);
-	void writeAmountOfPowerToFile(DOMNode* amountOfPowerNode, std::string date, int dayLength, int startHour, std::ofstream& outputFile);
-	void writeGasDayToFile(DOMNode* gasDayNode, std::ofstream& outputFile);
-	std::string getNodeName(DOMNode* node);
-	std::string getNodeValueAsString(DOMNode* node);
+	istringstream strin;
+	vector<MeasurePoint> measurePoints;
+
+	XMLCh* NODE_gasDay;
+
+	XMLCh* ATTR_date;
+	XMLCh* ATTR_gasDayStartHourInUTC;
+	XMLCh* ATTR_gasDayLengthInHours;
+	XMLCh* ATTR_hour;
+	XMLCh* ATTR_value;
+
+	void writeMeasuredToFile(DOMNode* measuredNode);
+	void writeBoundaryToFile(DOMNode* boundaryNode, /**tm*/ string date, int dayLength, int startHour);
+	void writeTimeToFile(DOMNode* timeNode, /**tm*/ string date, int dayLength, int startHour);
+	void writeAmountOfPowerToFile(DOMNode* amountOfPowerNode, /**tm*/ string date, int dayLength, int startHour);
+	void writeGasDayToFile(DOMNode* gasDayNode);
+	string getNodeName(DOMNode* node);
+	/**tm*/ string getNodeValueAsString(DOMNode* node);
 	int getNodeValueAsInt(DOMNode* node);
 	double getNodeValueAsDouble(DOMNode* node);
 	void initNodes();
 	void initAttributes();
 
 public:
+	vector<MeasurePoint> getMeasurePoints();
 	void writeDocumentToFile();
 	MeasurePointFromDocumentReader(DOMDocument* document);
 	virtual ~MeasurePointFromDocumentReader();

@@ -8,8 +8,6 @@
 #include "MeasurePointFromDocumentReader.h"
 
 namespace{
-	const char* OUTPUT_CSV = "output.csv";
-	const char* SEPERATOR = "; ";
 
 	const char* GASDAY_NODE = "gasDay";
 	const char* BOUNDARY_NODE = "boundaryNode";
@@ -17,14 +15,6 @@ namespace{
 	const char* AMOUNTOFPOWER_NODE = "amountOfPower";
 
 }
-
-	XMLCh* NODE_gasDay;
-
-	XMLCh* ATTR_date;
-	XMLCh* ATTR_gasDayStartHourInUTC;
-	XMLCh* ATTR_gasDayLengthInHours;
-	XMLCh* ATTR_hour;
-	XMLCh* ATTR_value;
 
 
 MeasurePointFromDocumentReader::MeasurePointFromDocumentReader(DOMDocument* document){
@@ -49,18 +39,17 @@ void MeasurePointFromDocumentReader::initAttributes() {
 }
 
 void MeasurePointFromDocumentReader::writeDocumentToFile() {
-	ofstream outputFile;
-	outputFile.open(OUTPUT_CSV);
+	measurePoints.clear();
 
 	DOMNodeList* nodeList = document->getElementsByTagName(NODE_gasDay);
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
-		writeGasDayToFile(nodeList->item(i), outputFile);
+		writeGasDayToFile(nodeList->item(i));
 	}
 }
 
 
-void MeasurePointFromDocumentReader::writeGasDayToFile(DOMNode* gasDayNode, ofstream& outputFile) {
-	std::string date = "";
+void MeasurePointFromDocumentReader::writeGasDayToFile(DOMNode* gasDayNode) {
+	string date = "";
 	int daylength = 0;
 	int startHour = 0;
 	DOMNamedNodeMap* attributeMap = gasDayNode->getAttributes();
@@ -71,22 +60,22 @@ void MeasurePointFromDocumentReader::writeGasDayToFile(DOMNode* gasDayNode, ofst
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		DOMNode* node = nodeList->item(i);
 		if(this->getNodeName(node)==BOUNDARY_NODE){
-			this->writeBoundaryToFile(node, date, daylength, startHour, outputFile);
+			this->writeBoundaryToFile(node, date, daylength, startHour);
 		}
 	}
 }
 
-void MeasurePointFromDocumentReader::writeBoundaryToFile(DOMNode* boundaryNode, std::string date, int dayLength, int startHour, std::ofstream& outputFile) {
+void MeasurePointFromDocumentReader::writeBoundaryToFile(DOMNode* boundaryNode, string date, int dayLength, int startHour) {
 	DOMNodeList* nodeList = boundaryNode->getChildNodes();
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		DOMNode* node = nodeList->item(i);
 		if(this->getNodeName(node)==TIME_NODE){
-			this->writeTimeToFile(node, date, dayLength, startHour, outputFile);
+			this->writeTimeToFile(node, date, dayLength, startHour);
 		}
 	}
 }
 
-void MeasurePointFromDocumentReader::writeTimeToFile(DOMNode* timeNode, std::string date, int dayLength, int startHour, std::ofstream& outputFile) {
+void MeasurePointFromDocumentReader::writeTimeToFile(DOMNode* timeNode, string date, int dayLength, int startHour) {
 	DOMNamedNodeMap* attributeMap = timeNode->getAttributes();
 	int hour = getNodeValueAsInt(attributeMap->getNamedItem(ATTR_hour));
 	hour = (startHour+hour)%dayLength;
@@ -95,28 +84,28 @@ void MeasurePointFromDocumentReader::writeTimeToFile(DOMNode* timeNode, std::str
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		DOMNode* node = nodeList->item(i);
 		if(this->getNodeName(node)==AMOUNTOFPOWER_NODE){
-			writeAmountOfPowerToFile(node, date, dayLength, hour, outputFile);
+			writeAmountOfPowerToFile(node, date, dayLength, hour);
 		}
 	}
 
 
 }
-void MeasurePointFromDocumentReader::writeAmountOfPowerToFile(DOMNode* powerNode, const std::string date, int dayLength, int hour, std::ofstream& outputFile) {
+void MeasurePointFromDocumentReader::writeAmountOfPowerToFile(DOMNode* powerNode, const string date, int dayLength, int hour) {
 	DOMNamedNodeMap* attributeMap = powerNode->getAttributes();
 	double power = getNodeValueAsDouble(attributeMap->getNamedItem(ATTR_value));
-	outputFile << date << SEPERATOR <<std::setw(2) << hour << SEPERATOR << power << std::endl;
+	measurePoints.push_back(MeasurePoint(power,hour,date));
 }
 
-std::string MeasurePointFromDocumentReader::getNodeName(DOMNode* node){
-	std::stringstream ss;
+string MeasurePointFromDocumentReader::getNodeName(DOMNode* node){
+	stringstream ss;
 	char* name = XMLString::transcode(node->getNodeName());
 	ss << name;
 	XMLString::release(&name);
 	return ss.str();
 }
 
-std::string MeasurePointFromDocumentReader::getNodeValueAsString(DOMNode* node){
-	std::stringstream ss;
+string MeasurePointFromDocumentReader::getNodeValueAsString(DOMNode* node){
+	stringstream ss;
 	char* value = XMLString::transcode(node->getNodeValue());
 	ss << value;
 	XMLString::release(&value);
@@ -141,6 +130,10 @@ double MeasurePointFromDocumentReader::getNodeValueAsDouble(DOMNode* node){
 	XMLString::release(&value);
 	strin.clear();
 	return valueDouble;
+}
+
+vector<MeasurePoint> MeasurePointFromDocumentReader::getMeasurePoints(){
+	return measurePoints;
 }
 
 MeasurePointFromDocumentReader::~MeasurePointFromDocumentReader(){

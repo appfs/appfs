@@ -8,13 +8,19 @@
 #include <xercesc/util/XMLString.hpp>
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <stdlib.h>
+#include <vector>
 
 #include "MeasurePointFromDocumentReader.h"
 #include "XMLParser.h"
+#include "MeasurePoint.h"
 
 namespace {
+
+	const char* OUTPUT_CSV = "output.csv";
+	const char* SEPERATOR = "; ";
 
 	const char* FILEPATH_MEASURED_XSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/measured-1-1-0.xsd";
 	const char* FILEPATH_FRAMEWORK_XSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/Framework-1-1-0.xsd";
@@ -93,6 +99,12 @@ int main(int argn, char *argv[]) {
 
 		MeasurePointFromDocumentReader* toFile = new MeasurePointFromDocumentReader(parser->getDocument());
 		toFile->writeDocumentToFile();
+		ofstream outputStream;
+		outputStream.open(OUTPUT_CSV, ios::out);
+		vector<MeasurePoint> measurePoints = toFile->getMeasurePoints();
+		for(MeasurePoint mp : measurePoints){
+			outputStream << mp.getDate() << SEPERATOR << setw(2) << mp.getHour() << SEPERATOR << mp.getPower() << endl;
+		}
 		delete toFile;
 
 	}
