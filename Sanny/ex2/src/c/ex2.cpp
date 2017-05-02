@@ -11,8 +11,8 @@
 #include <string>
 #include <stdlib.h>
 
+#include "MeasurePointFromDocumentReader.h"
 #include "XMLParser.h"
-#include "DocumentToFileWriter.h"
 
 namespace {
 
@@ -91,7 +91,7 @@ int main(int argn, char *argv[]) {
 //		  return 1;
 		}
 
-		DocumentToFileWriter* toFile = new DocumentToFileWriter(parser->getDocument());
+		MeasurePointFromDocumentReader* toFile = new MeasurePointFromDocumentReader(parser->getDocument());
 		toFile->writeDocumentToFile();
 		delete toFile;
 

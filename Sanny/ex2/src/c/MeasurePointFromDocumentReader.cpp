@@ -5,7 +5,7 @@
  *      Author: alesan
  */
 
-#include "DocumentToFileWriter.h"
+#include "MeasurePointFromDocumentReader.h"
 
 namespace{
 	const char* OUTPUT_CSV = "output.csv";
@@ -27,7 +27,7 @@ namespace{
 	XMLCh* ATTR_value;
 
 
-DocumentToFileWriter::DocumentToFileWriter(DOMDocument* document){
+MeasurePointFromDocumentReader::MeasurePointFromDocumentReader(DOMDocument* document){
 	XMLPlatformUtils::Initialize();
 
 	initNodes();
@@ -36,11 +36,11 @@ DocumentToFileWriter::DocumentToFileWriter(DOMDocument* document){
 	this->document = document;
 }
 
-void DocumentToFileWriter::initNodes() {
+void MeasurePointFromDocumentReader::initNodes() {
 	NODE_gasDay = XMLString::transcode(GASDAY_NODE);
 }
 
-void DocumentToFileWriter::initAttributes() {
+void MeasurePointFromDocumentReader::initAttributes() {
 	ATTR_date = XMLString::transcode("date");
 	ATTR_gasDayStartHourInUTC = XMLString::transcode("gasDayStartHourInUTC");
 	ATTR_gasDayLengthInHours = XMLString::transcode("gasDayLengthInHours");
@@ -48,7 +48,7 @@ void DocumentToFileWriter::initAttributes() {
 	ATTR_value = XMLString::transcode("value");
 }
 
-void DocumentToFileWriter::writeDocumentToFile() {
+void MeasurePointFromDocumentReader::writeDocumentToFile() {
 	ofstream outputFile;
 	outputFile.open(OUTPUT_CSV);
 
@@ -59,7 +59,7 @@ void DocumentToFileWriter::writeDocumentToFile() {
 }
 
 
-void DocumentToFileWriter::writeGasDayToFile(DOMNode* gasDayNode, ofstream& outputFile) {
+void MeasurePointFromDocumentReader::writeGasDayToFile(DOMNode* gasDayNode, ofstream& outputFile) {
 	std::string date = "";
 	int daylength = 0;
 	int startHour = 0;
@@ -76,7 +76,7 @@ void DocumentToFileWriter::writeGasDayToFile(DOMNode* gasDayNode, ofstream& outp
 	}
 }
 
-void DocumentToFileWriter::writeBoundaryToFile(DOMNode* boundaryNode, std::string date, int dayLength, int startHour, std::ofstream& outputFile) {
+void MeasurePointFromDocumentReader::writeBoundaryToFile(DOMNode* boundaryNode, std::string date, int dayLength, int startHour, std::ofstream& outputFile) {
 	DOMNodeList* nodeList = boundaryNode->getChildNodes();
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		DOMNode* node = nodeList->item(i);
@@ -86,7 +86,7 @@ void DocumentToFileWriter::writeBoundaryToFile(DOMNode* boundaryNode, std::strin
 	}
 }
 
-void DocumentToFileWriter::writeTimeToFile(DOMNode* timeNode, std::string date, int dayLength, int startHour, std::ofstream& outputFile) {
+void MeasurePointFromDocumentReader::writeTimeToFile(DOMNode* timeNode, std::string date, int dayLength, int startHour, std::ofstream& outputFile) {
 	DOMNamedNodeMap* attributeMap = timeNode->getAttributes();
 	int hour = getNodeValueAsInt(attributeMap->getNamedItem(ATTR_hour));
 	hour = (startHour+hour)%dayLength;
@@ -101,13 +101,13 @@ void DocumentToFileWriter::writeTimeToFile(DOMNode* timeNode, std::string date, 
 
 
 }
-void DocumentToFileWriter::writeAmountOfPowerToFile(DOMNode* powerNode, const std::string date, int dayLength, int hour, std::ofstream& outputFile) {
+void MeasurePointFromDocumentReader::writeAmountOfPowerToFile(DOMNode* powerNode, const std::string date, int dayLength, int hour, std::ofstream& outputFile) {
 	DOMNamedNodeMap* attributeMap = powerNode->getAttributes();
 	double power = getNodeValueAsDouble(attributeMap->getNamedItem(ATTR_value));
 	outputFile << date << SEPERATOR <<std::setw(2) << hour << SEPERATOR << power << std::endl;
 }
 
-std::string DocumentToFileWriter::getNodeName(DOMNode* node){
+std::string MeasurePointFromDocumentReader::getNodeName(DOMNode* node){
 	std::stringstream ss;
 	char* name = XMLString::transcode(node->getNodeName());
 	ss << name;
@@ -115,7 +115,7 @@ std::string DocumentToFileWriter::getNodeName(DOMNode* node){
 	return ss.str();
 }
 
-std::string DocumentToFileWriter::getNodeValueAsString(DOMNode* node){
+std::string MeasurePointFromDocumentReader::getNodeValueAsString(DOMNode* node){
 	std::stringstream ss;
 	char* value = XMLString::transcode(node->getNodeValue());
 	ss << value;
@@ -123,7 +123,7 @@ std::string DocumentToFileWriter::getNodeValueAsString(DOMNode* node){
 	return ss.str();
 }
 
-int DocumentToFileWriter::getNodeValueAsInt(DOMNode* node){
+int MeasurePointFromDocumentReader::getNodeValueAsInt(DOMNode* node){
 	char* value = XMLString::transcode(node->getNodeValue());
 	strin.str(value);
 	int valueInt;
@@ -133,7 +133,7 @@ int DocumentToFileWriter::getNodeValueAsInt(DOMNode* node){
 	return valueInt;
 }
 
-double DocumentToFileWriter::getNodeValueAsDouble(DOMNode* node){
+double MeasurePointFromDocumentReader::getNodeValueAsDouble(DOMNode* node){
 	char* value = XMLString::transcode(node->getNodeValue());
 	strin.str(value);
 	double valueDouble;
@@ -143,7 +143,7 @@ double DocumentToFileWriter::getNodeValueAsDouble(DOMNode* node){
 	return valueDouble;
 }
 
-DocumentToFileWriter::~DocumentToFileWriter(){
+MeasurePointFromDocumentReader::~MeasurePointFromDocumentReader(){
     XMLString::release( &NODE_gasDay );
 	XMLString::release( &ATTR_date );
 	XMLString::release( &ATTR_gasDayLengthInHours );

@@ -5,8 +5,8 @@
  *      Author: alesan
  */
 
-#ifndef C_DOCUMENTTOFILEWRITER_H_
-#define C_DOCUMENTTOFILEWRITER_H_
+#ifndef C_MEASUREPOINTFROMDOCUMENTREADER_H_
+#define C_MEASUREPOINTFROMDOCUMENTREADER_H_
 
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/dom/DOM.hpp>
@@ -20,7 +20,7 @@
 using namespace xercesc;
 using namespace std;
 
-class DocumentToFileWriter {
+class MeasurePointFromDocumentReader {
 private:
 	DOMDocument* document;
 	std::istringstream strin;
@@ -38,8 +38,8 @@ private:
 
 public:
 	void writeDocumentToFile();
-	DocumentToFileWriter(DOMDocument* document);
-	virtual ~DocumentToFileWriter();
+	MeasurePointFromDocumentReader(DOMDocument* document);
+	virtual ~MeasurePointFromDocumentReader();
 };
 
-#endif /* C_DOCUMENTTOFILEWRITER_H_ */
+#endif /* C_MEASUREPOINTFROMDOCUMENTREADER_H_ */
