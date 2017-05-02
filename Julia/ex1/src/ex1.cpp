@@ -7,9 +7,10 @@
 
 using namespace std;
 
+const char delimiter = ';';
 
 /**
- * Prueft, ob die Zeile ausgewertet werden soll
+ * checks if line is empty or a comment
  */
 bool lineIsValid(string line){
 	if (line.empty()){
@@ -22,26 +23,18 @@ bool lineIsValid(string line){
 }
 
 /**
- * ermittelt die Location einer Zeile
+ * returns the location of a line
  */
 int getLocation(string line){
 	int location = 0;
-	size_t pos = line.find_first_of(';');
-	stringstream loc;
-	if (pos != string::npos){
-		line = line.substr(pos + 2);
-		pos = line.find_first_of(';');
-		if (pos != string::npos){
-			loc.str(line.substr(0, pos));
-			loc >> location;
-			loc.clear();
-		}
-	}
+	istringstream stream(line);
+	string e1, e2, e3;
+	stream >> e1 >> location >> e3;
 	return location;
 }
 
 /*
- * ermittelt den Wert einer Zeile
+ * returns the value of a line
  */
 double getValue(string line){
 	double value = 0;
@@ -61,7 +54,7 @@ double getValue(string line){
 
 
 /*
- * berechnet das geometrische Mittel eines Vektors
+ * computes the geoMean of a vector
  */
 double geoMean(vector<double> vec, int length){
 	double sum = 0.;
@@ -86,7 +79,7 @@ int main(int argc, char* argv[]){
 	}
 
 	if (!infile){
-		cout << "Datei konnte nicht geöffnet werden" << endl;
+		cout << "File could not be opened." << endl;
 		return 1;
 	}
 
@@ -95,13 +88,15 @@ int main(int argc, char* argv[]){
 	vector<double> loc1;
 	vector<double> loc2;
 
+	int location;
+	double value;
 
 	while (getline(infile, line)){
 		lineCount++;
 		if (lineIsValid(line)){
-			int location = getLocation(line);
-			double value = getValue(line);
-			if (value > 0){
+			location = getLocation(line);
+			value = getValue(line);
+			if (!isnan(value) && !isinf(value) && value > 0 ){
 				if (location == 1){
 					loc1.push_back(value);
 				}else if (location == 2) {
