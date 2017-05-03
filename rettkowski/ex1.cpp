@@ -31,28 +31,39 @@ int main(int argc, char *argv[])
                 if (pos != string::npos)
                 {
                     tmp.str(str.substr(0, pos));
+                    if (strchr(tmp.str().c_str(), ' '))
+                    {
+                        continue;
+                    }
                     tmp >> location;
                     tmp.clear();
                     tmp.str(str.substr(pos + 2));
+                    if (strchr(tmp.str().c_str(), ' '))
+                    {
+                        continue;
+                    }
                     tmp >> value;
                     tmp.clear();
                 }
             }
-            if (location == 1)
+            if (isnormal(value))
             {
-                loc1log += log(value);
-                loc1size++;
-            }
-            else if (location == 2)
-            {
-                loc2log += log(value);
-                loc2size++;
+                if (location == 1)
+                {
+                    loc1log += log2(value);
+                    loc1size++;
+                }
+                else if (location == 2)
+                {
+                    loc2log += log2(value);
+                    loc2size++;
+                }
             }
         }
     }
 
-    double loc1mean = exp(loc1log / loc1size);
-    double loc2mean = exp(loc2log / loc2size);
+    double loc1mean = exp2(loc1log / loc1size);
+    double loc2mean = exp2(loc2log / loc2size);
 
     printf("File: %s with %ld lines\n", argv[1], numberOfLines);
     printf("Valid values Loc1: %ld with GeoMean: %f\n", loc1size, loc1mean);
