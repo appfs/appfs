@@ -5,24 +5,16 @@ from lxml import etree
 
 ######### functions #########
 
-def validate(filename_schema, filename_xml):
-	with open(filename_schema, 'r') as f:
-		schema_root = etree.XML(f.read())
-	
+def validate(filename_schema, etree_xmlfile):
+	schema_root = etree.parse(filename_schema)
 	schema = etree.XMLSchema(schema_root)
-	xmlparser = etree.XMLParser(schema=schema)
-	try:
-		with open(filename_xml, 'r') as f:
-			etree.fromstring(f.read(), xmlparser)
-		return True
-	except etree.XMLSchemaError:
-		return False
+	print(schema.validate(etree_xmlfile))
 
 def is_comment(element):
 	return type(element) == etree._Comment
 
-def extract_information(filename_xml):
-	root = etree.parse(filename_xml).getroot() 
+def extract_information(etree_xmlfile):
+	root = etree_xmlfile.getroot() 
 	for gas_day in root:
 		if is_comment(gas_day): continue
 		shift_hour = int(gas_day.attrib['gasDayStartHourInUTC'])
@@ -47,10 +39,8 @@ filename_xml = "example.measured-1-1-0.xml"
 
 ######### main program #########
 
-# if validate(filename_schema, filename_xml):
-# 	print("Validation successfull")
-# else:
-# 	print("Validation failed.")
+etree_xmlfile = etree.parse(filename_xml)
 
-extract_information(filename_xml)
+#extract_information(etree_xmlfile)
+validate(filename_schema, etree_xmlfile)
 
