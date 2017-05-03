@@ -10,14 +10,14 @@ GMean = [0,0]
 
 for line in file:
     Data = line.split("\n")[0].split("#")[0].split("; ")
-    valid[0]+=1
-    if len(Data)==3 and Data[2]!='NaN':
+    valid[0] += 1
+    if len(Data) == 3 and Data[2] != 'NaN':
         try:
             loc = int(Data[1])
             val = float(Data[2])
-            if (loc==1 or loc==2 and val>0):
-                valid[loc]+=1
-                GMean[loc-1]+=math.log(val,2)
+            if (loc == 1 or loc == 2 and val>0):
+                valid[loc] += 1
+                GMean[loc-1] += math.log(val,2)
                 if math.isnan(GMean[loc-1]):
                     print(line)
                     break
