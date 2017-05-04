@@ -72,18 +72,19 @@ int main(int argn, char *argv[]) {
 		  return 0;
 		}
 
-		MeasurePointFromDocumentReader* toFile = new MeasurePointFromDocumentReader(parser->getDocument());
-		toFile->writeDocumentToFile();
+		MeasurePointFromDocumentReader* measurePointsReader = new MeasurePointFromDocumentReader(parser->getDocument());
+		measurePointsReader->writeDocumentToFile();
 		ofstream outputStream;
 
 		string output=filename.replace(filename.end()-3, filename.end(),"csv");
-
 		outputStream.open(output.c_str(), ios::out);
-		vector<MeasurePoint> measurePoints = toFile->getMeasurePoints();
+
+		vector<MeasurePoint> measurePoints = measurePointsReader->getMeasurePoints();
 		for(MeasurePoint mp : measurePoints){
 			outputStream << mp.getDate() << SEPERATOR << setw(2) << mp.getHour() << SEPERATOR << mp.getPower() << endl;
 		}
-		delete toFile;
+
+		delete measurePointsReader;
 
 	}
 
