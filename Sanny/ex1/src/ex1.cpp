@@ -39,21 +39,12 @@ string inline openFile(const int argn, char* argv[], fstream& fileStream) {
 	}
 }
 
-void removeWhitespaces(string& line) {
+void inline removeWhitespaces(string& line) {
 	line.erase(std::remove_if(line.begin(), line.end(), &::isspace),
 			line.end());
 }
 
 
-/** Check if the value is greater 0. If this is correct, the line is added. */
-void inline addValue(const string valueString, istringstream& strin,
-		LocationValues& locationValues) {
-	double value;
-	strin.str(valueString);
-	strin >> value;
-	strin.clear();
-	locationValues.push_back(value);
-}
 
 /** Print the size and the geometric mean of LocationValues */
 void inline printValues(LocationValues valuesLocation) {
@@ -61,12 +52,13 @@ void inline printValues(LocationValues valuesLocation) {
 			<< fixed << setprecision(4) << valuesLocation.getGeoMean() << endl;
 }
 
-int inline getLocation(const string& locationString, istringstream& strin) {
-	int location;
+/** Converts a String to an double */
+double inline getDoubleFromString(const string& locationString, istringstream& strin) {
+	double d;
 	strin.str(locationString);
-	strin >> location;
+	strin >> d;
 	strin.clear();
-	return location;
+	return d;
 }
 
 
@@ -118,15 +110,15 @@ int main(int argn, char *argv[]) {
 		locationString.erase(0,1);
 		valueString.erase(0,1);
 
-		int location = getLocation(locationString, strin);
+		double location = getDoubleFromString(locationString, strin);
 
 
-		if(location == 1){
-			addValue(valueString, strin, valuesLocation1);
+		if(location == 1.){
+			valuesLocation1.push_back(getDoubleFromString(valueString, strin));
 		}
 
-		if(location == 2){
-			addValue(valueString, strin, valuesLocation2);
+		if(location == 2.){
+			valuesLocation2.push_back(getDoubleFromString(valueString, strin));
 		}
 
 		line.clear();
