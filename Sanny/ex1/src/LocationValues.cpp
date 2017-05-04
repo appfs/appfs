@@ -23,7 +23,7 @@ double LocationValues::getGeoMean() {
 }
 
 void LocationValues::push_back(const double value) {
-	if(value > 0){
+	if(value > 0 && !isnan(value)){
 		vector::push_back(value);
 	}
 }

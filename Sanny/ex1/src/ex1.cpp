@@ -1,3 +1,9 @@
+/**
+ * Exercise 1 : Read in a csv-file, save the valid values und print the geometric means of position 1 & 2.
+ *
+ * @author FirstSanny
+ */
+
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -7,7 +13,7 @@
 
 namespace {
 
-const char* DEFAULT_FILE_NAME = "ex1.dat";
+const char* DEFAULT_FILE_NAME = "recources/ex1.dat";
 const char* SEPERATOR = "; ";
 const char* COMMENT_SIGN = "#";
 
@@ -16,7 +22,7 @@ const char* COMMENT_SIGN = "#";
 using namespace std;
 
 /** Check if the value is greater 0. If this is correct, the line is added. */
-void addLine(const string line, const string::size_type indexOfSecondSeperator, istringstream& strin,
+void inline addLine(const string line, const string::size_type indexOfSecondSeperator, istringstream& strin,
 		LocationValues& locationValues) {
 	string valueString = line.substr(indexOfSecondSeperator);
 	valueString.replace(0,2,"");
@@ -33,6 +39,14 @@ void inline printValues(LocationValues valuesLocation) {
 			<< fixed << setprecision(4) << valuesLocation.getGeoMean() << endl;
 }
 
+int inline getLocation(const string& locationString, istringstream& strin) {
+	int location;
+	strin.str(locationString);
+	strin >> location;
+	strin.clear();
+	return location;
+}
+
 /** Opens either a file, which was given by invocation, or the default file, which is hard-coded. */
 string inline openFile(const int argn, char* argv[], fstream& fileStream) {
 	if (argn <= 1) {
@@ -45,6 +59,8 @@ string inline openFile(const int argn, char* argv[], fstream& fileStream) {
 		return argv[1];
 	}
 }
+
+
  /** Opens a file, parse the values and returns the geometric means of the locations */
 int main(int argn, char *argv[]) {
 
@@ -69,8 +85,14 @@ int main(int argn, char *argv[]) {
 
 		lineCount++;
 
-		if(line.find(COMMENT_SIGN) == 0){
+		const string::size_type indexOfCommentSign = line.find(COMMENT_SIGN);
+
+		if(indexOfCommentSign == 0){
 			continue;
+		}
+
+		if(indexOfCommentSign == string::npos){
+			line = line.substr(0,indexOfCommentSign);
 		}
 
 		const string::size_type indexOfFirstSeperator = line.find(SEPERATOR);
@@ -83,10 +105,7 @@ int main(int argn, char *argv[]) {
 		string locationString = line.substr(indexOfFirstSeperator, indexOfSecondSeperator - indexOfFirstSeperator);
 		locationString.replace(0,2,"");
 
-		int location;
-		strin.str(locationString);
-		strin >> location;
-		strin.clear();
+		int location = getLocation(locationString, strin);
 
 		if(location == 1){
 			addLine(line, indexOfSecondSeperator, strin, valuesLocation1);
