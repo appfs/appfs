@@ -19,7 +19,6 @@
 
 namespace {
 
-	const char* OUTPUT_CSV = "output.csv";
 	const char* SEPERATOR = "; ";
 
 
@@ -55,6 +54,8 @@ int main(int argn, char *argv[]) {
 		return 0;
 	}
 
+	string filename = argv[1];
+
 	XMLParser* parser = new XMLParser();
 
 	try {
@@ -74,7 +75,10 @@ int main(int argn, char *argv[]) {
 		MeasurePointFromDocumentReader* toFile = new MeasurePointFromDocumentReader(parser->getDocument());
 		toFile->writeDocumentToFile();
 		ofstream outputStream;
-		outputStream.open(OUTPUT_CSV, ios::out);
+
+		string output=filename.replace(filename.end()-3, filename.end(),"csv");
+
+		outputStream.open(output.c_str(), ios::out);
 		vector<MeasurePoint> measurePoints = toFile->getMeasurePoints();
 		for(MeasurePoint mp : measurePoints){
 			outputStream << mp.getDate() << SEPERATOR << setw(2) << mp.getHour() << SEPERATOR << mp.getPower() << endl;
