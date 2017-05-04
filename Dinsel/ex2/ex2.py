@@ -40,7 +40,7 @@ class ParseXML():
                 self.readXML()
                 self.readAttributes()
                 self.writeCSV()
-            elif yesNo == 'n':
+            else:
                 sys.exit()
 
     def readXSD(self):
