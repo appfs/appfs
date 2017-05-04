@@ -1,40 +1,44 @@
 #ex1 APPFS Martha Karpeter 367847
 
-from math import sqrt
-import decimal
-Decim = decimal.Decimal
+import sys
+import math
 
-file = open("ex2.dat","r") 
-Data = file.readlines() #reads lines from the data set
-decimal.getcontext().prec = 10
+file = open(sys.argv[-1], "r").readlines()
 
-#devide Data into Location1 and Location2
-Location1 = [Decim(line[line.index(";")+5:]) for line in Data if ";" in line and line[line.index(";")+5:].count(".")==1 and line.count(" ") == 2 and int(line[line.index(";")+2]) == 1]
-Location2 = [Decim(line[line.index(";")+5:]) for line in Data if ";" in line and line[line.index(";")+5:].count(".")==1 and line.count(" ") == 2 and int(line[line.index(";")+2]) == 2]
+valid = [0,0,0]
+GMean = [0,0]
 
+for line in file:
+    Data = line.split("\n")[0].split("#")[0].split("; ")
+    valid[0]+=1
+    if len(Data)==3 and Data[2]!='NaN':
+        try:
+            loc = int(Data[1])
+            val = float(Data[2])
+            if (loc==1 or loc==2 and val>0):
+                valid[loc]+=1
+                GMean[loc-1]+=math.log(val,2)
+                if math.isnan(GMean[loc-1]):
+                    print(line)
+                    break
+        except:
+            print(line)
+            continue
 
-#computes Geometric Mean of a given dataset, returns type decimal.Decimal
-def GeometricMean(dataset):
-    length = Decim(len(dataset))
-    result = Decim(1)
-    for line in dataset:
-        result *= line**(Decim(1)/length)
-    return(Decim(result))
-
-#get the geometric mean for each location
-GeometricMean1 = GeometricMean(Location1)
-GeometricMean2 = GeometricMean(Location2)
-
-#output 
-print("File ex2.dat with", len(Data), "lines")
-print('Valid values Loc1:', len(Location1), 'with GeoMean:', "%.4f"%GeometricMean1)
-print('Valid values Loc2:', len(Location2), 'with GeoMean:', "%.4f"%GeometricMean2)
-
-file.close()
+print(GMean)
+for i in range(2):
+    GMean[i] = pow(2,(GMean[i]/valid[i+1]))
 
 
-# File ex1.dat with 10000128 lines
-# Valid values Loc1: 4998044 with GeoMean: 36.7802
-# Valid values Loc2: 5000938 with GeoMean: 36.7666
+print("File", sys.argv[-1], "with", valid[0], "lines")
+print('Valid values Loc1:', valid[1], 'with GeoMean:', "%.4f"%GMean[0])
+print('Valid values Loc2:', valid[2], 'with GeoMean:', "%.4f"%GMean[1])
 
-# real    9m42.231s
+'''
+File ex1.data with 100001235 lines
+Valid values Loc1: 50004616 with GeoMean: 36.7818
+Valid values Loc2: 49994716 with GeoMean: 36.7826
+
+time    7m17.406s
+
+'''

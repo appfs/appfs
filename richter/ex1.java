@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class Exercise01 {
+public class ex1 {
 
 	public static void main(String[] args) {
 			
@@ -13,7 +13,7 @@ public class Exercise01 {
 		BufferedReader br = null;
 		
 		try{
-			br = new BufferedReader(new FileReader("ex1-100.dat"));
+			br = new BufferedReader(new FileReader(args[0]));
 		}
 		catch(Exception e){
 			System.out.println("File loading failed.");

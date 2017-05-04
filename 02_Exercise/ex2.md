@@ -8,7 +8,7 @@ and writes CSV data in format:
 
 	YYYY-MM-DD; HH; amountOfPower-Value
 	
-You will need the reading part later again.
+Please not that you will need the reading part later again.
 
 Try to validate the XML file against the provided schema.
 
@@ -16,4 +16,4 @@ The filename to be converted should be taken **from the command line**.
 The output should be to stdout, any errors to stderr.
 You may use whatever library to parse the XML file.
 
-**Deadline:   May 5, 16:00**
+**Deadline:   May 11, 16:00**
