@@ -38,16 +38,16 @@ void MeasurePointFromDocumentReader::initAttributes() {
 	ATTR_value = XMLString::transcode("value");
 }
 
-void MeasurePointFromDocumentReader::writeDocumentToFile() {
+void MeasurePointFromDocumentReader::readMeasurepoints() {
 	measurePoints.clear();
 	DOMNodeList* nodeList = document->getElementsByTagName(NODE_gasDay);
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
-		writeGasDayToFile(nodeList->item(i));
+		readGasDayNode(nodeList->item(i));
 	}
 }
 
 
-void MeasurePointFromDocumentReader::writeGasDayToFile(DOMNode* gasDayNode) {
+void MeasurePointFromDocumentReader::readGasDayNode(DOMNode* gasDayNode) {
 	string date = "";
 	int daylength = 0;
 	int startHour = 0;
@@ -59,22 +59,22 @@ void MeasurePointFromDocumentReader::writeGasDayToFile(DOMNode* gasDayNode) {
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		DOMNode* node = nodeList->item(i);
 		if(this->getNodeName(node)==BOUNDARY_NODE){
-			this->writeBoundaryToFile(node, date, daylength, startHour);
+			this->readBoundaryNode(node, date, daylength, startHour);
 		}
 	}
 }
 
-void MeasurePointFromDocumentReader::writeBoundaryToFile(DOMNode* boundaryNode, string date, int dayLength, int startHour) {
+void MeasurePointFromDocumentReader::readBoundaryNode(DOMNode* boundaryNode, string date, int dayLength, int startHour) {
 	DOMNodeList* nodeList = boundaryNode->getChildNodes();
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		DOMNode* node = nodeList->item(i);
 		if(this->getNodeName(node)==TIME_NODE){
-			this->writeTimeToFile(node, date, dayLength, startHour);
+			this->readTimeNode(node, date, dayLength, startHour);
 		}
 	}
 }
 
-void MeasurePointFromDocumentReader::writeTimeToFile(DOMNode* timeNode, string date, int dayLength, int startHour) {
+void MeasurePointFromDocumentReader::readTimeNode(DOMNode* timeNode, string date, int dayLength, int startHour) {
 	DOMNamedNodeMap* attributeMap = timeNode->getAttributes();
 	int hour = getNodeValueAsInt(attributeMap->getNamedItem(ATTR_hour));
 	hour = (startHour+hour)%dayLength;
@@ -83,13 +83,13 @@ void MeasurePointFromDocumentReader::writeTimeToFile(DOMNode* timeNode, string d
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		DOMNode* node = nodeList->item(i);
 		if(this->getNodeName(node)==AMOUNTOFPOWER_NODE){
-			writeAmountOfPowerToFile(node, date, dayLength, hour);
+			readAmountOfPowerNode(node, date, dayLength, hour);
 		}
 	}
 
 
 }
-void MeasurePointFromDocumentReader::writeAmountOfPowerToFile(DOMNode* powerNode, const string date, int dayLength, int hour) {
+void MeasurePointFromDocumentReader::readAmountOfPowerNode(DOMNode* powerNode, const string date, int dayLength, int hour) {
 	DOMNamedNodeMap* attributeMap = powerNode->getAttributes();
 	double power = getNodeValueAsDouble(attributeMap->getNamedItem(ATTR_value));
 	measurePoints.push_back(MeasurePoint(power,hour,date));

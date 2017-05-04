@@ -46,43 +46,57 @@ int main(int argn, char *argv[]) {
 		return 1;
 	}
 
+	string filename = argv[1];
+	cout << "Going to parse the file " << filename << endl;
+
 	try {
 	    XMLPlatformUtils::Initialize();
 	}catch (const XMLException& toCatch) {
-		cerr << "ERROR : Couldn't initialize XML-Parser."<<endl;
+		cerr << "ERROR : Couldn't initialize XML-Parser"<<endl;
 		printException(toCatch);
 		return 0;
 	}
 
-	string filename = argv[1];
 
 	XMLParser* parser = new XMLParser();
 
+	cout << "Successfull initialized" << endl;
+
 	try {
+
 		string shemaLoc = URL_MEASURED_XSD;
 		shemaLoc = shemaLoc + " " + FILE_MEASURED_XSD;
 		parser->setExternalSchemaLocation(shemaLoc.c_str());
+		cout << "Validationfile: "<< FILE_MEASURED_XSD << endl;
+
 		parser->parse(argv[1]);
+		cout << "File parsed to DOM"<< FILE_MEASURED_XSD << endl;
 
 		if(parser->getErrorCount() != 0){
-		  cerr << "ERROR : File doesn't match sheme." << endl;
+		  cerr << "ERROR : File doesn't match sheme" << endl;
 		  cerr << "There were " << parser->getErrorCount() << " errors." << endl;
 		  cerr << "Exceptions: "<< endl;
 		  cerr << parser->getErrors();
 		  return 0;
 		}
 
-		MeasurePointFromDocumentReader* measurePointsReader = new MeasurePointFromDocumentReader(parser->getDocument());
-		measurePointsReader->writeDocumentToFile();
-		ofstream outputStream;
+		cout << "Validation successfull" << endl;
 
+		MeasurePointFromDocumentReader* measurePointsReader = new MeasurePointFromDocumentReader(parser->getDocument());
+		measurePointsReader->readMeasurepoints();
+		vector<MeasurePoint> measurePoints = measurePointsReader->getMeasurePoints();
+		cout << measurePoints.size() <<" measurepoints read" << endl;
+
+		ofstream outputStream;
 		string output=filename.replace(filename.end()-3, filename.end(),"csv");
 		outputStream.open(output.c_str(), ios::out);
 
-		vector<MeasurePoint> measurePoints = measurePointsReader->getMeasurePoints();
+
+		cout << "Writing data to " << output << endl;
 		for(MeasurePoint mp : measurePoints){
 			outputStream << mp.getDate() << SEPERATOR << setw(2) << mp.getHour() << SEPERATOR << mp.getPower() << endl;
 		}
+		cout << "Writing was successfull" << endl;
 
 		delete measurePointsReader;
 

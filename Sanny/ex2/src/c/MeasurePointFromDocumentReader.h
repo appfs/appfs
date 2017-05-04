@@ -37,10 +37,10 @@ private:
 	XMLCh* ATTR_value;
 
 	void writeMeasuredToFile(DOMNode* measuredNode);
-	void writeBoundaryToFile(DOMNode* boundaryNode, /**tm*/ string date, int dayLength, int startHour);
-	void writeTimeToFile(DOMNode* timeNode, /**tm*/ string date, int dayLength, int startHour);
-	void writeAmountOfPowerToFile(DOMNode* amountOfPowerNode, /**tm*/ string date, int dayLength, int startHour);
-	void writeGasDayToFile(DOMNode* gasDayNode);
+	void readBoundaryNode(DOMNode* boundaryNode, /**tm*/ string date, int dayLength, int startHour);
+	void readTimeNode(DOMNode* timeNode, /**tm*/ string date, int dayLength, int startHour);
+	void readAmountOfPowerNode(DOMNode* amountOfPowerNode, /**tm*/ string date, int dayLength, int startHour);
+	void readGasDayNode(DOMNode* gasDayNode);
 	string getNodeName(DOMNode* node);
 	/**tm*/ string getNodeValueAsString(DOMNode* node);
 	int getNodeValueAsInt(DOMNode* node);
@@ -50,7 +50,7 @@ private:
 
 public:
 	vector<MeasurePoint> getMeasurePoints();
-	void writeDocumentToFile();
+	void readMeasurepoints();
 	MeasurePointFromDocumentReader(DOMDocument* document);
 	virtual ~MeasurePointFromDocumentReader();
 };
