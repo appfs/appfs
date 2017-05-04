@@ -12,18 +12,18 @@ ParserErrorHandler::ParserErrorHandler() : HandlerBase::HandlerBase() {
 }
 void ParserErrorHandler::error(const SAXParseException& exc) {
 	HandlerBase::error(exc);
-	addException(exc, "Exception:");
+	addException(exc, "Exception");
 }
 
 void ParserErrorHandler::fatalError(const SAXParseException& exc) {
 	HandlerBase::fatalError(exc);
-	addException(exc, "Fatal Exception:");
+	addException(exc, "Fatal Exception");
 }
 
 void ParserErrorHandler::addException(const SAXParseException& exc, string exceptionType) {
 	std::stringstream ss;
 	char* message = XMLString::transcode(exc.getMessage());
-	ss << exceptionType << endl << message << endl;
+	ss << exceptionType << " at line " << exc.getLineNumber() << " column " << exc.getColumnNumber() << ":" << endl << message << endl;
 	XMLString::release(&message);
 	errors.push_back(ss.str());
 }

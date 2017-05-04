@@ -22,10 +22,13 @@ namespace {
 	const char* OUTPUT_CSV = "output.csv";
 	const char* SEPERATOR = "; ";
 
-	const char* FILEPATH_MEASURED_XSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/measured-1-1-0.xsd";
-	const char* FILEPATH_FRAMEWORK_XSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/Framework-1-1-0.xsd";
-	const char* FILEPATH_PHYSICS_XSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/PhysicalValues-1-1-0.xsd";
-	const char* FILEPATH_TOPO_XSD = "/home/alesan/git/appfs/Sanny/ex2/src/recources/EX2/Topology-1-1-0.xsd";
+
+	const char* URL_MEASURED_XSD = "http://gaslab.zib.de/kwpt/measured";
+	const char* FILE_MEASURED_XSD = "measured-1-1-0.xsd";
+//	const char* FILE_FRAMEWORK_XSD = "Framework-1-1-0.xsd";
+//	const char* FILE_PHYSICS_XSD = "PhysicalValues-1-1-0.xsd";
+//	const char* FILE_TOPO_XSD = "Topology-1-1-0.xsd";
+//	const char* FILE_PROG_XSD = "prognosis-1-1-0.xsd";
 
 }
 
@@ -35,32 +38,6 @@ void inline printException(const XMLException& toCatch) {
 	char* message = XMLString::transcode(toCatch.getMessage());
 	cerr << "Exception:" << endl << message << endl;
 	XMLString::release(&message);
-}
-
-bool initGrammarIsSuccessfull(XMLParser* parser, const char* path) {
-	if (parser->loadGrammar(path,
-			Grammar::GrammarType::SchemaGrammarType, true) == nullptr) {
-		cerr << "ERROR : Couldn't initialize XSD-Shema for file "
-				<< path << endl;
-		return 0;
-	}
-	return 1;
-}
-
-bool initGrammarAndCheckIfSuccessfull(XMLParser* parser) {
-	if(!initGrammarIsSuccessfull(parser, FILEPATH_MEASURED_XSD)){
-		return 0;
-	}
-	if(!initGrammarIsSuccessfull(parser, FILEPATH_PHYSICS_XSD)){
-		return 0;
-	}
-	if(!initGrammarIsSuccessfull(parser, FILEPATH_FRAMEWORK_XSD)){
-		return 0;
-	}
-	if(!initGrammarIsSuccessfull(parser, FILEPATH_TOPO_XSD)){
-		return 0;
-	}
-	return 1;
 }
 
 int main(int argn, char *argv[]) {
@@ -75,18 +52,15 @@ int main(int argn, char *argv[]) {
 	}catch (const XMLException& toCatch) {
 		cerr << "ERROR : Couldn't initialize XML-Parser."<<endl;
 		printException(toCatch);
-		return 1;
+		return 0;
 	}
 
 	XMLParser* parser = new XMLParser();
 
-	bool success = initGrammarAndCheckIfSuccessfull(parser);
-
-	if(!success){
-		return 1;
-	}
-
 	try {
+		string shemaLoc = URL_MEASURED_XSD;
+		shemaLoc = shemaLoc + " " + FILE_MEASURED_XSD;
+		parser->setExternalSchemaLocation(shemaLoc.c_str());
 		parser->parse(argv[1]);
 
 		if(parser->getErrorCount() != 0){
@@ -94,7 +68,7 @@ int main(int argn, char *argv[]) {
 		  cerr << "There were " << parser->getErrorCount() << " errors." << endl;
 		  cerr << "Exceptions: "<< endl;
 		  cerr << parser->getErrors();
-//		  return 1;
+		  return 0;
 		}
 
 		MeasurePointFromDocumentReader* toFile = new MeasurePointFromDocumentReader(parser->getDocument());
@@ -112,7 +86,7 @@ int main(int argn, char *argv[]) {
 	catch (const XMLException& toCatch) {
 		cerr << "ERROR" <<endl;
 		printException(toCatch);
-		return 1;
+		return 0;
 	}
 
 	catch (const SAXParseException& toCatch) {
@@ -120,12 +94,12 @@ int main(int argn, char *argv[]) {
 		char* message = XMLString::transcode(toCatch.getMessage());
 		cerr << "Exception:" << endl << message << endl;
 		XMLString::release(&message);
-	    return 1;
+	    return 0;
 	}
 
 	delete parser;
 
 	XMLPlatformUtils::Terminate();
 
-	return 0;
+	return 1;
 }

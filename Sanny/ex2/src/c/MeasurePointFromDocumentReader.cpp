@@ -40,7 +40,6 @@ void MeasurePointFromDocumentReader::initAttributes() {
 
 void MeasurePointFromDocumentReader::writeDocumentToFile() {
 	measurePoints.clear();
-
 	DOMNodeList* nodeList = document->getElementsByTagName(NODE_gasDay);
 	for(unsigned int i = 0; i < nodeList->getLength(); i++){
 		writeGasDayToFile(nodeList->item(i));
