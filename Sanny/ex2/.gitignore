@@ -42,4 +42,8 @@ ex*.dat
 *.settings.xml
 
 /src/recources
+*.o
+*.d
+*.csv
+/appfs_exe/ex2
 /appfs_exe/
