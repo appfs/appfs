@@ -3,12 +3,15 @@
 import sys
 from lxml import etree
 
-######### functions #########
+######### methods #########
 
 def validate(filename_schema, etree_xmlfile):
 	schema_root = etree.parse(filename_schema)
 	schema = etree.XMLSchema(schema_root)
-	print(schema.validate(etree_xmlfile))
+	if schema.validate(etree_xmlfile):
+		print("Validation against provided schema successful!")
+	else:
+		print("Validation against provided schema failed!")
 
 def is_comment(element):
 	return type(element) == etree._Comment
@@ -25,22 +28,29 @@ def extract_information(etree_xmlfile):
 				for elem in time:
 					if is_comment(elem): continue
 					if elem.tag != '{http://gaslab.zib.de/kwpt/measured}amountOfPower': continue
-					print("{0},{1},{2}".format(gas_day.attrib['date'], int(time.attrib['hour'])+shift_hour, elem.attrib['value']))
-
+					print("{0}; {1:02d}; {2}".format(gas_day.attrib['date'], int(time.attrib['hour'])+shift_hour, elem.attrib['value']))
 
 ######### variables #########
 
-filename_schema = "measured-1-1-0.xsd"
-filename_xml = "example.measured-1-1-0.xml"
-
 # read filename from commandlineargs
-#filename_xml = sys.argv[1]
-#filename_schema = sys.argv[2]
+for option in [None, "-h", "--h", "-help", "--help"]:
+	try:
+		opt = sys.argv[1] 
+	except IndexError:
+		opt = None
+	if opt == option:
+		print("USAGE:\n./ex2 filename.xml schema.xsd")
+		print("EXAMPLE:\n./ex2 measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml measured-1-1-0.xsd")
+		exit()
+
+
+filename_xml = sys.argv[1]
+filename_schema = sys.argv[2]
 
 ######### main program #########
 
 etree_xmlfile = etree.parse(filename_xml)
 
-#extract_information(etree_xmlfile)
+extract_information(etree_xmlfile)
 validate(filename_schema, etree_xmlfile)
 
