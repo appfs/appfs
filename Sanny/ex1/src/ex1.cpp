@@ -9,28 +9,50 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <algorithm>
 #include "LocationValues.h"
 
 namespace {
 
 const char* DEFAULT_FILE_NAME = "recources/ex1.dat";
-const char* SEPERATOR = "; ";
+const char* SEPERATOR = ";";
 const char* COMMENT_SIGN = "#";
 
 }
 
 using namespace std;
 
+void removeSeperator(string& locationString) {
+
+}
+
+/** Opens either a file, which was given by invocation, or the default file, which is hard-coded. */
+string inline openFile(const int argn, char* argv[], fstream& fileStream) {
+	if (argn <= 1) {
+		cout << "There was no filename. The standard " << DEFAULT_FILE_NAME
+				<< " will be used." << endl;
+		fileStream.open(DEFAULT_FILE_NAME, ios::in);
+		return DEFAULT_FILE_NAME;
+	} else {
+		fileStream.open(argv[1], ios::in);
+		return argv[1];
+	}
+}
+
+void removeWhitespaces(string& line) {
+	line.erase(std::remove_if(line.begin(), line.end(), &::isspace),
+			line.end());
+}
+
+
 /** Check if the value is greater 0. If this is correct, the line is added. */
-void inline addLine(const string line, const string::size_type indexOfSecondSeperator, istringstream& strin,
+void inline addValue(const string valueString, istringstream& strin,
 		LocationValues& locationValues) {
-	string valueString = line.substr(indexOfSecondSeperator);
-	valueString.replace(0,2,"");
 	double value;
 	strin.str(valueString);
 	strin >> value;
-	locationValues.push_back(value);
 	strin.clear();
+	locationValues.push_back(value);
 }
 
 /** Print the size and the geometric mean of LocationValues */
@@ -45,19 +67,6 @@ int inline getLocation(const string& locationString, istringstream& strin) {
 	strin >> location;
 	strin.clear();
 	return location;
-}
-
-/** Opens either a file, which was given by invocation, or the default file, which is hard-coded. */
-string inline openFile(const int argn, char* argv[], fstream& fileStream) {
-	if (argn <= 1) {
-		cout << "There was no filename. The standard " << DEFAULT_FILE_NAME
-				<< " will be used." << endl;
-		fileStream.open(DEFAULT_FILE_NAME, ios::in);
-		return DEFAULT_FILE_NAME;
-	} else {
-		fileStream.open(argv[1], ios::in);
-		return argv[1];
-	}
 }
 
 
@@ -80,12 +89,11 @@ int main(int argn, char *argv[]) {
 	LocationValues valuesLocation1 = LocationValues();
 	LocationValues valuesLocation2 = LocationValues();
 
-	while (!fileStream.eof()){
-		getline(fileStream, line);
+	while (getline(fileStream, line)){
 
 		lineCount++;
 
-		const string::size_type indexOfCommentSign = line.find(COMMENT_SIGN);
+		const string::size_type indexOfCommentSign = line.find_first_of(COMMENT_SIGN);
 
 		if(indexOfCommentSign == 0){
 			continue;
@@ -95,6 +103,8 @@ int main(int argn, char *argv[]) {
 			line = line.substr(0,indexOfCommentSign);
 		}
 
+		removeWhitespaces(line);
+
 		const string::size_type indexOfFirstSeperator = line.find(SEPERATOR);
 		const string::size_type indexOfSecondSeperator = line.find(SEPERATOR, indexOfFirstSeperator+1);
 
@@ -103,18 +113,23 @@ int main(int argn, char *argv[]) {
 		}
 
 		string locationString = line.substr(indexOfFirstSeperator, indexOfSecondSeperator - indexOfFirstSeperator);
-		locationString.replace(0,2,"");
+		string valueString = line.substr(indexOfSecondSeperator);
+
+		locationString.erase(0,1);
+		valueString.erase(0,1);
 
 		int location = getLocation(locationString, strin);
 
+
 		if(location == 1){
-			addLine(line, indexOfSecondSeperator, strin, valuesLocation1);
+			addValue(valueString, strin, valuesLocation1);
 		}
 
 		if(location == 2){
-			addLine(line, indexOfSecondSeperator, strin, valuesLocation2);
+			addValue(valueString, strin, valuesLocation2);
 		}
 
+		line.clear();
 	}
 
 	cout << "File: " << filename << " with " << lineCount << " lines" << endl;
