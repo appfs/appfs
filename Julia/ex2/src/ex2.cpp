@@ -3,51 +3,91 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/framework/LocalFileInputSource.hpp>
+#include <xercesc/sax/ErrorHandler.hpp>
+#include <xercesc/sax/HandlerBase.hpp>
+#include <xercesc/sax/SAXParseException.hpp>
+#include <xercesc/validators/common/Grammar.hpp>
 #include "tinyxml2.h"
 #include "GasNode.h"
-#include <xercesc/util/PlatformUtils.hpp>
 
 using namespace tinyxml2;
+using namespace std;
+using namespace xercesc;
+
+const char* FILE_PATH = "example.measured-1-1-0.xml";
+const char* MEASURED_XSD = "http://gaslab.zib.de/kwpt/measured measured-1-1-0.xsd";
 
 
 XMLError checkResult(XMLError result){
 	if (result != XML_SUCCESS) {
-		std::cout << "Error while opening file: " << result << std::endl;
+		cerr << "Error while opening file: " << result << endl;
 	}
 	return result;
 }
 
 void checkAttribute(const XMLAttribute* attribute){
 	if (attribute == 0) {
-		std::cout << "Error: Attribute " << attribute << " not found." << std::endl;
+		cerr << "Error: Attribute " << attribute << " not found." << endl;
+	}
+}
+
+bool documentIsValid(const char* path){
+	XercesDOMParser domParser;
+
+	HandlerBase errorHandler;
+	domParser.setDoNamespaces(true);
+	domParser.setExternalSchemaLocation(MEASURED_XSD);
+	domParser.setErrorHandler(&errorHandler);
+	domParser.setValidationScheme(XercesDOMParser::Val_Auto);
+	domParser.setDoSchema(true);
+	domParser.setValidationConstraintFatal(true);
+
+	try {
+		domParser.parse(FILE_PATH);
+	} catch (SAXParseException&) {
+		cerr << "Error while parsing!" << endl;
+		return false;
+	}
+	if (domParser.getErrorCount() == 0) {
+	     cout << "XML file validated against the schema successfully" << endl;
+	     return true;
+	}else {
+	     cerr << "XML file doesn't conform to the schema" << endl;
+	     return false;
 	}
 }
 
 
-
-
 int main(int argc, char* argv[]){
 	try {
-		xercesc::XMLPlatformUtils::Initialize();
+		XMLPlatformUtils::Initialize();
+	}catch (const XMLException& toCatch) {
+		return 0;
 	}
-	catch (const xercesc::XMLException& toCatch) {
-		return 1;
-	}
-
 
 	XMLDocument xmlDoc;
 
-	const XMLAttribute *attribute;
 	XMLError result;
 	if (argc <= 1){
-		std::cout << "No path found. Open default file " << std::endl;
-		result = xmlDoc.LoadFile("example.measured-1-1-0.xml");
+		cerr << "No path found. Open default file " << endl;
+		result = xmlDoc.LoadFile(FILE_PATH);
 	} else {
 		result = xmlDoc.LoadFile(argv[1]);
+		FILE_PATH = argv[1];
 	}
 
 	checkResult(result);
 
+
+	if (!documentIsValid(FILE_PATH)) {
+		cerr << "Document is not valid!" << endl;
+		XMLPlatformUtils::Terminate();
+		return 0;
+	}
 
 	XMLElement * rootElement = xmlDoc.FirstChildElement();
 	if (rootElement == nullptr){
@@ -59,23 +99,28 @@ int main(int argc, char* argv[]){
 			return XML_ERROR_PARSING_ELEMENT;
 	}
 
+	//Reading the date
 	const char* dateOut = nullptr;
 	dateOut = gasElement -> Attribute("date");
 	if (nullptr == dateOut) {
 		return XML_ERROR_PARSING_ATTRIBUTE;
 	}
-	std::string date = dateOut;
+	string date = dateOut;
 
+	const XMLAttribute *attribute;
+
+	//Reading at which hour the gas day starts
 	int startingHour;
 	attribute = gasElement -> FindAttribute("gasDayStartHourInUTC");
 	checkAttribute(attribute);
 	startingHour = attribute -> IntValue();
 
 
+	//Reading data from the nodes
 	XMLElement * boundaryElement = gasElement -> FirstChildElement("boundaryNode");
 	XMLElement * timeElement;
 	XMLElement * powerElement;
-	std::vector<GasNode> dataNodes;
+	vector<GasNode> dataNodes;
 	GasNode dataNode;
 	int time;
 	int value;
@@ -102,21 +147,20 @@ int main(int argc, char* argv[]){
 		boundaryElement = boundaryElement -> NextSiblingElement("boundaryNode");
 	}
 
+	//Writing the new .csv file
+	fstream output;
+	output.open("measured.csv", ios::out);
 
-
-	xercesc::XMLPlatformUtils::Terminate();
-
-
-	std::fstream output;
-	output.open("measured.csv", std::ios::out);
-
-
-	for (int i = 0; i < dataNodes.size(); ++i) {
+	for (unsigned int i = 0; i < dataNodes.size(); ++i) {
 		output << date << "; " << dataNodes.at(i).getTime() + startingHour << "; " << dataNodes.at(i).getPower() << std::endl;
 	}
 
 	output.close();
 
-	return 0;
+
+
+    XMLPlatformUtils::Terminate();
+
+	return 1;
 
 }
