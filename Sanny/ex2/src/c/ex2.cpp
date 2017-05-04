@@ -70,7 +70,7 @@ int main(int argn, char *argv[]) {
 		cout << "Validationfile: "<< FILE_MEASURED_XSD << endl;
 
 		parser->parse(argv[1]);
-		cout << "File parsed to DOM"<< FILE_MEASURED_XSD << endl;
+		cout << "File parsed to DOM" << endl;
 
 		if(parser->getErrorCount() != 0){
 		  cerr << "ERROR : File doesn't match sheme" << endl;
