@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const char delimiter = ';';
+const string FILE_PATH= "ex1.dat";
 
 /**
  * checks if line is empty or a comment
@@ -20,36 +20,6 @@ bool lineIsValid(string line){
 		return false;
 	}
 	return true;
-}
-
-/**
- * returns the location of a line
- */
-int getLocation(string line){
-	int location = 0;
-	istringstream stream(line);
-	string e1, e2, e3;
-	stream >> e1 >> location >> e3;
-	return location;
-}
-
-/*
- * returns the value of a line
- */
-double getValue(string line){
-	double value = 0;
-	size_t pos = line.find_first_of(';');
-	stringstream val;
-	if (pos != string::npos){
-		line = line.substr(pos + 2);
-		pos = line.find_first_of(';');
-		if (pos != string::npos){
-			val.str(line.substr(pos + 2));
-			val >> value;
-			val.clear();
-		}
-	}
-	return value;
 }
 
 
@@ -67,12 +37,12 @@ double geoMean(vector<double> vec, int length){
 
 
 
-
 int main(int argc, char* argv[]){
 	ifstream infile;
 
 	if(argc <=1){
-		infile.open("ex1.dat", ios::in);
+		cout << "No file-path argument found. Open default file." << cout;
+		infile.open(FILE_PATH, ios::in);
 	}
 	else {
 		infile.open(argv[1], ios::in);
@@ -88,15 +58,27 @@ int main(int argc, char* argv[]){
 	vector<double> loc1;
 	vector<double> loc2;
 
-	int location;
+	double location;
 	double value;
 
+	string lineNo;
+	string loc;
+	string val;
+	istringstream s;
+
 	while (getline(infile, line)){
+		s.clear();
 		lineCount++;
 		if (lineIsValid(line)){
-			location = getLocation(line);
-			value = getValue(line);
-			if (!isnan(value) && !isinf(value) && value > 0 ){
+			s.str(line);
+			s >> lineNo >> loc >> val;
+			try {
+				location = stod(loc);
+				value = stod(val);
+			} catch (const exception&) {
+				continue;
+			}
+			if (!(isnan(value) || isinf(value) || value <= 0) ){
 				if (location == 1){
 					loc1.push_back(value);
 				}else if (location == 2) {
