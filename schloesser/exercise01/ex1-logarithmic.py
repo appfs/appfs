@@ -7,6 +7,7 @@ filename = sys.argv[1]
 
 with open(filename, "r") as f:
 	valid = [0,0,0]
+	loc = [[],[]]
 	mean = [0,0]
 	for i, line in enumerate(f):
 	    tmp = line.split("\n")[0].split("#")[0].split("; ")
@@ -14,6 +15,7 @@ with open(filename, "r") as f:
 	    if len(tmp) < 3:
 	        continue
 	    try:
+	    	seq = int(tmp[0])
 	        pos = int(tmp[1])
 	        val = float(tmp[2])
 	        if (pos == 1 or pos == 2) and val > 0:
