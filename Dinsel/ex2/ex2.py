@@ -35,13 +35,17 @@ class ParseXML():
             sys.stderr = open('err.log', 'w')
             sys.stderr.write(str(e))
             # possible to get the data although not valid
-            yesNo = input("Encountered error (see err.log). Continue anyway? [yn] ")
-            if yesNo == 'y':
-                self.readXML()
-                self.readAttributes()
-                self.writeCSV()
-            else:
-                sys.exit()
+            print("Encountered error (see err.log). Trying to continue anyway...")
+            self.readXML()
+            self.readAttributes()
+            self.writeCSV()
+            # yesNo = input("Encountered error (see err.log). Continue anyway? [yn] ")
+            # if yesNo == 'y':
+            #     self.readXML()
+            #     self.readAttributes()
+            #     self.writeCSV()
+            # else:
+            #     sys.exit()
 
     def readXSD(self):
         """Open a scheme file to validate the to-be-read file."""
