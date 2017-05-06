@@ -9,3 +9,5 @@ are printed.
     * Time taken: ~1m.
     * Valid Values at Loc1: 50004412.
     * Valid Values at Loc2: 49994541.
+    * Number of Loc1 lines with whitespace at start or end: 54
+    * Number of Loc2 lines with whitespace at start or end: 40
