@@ -1,78 +1,87 @@
+//////////////////////////////
+//
+// compile:	g++ -std=c++11 -O3 ex1.cxx -o ex1
+// run:		./ex1 ex1.dat
+//
+//////////////////////////////
+
 #include <iostream> // cout
 #include <fstream> // ifstream
 #include <sstream> // istringstream
 #include <math.h> // log;exp
 #include <vector> // vector
 #include <algorithm> // for_each
+
 using namespace std;
 
 int main(int argc, char* argv[]){
-    string str, a,b,c, token; // define variables and constants.
-    int i=0,d=1, loc;
-    double val1=1.0, val2=1.0, val, logval1=0, logval2=0;
-    const double valMax = 1e64;
-    vector<int> vectorLoc1,vectorLoc2;
-    vector<double> vectorVal1, vectorVal2;
+  
+  string str,a,str0; // define variables and constants.
+  int i=0, loc, ja=0, jb=0; // i iteration of loop. ja and jb are number of SeqNo's with first or last char as whitespace.
+  size_t pos, pos1; // positions of string.
+  char b; // loc as str.
+  float val;
+  const double valMax = 1e64;
+  double mulVal[2] = {1.0,1.0}, logVal[2] = {0.0,0.0};
+  vector<int> vecL[2];
+  vector<double> vecV[2];
+  
+  ifstream file(argv[1]); // open file. Filename as argument of main.
+  
+  while (getline(file,str)){
+    str0 = str; // store original string as str0, to output in case of exception.
+    str = str.substr(0, str.find("#", 0)); // remove all characters after hex.
+    if (str.empty()){i++;continue;} // skip line if line is empty.
     
-    ifstream file(argv[1]); // open file. Filename as argument of main.
+    pos = str.find(";"); // find first ";".
+    a = str.substr(0,pos); // assume everything before that is SeqNo.
+    str.erase(0,pos+2); // remove it from string + semicolon and following space.
     
-    // loop over lines in file until end-of-file.
-    //while (i < 1000){
-    //  getline(file,str);
-    while (getline(file,str)){
-      //str = str.substr(0, str.find("#", 0));
-      if ((str[0]=='#')||(str.empty())){;}else{ // check if line should be ignored, if first char is '#' or empty line.
-	istringstream ss(str); // get columns.
-	//ss >> a >> b >> c; // split columns at spaces. Does not handle cases with spaces in SeqNo.
-	int j=0;
-	while(getline(ss,token,';')){
-	  if (j==0){a = token;}
-	  else if (j==1){b = token;}
-	  else if (j==2){c = token;}
-	  else {d = 0;}
-	  j++;
-	}
-	int k = 0;
-	while (a[k]){
-	  if (isspace(a[k])){
-	    a=
-	val = stod(c); 
-	if (d != 0){
-	//if ((any_of(b.begin(),b.end(),::isdigit)) && (!isnan(val))){ // error handling. loc must be digit, and nan values are not allowed.
-	if ((any_of(b.begin(),b.end(),::isdigit)) && (!isnan(val))){
-	  loc = stoi(b);
-	  if(loc==1){ // create data array corresponding to loc=1.
-	    vectorLoc1.push_back(loc); // store Loc for loc count. 
-	    vectorVal1.push_back(val); // store Values for GeoMean calculations.
-	  }
-	  else if (loc==2){ // create data array corresponding to loc=2. Same as in loc=1.
-	    vectorLoc2.push_back(loc);
-	    vectorVal2.push_back(val);
-	  }
-	  //else{if(!isnan(val)){cout<<"str: "<<str<<"      b:"<<b<<" c: "<<c<<endl;}} //show the exceptions that were not handled.
-	}
-	}
-      }
-      loc=0; i++; // update counter for line count, and reset location for lines skipped.
-      d=1;
-    }
+    pos = a.find(" "); // see if there's a whitespace in SeqNo.
     
-    // loop through vector containing values. Calculate GeoMean.
-    for_each(vectorVal1.begin(), vectorVal1.end(), [&] (double val){
-      val1 *= val; // multiply the values of the vector until close-to-overflow,
-      if (val1 > valMax){logval1+=log(val1);val1=1.0;} // then log it and add onto logval.
+    b = str[0]; // get loc.
+    loc = b-48; // convert char to int.
+    
+    if (isspace((a.back()))&&(loc==1)){ja++;} // check if whitespace is first or last character of SeqNo. For comparison to sample solution.
+    if (isspace(a[0])&&(loc==1)){ja++;}
+    if (isspace((a.back()))&&(loc==2)){jb++;}
+    if (isspace(a[0])&&(loc==2)){jb++;}
+    
+    if (string::npos!=pos){i++;cout<<str0<<endl;continue;} // reject line if there's whitespace in SeqNo.
+    if ((loc!=1)&&(loc!=2)){i++;cout<<str0<<endl;continue;} // reject line if loc is not valid.
+    pos = str.find(";"); // lets find next delimiter... Assume that that is loc.
+    str.erase(0,pos+1); // remove loc and the following semicolon.
+    
+    pos = str.find_first_not_of(" "); // find end of leading whitespaces.
+    pos1 = str.find_last_not_of(" "); // find start of trailing whitespaces.
+    str.erase(pos1+1); // remove trailing whitespaces.
+    str = str.substr(pos,str.length()); // remove leading white spaces.
+    pos = str.find_first_of(" ;"); // check if values are valid, i.e. if there's no space or semicolon.
+    if (string::npos!=pos){i++;cout<<str0<<endl;continue;} // remove these offending values.
+    
+    val = stof(str); // convert value to float.
+    if (isnan(val)){i++;continue;} // reject line if value is nan.
+    vecL[loc-1].push_back(loc); // store Loc for loc count. 
+    vecV[loc-1].push_back(val); // store Values for GeoMean calculations.
+    
+    loc=0; i++; // reset location for lines skipped and update counter for line count.
+  }
+  
+  for (int j=0; j < 2;j++){
+    for_each(vecV[j].begin(), vecV[j].end(), [&] (double val){
+      mulVal[j] *= val; // multiply the values of the vector until close-to-overflow,
+      if (mulVal[j] > valMax){
+	logVal[j] += log(mulVal[j]);
+	mulVal[j]=1.0;} // then log it and add onto logval.
     });
-    
-   // same as in for loc=1.
-    for_each(vectorVal2.begin(), vectorVal2.end(), [&] (double val){ 
-      val2 *= val;
-      if (val2 > valMax){logval2+=log(val2);val2=1.0;}
-    });
-   
-   // output results.
-    cout << "File: " << argv[1] << " with " <<  i << " lines" << endl;
-    cout << "Valid values Loc1: " << vectorLoc1.size() << " with GeoMean: " << exp((logval1+log(val1))/vectorLoc1.size()) << endl;
-    cout << "Valid values Loc2: " << vectorLoc2.size() << " with GeoMean: " << exp((logval2+log(val2))/vectorLoc2.size()) << endl;
-    return 0;
+  }
+  
+  // output results.
+  cout << "File: " << argv[1] << " with " <<  i << " lines" << endl;
+  cout << "Valid values Loc1: " << vecL[0].size() << " with GeoMean: " << exp((logVal[0]+log(mulVal[0]))/vecL[0].size()) << endl;
+  cout << "Valid values Loc2: " << vecL[1].size() << " with GeoMean: " << exp((logVal[1]+log(mulVal[1]))/vecL[1].size()) << endl;
+  cout << "# of Loc1 lines with whitespace at start or end: " << ja << endl;
+  cout << "# of Loc2 lines with whitespace at start or end: " << jb << endl;
+  return 0;
 }
 

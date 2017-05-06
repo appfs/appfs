@@ -1,3 +1,10 @@
+//////////////////////////////
+//
+// compile: g++ -std=c++11 -O3 ex2.cxx -o ex2 -lxerces-c
+// run: ./ex2 <xml filepath>
+//
+//////////////////////////////
+
 #include <xercesc/parsers/SAXParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/util/XMLString.hpp>
