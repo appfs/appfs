@@ -24,30 +24,37 @@ double getGeoMean(node_t * head, long int often){
     return GeoMean;
 }
 
-void printList(node_t * head) {
-    node_t * current = head;
-
-    while (current != NULL) {
-        printf("%f\n", current->val);
-        current = current->next;
+int jumpSpace(char* line, int iter){
+    while(*(line+iter) == ' '){
+    ++iter;
     }
+    return iter;
+}
+
+int jumpNumber(char *line, int iter){
+    while(*(line+iter)=='0' || *(line+iter)=='1' || *(line+iter)=='2' || *(line+iter)=='3' || *(line+iter)=='4' || *(line+iter)=='5' || *(line+iter)=='6' || *(line+iter)=='7' || *(line+iter)=='8' || *(line+iter)=='9'){
+			++iter;
+		}
+    return iter;		
 }
 
 
 	
 int main(int argc, char *argv[]){
 FILE *fp;
-    char *line = (char*) malloc(MAX_LINE_LEN * sizeof(char));
-    size_t len = 0;
-    long int often1 = 0;
-    long int often2 = 0;
-    double temp;
-    char delimiter[] = " ;";
-    char *ptr;
-    long int counter = 0;
     char *bla;
+    char delimiter[] = ";";
+    char *ptr;
     int lol;
-
+    int iter;    
+    int pointer=-1; 
+    size_t len = 0;
+    double temp;    
+    long int often[2];
+    long int counter = 0;
+    char *line = (char*) malloc(MAX_LINE_LEN * sizeof(char));
+    often[0] = -1;
+    often[1] = -1;
     
     node_t * val1 = NULL;
     val1 = malloc(sizeof(node_t));
@@ -65,56 +72,84 @@ FILE *fp;
    while ((lol=getline(&line, &len, fp)) != -1) {
 	++counter;
 	if (*(line) != '\n' && *(line) != '#'){
-		ptr = strtok(line, delimiter);
-		ptr = strtok(NULL, delimiter);
-		if (*(ptr) == '1' && strlen(ptr)==1){
-			ptr = strtok(NULL, delimiter);
- 			if (*ptr != 'N'){
- 				if (often1 == 0){
-	 				 	temp = strtod(ptr, &bla);
-
-						val1->val = temp;
-    						val1->next = NULL;
-						++often1;    						
- 				}	
- 					
- 				else{
- 					temp = strtod(ptr, &bla);
-    					val11->next = malloc(sizeof(node_t));
-    					val11->next->val = temp;
-    					val11->next->next = NULL;
- 					val11 = val11->next;	
-					++often1; 
-				}
- 			}
-				
-		}	
-		else if (*(ptr) == '2' && strlen(ptr)==1){
-			ptr = strtok(NULL, delimiter);
- 			if (*ptr != 'N'){
- 				if (often2 == 0){
-	 				 	temp = strtod(ptr, &bla);
-						val2->val = temp;
-    						val2->next = NULL;	
-						++often2;
-	 			}	
- 				else{
- 					temp = strtod(ptr, &bla);
-    					val22->next = malloc(sizeof(node_t));
-    					val22->next->val = temp;
-    					val22->next->next = NULL;
- 					val22 = val22->next;	
-					++often2; 
-				}
- 			}			
-			
+		iter=1;
+		iter=jumpNumber(line, iter);
+		iter=jumpSpace(line, iter);
+		if(*(line+iter)==';'){
+			++iter;
+			iter=jumpSpace(line, iter);
 		}
+		else {
+		continue;
+		}
+		if(*(line+iter)=='1'){
+			pointer = 0;
+			++iter;
+		}
+		else if(*(line+iter)=='2'){
+			pointer = 1;
+			++iter;
+		}
+		else {
+		continue;
+		}
+		iter=jumpSpace(line,iter);
+		if(*(line+iter)!=';') {
+		continue;
+		}
+		++iter;
+		iter=jumpSpace(line, iter);
+		if (*(line+iter)=='N'){
+			continue;
+		}
+		iter=jumpNumber(line,iter);
+		if(*(line+iter)=='.'){
+			++iter;
+			iter=jumpNumber(line,iter);
+		}
+		iter=jumpSpace(line, iter);
+		if(*(line+iter)=='#'||*(line+iter)=='\n'||*(line+iter)=='e'){
+			ptr = strtok(line, delimiter);
+			ptr = strtok(NULL, delimiter);
+			ptr = strtok(NULL, delimiter);
+			if (pointer == 0){
+				if (often[pointer] == -1){
+					temp = strtod(ptr, &bla);
+					val1->val = temp;
+					val1->next = NULL;
+					often[pointer]=1;  
+				}		
+				else {
+					temp = strtod(ptr, &bla);
+					val11->next = malloc(sizeof(node_t));
+					val11->next->val = temp;
+					val11->next->next = NULL;
+					val11 = val11->next;	
+					++often[pointer];
+				}
+			}
+			else{
+				if (often[pointer] == -1){
+					temp = strtod(ptr, &bla);
+					val2->val = temp;
+					val2->next = NULL;
+					often[pointer]=1;
+				}		
+				else {
+					temp = strtod(ptr, &bla);
+					val22->next = malloc(sizeof(node_t));
+					val22->next->val = temp;
+					val22->next->next = NULL;
+					val22 = val22->next;	
+					++often[pointer];
+				}			
+			}
+		}				
     	}
     }
-
    printf("%s has %li lines \n",argv[1], counter);	
-   printf("Valid values Loc1: %li, with with GeoMean: %f \n",often1, getGeoMean(val1, often1));
-   printf("Valid values Loc2: %li, with with GeoMean: %f \n",often2, getGeoMean(val2, often2));
+   printf("Valid values Loc1: %li, with with GeoMean: %f \n",often[0], getGeoMean(val1, often[0]));
+   printf("Valid values Loc2: %li, with with GeoMean: %f \n",often[1], getGeoMean(val2, often[1]));
    
    free(line);
    exit(EXIT_SUCCESS);
