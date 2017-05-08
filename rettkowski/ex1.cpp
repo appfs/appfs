@@ -12,7 +12,7 @@
 #include <fstream>
 
 
-namespace ex1
+namespace exercise1
 {
 	namespace qi = boost::spirit::qi;
 	namespace ascii = boost::spirit::ascii;
@@ -26,13 +26,13 @@ namespace ex1
 
 
 BOOST_FUSION_ADAPT_STRUCT(
-	ex1::line,
+	exercise1::line,
 	(int, id)
 	(int, location)
 	(double, value)
 )
 
-namespace ex1
+namespace exercise1
 {
 	template <typename Iterator>
 	struct line_parser : qi::grammar<Iterator, line(), ascii::space_type>
@@ -53,47 +53,28 @@ int main(int argc, char *argv[])
 {
 	using boost::spirit::ascii::space;
 	typedef std::string::const_iterator iterator_type;
-	typedef ex1::line_parser<iterator_type> line_parser;
-
-	line_parser g;
-	std::string str;
-
+	typedef exercise1::line_parser<iterator_type> line_parser;
+	line_parser parser;
+	std::string currentLine;
 	std::ifstream file(argv[1]);
-	int success_lines = 0;
-
 	std::vector<double> values[2];
-	double mean[2]{ 0.0, 0.0 };
-
+	double mean[2]{0.0, 0.0};
 	long numberOfLines = 0;
 
-	while (getline(file, str))
+	while (getline(file, currentLine))
 	{
 		numberOfLines++;
 
-		ex1::line emp;
-		std::string::const_iterator iter = str.begin();
-		std::string::const_iterator end = str.end();
-		bool r = phrase_parse(iter, end, g, space, emp);
+		exercise1::line parsedLine;
+		std::string::const_iterator currentPosition = currentLine.begin();
+		std::string::const_iterator lineEnd = currentLine.end();
+		bool parsingSucceeded = phrase_parse(currentPosition, lineEnd, parser, space, parsedLine);
 
-		if (r && iter == end)
+		if (parsingSucceeded && currentPosition == lineEnd)
 		{
-			if (std::isnan(emp.value) || emp.value <= 0 || emp.location < 1 || emp.location > 2)
+			if (std::isnan(parsedLine.value) || parsedLine.value <= 0 || parsedLine.location < 1 || parsedLine.location > 2)
 				continue;
-
-			values[--emp.location].push_back(emp.value);
-			/*std::cout << "-------------------------\n";
-			std::cout << "Parsing succeeded\n";
-			std::cout << "got: " << boost::fusion::as_vector(emp) << std::endl;
-			std::cout << "\n-------------------------\n";*/
-			success_lines++;
-		}
-		else
-		{
-			/*std::cout << "-------------------------\n";
-			std::cout << "Parsing failed\n";
-			std::cout << str << std::endl;
-			std::cout << "-------------------------\n";*/
-			//std::cout << str << std::endl;
+			values[--parsedLine.location].push_back(parsedLine.value);
 		}
 	}
 
