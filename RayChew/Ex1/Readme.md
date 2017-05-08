@@ -10,8 +10,10 @@ are printed.
     * Valid Values at Loc1: 50004412.
     * Valid Values at Loc2: 49994541.
     * Number of Loc1 lines with whitespace at start or end: 54
-<<<<<<< HEAD
     * Number of Loc2 lines with whitespace at start or end: 40
+<<<<<<< HEAD
 =======
     * Number of Loc2 lines with whitespace at start or end: 40
 >>>>>>> added ex3, updated ex2, updated readme's.
+=======
+>>>>>>> fixed typos in ex1,ex2 readme's, fixed ex3.cxx
