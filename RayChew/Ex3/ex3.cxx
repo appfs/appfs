@@ -10,7 +10,7 @@ int main(){
   ps.push_back("  std::string trigger;");
   ps.push_back("  for(int i=0; i<ps.size(); i++){");
   ps.push_back("  std::cout << ps[i] << std::endl;");
-  ps.push_back("  if (ps[i].find(\"trigger\") != std::string::npos){");
+  ps.push_back("  if (ps[i].find(\"std::string trigger\") != std::string::npos){");
   ps.push_back("      for(int j=0; j<ps.size(); j++){");
   ps.push_back("	std::cout<<\"ps.push_back(\"<<ps[j]<<\");\"<<std::endl;}}}");
   ps.push_back("return 0;}");
