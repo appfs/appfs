@@ -92,7 +92,8 @@ void MeasurePointFromDocumentReader::readTimeNode(DOMNode* timeNode, string date
 void MeasurePointFromDocumentReader::readAmountOfPowerNode(DOMNode* powerNode, const string date, int dayLength, int hour) {
 	DOMNamedNodeMap* attributeMap = powerNode->getAttributes();
 	double power = getNodeValueAsDouble(attributeMap->getNamedItem(ATTR_value));
-	measurePoints.push_back(MeasurePoint(power,hour,date));
+	MeasurePoint* point = new MeasurePoint(power,hour,date);
+	measurePoints.push_back(point);
 }
 
 string MeasurePointFromDocumentReader::getNodeName(DOMNode* node){
@@ -131,7 +132,7 @@ double MeasurePointFromDocumentReader::getNodeValueAsDouble(DOMNode* node){
 	return valueDouble;
 }
 
-vector<MeasurePoint> MeasurePointFromDocumentReader::getMeasurePoints(){
+vector<MeasurePoint*> MeasurePointFromDocumentReader::getMeasurePoints(){
 	return measurePoints;
 }
 

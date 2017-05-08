@@ -9,31 +9,48 @@
 
 ParserErrorHandler::ParserErrorHandler() : HandlerBase::HandlerBase() {
 	errors = vector<string>();
+	fatalErrors = vector<string>();
+	warnings = vector<string>();
 }
+
+void ParserErrorHandler::warning(const SAXParseException& exc) {
+	HandlerBase::warning(exc);
+	addException(warnings, exc);
+}
+
 void ParserErrorHandler::error(const SAXParseException& exc) {
 	HandlerBase::error(exc);
-	addException(exc, "Exception");
+	addException(errors, exc);
 }
 
 void ParserErrorHandler::fatalError(const SAXParseException& exc) {
 	HandlerBase::fatalError(exc);
-	addException(exc, "Fatal Exception");
+	addException(fatalErrors, exc);
 }
 
-void ParserErrorHandler::addException(const SAXParseException& exc, string exceptionType) {
+void ParserErrorHandler::addException(vector<string> &list, const SAXParseException& exc) {
 	std::stringstream ss;
 	char* message = XMLString::transcode(exc.getMessage());
-	ss << exceptionType << " at line " << exc.getLineNumber() << " column " << exc.getColumnNumber() << ":" << endl << message << endl;
+	ss << "Exception at line " << exc.getLineNumber() << " column " << exc.getColumnNumber() << ":" << endl << message << endl;
 	XMLString::release(&message);
-	errors.push_back(ss.str());
+	list.push_back(ss.str());
 }
+
 
 string ParserErrorHandler::getExceptionsAsString(){
 	std::stringstream ss;
-	for(unsigned int i=0; i<errors.size(); i++){
-		ss << errors.at(i);
-		ss << endl;
-	}
+	ss << warnings.size() <<" Warnings:" << endl;
+	addStrings(ss, warnings);
+	ss << endl << errors.size() <<  " Errors:" << endl;
+	addStrings(ss, errors);
+	ss << endl << fatalErrors.size() << " Fatal Errors:" << endl;
+	addStrings(ss, fatalErrors);
 	return ss.str();
+}
+
+void ParserErrorHandler::addStrings(std::stringstream& ss, vector<string> &strings) {
+	for (unsigned int i = 0; i < strings.size(); i++) {
+		ss << strings.at(i);
+	}
 }
 

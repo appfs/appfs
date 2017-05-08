@@ -26,7 +26,7 @@ class MeasurePointFromDocumentReader {
 private:
 	DOMDocument* document;
 	istringstream strin;
-	vector<MeasurePoint> measurePoints;
+	vector<MeasurePoint*> measurePoints;
 
 	XMLCh* NODE_gasDay;
 
@@ -49,7 +49,7 @@ private:
 	void initAttributes();
 
 public:
-	vector<MeasurePoint> getMeasurePoints();
+	vector<MeasurePoint*> getMeasurePoints();
 	void readMeasurepoints();
 	MeasurePointFromDocumentReader(DOMDocument* document);
 	virtual ~MeasurePointFromDocumentReader();

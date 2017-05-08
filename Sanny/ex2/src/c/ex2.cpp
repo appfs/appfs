@@ -70,21 +70,17 @@ int main(int argn, char *argv[]) {
 		cout << "Validationfile: "<< FILE_MEASURED_XSD << endl;
 
 		parser->parse(argv[1]);
-		cout << "File parsed to DOM" << endl;
+		cout << "File validated and parsed to DOM" << endl;
 
 		if(parser->getErrorCount() != 0){
-		  cerr << "ERROR : File doesn't match sheme" << endl;
+		  cerr << "WARNING : File doesn't match sheme" << endl;
 		  cerr << "There were " << parser->getErrorCount() << " errors." << endl;
-		  cerr << "Exceptions: "<< endl;
-		  cerr << parser->getErrors();
-		  return 0;
 		}
-
-		cout << "Validation successfull" << endl;
+		cerr << parser->getErrors();
 
 		MeasurePointFromDocumentReader* measurePointsReader = new MeasurePointFromDocumentReader(parser->getDocument());
 		measurePointsReader->readMeasurepoints();
-		vector<MeasurePoint> measurePoints = measurePointsReader->getMeasurePoints();
+		vector<MeasurePoint*> measurePoints = measurePointsReader->getMeasurePoints();
 		cout << measurePoints.size() <<" measurepoints read" << endl;
 
 		ofstream outputStream;
@@ -93,10 +89,15 @@ int main(int argn, char *argv[]) {
 
 
 		cout << "Writing data to " << output << endl;
-		for(MeasurePoint mp : measurePoints){
-			outputStream << mp.getDate() << SEPERATOR << setw(2) << mp.getHour() << SEPERATOR << mp.getPower() << endl;
+		for(MeasurePoint* mp : measurePoints){
+			outputStream << mp->getDate() << SEPERATOR << setw(2) << mp->getHour() << SEPERATOR << mp->getPower() << endl;
 		}
+
 		cout << "Writing was successfull" << endl;
+
+		for(MeasurePoint* mp : measurePoints){
+			delete mp;
+		}
 
 		delete measurePointsReader;
 
