@@ -14,9 +14,23 @@ const string FILE_PATH= "ex1.dat";
  */
 bool lineIsValid(string line){
 	if (line.empty()){
+		cerr << "Ignore line because it's empty." << endl;
 		return false;
 	}
-	if (line[0] == '#'){
+	size_t pos = line.find('#');
+
+	if (pos == string::npos) {
+		return true;
+	}
+	string substring = line.substr(0, pos);
+	size_t firstSemi = substring.find(';');
+	if (firstSemi == string::npos){
+		cerr << "Ignore line because it's invalid." << endl;
+		return false;
+	}
+	size_t secondSemi = substring.find(';', firstSemi+1);
+	if (secondSemi == string::npos) {
+		cerr << "Ignore line because it's invalid." << endl;
 		return false;
 	}
 	return true;
@@ -41,7 +55,7 @@ int main(int argc, char* argv[]){
 	ifstream infile;
 
 	if(argc <=1){
-		cout << "No file-path argument found. Open default file." << cout;
+		cout << "No file-path found. Open default-file." << endl;
 		infile.open(FILE_PATH, ios::in);
 	}
 	else {

@@ -13,12 +13,13 @@
 #include <xercesc/validators/common/Grammar.hpp>
 #include "tinyxml2.h"
 #include "GasNode.h"
+#include "DocumentErrorHandler.h"
 
 using namespace tinyxml2;
 using namespace std;
 using namespace xercesc;
 
-const char* FILE_PATH = "example.measured-1-1-0.xml";
+const char* FILE_PATH = "measured.xml";
 const char* MEASURED_XSD = "http://gaslab.zib.de/kwpt/measured measured-1-1-0.xsd";
 
 
@@ -38,7 +39,7 @@ void checkAttribute(const XMLAttribute* attribute){
 bool documentIsValid(const char* path){
 	XercesDOMParser domParser;
 
-	HandlerBase errorHandler;
+	DocumentErrorHandler errorHandler;
 	domParser.setDoNamespaces(true);
 	domParser.setExternalSchemaLocation(MEASURED_XSD);
 	domParser.setErrorHandler(&errorHandler);
@@ -57,7 +58,7 @@ bool documentIsValid(const char* path){
 	     return true;
 	}else {
 	     cerr << "XML file doesn't conform to the schema" << endl;
-	     return false;
+	     return true;
 	}
 }
 
