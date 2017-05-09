@@ -8,4 +8,12 @@ after which log is taken. Rejected values, excluding comments and empty lines, a
     * Valid Values at Loc1: 50004412.
     * Valid Values at Loc2: 49994541.
     * Number of Loc1 lines with whitespace at start or end: 54
+<<<<<<< HEAD
     * Number of Loc2 lines with whitespace at start or end: 40
+=======
+<<<<<<< HEAD
+    * Number of Loc2 lines with whitespace at start or end: 40
+=======
+    * Number of Loc2 lines with whitespace at start or end: 40
+>>>>>>> added ex3, updated ex2, updated readme's.
+>>>>>>> parent of e78b59d... fixed typos in ex1,ex2 readme's, fixed ex3.cxx
