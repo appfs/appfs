@@ -43,8 +43,18 @@ int main(int numargs, char *args[]) {
 		}
 
 
-		int pos1 = line.find(";");
-		int pos2 = line.find(";", pos1+1);
+
+		size_t pos1 = line.find(";");
+		if (pos1 == string::npos) {
+			err++;
+			continue;
+		}
+		size_t pos2 = line.find(";", pos1+1);
+		if (pos2 == string::npos) {
+			err++;
+			continue;
+		}
+
 		int seqNum = 0;
 		int location = 0;
 		double value = 0;
@@ -59,7 +69,7 @@ int main(int numargs, char *args[]) {
 		}
 
 
-		if (location < 1 || location > 2 || isnan(value) || value <=0 ) {			//location must be positive
+		if (location < 1 || location > 2 || !isnormal(value) || value <= 0. ) {			//location must be positive
 			err++;
 			continue;
 		}
@@ -78,7 +88,7 @@ int main(int numargs, char *args[]) {
 	// writing output
 	cout << "File: " << args[1] << " with " << nLines << " lines" << endl;
 	for (int i = 0; i < 2; i++) {
-		cout << "Valid values Loc " << (i+1) << ": " << nLoc[i] << " with GeoMean " << geoMean[i] << endl;
+		cout << "Valid values Loc" << (i+1) << ": " << nLoc[i] << " with GeoMean " << geoMean[i] << endl;
 	}
 	cout << "Number of errors in the file: " << err << endl;
 
