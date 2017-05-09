@@ -11,6 +11,7 @@ after which log is taken. Rejected values, excluding comments and empty lines, a
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     * Number of Loc2 lines with whitespace at start or end: 40
 =======
 =======
@@ -29,3 +30,6 @@ after which log is taken. Rejected values, excluding comments and empty lines, a
 >>>>>>> parent of e78b59d... fixed typos in ex1,ex2 readme's, fixed ex3.cxx
 =======
 >>>>>>> parent of e78b59d... fixed typos in ex1,ex2 readme's, fixed ex3.cxx
+=======
+    * Number of Loc2 lines with whitespace at start or end: 40
+>>>>>>> parent of b9f1bff... added ex3, updated ex2, updated readme's.
