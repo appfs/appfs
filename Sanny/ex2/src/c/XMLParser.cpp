@@ -11,11 +11,12 @@ XMLParser::XMLParser() : XercesDOMParser(){
 	errorHandler = new ParserErrorHandler();
 
 	XercesDOMParser::setValidationScheme(XercesDOMParser::Val_Always);
-	XercesDOMParser::setDoNamespaces(true);
+	XercesDOMParser::setHandleMultipleImports(true);
 	XercesDOMParser::setDoSchema(true);
+	XercesDOMParser::setDoNamespaces(true);
 	XercesDOMParser::setErrorHandler(errorHandler);
 	XercesDOMParser::setValidationSchemaFullChecking(true);
-
+	XercesDOMParser::setLoadSchema(true);
 }
 
 XMLParser::~XMLParser(){
@@ -26,10 +27,6 @@ Grammar* XMLParser::loadGrammar(const char* const systemId,
         const Grammar::GrammarType grammarType,
         const bool toCache){
 	return XercesDOMParser::loadGrammar(systemId, grammarType, toCache);
-}
-
-int XMLParser::getErrorCount(){
-	return XercesDOMParser::getErrorCount();
 }
 
 string XMLParser::getErrors(){

@@ -9,42 +9,21 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <algorithm>
 #include "LocationValues.h"
 
 namespace {
 
 const char* DEFAULT_FILE_NAME = "recources/ex1.dat";
-const char* SEPERATOR = "; ";
+const char* SEPERATOR = ";";
 const char* COMMENT_SIGN = "#";
 
 }
 
 using namespace std;
 
-/** Check if the value is greater 0. If this is correct, the line is added. */
-void inline addLine(const string line, const string::size_type indexOfSecondSeperator, istringstream& strin,
-		LocationValues& locationValues) {
-	string valueString = line.substr(indexOfSecondSeperator);
-	valueString.replace(0,2,"");
-	double value;
-	strin.str(valueString);
-	strin >> value;
-	locationValues.push_back(value);
-	strin.clear();
-}
+void removeSeperator(string& locationString) {
 
-/** Print the size and the geometric mean of LocationValues */
-void inline printValues(LocationValues valuesLocation) {
-	cout << "Valid values Loc1: " << valuesLocation.size() << " with GeoMean: "
-			<< fixed << setprecision(4) << valuesLocation.getGeoMean() << endl;
-}
-
-int inline getLocation(const string& locationString, istringstream& strin) {
-	int location;
-	strin.str(locationString);
-	strin >> location;
-	strin.clear();
-	return location;
 }
 
 /** Opens either a file, which was given by invocation, or the default file, which is hard-coded. */
@@ -58,6 +37,28 @@ string inline openFile(const int argn, char* argv[], fstream& fileStream) {
 		fileStream.open(argv[1], ios::in);
 		return argv[1];
 	}
+}
+
+void inline removeWhitespaces(string& line) {
+	line.erase(std::remove_if(line.begin(), line.end(), &::isspace),
+			line.end());
+}
+
+
+
+/** Print the size and the geometric mean of LocationValues */
+void inline printValues(LocationValues valuesLocation) {
+	cout << "Valid values Loc1: " << valuesLocation.size() << " with GeoMean: "
+			<< fixed << setprecision(4) << valuesLocation.getGeoMean() << endl;
+}
+
+/** Converts a String to an double */
+double inline getDoubleFromString(const string& locationString, istringstream& strin) {
+	double d;
+	strin.str(locationString);
+	strin >> d;
+	strin.clear();
+	return d;
 }
 
 
@@ -80,12 +81,11 @@ int main(int argn, char *argv[]) {
 	LocationValues valuesLocation1 = LocationValues();
 	LocationValues valuesLocation2 = LocationValues();
 
-	while (!fileStream.eof()){
-		getline(fileStream, line);
+	while (getline(fileStream, line)){
 
 		lineCount++;
 
-		const string::size_type indexOfCommentSign = line.find(COMMENT_SIGN);
+		const string::size_type indexOfCommentSign = line.find_first_of(COMMENT_SIGN);
 
 		if(indexOfCommentSign == 0){
 			continue;
@@ -95,6 +95,8 @@ int main(int argn, char *argv[]) {
 			line = line.substr(0,indexOfCommentSign);
 		}
 
+		removeWhitespaces(line);
+
 		const string::size_type indexOfFirstSeperator = line.find(SEPERATOR);
 		const string::size_type indexOfSecondSeperator = line.find(SEPERATOR, indexOfFirstSeperator+1);
 
@@ -103,18 +105,23 @@ int main(int argn, char *argv[]) {
 		}
 
 		string locationString = line.substr(indexOfFirstSeperator, indexOfSecondSeperator - indexOfFirstSeperator);
-		locationString.replace(0,2,"");
+		string valueString = line.substr(indexOfSecondSeperator);
 
-		int location = getLocation(locationString, strin);
+		locationString.erase(0,1);
+		valueString.erase(0,1);
 
-		if(location == 1){
-			addLine(line, indexOfSecondSeperator, strin, valuesLocation1);
+		double location = getDoubleFromString(locationString, strin);
+
+
+		if(location == 1.){
+			valuesLocation1.push_back(getDoubleFromString(valueString, strin));
 		}
 
-		if(location == 2){
-			addLine(line, indexOfSecondSeperator, strin, valuesLocation2);
+		if(location == 2.){
+			valuesLocation2.push_back(getDoubleFromString(valueString, strin));
 		}
 
+		line.clear();
 	}
 
 	cout << "File: " << filename << " with " << lineCount << " lines" << endl;
