@@ -11,12 +11,12 @@ from lxml.etree import XMLSchemaParseError, XMLSyntaxError
 class MeasuredDto(object):
     
     def __init__(self, datumAlsString, hourAlsString, wertAlsString):
-         self.__datumAlsString = datumAlsString
-         self.__hourAlsString = hourAlsString
-         self.__wertAlsString = wertAlsString
-         
+         self.datum = datumAlsString
+         self.hour = hourAlsString
+         self.wert = wertAlsString
+    
     def getAsSemikolonString(self):
-        string =  self.__datumAlsString + ";" + self.__hourAlsString + ";" + self.__wertAlsString
+        string = self.datum + ";" + self.hour + ";" + self.wert
         return string
          
          
@@ -44,8 +44,8 @@ class EtlProzess(object):
         fobj = open(self.__csvOutputFilename, "w")
         csvWriter = csv.writer(fobj, delimiter=';')
         for measured in self.__messureds:
-            print("schreibe: " + measured.getAsSemikolonString())
-            csvWriter.writerow(measured.getAsSemikolonString())
+            #print("Speichere: " + measured.getAsSemikolonString())
+            csvWriter.writerow([measured.datum, measured.hour, measured.wert])
         fobj.close()
         
     def __readXsd(self):
@@ -65,7 +65,7 @@ class EtlProzess(object):
         for knoten in knotenMenge:
             for tag in knoten:
                 wert = tag.find("{" + nsmap[None] + "}amountOfPower").get('value')
-                self.__messureds.append(MeasuredDto(datum, hour, wert))
+                self.__messureds.append(MeasuredDto(datum, int(hour) + int(tag.get('hour')), wert))
         
         
         
