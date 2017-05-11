@@ -6,6 +6,8 @@ from lxml.etree import XMLSchemaParseError, XMLSyntaxError
 # aufgrund einer Razzia in seinem Buero bei Toll Collect nicht aufs Coden
 # konzentrieren konnte.
 
+# Start z.B. per: python ex2.py measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml measured-1-1-0.xsd result.csv
+
 class MeasuredDto(object):
     
     def __init__(self, datumAlsString, hourAlsString, wertAlsString):
@@ -35,14 +37,15 @@ class EtlProzess(object):
             sys.stderr = open('error.log', 'w')
             sys.stderr.write(str(error))
             print("Warnung: Probleme wurden bemerkt und im error.log beschrieben.")
-            xml = self.__readXml(schema)
+            xml = self.__readXml()
             self.__readMessureds(xml)
         
     def writeCsv(self):
         fobj = open(self.__csvOutputFilename, "w")
         csvWriter = csv.writer(fobj, delimiter=';')
         for measured in self.__messureds:
-            csvWriter.writerrow(measured.getAsSemikolonString())
+            print("schreibe: " + measured.getAsSemikolonString())
+            csvWriter.writerow(measured.getAsSemikolonString())
         fobj.close()
         
     def __readXsd(self):
@@ -61,9 +64,8 @@ class EtlProzess(object):
         hour = knotenMenge.get('gasDayStartHourInUTC')
         for knoten in knotenMenge:
             for tag in knoten:
-                wert = tag.find("{" + nsmap[None] + "}amountOfPower")
-                neuerIndex = len(self.__messureds)
-                self.__messureds[neuerIndex] = MeasuredDto(datum, hour, wert)
+                wert = tag.find("{" + nsmap[None] + "}amountOfPower").get('value')
+                self.__messureds.append(MeasuredDto(datum, hour, wert))
         
         
         
