@@ -23,9 +23,10 @@ double LocationValues::getGeoMean() {
 }
 
 void LocationValues::push_back(const double value) {
-	if(value > 0 && !isnan(value)){
-		vector::push_back(value);
+	if(value <= 0 || isnan(value)){
+		return;
 	}
+	vector::push_back(value);
 }
 
 } /* namespace std */
