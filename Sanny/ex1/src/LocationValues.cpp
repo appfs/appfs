@@ -22,11 +22,12 @@ double LocationValues::getGeoMean() {
 	return exp(geoMean);
 }
 
-void LocationValues::push_back(const double value) {
+bool LocationValues::push_back(const double value) {
 	if(value <= 0 || isnan(value)){
-		return;
+		return false;
 	}
 	vector::push_back(value);
+	return true;
 }
 
 } /* namespace std */

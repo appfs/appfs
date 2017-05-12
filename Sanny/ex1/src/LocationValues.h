@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 #ifndef LOCATIONVALUES_H_
 #define LOCATIONVALUES_H_
@@ -17,7 +18,7 @@ class LocationValues : public vector<double> {
 
 public:
 	double getGeoMean();
-	void push_back(const double);
+	bool push_back(const double);
 };
 
 } /* namespace std */

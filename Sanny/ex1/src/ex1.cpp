@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <cstring>
 #include <algorithm>
 #include "LocationValues.h"
 
@@ -16,7 +17,6 @@ namespace {
 
 const char* DEFAULT_FILE_NAME = "recources/ex1.dat";
 const char* SEPERATOR = ";";
-const char* COMMENT_SIGN = "#";
 
 }
 
@@ -39,26 +39,11 @@ string inline openFile(const int argn, char* argv[], ifstream& fileStream) {
 	}
 }
 
-void inline removeWhitespaces(string& line) {
-	line.erase(std::remove_if(line.begin(), line.end(), &::isspace),
-			line.end());
-}
-
-
 
 /** Print the size and the geometric mean of LocationValues */
 void inline printValues(LocationValues valuesLocation) {
 	cout << "Valid values Loc1: " << valuesLocation.size() << " with GeoMean: "
 			<< fixed << setprecision(4) << valuesLocation.getGeoMean() << endl;
-}
-
-/** Converts a String to an double */
-double inline getDoubleFromString(const string& locationString, istringstream& strin) {
-	double d;
-	strin.str(locationString);
-	strin >> d;
-	strin.clear();
-	return d;
 }
 
 
@@ -87,41 +72,33 @@ int main(int argn, char *argv[]) {
 
 		lineCount++;
 
-		const string::size_type indexOfCommentSign = line.find_first_of(COMMENT_SIGN);
-
-		if(indexOfCommentSign == 0){
-			continue;
+		const char* shortenedline = strpbrk(line.c_str(), "#\n");
+		if(shortenedline != nullptr){
+			line = shortenedline;
 		}
-
-		if(indexOfCommentSign != string::npos){
-			line = line.substr(0,indexOfCommentSign);
-		}
-
-		removeWhitespaces(line);
 
 		const string::size_type indexOfFirstSeperator = line.find(SEPERATOR);
 		const string::size_type indexOfSecondSeperator = line.find(SEPERATOR, indexOfFirstSeperator+1);
-
 		if(indexOfFirstSeperator == string::npos || indexOfSecondSeperator == string::npos){
+			line.clear();
 			continue;
 		}
 
-		string locationString = line.substr(indexOfFirstSeperator, indexOfSecondSeperator - indexOfFirstSeperator);
-		string valueString = line.substr(indexOfSecondSeperator);
+		int location = 0;
+		double value = 0;
+		char rest[2];
 
-		locationString.erase(0,1);
-		valueString.erase(0,1);
-
-		double location = getDoubleFromString(locationString, strin);
-
-		if(location == 1.){
-			valuesLocation1.push_back(getDoubleFromString(valueString, strin));
+		int values = sscanf(line.c_str(), "%*d ; %d ; %lf %1s", &location, &value, rest);
+		if(values!=2){
+			line.clear();
+			continue;
 		}
 
-		if(location == 2.){
-			valuesLocation2.push_back(getDoubleFromString(valueString, strin));
+		if(location == 1){
+			valuesLocation1.push_back(value);
+		} else if(location == 2){
+			valuesLocation2.push_back(value);
 		}
-
 		line.clear();
 	}
 
