@@ -90,18 +90,12 @@ int main(int argn, char *argv[]) {
 		const string::size_type indexOfCommentSign = line.find_first_of(COMMENT_SIGN);
 
 		if(indexOfCommentSign == 0){
-			cout << "Whole Commentline "<< lineCount <<endl;
 			continue;
 		}
 
 		if(indexOfCommentSign != string::npos){
-			cout<< "Cutted comment on line"<< lineCount << endl;
-			cout<< line << endl;
 			line = line.substr(0,indexOfCommentSign);
-			cout<< line << endl;
 		}
-
-
 
 		removeWhitespaces(line);
 
@@ -109,7 +103,6 @@ int main(int argn, char *argv[]) {
 		const string::size_type indexOfSecondSeperator = line.find(SEPERATOR, indexOfFirstSeperator+1);
 
 		if(indexOfFirstSeperator == string::npos || indexOfSecondSeperator == string::npos){
-			cout << "There aren't two seperators on line "<< lineCount <<endl;
 			continue;
 		}
 
