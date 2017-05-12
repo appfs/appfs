@@ -73,6 +73,8 @@ int main(int argn, char *argv[]) {
 	    return 0;
 	}
 
+	cout << "Opened File "<< filename << " successfully" << endl;
+
 	istringstream strin;
 	string line;
 
@@ -111,7 +113,6 @@ int main(int argn, char *argv[]) {
 		valueString.erase(0,1);
 
 		double location = getDoubleFromString(locationString, strin);
-
 
 		if(location == 1.){
 			valuesLocation1.push_back(getDoubleFromString(valueString, strin));
