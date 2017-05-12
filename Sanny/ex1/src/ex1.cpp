@@ -27,7 +27,7 @@ void removeSeperator(string& locationString) {
 }
 
 /** Opens either a file, which was given by invocation, or the default file, which is hard-coded. */
-string inline openFile(const int argn, char* argv[], fstream& fileStream) {
+string inline openFile(const int argn, char* argv[], ifstream& fileStream) {
 	if (argn <= 1) {
 		cout << "There was no filename. The standard " << DEFAULT_FILE_NAME
 				<< " will be used." << endl;
@@ -65,7 +65,7 @@ double inline getDoubleFromString(const string& locationString, istringstream& s
  /** Opens a file, parse the values and returns the geometric means of the locations */
 int main(int argn, char *argv[]) {
 
-	fstream fileStream;
+	ifstream fileStream;
 	const string filename = openFile(argn, argv, fileStream);
 
 	if ( (fileStream.rdstate()) != 0 ){
@@ -90,12 +90,18 @@ int main(int argn, char *argv[]) {
 		const string::size_type indexOfCommentSign = line.find_first_of(COMMENT_SIGN);
 
 		if(indexOfCommentSign == 0){
+			cout << "Whole Commentline "<< lineCount <<endl;
 			continue;
 		}
 
-		if(indexOfCommentSign == string::npos){
+		if(indexOfCommentSign != string::npos){
+			cout<< "Cutted comment on line"<< lineCount << endl;
+			cout<< line << endl;
 			line = line.substr(0,indexOfCommentSign);
+			cout<< line << endl;
 		}
+
+
 
 		removeWhitespaces(line);
 
@@ -103,6 +109,7 @@ int main(int argn, char *argv[]) {
 		const string::size_type indexOfSecondSeperator = line.find(SEPERATOR, indexOfFirstSeperator+1);
 
 		if(indexOfFirstSeperator == string::npos || indexOfSecondSeperator == string::npos){
+			cout << "There aren't two seperators on line "<< lineCount <<endl;
 			continue;
 		}
 
