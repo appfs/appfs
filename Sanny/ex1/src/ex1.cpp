@@ -7,15 +7,14 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
-#include <sstream>
 #include <string>
 #include <cstring>
 #include <algorithm>
-#include "LocationValues.h"
+#include <cmath>
 
 namespace {
 
-const char* DEFAULT_FILE_NAME = "recources/ex1.dat";
+const char* DEFAULT_FILE_NAME = "ex1.dat";
 const char* SEPERATOR = ";";
 
 }
@@ -39,12 +38,33 @@ string inline openFile(const int argn, char* argv[], ifstream& fileStream) {
 	}
 }
 
+bool push(vector<double> *values, const double value) {
+	if(value <= 0 || isnan(value)){
+		return false;
+	}
+	values->push_back(value);
+	return true;
+}
+
+double getGeoMean(vector<double> *values) {
+	double geoMean = 0.;
+	const unsigned int count = values->size();
+
+	for (unsigned int i = 0; i < count; ++i) {
+		geoMean += log(values->at(i));
+	}
+
+	geoMean /= count;
+
+	return exp(geoMean);
+}
 
 /** Print the size and the geometric mean of LocationValues */
-void inline printValues(LocationValues valuesLocation) {
-	cout << "Valid values Loc1: " << valuesLocation.size() << " with GeoMean: "
-			<< fixed << setprecision(4) << valuesLocation.getGeoMean() << endl;
+void inline printValues(vector<double> *values) {
+	cout << "Valid values Loc1: " << values->size() << " with GeoMean: "
+			<< fixed << setprecision(6) << getGeoMean(values) << endl;
 }
+
 
 
  /** Opens a file, parse the values and returns the geometric means of the locations */
@@ -65,8 +85,8 @@ int main(int argn, char *argv[]) {
 
 	int lineCount = 0;
 
-	LocationValues valuesLocation1 = LocationValues();
-	LocationValues valuesLocation2 = LocationValues();
+	vector<double> *valuesLocation1 = new vector<double>();
+	vector<double> *valuesLocation2 = new vector<double>();
 
 	while (getline(fileStream, line)){
 
@@ -95,9 +115,9 @@ int main(int argn, char *argv[]) {
 		}
 
 		if(location == 1){
-			valuesLocation1.push_back(value);
+			push(valuesLocation1,value);
 		} else if(location == 2){
-			valuesLocation2.push_back(value);
+			push(valuesLocation2, value);
 		}
 		line.clear();
 	}
