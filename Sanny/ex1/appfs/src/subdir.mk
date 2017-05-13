@@ -4,15 +4,12 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/LocationValues.cpp \
 ../src/ex1.cpp 
 
 OBJS += \
-./src/LocationValues.o \
 ./src/ex1.o 
 
 CPP_DEPS += \
-./src/LocationValues.d \
 ./src/ex1.d 
 
 
