@@ -104,13 +104,9 @@ def compute_result():
 
 if __name__ == '__main__':
 
-    start_time = time.time()
-
     content = read_file(sys.argv[-1])
     for line in content:
         aggregate_data(line)
 
     compute_result()
-
-    print("--- %s seconds ---" % (time.time() - start_time))
 
