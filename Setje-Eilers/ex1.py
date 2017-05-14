@@ -15,12 +15,12 @@ def geomean(x):
 
 location1=deque()
 location2=deque()
-#num_lines=0
+num_lines=0
 filepath=sys.argv[1]
 with open(filepath) as f:
-    for num_lines,line in enumerate(f):
+    for line in f:
         line_split=line.split(';')
-        if not line.startswith('#') and len(line_split)==3:
+        if not line.startswith('#'):
             try:
                 value=float(line_split[2])
                 if not isnan(value) and value>0.0:
@@ -30,13 +30,17 @@ with open(filepath) as f:
                         location2.append(value)
 
             except ValueError:
+                num_lines+=1
                 continue
-#        num_lines+=1
+            except IndexError:
+                num_lines+=1
+                continue
+        #num_lines+=1
 len1=len(location1)
 len2=len(location2)
 
-print('File: '+filepath+' with '+str(num_lines)+' lines \n'+
-'Valid values Loc0: ' +str(len1)+' with '+'GeoMean: '+str(geomean(list(location1)))+'\n'+
-'Valid values Loc1: ' +str(len2)+' with '+'GeoMean: '+str(geomean(list(location2))))
+print('File: '+filepath+' with '+str(num_lines+len1+len2)+' lines')
+print('Valid values Loc0: ' +str(len1)+' with '+'GeoMean: '+str(gmean(list(location1))))
+print('Valid values Loc1: ' +str(len2)+' with '+'GeoMean: '+str(gmean(list(location2))))
 
             
