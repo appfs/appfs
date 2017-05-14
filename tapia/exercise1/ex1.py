@@ -8,8 +8,6 @@ import sys
 
 import math
 
-import time
-
 LINES_COUNT = 0
 
 VALID_VALUES_LOC1 = 0
