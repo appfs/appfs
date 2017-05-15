@@ -46,5 +46,5 @@
 *.o
 *.d
 *.csv
-/appfs_exe/ex2
-/appfs_exe/
+/ex3/ex3
+/ex3/
