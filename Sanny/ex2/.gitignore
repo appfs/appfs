@@ -32,14 +32,19 @@
 *.dSYM/
 *.su
 
-# large example files
-ex*.dat
-
 # project data
 */.settings/*
 .project
 .cproject
 *.settings.xml
 
-/src/recources
+# Examplefiles
+*.xml*
+*.pdf
+
+*.md
+*.o
+*.d
+*.csv
+/appfs_exe/ex2
 /appfs_exe/

@@ -26,7 +26,6 @@ public:
 	Grammar* loadGrammar(const char* const systemId,
 	                         const Grammar::GrammarType grammarType,
 	                         const bool toCache = false);
-	int getErrorCount();
 	string getErrors();
 };
 

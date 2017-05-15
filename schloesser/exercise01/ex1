@@ -25,14 +25,16 @@ with open(filename, "r") as f:
         # line broken if we get back less than three values
         if len(tmp) < 3:
         	# next line
-            continue
+        	continue
         try:
 			# try converting strings into numbers
+            seq = int(tmp[0])
             pos = int(tmp[1])
             val = float(tmp[2])
             # if these numbers are matching our format, then store them
             if val>0 and (pos == 1 or pos == 2): 
                 loc[pos-1].append(val)
+                continue
         # if something fails, then the line was broken
         except ValueError:
             continue
@@ -43,5 +45,5 @@ print("File: " + str(filename) + " with " + str(valid[0]) + " lines")
 for i in range(2):
     valid[i+1] = len(loc[i])
     mean.append(scipy.stats.mstats.gmean(np.asarray(loc[i])))
-    print("Valid values Loc" + str(i) + ": " + str(valid[i+1]) + " with GeoMean: " + str(mean[i]))
+    print("Valid values Loc" + str(i+1) + ": " + str(valid[i+1]) + " with GeoMean: " + str(mean[i]))
 

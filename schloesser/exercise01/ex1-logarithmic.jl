@@ -10,6 +10,7 @@ for (index, line) in enumerate(eachline(f))
         continue
     end 
     try
+		seq = parse(Int, tmp[1])
         pos = parse(Int, tmp[2])
         val = float(tmp[3])
         if val>0 && (pos == 1 || pos == 2)
