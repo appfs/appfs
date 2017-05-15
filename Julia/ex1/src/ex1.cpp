@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const string FILE_PATH= "ex1.dat";
+const string SOURCE_FILE_PATH= "ex1.dat";
 
 /**
  * checks if line is empty or a comment
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
 
 	if(argc <=1){
 		cout << "No file-path found. Try to open default file path." << endl;
-		infile.open(FILE_PATH, ios::in);
+		infile.open(SOURCE_FILE_PATH, ios::in);
 	}
 	else {
 		infile.open(argv[1], ios::in);
