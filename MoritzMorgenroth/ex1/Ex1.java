@@ -15,7 +15,8 @@ public class Ex1 {
 		Double val;
 		int lines = 0; 
 
-		String groupMatcher = "[0-1]";
+		String seqMatcher = "[0-9]+";
+		String groupMatcher = "[1-2]";
 		String floatMatcher = "[0-9.]+";
 
 		//System.out.println("Reading file and calculating means..."); 
@@ -34,7 +35,7 @@ public class Ex1 {
 	           		line = line.replace(" ", "");
 	          		String[] parts = line.split(";");
 	          		if(parts.length == 3){
-	     				if (!(parts[1].matches(groupMatcher) && parts[2].matches(floatMatcher)))continue;
+	     				if (!(parts[0].matches(seqMatcher) && parts[1].matches(groupMatcher) && parts[2].matches(floatMatcher)))continue;
 
 	          			group = Integer.parseInt(parts[1]);
 	          			val = Double.parseDouble(parts[2]);
