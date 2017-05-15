@@ -14,25 +14,13 @@ const string FILE_PATH= "ex1.dat";
  */
 bool lineIsValid(string line){
 	if (line.empty()){
-		cerr << "Ignore line because it's empty." << endl;
 		return false;
 	}
 	size_t pos = line.find('#');
-
-	if (pos == string::npos) {
-		return true;
-	}
-	string substring = line.substr(0, pos);
-	size_t firstSemi = substring.find(';');
-	if (firstSemi == string::npos){
-		cerr << "Ignore line because it's invalid." << endl;
-		return false;
-	}
-	size_t secondSemi = substring.find(';', firstSemi+1);
-	if (secondSemi == string::npos) {
-		cerr << "Ignore line because it's invalid." << endl;
-		return false;
-	}
+	if (pos == 0) {
+		cout << "Ignore comment line" << endl;
+			return false;
+		}
 	return true;
 }
 
@@ -55,7 +43,7 @@ int main(int argc, char* argv[]){
 	ifstream infile;
 
 	if(argc <=1){
-		cout << "No file-path found. Open default-file." << endl;
+		cout << "No file-path found. Try to open default file path." << endl;
 		infile.open(FILE_PATH, ios::in);
 	}
 	else {
@@ -75,30 +63,25 @@ int main(int argc, char* argv[]){
 	double location;
 	double value;
 
-	string lineNo;
-	string loc;
-	string val;
-	istringstream s;
+	char overage[2];
 
 	while (getline(infile, line)){
-		s.clear();
 		lineCount++;
-		if (lineIsValid(line)){
-			s.str(line);
-			s >> lineNo >> loc >> val;
-			try {
-				location = stod(loc);
-				value = stod(val);
-			} catch (const exception&) {
-				continue;
-			}
-			if (!(isnan(value) || isinf(value) || value <= 0) ){
-				if (location == 1){
-					loc1.push_back(value);
-				}else if (location == 2) {
-					loc2.push_back(value);
-				}
-			}
+		if(lineIsValid(line)){
+		 int values = sscanf(line.c_str(), "%*d ; %lf ; %lf %1s", &location, &value, overage);
+		 if (values != 2) {
+			cerr << "Error while parsing data" << endl;
+			continue;
+		 }if (isnan(value) || value <= 0){
+			 cerr << "Invalid value" << endl;
+			 continue;
+		 }
+			 if (location == 1){
+				 loc1.push_back(value);
+			 } else if (location == 2) {
+				 loc2.push_back(value);
+			 }
+
 		}
 	}
 
