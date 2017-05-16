@@ -23,7 +23,7 @@ public class Ex2{
 
 	public static void main(String[]args){
 
-		System.out.println("Starting Ex2");
+		System.out.println("Running Ex2... ");
 
 		// check if schema is explicitly defined in input arg, else use default
 		String schemaFileName = "schema.xsd";
@@ -41,15 +41,15 @@ public class Ex2{
 		catch(Exception e){
 			System.out.println("Schema file not explicitly given, defaulting to data.xml");
 		}
-		System.out.println("Attemting to read " + xmlFileName + " with schema "+ schemaFileName " ... ");
+		System.out.println("Reading " + xmlFileName + " with schema "+ schemaFileName + " ... ");
 
 		try{
-			validateWithSchema(args[0], schemaFileName);
+			System.out.println("Validating Schema...");
+			validateWithSchema(xmlFileName, schemaFileName);
 		}
 		catch(Exception e){
 			System.err.println(e.toString());
 		}
-
 		try{
 			parseToCsv(xmlFileName);
 		}
@@ -57,7 +57,7 @@ public class Ex2{
 			System.err.println(e.toString());
 		}
 
-		System.out.println("Terminating Ex2");
+		System.out.println("Terminating Ex2...");
 	}
 
 	public static void validateWithSchema(String xmlFileName, String schemaFileName) throws Exception{
@@ -81,7 +81,8 @@ public class Ex2{
 		Transformer transformer = TransformerFactory.newInstance()
 		        .newTransformer(stylesource);
 		Source source = new DOMSource(document);
-		Result outputTarget = new StreamResult(new File("data.csv"));
+		String outputFileName = xmlFileName.replace(".xml", "") + ".csv";
+		Result outputTarget = new StreamResult(new File(outputFileName));
 		transformer.transform(source, outputTarget);		        
 	}
 
