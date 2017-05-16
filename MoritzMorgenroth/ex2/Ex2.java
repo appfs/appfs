@@ -26,34 +26,37 @@ public class Ex2{
 		System.out.println("Running Ex2... ");
 
 		// check if schema is explicitly defined in input arg, else use default
-		String schemaFileName = "schema.xsd";
+		String schemaFileName = "measured-1-1-0.xsd";
 		try{
 			schemaFileName = args[1];
 		}
 		catch(Exception e){
-			System.out.println("Schema file not explicitly given, defaulting to schema.xsd");
+			System.out.println("Schema file not explicitly given, defaulting to measured-1-1-0.xsd");
 		}
 
-		String xmlFileName = "data.xml"; 
+		String xmlFileName = "example.measured-1-1-0.xml"; 
 		try{
 			xmlFileName = args[0];
 		}
 		catch(Exception e){
-			System.out.println("Schema file not explicitly given, defaulting to data.xml");
+			System.out.println("XML file not explicitly given, defaulting to example.measured-1-1-0.xml");
 		}
-		System.out.println("Reading " + xmlFileName + " with schema "+ schemaFileName + " ... ");
+		System.out.println("Reading " + xmlFileName + " with schema "+ schemaFileName + "... ");
 
 		try{
-			System.out.println("Validating Schema...");
+			System.out.println("Validating schema...");
 			validateWithSchema(xmlFileName, schemaFileName);
 		}
 		catch(Exception e){
+			System.out.println("An error occured validating the schema:");
 			System.err.println(e.toString());
 		}
 		try{
+			System.out.println("Parsing to csv...");
 			parseToCsv(xmlFileName);
 		}
 		catch(Exception e){
+			System.out.println("An error occured parsing to csv:");
 			System.err.println(e.toString());
 		}
 
@@ -82,6 +85,7 @@ public class Ex2{
 		        .newTransformer(stylesource);
 		Source source = new DOMSource(document);
 		String outputFileName = xmlFileName.replace(".xml", "") + ".csv";
+		System.out.println("Writing to " + outputFileName);
 		Result outputTarget = new StreamResult(new File(outputFileName));
 		transformer.transform(source, outputTarget);		        
 	}
