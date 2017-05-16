@@ -6,7 +6,7 @@
  */
 
 
-#include </home/fabian/tinyxml/tinyxml.h>
+#include <tinyxml/tinyxml.h>
 #include <iostream>
 #include <fstream>
 
