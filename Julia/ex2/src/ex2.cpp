@@ -55,12 +55,15 @@ void validateDocument(){
 	if (domParser.getErrorCount() == 0) {
 	     cout << "XML file validated against the schema successfully" << endl;
 	}else {
-	     cerr << "XML file doesn't conform to the schema" << endl;
-	     cout << errorHandler.getInformationsAsString() << endl;
+	     cerr << "XML file doesn't conform to the schema. " << domParser.getErrorCount() << " error(s) found." << endl;
 	}
 }
 
 
+/**
+ * Run program with ex2 filename.
+ * Validation schema is needed to be in the same folder (or higher folder)
+ */
 int main(int argc, char* argv[]){
 	try {
 		XMLPlatformUtils::Initialize();
@@ -74,8 +77,7 @@ int main(int argc, char* argv[]){
 	if (argc <= 1){
 		cerr << "No path found. Try to open default file " << endl;
 	} else {
-		SOURCE_FILE_PATH = argv[0];
-		SCHEME_PATH = argv[1];
+		SOURCE_FILE_PATH = argv[1];
 	}
 	result = xmlDoc.LoadFile(SOURCE_FILE_PATH);
 

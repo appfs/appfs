@@ -34,10 +34,7 @@
 
 .project
 .cproject
-*.xml
-*.xsd
-*.pdf
 
 language.settings.xml
 *.dat
-/ex2/
+
