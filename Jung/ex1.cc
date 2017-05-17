@@ -3,175 +3,188 @@
 #include <stack>
 #include <cmath>
 #include <time.h>
+#include <string>
 using namespace std;
 
 
 
-void goToSemi(ifstream &myfile, int &i){             // stream goes to the next semicolon with it already extracted
-    int where=myfile.get();
-    while(where!=59){
-        if(where==10){
-            i++;
-        }
-        where=myfile.get();
-    }
-}
 
 
-
-void goToNextLine(ifstream &myfile){                //stream goes to the next line
-            int where = myfile.get();
-             while(where!=10){                    // until the next line     10= int '\n'
-                where=myfile.get();
-            }
-}
-
-
-
-
-int goToLoc(ifstream &myfile){                          // stream goes to the next number with it already extracted and gives back its value
-                                                        // if there is no number before the next semicolon it returns 0 (and semicolon is extractet) 
-    int where = myfile.get();
-    int where2=where;
-    while ((where<48 || where > 57)&&where!=59){
-        
-        where = myfile.get();
-    }
-    if(where==59){
-        where=48;
-    }
-    return where-48;
-}
-
-
-
-
-void addNumber(ifstream &myfile, long double &w, long int n, int &i){                        //extracts the next number and calculates the actual geometric mean given the location 
+bool addNumber(double &mean,string str, int pos,int n){               //adds number to mean if line is valid and returns 1, otherwise returns 0
     
-    long double v=0.0;
-    int where = myfile.get();
-    int count = 0;
-    int point =0;
-    stack<int> number;
+    int i=pos+1;
     
-    while (where<48 || where > 57){
-        if(where==10){
-            i++;
-        }
-        where = myfile.get();
-    }
+    int pos2=i;
+    int point;
     
-    while ((where>=48&&where<=57)||where==46){
-        
-        if(where==46){
-            point=count;
-        }
-        else{
-            count++;
-            number.push(where-48);
-        }
-        where=myfile.get();
+    
+    while(str[i]==' '){
+        i++;
     }
-        myfile.unget();
-        
-        
-    for(int j=count; j>0; j--){
-        v=v+(number.top())*(pow(10,(point-j)));
-        number.pop();
-    }
-    if(w==0){
-        w=v;
+    if(str[i]<48||str[i]>57){
+        return false;
     }
     else{
-        long double exponent=(1+(log(1/w))/(log(v)))/(n+1);
-        w=w*pow(v,exponent);
-    }
-    
-
-    
-}
-
-
-
-
-
-void mean(long double * means){
-    
-    ifstream myfile;
-    myfile.open("ex1.dat");
-    
-    //cout<<myfile.eof()<<endl;
-    int i=1;
-    int where=myfile.get();
-    int loc;
-    long int loc1=0;
-    long int loc2=0;
-    
-    while(where!=-1){
-
-        if(where==35){                  // ignore lines with #
-            
-            where=myfile.get();
-            
-            while(where!=10 && where!=-1){       // goes to next line
-               where=myfile.get();
-            }
+        pos2=i;
+        while(str[i]>47&&str[i]<58){
             i++;
-            where=myfile.get();
         }
         
-        
+        point=i;
+        int pos3=i;
+        if(str[i]==' '){
+            while(str[i]==' '){
+                i++;
+            }
+            if(str[i]!=0){
+                return false;
+            }
+        }
+        else if(str[i]==0){
+            
+        }
+        else if(str[i]=='.'){
+            i++;
+            while(str[i]>47&&str[i]<58){
+            i++;
+            }
+            pos3=i-1;
+            while(str[i]==' '){
+                i++;
+            }
+            if(str[i]!=0){
+                return false;
+            }
+            
+        }
         else{
-            
-            goToSemi(myfile,i);
-            loc=goToLoc(myfile);
-            goToSemi(myfile,i);
-            
-            
-            if(loc==1){
-                addNumber(myfile,means[0],loc1, i);  
-                loc1++;
-            }
-            else if(loc==2){
-                addNumber(myfile,means[1],loc2, i);
-                loc2++;
-            }
-            
-            else{
-
-            }
-
-            goToNextLine(myfile);
-            where=myfile.peek();
-            i++;
-
+            return false;
         }
-    
+        
+        double numb=0.0;
+        for(int j=point-pos3;j<0;j++){         //numbers behind comma
+            numb=numb+(str[point-j]-48)*pow(10,j);
+        }
+        for(int j=0;j<point-pos2;j++){          //numbers before comma
+            numb=numb+(str[point-j-1]-48)*pow(10,j);
+        }
+        
+        
+        if(mean==0){
+            mean=numb;
+        }
+        else{
+            long double exponent=(1+(log(1/mean))/(log(numb)))/(n+1);
+            mean=mean*pow(numb,exponent);
+        }
+        return true;
+        
         
     }
     
-    cout<< "File: ex1.dat with :"<< i << "  lines"<< endl;
-    cout<<" Valid Values Loc1:"<< loc1<< "  With GeoMean: "<<means[0]<<endl;
-    cout<<" Valid Values Loc1:"<< loc2<< "  With GeoMean: "<<means[1]<<endl;
+}
+
+int getLoc(int &pos, string str){                            //gets location, returns 0 if nonvalid location, sets new position after nex semicolon
     
+
+    int i=pos+1;
+    while(str[i]==' '){
+        i++;
+    }
+    
+    if(str[i]!='1'&&str[i]!='2'){
+        return 0;
+    }
+    else{
+        int loc=str[i]-48;
+        i++;
+        while(str[i]==' '){
+            i++;
+        }
+        if(str[i]!=';'){
+            return 0;
+        }
+        else{
+            pos=i;
+            return loc;
+        }
+    }
 }
 
 
+int mean(int &loc1,int &loc2,double &mean1,double &mean2,string filename) {
+     
+     
+     
+     
+	ifstream file;
+	file.open(filename);
+	string str;
+	int count = 0;
+	
+	while (file.peek() != -1) {
+	    
+	     getline(file, str);
+		    count++;
+	    
+	    if(str[0]=='#'){                //ignore lines with semicolon
+	    }
+	    else{
+	        
+	       int length=str.length();
+	       
+	       if (length<4){               //ignore nonvalid lines
+	       }
+	       else{
+	           	      
+	           int pos=str.find_first_of(';',0);
+	           
+	           if(pos>length){          //ignore lines with no semicolon
+	               
+	           }
+	           else{
+	               
 
-
-
-
-
-int main(){
-    clock_t tStart = clock();
-    ifstream myfile;
-    myfile.open("ex1.dat");
-
-
-    
-    long double means[2]={0.0,0.0};
-    mean(means);
-    
-    cout<<"Time needed: ";
-    cout<<(double)(clock()-tStart)/CLOCKS_PER_SEC<<" seconds"<<endl;
+	               
+	               int loc=getLoc(pos,str);
+	                if(loc==1){
+	                   bool is=addNumber(mean1,str,pos,loc1);
+	                   if(is){
+	                    loc1++;
+	                   }
+	               }
+	               else if(loc==2){
+	                    bool is=addNumber(mean2,str,pos,loc2);
+	                   if(is){
+	                    loc2++;
+	                   }
+	               }
+	           }
+	       }
+	    }
+		
+	}
+	file.close();
+	return count;
+	
 }
+
+
+int main(int argc, char* argv[]) {
+    	clock_t tStart = clock();
+    	
+    	int loc1=0;
+    	int loc2=0;
+    	double mean1=0.0;
+    	double mean2=0.0;
+    	int count=mean(loc1,loc2,mean1,mean2,argv[1]);
+    	
+    	cout<< "File: ex1.dat with :"<< count << "  lines"<< endl;
+        cout<<" Valid Values Loc1:"<< loc1<< "  With GeoMean: "<<mean1<<endl;
+        cout<<" Valid Values Loc2:"<< loc2<< "  With GeoMean: "<<mean2<<endl;
+
+		cout << "Time needed: ";
+	    cout << (double)(clock() - tStart) / CLOCKS_PER_SEC << " seconds" << endl;
+	   
+	return 0;
+ }
