@@ -1,22 +1,37 @@
-import sys, csv
+import sys, csv, datetime
 from lxml import etree, objectify
 from lxml.etree import XMLSchemaParseError, XMLSyntaxError
 
-# Auch diesen Code hat Christopher Wyczisk runtergesaut, da er sich
-# aufgrund einer Razzia in seinem Buero bei Toll Collect nicht aufs Coden
-# konzentrieren konnte.
-
-# Start z.B. per: python ex2.py measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml measured-1-1-0.xsd result.csv
+# Anmerkung:
+# Um dieses Programm z.B. auf Ubuntu und Windows auszufuehren, muss mittels PIP oder easy_install (etc.)
+# lxml installiert werden. Dies Funktioniert z.B. per pip install lxml
+# Sollte diese Anweisung zu folgendem Fehler fuehren:
+#       error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+# so haben Sie Python-Dev auf Ihrer Maschine nicht vollstaendig installiert, das Loest man auf Ubuntu 16.x z.B. per:
+#       sudo apt-get update
+#       apt-get install python2.7-dev
+# Im Anschluss bitte pip install lxml, sollte das trotzdem nicht klappen: E-Mail an mich.
+# Verwenden Sie Python3 nehmen sie python3-dev.
+# Start des programms geht z.B. per:
+#       python ex2.py measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml measured-1-1-0.xsd result.csv
 
 class MeasuredDto(object):
     
-    def __init__(self, datumAlsString, hourAlsString, wertAlsString):
-         self.datum = datumAlsString
-         self.hour = hourAlsString
-         self.wert = wertAlsString
+    def __init__(self, nodeId, datumAlsString, hourAlsString, wertAlsString):
+        self.nodeId = nodeId
+        self.hour = hourAlsString
+        self.datum = self.__getDatum(datumAlsString, hourAlsString)
+        self.wert = wertAlsString
+    
+    def __getDatum(self, datum, hour):
+        datumObj = datetime.datetime.strptime(datum, "%Y-%m-%d")
+        if hour > 24:
+            datumObj = datumObj + datetime.timedelta(days = 1)
+            self.hour = hour - 24
+        return datumObj.strftime("%Y-%m-%d")
     
     def getAsSemikolonString(self):
-        string = self.datum + ";" + self.hour + ";" + self.wert
+        string = self.nodeId + ";" + self.datum + ";" + self.hour + ";" + self.wert
         return string
          
          
@@ -25,7 +40,7 @@ class EtlProzess(object):
     def __init__(self, xmlInputFilename, xslInputFilename, csvOutputFilename):
         self.__xmlInputFilename = xmlInputFilename
         self.__xslInputFilename = xslInputFilename
-        self.__csvOutputFilename =csvOutputFilename
+        self.__csvOutputFilename = csvOutputFilename
         self.__messureds = []
     
     def readXml(self):
@@ -44,8 +59,7 @@ class EtlProzess(object):
         fobj = open(self.__csvOutputFilename, "w")
         csvWriter = csv.writer(fobj, delimiter=';')
         for measured in self.__messureds:
-            #print("Speichere: " + measured.getAsSemikolonString())
-            csvWriter.writerow([measured.datum, measured.hour, measured.wert])
+            csvWriter.writerow([measured.nodeId, measured.datum, measured.hour, measured.wert])
         fobj.close()
         
     def __readXsd(self):
@@ -63,9 +77,10 @@ class EtlProzess(object):
         datum = knotenMenge.get('date')
         hour = knotenMenge.get('gasDayStartHourInUTC')
         for knoten in knotenMenge:
+            nodeId = knoten.get("id")
             for tag in knoten:
                 wert = tag.find("{" + nsmap[None] + "}amountOfPower").get('value')
-                self.__messureds.append(MeasuredDto(datum, int(hour) + int(tag.get('hour')), wert))
+                self.__messureds.append(MeasuredDto(nodeId, datum, int(hour) + int(tag.get('hour')), wert))
         
         
         
@@ -81,7 +96,3 @@ etl.readXml()
 print(xmlInputFilename + " wurde gelesen. Jetzt wird das csv erstellt...")
 etl.writeCsv()
 print("Fertig! Das csv File " + csvOutputFilename + " wurde erstellt.")
-
-
-
-
