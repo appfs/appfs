@@ -1,28 +1,23 @@
-/*
- * DocumentErrorHandler.cpp
- *
- *  Created on: May 8, 2017
- *      Author: july
- */
-
 #include "DocumentErrorHandler.h"
-#include <iostream>
 
 using namespace std;
+using namespace xercesc;
 
 DocumentErrorHandler::DocumentErrorHandler() {
-	// TODO Auto-generated constructor stub
-
+	// Nothing to do
 }
 
-void DocumentErrorHandler::error(const xercesc_3_1::SAXParseException &e){
-	cerr << "Error occured: " << e.getMessage() << endl;
+void DocumentErrorHandler::error(const SAXParseException &ex){
+	HandlerBase::error(ex);
+	cerr << "Error found: " << XMLString::transcode(ex.getMessage()) <<" at line " << ex.getLineNumber() << endl;
 }
 
-void DocumentErrorHandler::fatalError(const xercesc_3_1::SAXParseException &e){
-	cerr << "Fatal error occured: " << e.getMessage() << endl;
+void DocumentErrorHandler::fatalError(const SAXParseException &ex){
+	HandlerBase::fatalError(ex);
+	cerr << "Fatal error found: " << XMLString::transcode(ex.getMessage()) <<" at line " << ex.getLineNumber() << endl;
 }
 
-void DocumentErrorHandler::warning(const xercesc_3_1::SAXParseException &e){
-	cerr << "Warning: " << e.getMessage() << endl;
+void DocumentErrorHandler::warning(const SAXParseException &ex){
+	HandlerBase::warning(ex);
+	cerr << "Warning found: " << XMLString::transcode(ex.getMessage()) <<" at line " << ex.getLineNumber() << endl;
 }
