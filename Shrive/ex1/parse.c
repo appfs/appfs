@@ -2,7 +2,7 @@
 
 struct double_xy geo_mean_rows(struct row *conductor, int count1, int count2)
 {
-	int count;
+	int count;  //is this neded?
 	double result;
 	struct double_xy geo_mean;
 	geo_mean.x = 1.;
