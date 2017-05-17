@@ -2,8 +2,8 @@
 
 struct double_xy geo_mean_rows(struct row *conductor, int count1, int count2)
 {
-	int count;  //is this neded?
-	double result;
+	int count;  // is this needed?
+	double result; // is this needed?
 	struct double_xy geo_mean;
 	geo_mean.x = 1.;
 	geo_mean.y = 1.;
