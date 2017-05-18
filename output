@@ -1,0 +1,9 @@
+simo@simo-XPS-L501X:~/Documents/uni/TU-Berlin/appfs/appfs$ time python ex1.py ex1.dat
+File:	ex1.dat with 76441562 lines 
+Valid values Loc1: 38218952 with GeoMean: 50.0028593136
+Valid values Loc2: 38221141 with GeoMean: 50.0014522173
+
+real	4m42.182s
+user	4m38.088s
+sys	0m1.716s
+
