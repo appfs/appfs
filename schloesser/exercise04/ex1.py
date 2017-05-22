@@ -12,13 +12,15 @@ import sys
 class Ex1:
 
 	def __init__(self, string):
+		## store the filename
 		self.filename = string;
-		# store [number of lines, number of positions in location1, number of positions in location2]
+		## store [number of lines, number of positions in location1, number of positions in location2]
 		self.total = 0
-		# store values in loc1, loc2 respectively
+		## store values in loc1, loc2 respectively
 		self.loc = [[],[]]
+		## store number of values in locations
 		self.n = []
-		# store the geometric mean of both locations
+		## store the geometric mean of both locations
 		self.mean = []
 		
 	## Parse a file
