@@ -17,6 +17,7 @@
 using namespace xercesc;
 using namespace std;
 
+/** Handler for Errors */
 class ParserErrorHandler : public HandlerBase{
 private:
 	vector<string> errors;
@@ -26,10 +27,15 @@ private:
 	void addStrings(std::stringstream& ss, vector<string> &strings);
 
 public:
+	/** Constructor */
 	ParserErrorHandler();
+	/** @Override adding an error */
 	void error(const SAXParseException& exc);
+	/** @Override adding an fatalError */
 	void fatalError(const SAXParseException& exc);
+	/** @Override adding an warning */
 	void warning(const SAXParseException& exc);
+	/** get all Exceptions as string. 1. warnings 2. errors 3. fatalErrors */
 	string getExceptionsAsString();
 };
 
