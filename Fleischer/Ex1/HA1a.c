@@ -76,7 +76,12 @@ int jumpNumber(char *line, int iter){
     return iter;		
 }
 
-
+/**
+* Computes the Geometric Mean of loc1 and loc2 of a file
+*
+* @param life at the call of the programm
+* @return The Geometric Mean of loc1 and loc2 with the number of valid loc1 and loc2 lines and the amont of lines in the file
+*/
 	
 int main(int argc, char *argv[]){
 FILE *fp;
