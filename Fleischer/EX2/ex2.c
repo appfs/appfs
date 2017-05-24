@@ -1,3 +1,15 @@
+/**
+ * @file
+ * @author  Sven Fleischer
+ * @version 1.0
+
+ *
+ * @section DESCRIPTION
+ *
+ * This programm verfies at first the through the shell at the moment of the call given xml file with a given shema (this file is given at second file after the xml file at the call). It writes to stdout.csv all values in the form YYYY-MM-DD; HH; amountOfPower. In stderr comes every error and every faulty value, which is having for example a non digit written in it, or a non existing time/date.
+-Value
+ */
+
 #include <libxml/parser.h>
 #include <stdio.h>
 #include <ctype.h>
