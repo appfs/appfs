@@ -17,7 +17,13 @@
 #include <libxml/xmlschemas.h>
 //parse with: gcc -std=c11 -O3 xml2-config --cflags --libs`ex2.c -o ex2 -lm
 //run with ./ex2 XML-File Schema
- 
+
+/**
+* Validates the file and verfies the data in the xml data
+*
+* @return stdout with the data and/or stderr with the errors and the worng lines.
+*/ 
+
 int main(int argc, char *argv[]){
  FILE *fptr;
  FILE *fptr2;
