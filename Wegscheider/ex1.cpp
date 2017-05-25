@@ -1,4 +1,8 @@
-/* @author: Fabian Wegscheider */
+/**
+ * @file ex1.cpp
+ * @author Fabian Wegscheider
+ * @date 1.5.17
+ */
 
 #include <iostream>
 #include <fstream>
@@ -8,7 +12,15 @@
 using namespace std;
 
 
-
+/**
+ * The main function. Reads a csv file from the command line that contains
+ * measured data from two locations in a specific format. Then the number of
+ * valid lines as well as the geometric means of the two data sets are printed
+ * to the standard output.
+ * @param numargs number of inputs on command line
+ * @param args array of inputs on command line
+ * @return whether the file was read successfully
+ */
 int main(int numargs, char *args[]) {
 
 	if (numargs != 2) {

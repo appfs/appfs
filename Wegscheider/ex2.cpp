@@ -1,8 +1,7 @@
-/*
- * ex2.cpp
- *
- *  Created on: May 12, 2017
- *      Author: Fabian Wegscheider
+/**
+ * @file ex2.cpp
+ * @author Fabian Wegscheider
+ * @date May 12, 2017
  */
 
 
@@ -71,7 +70,14 @@ string readRecursively(TiXmlNode *node, string date) {
 }
 
 
-
+/**
+ * main function which reads an xml file of the scheme "measured"
+ * from the command line and prints the measured amounts of power
+ * to the standard output.
+ * @param numargs the number of inputs on the command line
+ * @param args array of inputs on the command line
+ * @return whether the file was read successfully
+ */
 int main(int numargs, char *args[]) {
 
 	if (numargs != 2) {
