@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 ## @package exercise 2 + 4
 #  This package provides means to solving exercises 2 and 4 from the lecture appfs
@@ -10,7 +11,7 @@ from lxml import etree
 class XMLValidator:
 	
 	@staticmethod
-`	## Validation 
+	## Validation 
 	#  Validate an etree against an xml schema and print out the result.
 	def validate(filename_schema, etree_xmlfile):
 		schema_root = etree.parse(filename_schema)
@@ -37,14 +38,14 @@ class XMLValidator:
 	def extract_information(etree_xmlfile):
 		root = etree_xmlfile.getroot() 
 		for gas_day in root:
-			if is_comment(gas_day): continue
+			if XMLValidator.is_comment(gas_day): continue
 			shift_hour = int(gas_day.attrib['gasDayStartHourInUTC'])
 			for boundary_node in gas_day:
-				if is_comment(boundary_node): continue
+				if XMLValidator.is_comment(boundary_node): continue
 				for time in boundary_node:
-					if is_comment(time): continue
+					if XMLValidator.is_comment(time): continue
 					for elem in time:
-						if is_comment(elem): continue
+						if XMLValidator.is_comment(elem): continue
 						if elem.tag != '{http://gaslab.zib.de/kwpt/measured}amountOfPower': continue
 						print("{0}; {1:02d}; {2}".format(gas_day.attrib['date'], int(time.attrib['hour'])+shift_hour, elem.attrib['value']))
 
