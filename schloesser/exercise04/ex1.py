@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ## @package exercise 1 + 4
-#  This package provides means to solving exercises 1 and 4 from the lecture
+#  This package provides means to solving exercises 1 and 4 from the lecture appfs
 
 import numpy as np
 import scipy, scipy.stats
@@ -10,7 +10,13 @@ import sys
 ## Exercise 1 class
 #  This class provides methods for completing the first exercise of the lecture appfs, summer 2017, TUB
 class Ex1:
-
+	
+	## Constructor
+	#  
+	#  @param string the name of the file containing the data. Each line has format:
+	#      seq; loc; val
+	#  where seq is a sequence number, loc is either 1 or 2 and val is a value > 0.
+	#  Empty lines or a line starting with '#' is treated as comment and ignored.
 	def __init__(self, string):
 		## store the filename
 		self.filename = string;
@@ -24,7 +30,7 @@ class Ex1:
 		self.mean = []
 		
 	## Parse a file
-	#  Writes to total and loc the number of lines resp. the values in both locations
+	#  Write to total and loc the number of lines resp. the values in both locations
 	def parse_file(self):
 		# open file
 		with open(self.filename, "r") as f:
@@ -62,7 +68,6 @@ class Ex1:
 	
 	## Calculate geometric mean
 	#  calculate the geometric means of the values in the lists in loc
-	#  @param loc a two dimensional list
 	def calculate_means(self):
 		for i in range(2):
 		    self.n.append(len(self.loc[i]))
@@ -71,9 +76,11 @@ class Ex1:
 ## Mainmethod
 #  run when class is executed, but not after import
 if __name__=="__main__":
+	# read filename from commandlineargs
 	filename = sys.argv[1]
 	e = Ex1(filename)
-	# read filename from commandlineargs
+
+	# parse file, calculate means and output result to user
 	e.parse_file()
 	e.calculate_means()
 	e.print_info()
