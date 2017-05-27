@@ -1,3 +1,13 @@
+/*
+ * ex2.cpp
+ *
+ * 	\brief     Second exercixe
+ *  \details   This class reads in a xml-file and validates it against a scheme. Also reads data from given file. Run program with ex2 filename.
+ *  \pre       Be sure that the validation scheme is there
+ *  \author    Julia Baumbach
+ *  \date      01.05.2017
+ */
+
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -19,23 +29,44 @@ using namespace tinyxml2;
 using namespace std;
 using namespace xercesc;
 
+/**
+ * \param SOURCE_FILE_PATH default file path if none is hand over while starting the programm
+ */
 const char* SOURCE_FILE_PATH = "measured.xml";
+/**
+ * \param SCHEME_PATH path for validation scheme
+ */
 const char* SCHEME_PATH = "http://gaslab.zib.de/kwpt/measured measured-1-1-0.xsd";
 
-
-XMLError checkResult(XMLError result){
+/**
+ * \fn void checkResult(XMLError result)
+ * \brief Checks if a XMLError is a success or not.
+ * If not, writes an error message at the console
+ * \param result the XMLError to check
+ */
+void checkResult(XMLError result){
 	if (result != XML_SUCCESS) {
 		cerr << "Error while opening file: " << result << endl;
 	}
-	return result;
 }
 
+/**
+ * \fn void checkAttribute(const XMLAttribute* attribute)
+ * \brief Checks if a given attribute is valid. If not,prints an error
+ * to the console
+ * \param attribute the given attribute to check
+ */
 void checkAttribute(const XMLAttribute* attribute){
 	if (attribute == 0) {
 		cerr << "Error: Attribute " << attribute << " not found." << endl;
 	}
 }
 
+/**
+ * \fn void validateDocument()
+ * \brief Validates the given document against the validation scheme.
+ * If it's not valid, prints the validation errors and warnings to the console
+ */
 void validateDocument(){
 	XercesDOMParser domParser;
 
@@ -61,8 +92,9 @@ void validateDocument(){
 
 
 /**
- * Run program with ex2 filename.
- * Validation schema is needed to be in the same folder (or higher folder)
+ * Main function which reads in a document and validates it.
+ * Reads also data from the given document.
+ * Shows error message if the file could not be found
  */
 int main(int argc, char* argv[]){
 	try {
