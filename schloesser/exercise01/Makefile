@@ -7,7 +7,8 @@ doc:
 	doxygen dox-conf
 
 coverage:
-	echo "please implement me"
+	python3-coverage run --omit=/usr/* ex1.py test/testdata
+	python3-coverage report -m
 
 check:
 	echo "please implement me"
