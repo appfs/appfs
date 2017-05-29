@@ -1,9 +1,10 @@
 test:
-	python ex1.py test/testdat
+	python ex1.py test/testdata
+	python ex1.py test/cleandata
+	python ex1.py test/longdata
 
 doc:
-	doxygen -g configuration
-	doxygen configuration
+	doxygen dox-conf
 
 coverage:
 	echo "please implement me"

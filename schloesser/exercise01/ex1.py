@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-## @package exercise 1 + 4
+## @package exercise 1 + 4 
 #  This package provides means to solving exercises 1 and 4 from the lecture appfs
 
 import numpy as np
