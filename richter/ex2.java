@@ -17,6 +17,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+
+/**
+ * Advanced Programming: Exercise 2 (handling xml files)
+ * @author Maximilian Richter
+ */
+
 public class ex2 {
 
 	public static void main(String[] args) {
@@ -59,6 +65,13 @@ public class ex2 {
 		
 	}
 	
+	/**
+	 * This function checks a given xml file against a xml schema.
+	 * @param xmlFile Specifies the xml file given in String format.
+	 * @param schemaName Specifies the schema file given in String format.
+	 * @throws SAXException Parsing Error.
+	 * @throws IOException File Exception (should not be thrown)
+	 */
 	public static void validXmlSchema(String xmlFile, String schemaName) throws SAXException, IOException{
 		
 		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -69,7 +82,14 @@ public class ex2 {
 		
 	}
 	
-	
+	/**
+	 * This function reads the file indicated by fileName and returns a String of its contents.
+	 * @param fileName Specifies the file name of the input file.
+	 * @return Xml file as String.
+	 * @throws ParserConfigurationException Parsing Error.
+	 * @throws SAXException Parsing Error.
+	 * @throws IOException Given input fileName does not specify a valid file.
+	 */
 	public static String readXmlToString(String fileName) throws ParserConfigurationException, SAXException, IOException{
 		
 		String returnString = "";
