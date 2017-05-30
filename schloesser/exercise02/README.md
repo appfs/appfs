@@ -1,5 +1,7 @@
 You have to have the following packages installed:
 
+lxml 
+
 doxypypy
     available as command doxypypy
 

@@ -1,6 +1,7 @@
 latex/*
 html*/*
-dat*
+
+*.x*
 
 .cov*
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" 
+"""
 Exercise 1 + 4
 
 This package provides means to solving exercises 1 and 4 from the lecture appfs, summer 2017, TUB
@@ -29,7 +29,7 @@ import numpy as np
 from scipy import stats
 
 class Ex1:
-    """ 
+    """
     Exercise 1 class
 
     This class provides methods for completing the first exercise of the lecture appfs,
@@ -43,11 +43,12 @@ class Ex1:
     """
 
     def __init__(self, string):
-        """ 
+        """
         Constructor
-        
-        Args: 
-            string: the name of the file containing the data
+
+        Args:
+            self: the object pointer
+            string (str): the name of the file containing the data
         """
         self.filename = string
         self.total = 0
@@ -56,16 +57,19 @@ class Ex1:
         self.mean = []
 
     def parse_file(self):
-        """ 
+        """
         Parse a file
-        
+
         Write to total and loc the number of lines resp. the values in both locations
+
+        Args:
+            self: the object pointer
         """
         # open file
         with open(self.filename, "r") as f:
             last = 0
             # loop over lines in file
-            for i, line in enumerate(f):
+            for line in f:
                 # split the lines into the 3 values we are interested in
                 tmp = line.split("\n")[0].split("#")[0].split("; ")
                 # increase number of lines
@@ -101,11 +105,14 @@ class Ex1:
                     continue
 
     def print_info(self):
-        """ 
+        """
         Print information
-        
+
         print collected information to stdout such as filename, number of lines and values
         and the geometric means.
+
+        Args:
+            self: the object pointer
         """
         # output information
         print("File: " + str(self.filename) + " with " + str(self.total) + " lines")
@@ -114,10 +121,13 @@ class Ex1:
             print("Valid values Loc {}: {} with GeoMean: {}".format(i+1, self.n[i], self.mean[i]))
 
     def calculate_means(self):
-        """ 
+        """
         Calculate geometric mean
-        
+
         calculate the geometric means of the values in the lists in loc
+
+        Args:
+            self: the object pointer
         """
         for i in range(2):
             self.n.append(len(self.loc[i]))
