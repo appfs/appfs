@@ -1,6 +1,6 @@
 latex/*
 html/*
 dat*
-.coverage/
-.coverage/*
+
+.cov*
 
