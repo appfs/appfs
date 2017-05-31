@@ -20,6 +20,15 @@ class ParseXML():
     """XML file handling."""
 
     def __init__(self, xml, xsd, verbose):
+        """
+        Initiate the passed files and options.
+
+        Parameters
+        ----------
+        xml -- the xml file to extract the "amountOfPower" from
+        xsd -- the schema file to validate the xml against
+        verbose -- prompt some info on the screen
+        """
         self.fileXML = xml
         self.fileXSD = xsd
         self.verbose = verbose
@@ -55,7 +64,14 @@ class ParseXML():
         # print(self.schema.validate(etree.parse(self.fileXML)))
 
     def readXML(self, schema=None):
-        """Open XML file and return the root."""
+        """
+        Open XML file and return the root.
+
+        Parameters
+        ----------
+        schema -- validation with a schema is optional
+
+        """
         parser = etree.XMLParser(remove_comments=True, schema=schema)
         # validation happens with the schema argument during parsing or throw
         # an error to see whats wrong (in init)
@@ -94,7 +110,7 @@ class ParseXML():
 
 
 def main(argv):
-    """."""
+    """Argument handler."""
     import argparse
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
