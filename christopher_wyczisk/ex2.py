@@ -1,21 +1,31 @@
+"""
+Author:  Christopher Wyczisk
+Version: 1.0
+
+DESCRIPTION
+
+Mit diesem Programm koennen Sie Daten aus einem .xml File in ein .csv File uebertragen.
+
+Um dieses Programm z.B. auf Ubuntu und Windows auszufuehren, muss mittels PIP oder easy_install (etc.)
+lxml installiert werden. Dies Funktioniert z.B. per pip install lxml
+Sollte diese Anweisung zu folgendem Fehler fuehren:
+   error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+so haben Sie Python-Dev auf Ihrer Maschine nicht vollstaendig installiert, das Loest man auf Ubuntu 16.x z.B. per:
+   sudo apt-get update
+   apt-get install python2.7-dev
+Im Anschluss bitte pip install lxml, sollte das trotzdem nicht klappen: E-Mail an mich.
+Verwenden Sie Python3 nehmen sie python3-dev.
+Start des programms geht z.B. per:
+   python ex2.py measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml measured-1-1-0.xsd result.csv
+"""
+
 import sys, csv, datetime
 from lxml import etree, objectify
 from lxml.etree import XMLSchemaParseError, XMLSyntaxError
 
-# Anmerkung:
-# Um dieses Programm z.B. auf Ubuntu und Windows auszufuehren, muss mittels PIP oder easy_install (etc.)
-# lxml installiert werden. Dies Funktioniert z.B. per pip install lxml
-# Sollte diese Anweisung zu folgendem Fehler fuehren:
-#       error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
-# so haben Sie Python-Dev auf Ihrer Maschine nicht vollstaendig installiert, das Loest man auf Ubuntu 16.x z.B. per:
-#       sudo apt-get update
-#       apt-get install python2.7-dev
-# Im Anschluss bitte pip install lxml, sollte das trotzdem nicht klappen: E-Mail an mich.
-# Verwenden Sie Python3 nehmen sie python3-dev.
-# Start des programms geht z.B. per:
-#       python ex2.py measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml measured-1-1-0.xsd result.csv
 
 class MeasuredDto(object):
+    """Auf diese Hilfsklasse mappen wir jede Zeile der ,xml Datei."""
     
     def __init__(self, nodeId, datumAlsString, hourAlsString, wertAlsString):
         self.nodeId = nodeId
@@ -31,11 +41,13 @@ class MeasuredDto(object):
         return datumObj.strftime("%Y-%m-%d")
     
     def getAsSemikolonString(self):
+        """@return Zusammenfassendezeichenkette"""
         string = self.nodeId + ";" + self.datum + ";" + self.hour + ";" + self.wert
         return string
          
          
 class EtlProzess(object):
+    """Managed die die Uebertragung der .xml Daten in ein .csv File."""
     
     def __init__(self, xmlInputFilename, xslInputFilename, csvOutputFilename):
         self.__xmlInputFilename = xmlInputFilename
@@ -44,6 +56,7 @@ class EtlProzess(object):
         self.__messureds = []
     
     def readXml(self):
+        """Liesst das .xml ein und ueberprueft die vailiditaet."""
         try:
             schema = self.__readXsd()
             xml = self.__readXml(schema)
@@ -56,6 +69,7 @@ class EtlProzess(object):
             self.__readMessureds(xml)
         
     def writeCsv(self):
+        """Schreibt die relevanten Daten in ein .csv File."""
         fobj = open(self.__csvOutputFilename, "w")
         csvWriter = csv.writer(fobj, delimiter=';')
         for measured in self.__messureds:
@@ -72,6 +86,7 @@ class EtlProzess(object):
         return tree.getroot()
         
     def __readMessureds(self, xml):
+        """Mappt die relevanten Daten."""
         nsmap = xml.nsmap
         knotenMenge = xml.find("{" + nsmap[None] + "}gasDay")
         datum = knotenMenge.get('date')
