@@ -15,7 +15,13 @@ from scipy.stats.mstats import gmean
 
 
 def getData(fname):
-    """."""
+    """
+    Strip down the data file.
+
+    Parameters
+    ----------
+    fname -- the name of the data containing file
+    """
     vals1 = []
     vals2 = []
     errors = []
@@ -40,12 +46,24 @@ def getData(fname):
 
 
 def hTime(num):
-    """Return a string of human readable time."""
+    """
+    Return a string of human readable time.
+
+    Parameters
+    ----------
+    num -- the value in seconds to return as a readable time value
+    """
     return str(datetime.timedelta(seconds=num))
 
 
 def getGMean(args):
-    """Calculate the geometric mean of file."""
+    """
+    Calculate the geometric mean of file.
+
+    Parameters
+    ----------
+    args -- the command line arguments data file and cython option
+    """
     # start timing
     # cython = False
     t0 = time.time()
@@ -64,7 +82,7 @@ def getGMean(args):
 
 
 def main(argv):
-    """."""
+    """Argument handler."""
     import argparse
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
