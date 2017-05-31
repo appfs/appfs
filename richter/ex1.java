@@ -1,12 +1,22 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.ArrayList;
+
+/**
+ * Advanced Programming: Exercise 1 (handling large data files)
+ * @author Maximilian Richter
+ */
 
 public class ex1 {
 
+//	static ArrayList<Float> pos1A = new ArrayList<Float>();
+//	static ArrayList<Float> pos2A = new ArrayList<Float>();
 	static float[] pos1 = new float[51000000];
 	static float[] pos2 = new float[51000000];
 	
+	/**
+	 * This function parses the given file, reads in the contained data and calculates the geometric means of the locations.
+	 * @param args Specifies file to be parsed.
+	 */
 	public static void main(String[] args) {
 			
 		long startTime = System.currentTimeMillis();
@@ -22,6 +32,7 @@ public class ex1 {
 			
         String line = "";
         int seqnum;
+        int lastSeqnum = 0;
         int location;
         Float value;
         double sumOfLog1 = 0;
@@ -63,14 +74,14 @@ public class ex1 {
 		    	
 		    	// ignore line if location is not 1 or 2
 		    	if(!( location == 1 || location == 2)){
-//		    		System.err.println("Invalid location format.");
+//		    		System.err.println("Invalid location format in line " + (progress + 1) + ".");
 		    		continue;
 		    	}
 
 		    	
 		    	// ignore line of value is less than zero or NaN
 		    	if(value < 0 || Double.isNaN(value)){
-//		    		System.err.println("Invalid number format.");
+//		    		System.err.println("Invalid number format in line " + (progress + 1) + ".");
 		    		continue;
 		    	}
 		    	
@@ -88,7 +99,12 @@ public class ex1 {
 		    		pos2[validDataPointsPosition2] = value;
 		    		validDataPointsPosition2++;
 		    	}
+		    	
+		    	if(seqnum == lastSeqnum){
+		    		System.err.println("WARNING: Two consecutive identical sequence numbers  in line " + progress + " and " + (progress + 1));
+		    	}
 	    		
+		    	lastSeqnum = seqnum;
 	    	}
 	    	
 	    	catch(Exception e){
