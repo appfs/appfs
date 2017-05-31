@@ -1,7 +1,7 @@
 /**
  * @file
  * @author  Sven Fleischer
- * @version 1.0
+ * @version 1.1
 
  *
  * @section DESCRIPTION
@@ -15,8 +15,11 @@
 #include<stdlib.h>
 #include <string.h>
 #include <math.h> 
+#include <assert.h>
+#include <ctype.h>
 
 #define MAX_LINE_LEN 512
+
 
 /** 
 * A simple list
@@ -70,7 +73,7 @@ int jumpSpace(char* line, int iter){
 */
 
 int jumpNumber(char *line, int iter){
-    while(*(line+iter)=='0' || *(line+iter)=='1' || *(line+iter)=='2' || *(line+iter)=='3' || *(line+iter)=='4' || *(line+iter)=='5' || *(line+iter)=='6' || *(line+iter)=='7' || *(line+iter)=='8' || *(line+iter)=='9'){
+    while(*(line+iter) > 47 && *(line+iter) < 58){
 			++iter;
 		}
     return iter;		
@@ -85,7 +88,6 @@ int jumpNumber(char *line, int iter){
 	
 int main(int argc, char *argv[]){
 FILE *fp;
-    char *bla;
     char delimiter[] = ";";
     char *ptr;
     int lol;
@@ -95,9 +97,11 @@ FILE *fp;
     double temp;    
     long int often[2];
     long int counter = 0;
+    long int linenr = 1;
     char *line = (char*) malloc(MAX_LINE_LEN * sizeof(char));
     often[0] = -1;
     often[1] = -1;
+    //int zahl = 0;
     
     node_t * val1 = NULL;
     val1 = malloc(sizeof(node_t));
@@ -114,6 +118,8 @@ FILE *fp;
 
    while ((lol=getline(&line, &len, fp)) != -1) {
 	++counter;
+	assert(line != NULL);
+	//printf("%li + %s\n", linenr, line);
 	if (*(line) != '\n' && *(line) != '#'){
 		iter=1;
 		iter=jumpNumber(line, iter);
@@ -123,7 +129,8 @@ FILE *fp;
 			iter=jumpSpace(line, iter);
 		}
 		else {
-		continue;
+			++linenr;
+			continue;
 		}
 		if(*(line+iter)=='1'){
 			pointer = 0;
@@ -134,15 +141,18 @@ FILE *fp;
 			++iter;
 		}
 		else {
-		continue;
+			++linenr;
+			continue;
 		}
 		iter=jumpSpace(line,iter);
 		if(*(line+iter)!=';') {
-		continue;
+			++linenr;
+			continue;
 		}
 		++iter;
 		iter=jumpSpace(line, iter);
 		if (*(line+iter)=='N'){
+			++linenr;
 			continue;
 		}
 		iter=jumpNumber(line,iter);
@@ -152,18 +162,30 @@ FILE *fp;
 		}
 		iter=jumpSpace(line, iter);
 		if(*(line+iter)=='#'||*(line+iter)=='\n'||*(line+iter)=='e'){
+
+			if (atol(line) != linenr){
+				//printf("err %li + %s\n", linenr, line);
+				++linenr;
+				//++zahl;
+        			//if (zahl==6)exit(EXIT_FAILURE);
+        			continue;
+			}
 			ptr = strtok(line, delimiter);
+			++linenr;
 			ptr = strtok(NULL, delimiter);
 			ptr = strtok(NULL, delimiter);
+			temp = atof(ptr);
+			if (temp == -(HUGE_VAL) || temp == 0.0 || temp == HUGE_VAL){
+				printf("Could not convert value in line %s and the string. value is:%s \n", line, ptr);
+				continue;
+			}
 			if (pointer == 0){
 				if (often[pointer] == -1){
-					temp = strtod(ptr, &bla);
 					val1->val = temp;
 					val1->next = NULL;
 					often[pointer]=1;  
 				}		
 				else {
-					temp = strtod(ptr, &bla);
 					val11->next = malloc(sizeof(node_t));
 					val11->next->val = temp;
 					val11->next->next = NULL;
@@ -173,13 +195,11 @@ FILE *fp;
 			}
 			else{
 				if (often[pointer] == -1){
-					temp = strtod(ptr, &bla);
 					val2->val = temp;
 					val2->next = NULL;
 					often[pointer]=1;
 				}		
 				else {
-					temp = strtod(ptr, &bla);
 					val22->next = malloc(sizeof(node_t));
 					val22->next->val = temp;
 					val22->next->next = NULL;
@@ -187,7 +207,19 @@ FILE *fp;
 					++often[pointer];
 				}			
 			}
-		}				
+		}
+		else{
+			++linenr;
+			ptr = strtok(line, delimiter);
+			ptr = strtok(NULL, delimiter);
+			ptr = strtok(NULL, delimiter);
+			ptr = strtok(NULL, delimiter);
+			if (ptr != NULL){
+				ptr = strtok(NULL, delimiter);
+					if (ptr !=NULL) ++linenr;
+				
+			}
+		}	
     	}
     }
    printf("%s has %li lines \n",argv[1], counter);	
