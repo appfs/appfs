@@ -1,0 +1,3 @@
+#!/bin/bash
+javac Ex1.java
+java Ex1 $1
