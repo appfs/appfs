@@ -1,3 +1,13 @@
+/*
+ * ex1.cpp
+ *
+ * 	\brief     First exercixe
+ *  \details   This class reads in a data document and counts the valid lines
+ *  \pre       Create the data file
+ *  \author    Julia Baumbach
+ *  \date      25.04.2017
+ */
+
 #include <fstream>
 #include <iostream>
 #include <cmath>
@@ -7,10 +17,17 @@
 
 using namespace std;
 
+/**
+ * \paran SOURCE_FILE_PATH default file name
+ * if none is set while starting the program
+ */
 const string SOURCE_FILE_PATH= "ex1.dat";
 
 /**
- * checks if line is empty or a comment
+ * \fn bool lineIsValid(string line)
+ * \brief checks if line is empty or a comment
+ * \param line a string representing a line
+ * \return returns if the given line is valid
  */
 bool lineIsValid(string line){
 	if (line.empty()){
@@ -25,8 +42,12 @@ bool lineIsValid(string line){
 }
 
 
-/*
- * computes the geoMean of a vector
+/**
+ * \fn double geoMean(vector<double> vec, int length)
+ * \brief computes the geoMean of a vector
+ * \param vec a vector with the data as double
+ * \param length the length of the given vector
+ * \return the geometric mean of the data of the vector
  */
 double geoMean(vector<double> vec, int length){
 	double sum = 0.;
@@ -38,7 +59,13 @@ double geoMean(vector<double> vec, int length){
 }
 
 
-
+/**
+ * Main function which reads in a document file
+ * and stores its data for computing the geometric mean
+ * Shows a warning if no file path name is given while
+ * starting the program.
+ * Stops if no file could be found.
+ */
 int main(int argc, char* argv[]){
 	ifstream infile;
 

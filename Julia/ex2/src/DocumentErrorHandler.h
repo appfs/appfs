@@ -1,3 +1,11 @@
+/*
+ * DocumentErrorHandler.h
+ *
+ * 	\brief     Class for handle errors while parsing xml files.
+ *  \details   Extends xercesc_3_1::HandlerBase for error handling while parsing xml files
+ *  \author    Julia Baumbach
+ *  \date      01.05.2017
+ */
 
 #ifndef DOCUMENTERRORHANDLER_H_
 #define DOCUMENTERRORHANDLER_H_
