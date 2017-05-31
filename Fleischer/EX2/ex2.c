@@ -1,3 +1,15 @@
+/**
+ * @file
+ * @author  Sven Fleischer
+ * @version 1.0
+
+ *
+ * @section DESCRIPTION
+ *
+ * This programm verfies at first the through the shell at the moment of the call given xml file with a given shema (this file is given at second file after the xml file at the call). It writes to stdout.csv all values in the form YYYY-MM-DD; HH; amountOfPower. In stderr comes every error and every faulty value, which is having for example a non digit written in it, or a non existing time/date.
+-Value
+ */
+
 #include <libxml/parser.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -5,7 +17,13 @@
 #include <libxml/xmlschemas.h>
 //parse with: gcc -std=c11 -O3 xml2-config --cflags --libs`ex2.c -o ex2 -lm
 //run with ./ex2 XML-File Schema
- 
+
+/**
+* Validates the file and verfies the data in the xml data
+*
+* @return stdout with the data and/or stderr with the errors and the worng lines.
+*/ 
+
 int main(int argc, char *argv[]){
  FILE *fptr;
  FILE *fptr2;

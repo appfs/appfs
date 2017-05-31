@@ -1,3 +1,15 @@
+/**
+ * @file
+ * @author  Sven Fleischer
+ * @version 1.0
+
+ *
+ * @section DESCRIPTION
+ *
+ * This programm computes the Geometric Mean of loc1 and loc2 of a given file.
+ */
+
+
 #define _GNU_SOURCE
 #include<stdio.h>
 #include<stdlib.h>
@@ -6,12 +18,22 @@
 
 #define MAX_LINE_LEN 512
 
-    
+/** 
+* A simple list
+*/ 
 typedef struct node {
     double val;
     struct node * next;
 } node_t;
 
+
+/**
+* Computes the Geometric Mean of list
+*
+* @param head element of a list
+* @param size of the list
+* @return The Geometric Mean of a list
+*/
 
 double getGeoMean(node_t * head, long int often){
     node_t * current = head;
@@ -24,12 +46,28 @@ double getGeoMean(node_t * head, long int often){
     return GeoMean;
 }
 
+/**
+* Jumpes to the next non space element of a char.
+*
+* @param pointer to a char
+* @param index element of a string
+* @return index of the first non space element of a string starting from a given index
+*/
+
 int jumpSpace(char* line, int iter){
     while(*(line+iter) == ' '){
     ++iter;
     }
     return iter;
 }
+
+/**
+* Jumpes to the next non digit element of a char.
+*
+* @param pointer to a char
+* @param index element of a string
+* @return index of the first non digit element of a string starting from a given index
+*/
 
 int jumpNumber(char *line, int iter){
     while(*(line+iter)=='0' || *(line+iter)=='1' || *(line+iter)=='2' || *(line+iter)=='3' || *(line+iter)=='4' || *(line+iter)=='5' || *(line+iter)=='6' || *(line+iter)=='7' || *(line+iter)=='8' || *(line+iter)=='9'){
@@ -38,7 +76,12 @@ int jumpNumber(char *line, int iter){
     return iter;		
 }
 
-
+/**
+* Computes the Geometric Mean of loc1 and loc2 of a file
+*
+* @param life at the call of the programm
+* @return The Geometric Mean of loc1 and loc2 with the number of valid loc1 and loc2 lines and the amont of lines in the file
+*/
 	
 int main(int argc, char *argv[]){
 FILE *fp;
