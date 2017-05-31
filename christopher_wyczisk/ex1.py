@@ -1,9 +1,19 @@
+"""
+Author:  Christopher Wyczisk
+Version: 1.0
 
+DESCRIPTION
+
+Dieses Programm wir mit "python ex1.py filename" gestartet. Es liesst die Daten aus filename ein und berechnet
+fuer dessen Werten das Geometrische Mittel, fehlerhaftewerte werden herausgefiltert.
+"""
+ 
 import math, types, sys
 
 # Diesen Code hat Christopher Wyczisk runtergesaut.
 
 class GeometrischesMittelDerWerteZweiterLocations(object):
+    """Diese Klasse berechnet das Geometrische mittel fuer zwei Locations."""
     
     def __init__(self):
         self.__values1 = []
@@ -13,6 +23,7 @@ class GeometrischesMittelDerWerteZweiterLocations(object):
         self.countAllRows = 0
     
     def leseDaten(self, filename):
+        """Liesst die Daten aus dem FIle filename."""
         fobj = open(filename, "r")
         for line in fobj:
             self.countAllRows += 1
@@ -31,6 +42,7 @@ class GeometrischesMittelDerWerteZweiterLocations(object):
         fobj.close()
         
     def getGeoMittel(self, location):
+        """Berechnet das Geometrische Mittel"""
         prod = 1.0
         if location == 1:
             for value in self.__values1:
