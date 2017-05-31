@@ -1,7 +1,0 @@
-#!/usr/bin/env python3
-
-import sys, os
-myname = os.path.basename(sys.argv[0])
-
-with open(myname, 'r') as f:
-	sys.stdout.write(f.read()[:-1])

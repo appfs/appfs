@@ -1,9 +1,0 @@
->> time ./ex1 ex1-8.dat 
-File: ex1-8.dat with 99999485 lines
-Valid values Loc0: 50004616 with GeoMean: 36.7817613362
-Valid values Loc1: 49994716 with GeoMean: 36.7825739226
-
-should be:
-100001235
-50004466 valid values of loc1 with GeoMean: 36.7817361173
-49994581 valid values of loc2 with GeoMean: 36.7825832003 
