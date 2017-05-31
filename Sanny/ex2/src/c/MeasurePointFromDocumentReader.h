@@ -22,6 +22,7 @@
 using namespace xercesc;
 using namespace std;
 
+/** Go through a DOM and find all MeasuremePoints */
 class MeasurePointFromDocumentReader {
 private:
 	DOMDocument* document;
@@ -49,9 +50,13 @@ private:
 	void initAttributes();
 
 public:
+	/** Getter for all read MeasurePoints */
 	vector<MeasurePoint*> getMeasurePoints();
+	/** main -> read all MeasurePoints by going through the parsed xml via DOM using xercesc*/
 	void readMeasurepoints();
+	/** Constructor */
 	MeasurePointFromDocumentReader(DOMDocument* document);
+	/** Deconstructor */
 	virtual ~MeasurePointFromDocumentReader();
 };
 

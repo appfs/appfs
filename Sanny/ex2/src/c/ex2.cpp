@@ -33,12 +33,14 @@ namespace {
 
 using namespace std;
 
+/** Printing a Exception with "Exception:\n message \n" */
 void inline printException(const XMLException& toCatch) {
 	char* message = XMLString::transcode(toCatch.getMessage());
 	cerr << "Exception:" << endl << message << endl;
 	XMLString::release(&message);
 }
 
+/** Reading in a File, try to parse and validate against sheme */
 int main(int argn, char *argv[]) {
 
 	if (argn <= 1) {
