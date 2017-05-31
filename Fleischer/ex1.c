@@ -101,8 +101,7 @@ FILE *fp;
     char *line = (char*) malloc(MAX_LINE_LEN * sizeof(char));
     often[0] = -1;
     often[1] = -1;
-    //int zahl = 0;
-    
+	
     node_t * val1 = NULL;
     val1 = malloc(sizeof(node_t));
     node_t *  val11 = val1;
@@ -119,7 +118,6 @@ FILE *fp;
    while ((lol=getline(&line, &len, fp)) != -1) {
 	++counter;
 	assert(line != NULL);
-	//printf("%li + %s\n", linenr, line);
 	if (*(line) != '\n' && *(line) != '#'){
 		iter=1;
 		iter=jumpNumber(line, iter);
@@ -164,10 +162,7 @@ FILE *fp;
 		if(*(line+iter)=='#'||*(line+iter)=='\n'||*(line+iter)=='e'){
 
 			if (atol(line) != linenr){
-				//printf("err %li + %s\n", linenr, line);
 				++linenr;
-				//++zahl;
-        			//if (zahl==6)exit(EXIT_FAILURE);
         			continue;
 			}
 			ptr = strtok(line, delimiter);
