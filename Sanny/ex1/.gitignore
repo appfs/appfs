@@ -51,3 +51,4 @@ ex*.dat
 /src/html/*
 /src/latex/*
 /src/out/*
+/src/ex1
