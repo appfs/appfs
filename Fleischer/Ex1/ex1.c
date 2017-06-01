@@ -42,7 +42,7 @@ typedef struct node {
 double getGeoMean(node_t * head, long int often){
     node_t * current = head;
     double GeoMean = 1;
-    assert(often == 0);
+    assert(often != 0);
     while (current->next != NULL) {
 	assert((current->val) > 0);	    
         GeoMean = GeoMean * pow(current->val, 1./often);    
