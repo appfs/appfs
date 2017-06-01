@@ -1,0 +1,10 @@
+Python3
+
+run instructions:
+
+-Install BeautifulSoup
+pip install bs4
+
+-Execution example:
+
+python ex2.py example.measured-1-1-0.xml
