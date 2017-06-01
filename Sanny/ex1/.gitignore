@@ -44,3 +44,10 @@ ex*.dat
 /appfs/ex1
 *.o
 *.d
+*.gcda
+*.gcno
+*.info
+
+/src/html/*
+/src/latex/*
+/src/out/*
