@@ -45,9 +45,11 @@
 *.o
 *.d
 *.csv
+*.gcda
+*.gcno
+*.info
+
 /appfs_exe/ex2
-/appfs_exe/src
 /appfs_coverage/ex2
-/appfs_coverage/src
 /src/c/html/*
 /src/c/latex/*
