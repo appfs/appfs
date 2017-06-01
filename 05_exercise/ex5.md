@@ -5,7 +5,7 @@ Write a program that:
 
 * reads in a graph from file given in .gph format (see [here](http://www.zib.de/koch/SP/data/) for examples) with the filename provided as a command line argument. Note that the graphs have positive edge weights (that are always below 2000000000).
 
-* computes a longest (with respect to the edge weights) shortest path from any vertex to the vertex with index 1. In case of ties the vertex with smallest index should be taken.
+* computes a longest (with respect to the edge weights) shortest path from any vertex to the vertex with index 1. In case of ties the vertex with smallest index should be chosen.
 
 * gives an output with the following syntax:
 
