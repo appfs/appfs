@@ -9,9 +9,9 @@ Write a program that:
 
 * gives an output with the following syntax:
 
-    RESULT VERTEX <vertex index>
+    RESULT VERTEX 42
 
-    RESULT DIST <distance of longest shortest path>
+    RESULT DIST 5553
 
 
 
