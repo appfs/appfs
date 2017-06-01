@@ -17,6 +17,7 @@
 #include <math.h> 
 #include <assert.h>
 #include <ctype.h>
+#include <fenv.h>
 
 #define MAX_LINE_LEN 512
 
@@ -43,9 +44,11 @@ double getGeoMean(node_t * head, long int often){
     double GeoMean = 1;
     while (current->next != NULL) {
         GeoMean = GeoMean * pow(current->val, 1./often);
+        assert(!fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW));
         current = current->next;
     }
     GeoMean = GeoMean * pow(current->val, 1./often);
+    assert(!fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW));
     return GeoMean;
 }
 
@@ -90,6 +93,7 @@ int main(int argc, char *argv[]){
 FILE *fp;
     char delimiter[] = ";";
     char *ptr;
+    char *bla;
     int lol;
     int iter;    
     int pointer=-1; 
@@ -101,7 +105,7 @@ FILE *fp;
     char *line = (char*) malloc(MAX_LINE_LEN * sizeof(char));
     often[0] = -1;
     often[1] = -1;
-	
+    
     node_t * val1 = NULL;
     val1 = malloc(sizeof(node_t));
     node_t *  val11 = val1;
@@ -169,8 +173,8 @@ FILE *fp;
 			++linenr;
 			ptr = strtok(NULL, delimiter);
 			ptr = strtok(NULL, delimiter);
-			temp = atof(ptr);
-			if (temp == -(HUGE_VAL) || temp == 0.0 || temp == HUGE_VAL){
+			temp = strtod(ptr, &bla);
+			if (!isnormal(temp)){
 				printf("Could not convert value in line %s and the string. value is:%s \n", line, ptr);
 				continue;
 			}
@@ -217,10 +221,19 @@ FILE *fp;
 		}	
     	}
     }
-   printf("%s has %li lines \n",argv[1], counter);	
-   printf("Valid values Loc1: %li, with with GeoMean: %f \n",often[0], getGeoMean(val1, often[0]));
-   printf("Valid values Loc2: %li, with with GeoMean: %f \n",often[1], getGeoMean(val2, often[1]));
-   
+   printf("%s has %li lines \n",argv[1], counter);
+   if (often[0]!=-1){	
+   	printf("Valid values Loc1: %li, with with GeoMean: %f\n",often[0], getGeoMean(val1, often[0]));
+   }
+   else{
+   	printf("Valid values Loc1: 0\n");
+   }
+   if (often[1]!=-1){
+   	printf("Valid values Loc2: %li, with with GeoMean: %f \n",often[1], getGeoMean(val2, often[1]));
+   }
+   else{
+   	printf("Valid values Loc2: 0\n");
+   }
    free(line);
    exit(EXIT_SUCCESS);
    return argc;
