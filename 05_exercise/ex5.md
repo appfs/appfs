@@ -19,4 +19,4 @@ You may use graph libraries such as boost (for C++) or graph-tool (for Python), 
 
  
 
-**Deadline: May 7, 18:00**
+**Deadline: June 8, 18:00**
