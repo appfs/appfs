@@ -42,7 +42,6 @@
 *.xml*
 *.pdf
 
-*.md
 *.o
 *.d
 *.csv
