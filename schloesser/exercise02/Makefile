@@ -9,5 +9,5 @@ coverage:
 	coverage3 report -m
 
 check:
-	pylint ex2.py --rcfile=pyl-conf
+	pylint3 ex2.py --rcfile=pyl-conf
 
