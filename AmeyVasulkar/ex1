@@ -1,0 +1,81 @@
+//Ex1 Amey Vasulkar
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+#include <cmath>
+#include <vector>
+
+using namespace std;
+
+int main(int argc, char *argv[])
+{   
+  int locno=0; // Declaration and Initialization of required variables
+  double value, logval1, logval2, sum1, sum2;
+  logval1=logval2=1.0;
+  sum1=sum2=0;
+  double geomean1, geomean2;
+  int l=0;
+  string line, part1, part2, part3, name;
+  vector <double> data1;
+  vector <double> data2;
+  data1.reserve (50006000);
+  data2.reserve (50006000);
+    
+  if (argc != 2)
+	  cout<<"Please type the file name you want to read and try again."<<endl;
+  else
+  {	  
+      ifstream myfile (argv[1]); //Opening file to run
+	  name = argv[1];	
+	  if (myfile.is_open())
+	  {	
+		while (getline (myfile,line)) // Loop to check each line of opened file.
+		{ 
+			l=l+1;
+			istringstream lss (line);
+			lss >> part1 >> part2 >> part3 ; //To get all the entries in a line into different strings.
+			
+			if (part1 == "#" || part1 == "")// To omit the lines with # and blanks.
+			;
+			else 
+			{
+				value= stof(part3); //storing data in array.
+				if (part2.size()== 2 && isnan(value)== false )
+					locno = stoi(part2);
+				else 
+					locno=0;
+					
+				if (locno == 1) 
+				{
+					data1.push_back(value);
+					logval1=log(value);
+					sum1=sum1+logval1;
+				}			
+				else if (locno == 2)
+				{
+					data2.push_back(value);
+					logval2=log(value);
+					sum2=sum2+logval2;
+				}		
+			}
+		}
+		
+		//Computing the Geometric Mean
+		geomean1=exp(sum1/data1.size());
+		geomean2=exp(sum2/data2.size());
+			
+		//Producing the required output	
+		cout << "File: "<< name << " with " << l << " lines" << endl;
+		cout << "Valid values Loc1: " << data1.size() << " with Geomean: " << geomean1 << endl;
+		cout << "Valid values Loc2: " << data2.size() << " with Geomean: " << geomean2 << endl;
+		
+		myfile.close();
+		}
+			
+	  else 
+		cout << "Unable to open file"; 
+  }
+    return 0;
+}

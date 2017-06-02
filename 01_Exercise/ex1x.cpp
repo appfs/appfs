@@ -1,11 +1,11 @@
 /*
- * exercise1fast.cpp
+ * ex1x.cpp
  *
  *  Created on: 25.04.2017
  *
  *  Author: Daniel Rehfeldt
  *
- *  Compile: g++ exercise1fast.cpp -o exf -O3 -std=c++14 -Wall
+ *  Compile: g++ ex1x.cpp -o ex1x -O3 -std=c++14 -Wall
  */
 
 #include <vector>

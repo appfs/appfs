@@ -1,9 +1,19 @@
+"""
+Author:  Christopher Wyczisk
+Version: 1.0
 
-import math, types
+DESCRIPTION
+
+Dieses Programm wir mit "python ex1.py filename" gestartet. Es liesst die Daten aus filename ein und berechnet
+fuer dessen Werten das Geometrische Mittel, fehlerhaftewerte werden herausgefiltert.
+"""
+ 
+import math, types, sys
 
 # Diesen Code hat Christopher Wyczisk runtergesaut.
 
 class GeometrischesMittelDerWerteZweiterLocations(object):
+    """Diese Klasse berechnet das Geometrische mittel fuer zwei Locations."""
     
     def __init__(self):
         self.__values1 = []
@@ -12,8 +22,9 @@ class GeometrischesMittelDerWerteZweiterLocations(object):
         self.countRowsOfLocation2 = 0
         self.countAllRows = 0
     
-    def leseDaten(self):
-        fobj = open("../exercise_1/ex1.dat", "r")
+    def leseDaten(self, filename):
+        """Liesst die Daten aus dem FIle filename."""
+        fobj = open(filename, "r")
         for line in fobj:
             self.countAllRows += 1
             inhaltDerLineAlsSplit = line.rstrip().split(";")
@@ -31,6 +42,7 @@ class GeometrischesMittelDerWerteZweiterLocations(object):
         fobj.close()
         
     def getGeoMittel(self, location):
+        """Berechnet das Geometrische Mittel"""
         prod = 1.0
         if location == 1:
             for value in self.__values1:
@@ -41,10 +53,11 @@ class GeometrischesMittelDerWerteZweiterLocations(object):
                 if value > 0:
                     prod *= math.pow(value, float(1) / float(self.countRowsOfLocation2))
         return prod
-    
+        
+filename = sys.argv[1]
 geoObj = GeometrischesMittelDerWerteZweiterLocations()
-geoObj.leseDaten()
+geoObj.leseDaten(filename)
 
-print("File ex1.dat with " + str(geoObj.countAllRows) + " lines")
+print("File " + filename + " with " + str(geoObj.countAllRows) + " lines")
 print("Valid values Loc1: " + str(geoObj.countRowsOfLocation1) + " with GeoMean: " + str(geoObj.getGeoMittel(1)))
 print("Valid values Loc2: " + str(geoObj.countRowsOfLocation2) + " with GeoMean: " + str(geoObj.getGeoMittel(2)))
