@@ -4,7 +4,7 @@ doc:
 coverage:
 	@echo 'Compiling'
 	cd ../../appfs_coverage/
-	./makefile
+	make
 	@echo 'Running Program'
 	ex2 measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml
 	@echo 'Analysing Coverage Data'
