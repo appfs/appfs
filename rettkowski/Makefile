@@ -9,4 +9,4 @@ coverage: ex1.cpp
 	genhtml ex1.coverage.info --output-directory coverage
 	
 check: ex1.cpp
-	cppcheck --enable=all ex1.c
+	cppcheck --enable=all ex1.cpp
