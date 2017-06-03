@@ -50,6 +50,7 @@
 *.info
 
 /appfs_exe/ex2
-/appfs_coverage/ex2
+/src/c/ex2
 /src/c/html/*
 /src/c/latex/*
+/src/c/out/*
