@@ -50,7 +50,6 @@
 *.info
 *.gph
 
-/exe/ex5
 /src/c/ex5
 /src/c/html/*
 /src/c/latex/*
