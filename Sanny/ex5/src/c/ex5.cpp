@@ -12,7 +12,6 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/named_function_params.hpp>
-#include <boost/array.hpp>
 
 namespace {
 
@@ -29,6 +28,28 @@ using std::string;
 typedef boost::adjacency_list<boost::listS, boost::vecS,
   boost::undirectedS, boost::no_property,
   boost::property<boost::edge_weight_t, int>> graph;
+typedef boost::graph_traits < graph >::vertex_descriptor vertex_descriptor;
+
+int readFirstLine(int edgeCount, string& line) {
+
+	return edgeCount;
+}
+
+/** add's fileending and opens the via ifstream */
+std::ifstream openFile(char* argv[]) {
+	string filename = argv[1];
+	filename += FILEEND;
+	cout << "Going to parse the file " << filename << endl;
+	std::ifstream fileStream;
+	fileStream.open(filename.c_str(), std::ios::in);
+	return fileStream;
+}
+
+/** Creates a Map for boost, cause a normal vector.begin() doesn't work */
+boost::iterator_property_map<__gnu_cxx:: __normal_iterator <int*,std::vector<int,std::allocator<int> > > ,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned long int> ,int,int&> getBoostMap(std::vector<int> directions, graph& g)
+{
+	return boost::make_iterator_property_map(directions.begin(), boost::get(boost::vertex_index, g));
+}
 
 /** Reading in a Graphfile, computes the longest shortest path */
 int main(int argn, char *argv[]) {
@@ -38,28 +59,22 @@ int main(int argn, char *argv[]) {
 		return 1;
 	}
 
-	string filename = argv[1];
-	filename += FILEEND;
-
-	cout << "Going to parse the file " << filename <<endl;
-
-	std::ifstream fileStream;
-	fileStream.open(filename.c_str(), std::ios::in);
+	std::ifstream fileStream = openFile(argv);
 
 	if ( (fileStream.rdstate()) != 0 ){
 		std::perror("ERROR : Encoutered Problem opening file");
 		return 1;
 	}
 
-	string* line = new string();
-	int edgeCount;
+	string line;
 
-	if(std::getline(fileStream, *line)){
-		int vertexCount;
-		sscanf(line->c_str(), "%d %d", &vertexCount, &edgeCount);
+	int edgeCount;
+	int vertexCount;
+	if(std::getline(fileStream, line)){
+		sscanf(line.c_str(), "%d %d", &vertexCount, &edgeCount);
 		cout << "Vertexcount: " << vertexCount << endl;
 		cout << "Edgecount: " << edgeCount << endl;
-		line->clear();
+		line.clear();
 	} else {
 		cerr << "ERROR : File was empty" << endl;
 		return 1;
@@ -68,48 +83,47 @@ int main(int argn, char *argv[]) {
 	std::vector<std::pair<int, int>> edges;
 	std::vector<int> weights;
 
-	int lineCount = 0;
-	while (getline(fileStream, *line)){
+	cout << "Reading edges..." << endl;
+	while (getline(fileStream, line)) {
 		int start;
 		int end;
 		int weight;
-		int count = sscanf(line->c_str(), "%d %d %d", &start, &end, &weight);
-		if(count != 3){
-			line->clear();
+		int count = sscanf(line.c_str(), "%d %d %d", &start, &end, &weight);
+		if (count != 3) {
+			line.clear();
 			continue;
 		}
 		edges.push_back(std::make_pair(start, end));
 		weights.push_back(weight);
-		lineCount++;
+		line.clear();
 	}
 
-	delete line;
+	cout << "Creating graph..." << endl;
+	graph g{edges.begin(), edges.end(), weights.begin(), 7};
 
-	cout << "Creating graph of " << lineCount << " edges" << endl;
-	graph g{edges.begin(), edges.end(), weights.begin(), lineCount};
+	std::vector<int> directions;
+	std::vector<int> weightMap;
 
-//	int index = -1;
-//	int weight = -1;
+	cout << "Compute shortest paths via Dijkstra..." << endl;
+	boost::dijkstra_shortest_paths(g, 1,
+		boost::predecessor_map(//
+					getBoostMap(directions, g)) //
+			.distance_map(getBoostMap(weightMap, g)));
 
-	for(int i=2; i<=lineCount; i++){
-
-		boost::array<int, 262145> directions ;
-		boost::dijkstra_shortest_paths(g, i,
-			boost::predecessor_map(directions.begin()));
-
-		int p = 1;
-		while (p != i)
-		{
-		  std::cout << p << '\n';
-		  p = directions[p];
+	cout << "Search longest shortest path..." << endl;
+	int vertex = -1;
+	int distance = -1;
+	for(int i=2; i<=vertexCount; i++){
+		cout << "distance " << weightMap[i] << " from vertex "<< i << '\n';
+		if(weightMap[i]>distance){
+			distance = weightMap[i];
+			vertex = i;
 		}
-		std::cout << p << '\n';
-
 	}
 
-//	for(int i=2; i<=lineCount; i++){
-//
-//	}
+	cout << "RESULT VERTEX " << vertex << '\n';
+	cout << "RESULT DIST " << distance << '\n';
+
 
 	return 0;
 }
