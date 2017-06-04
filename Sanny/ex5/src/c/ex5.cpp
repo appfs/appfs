@@ -68,8 +68,8 @@ int main(int argn, char *argv[]) {
 
 	string line;
 
-	int edgeCount;
-	int vertexCount;
+	unsigned int edgeCount;
+	unsigned int vertexCount;
 	if(std::getline(fileStream, line)){
 		sscanf(line.c_str(), "%d %d", &vertexCount, &edgeCount);
 		cout << "Vertexcount: " << vertexCount << endl;
@@ -99,10 +99,10 @@ int main(int argn, char *argv[]) {
 	}
 
 	cout << "Creating graph..." << endl;
-	graph g{edges.begin(), edges.end(), weights.begin(), 7};
+	graph g{edges.begin(), edges.end(), weights.begin(), vertexCount};
 
-	std::vector<vertex_descriptor> directions;
-	std::vector<int> weightMap;
+	std::vector<vertex_descriptor> directions(vertexCount);
+	std::vector<int> weightMap(vertexCount);
 
 	cout << "Compute shortest paths via Dijkstra..." << endl;
 	boost::dijkstra_shortest_paths(g, 1,
@@ -114,8 +114,7 @@ int main(int argn, char *argv[]) {
 	cout << "Search longest shortest path..." << endl;
 	int vertex = 1;
 	int distance = 0;
-	for(int i=2; i<=vertexCount; i++){
-		cout << "distance " << weightMap[i] << " from vertex "<< i << '\n';
+	for(unsigned int i=2; i<=vertexCount; i++){
 		if(weightMap[i]>distance){
 			distance = weightMap[i];
 			vertex = i;
@@ -124,7 +123,6 @@ int main(int argn, char *argv[]) {
 
 	cout << "RESULT VERTEX " << vertex << '\n';
 	cout << "RESULT DIST " << distance << '\n';
-
 
 	return 0;
 }
