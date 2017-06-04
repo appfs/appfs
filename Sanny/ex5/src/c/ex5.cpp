@@ -101,18 +101,19 @@ int main(int argn, char *argv[]) {
 	cout << "Creating graph..." << endl;
 	graph g{edges.begin(), edges.end(), weights.begin(), 7};
 
-	std::vector<int> directions;
+	std::vector<vertex_descriptor> directions;
 	std::vector<int> weightMap;
 
 	cout << "Compute shortest paths via Dijkstra..." << endl;
 	boost::dijkstra_shortest_paths(g, 1,
 		boost::predecessor_map(//
-					getBoostMap(directions, g)) //
-			.distance_map(getBoostMap(weightMap, g)));
+				boost::make_iterator_property_map(directions.begin(), boost::get(boost::vertex_index, g))) //
+			.distance_map(//
+				boost::make_iterator_property_map(weightMap.begin(), boost::get(boost::vertex_index, g))));
 
 	cout << "Search longest shortest path..." << endl;
-	int vertex = -1;
-	int distance = -1;
+	int vertex = 1;
+	int distance = 0;
 	for(int i=2; i<=vertexCount; i++){
 		cout << "distance " << weightMap[i] << " from vertex "<< i << '\n';
 		if(weightMap[i]>distance){
