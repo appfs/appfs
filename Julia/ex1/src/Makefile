@@ -10,3 +10,7 @@ coverage:
 
 check:
 	cppcheck ex1.cpp
+
+run:
+	g++ ex1.cpp -o ex1
+	./ex1 ../ex100.dat
