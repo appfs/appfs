@@ -15,15 +15,32 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-
+/**
+ * a class to read hourly gas power in xml format. 
+ * @author mona
+ * 
+ *
+ */
 public class ex2{
-	
+	/**
+	 * method to validate a file
+	 * @param xmlf the xml file to validate
+	 * @param xsdf the xsd file to validate
+	 * @throws Exception if validation fails
+	 */
 	public static void validateFile(File xmlf, File xsdf) throws Exception{
 		SchemaFactory sf=SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		Schema s =sf.newSchema(new StreamSource(xsdf));	
 		Validator validator =s.newValidator();
 		validator.validate(new StreamSource(xmlf));
 	}
+	/**
+	 * parse xml file
+	 * @param xmlFile xml File to parse
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
 	public static void parseXML(File xmlFile) throws ParserConfigurationException, SAXException, IOException{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -54,7 +71,10 @@ public class ex2{
         fw.close();
     }
 	
-
+/**
+ * main method. 
+ * @param argv name of the xml file
+ */
   public static void main(String argv[]) {
 
 
@@ -63,6 +83,7 @@ public class ex2{
 	//File xmlFile = new File("example.measured-1-1-0.xml");
 	File xsdFile = new File("measured-1-1-0.xsd");
 
+	
 	File xmlFile= new File(argv[0]);
 	//File xsdFile = new File(argv[1]);
 
@@ -79,6 +100,7 @@ public class ex2{
         }        catch (IOException e1) {
 			// TODO Auto-generated catch block
         }
+        
         
 	}
     try {
