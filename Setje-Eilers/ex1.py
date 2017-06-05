@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """
+
 Created on Tue Apr 25 19:04:53 2017
 
 @author: mona
@@ -11,7 +12,10 @@ from collections import deque
 import sys
 from sys import float_info
 #computer the geometric mean
+
 def geomean(x):
+    """computes geometric mean
+    """
     return exp(sum( log(i) for i in x) / len(x))
 
 
