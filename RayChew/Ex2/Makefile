@@ -11,6 +11,7 @@ TARGET = ex2
 # xml data file to read:
 DATA = measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml
 # DATA = example.measured-1-1-0.xml
+VALID = -V
 
 # path of cppcheck:
 CPPCHECKPATH = ./
@@ -36,16 +37,16 @@ doc:
 coverage:
 	$(CC) $(CFLAGS) --coverage $(TARGET).cxx -o $(TARGET) $(LIBS)
 	mkdir -p gcov
-	./$(TARGET) $(DATA)
+	./$(TARGET) $(DATA) $(VALID)
 	mv $(TARGET).gcno $(TARGET).gcda gcov
-	# lcov -t "result" -o result.info -c -d /gcov
-	# genhtml -o result result.info
+	lcov -t "result" -o result.info -c -d gcov
+	genhtml -o result result.info
 
 check:
 	# if cppcheck binary is in the same folder as source file:
-	./cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
+	# ./cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
 	# otherwise, if cppcheck is an installed library:
-	# cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
+	cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
 
 clean:
 	$(RM) $(TARGET)

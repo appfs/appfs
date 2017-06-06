@@ -37,14 +37,14 @@ coverage:
 	mkdir -p gcov
 	./$(TARGET) $(DATA)
 	mv $(TARGET).gcno $(TARGET).gcda gcov
-	# lcov -t "result" -o result.info -c -d /gcov
-	# genhtml -o result result.info
+	lcov -t "result" -o result.info -c -d gcov
+	genhtml -o result result.info
 
 check:
 	# if cppcheck binary is in the same folder as source file:
-	./cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
+	#./cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
 	# otherwise, if cppcheck is an installed library:
-	# cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
+	cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
 
 clean:
 	$(RM) $(TARGET)
