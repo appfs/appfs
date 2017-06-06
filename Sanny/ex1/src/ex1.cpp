@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cmath>
 
+/** Some Constants to avoid "magic"-signs */
 namespace {
 
 const char* DEFAULT_FILE_NAME = "ex1.dat";
@@ -19,11 +20,8 @@ const char* SEPERATOR = ";";
 
 }
 
+/** Using namespace cause of laziness. */
 using namespace std;
-
-void removeSeperator(string& locationString) {
-
-}
 
 /** Opens either a file, which was given by invocation, or the default file, which is hard-coded. */
 string inline openFile(const int argn, char* argv[], ifstream& fileStream) {
@@ -38,6 +36,7 @@ string inline openFile(const int argn, char* argv[], ifstream& fileStream) {
 	}
 }
 
+/** Opens either a file, which was given by invocation, or the default file, which is hard-coded. */
 bool push(vector<double> *values, const double value) {
 	if(value <= 0 || isnan(value)){
 		return false;
@@ -46,6 +45,7 @@ bool push(vector<double> *values, const double value) {
 	return true;
 }
 
+/** Computes the geometric mean via the logartihm. */
 double getGeoMean(vector<double> *values) {
 	double geoMean = 0.;
 	const unsigned int count = values->size();

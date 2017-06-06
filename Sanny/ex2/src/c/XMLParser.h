@@ -17,15 +17,20 @@
 
 using namespace xercesc;
 
+/** Parser for an XML file, which parses into a DOM */
 class XMLParser : public XercesDOMParser{
 private:
 	ParserErrorHandler* errorHandler;
 public:
+	/** Constructor */
 	XMLParser();
+	/** Deconstructor */
 	virtual ~XMLParser();
+	/** loads given Grammar */
 	Grammar* loadGrammar(const char* const systemId,
 	                         const Grammar::GrammarType grammarType,
 	                         const bool toCache = false);
+	/** Delegate to gget all the errors from ErrorHandler */
 	string getErrors();
 };
 

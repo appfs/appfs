@@ -1,14 +1,18 @@
 /*
  * DocumentErrorHandler.h
  *
- *  Created on: May 8, 2017
- *      Author: july
+ * 	\brief     Class for handle errors while parsing xml files.
+ *  \details   Extends xercesc_3_1::HandlerBase for error handling while parsing xml files
+ *  \author    Julia Baumbach
+ *  \date      01.05.2017
  */
 
 #ifndef DOCUMENTERRORHANDLER_H_
 #define DOCUMENTERRORHANDLER_H_
 
 #include <xercesc/sax/HandlerBase.hpp>
+#include <iostream>
+#include <sstream>
 
 class DocumentErrorHandler: public xercesc_3_1::HandlerBase {
 public:
