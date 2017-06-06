@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict
-from random import shuffle
+from random import shuffle, choice
 
 
 class Graph():
@@ -39,10 +39,13 @@ def plotPoints(x, y):
 
     # # plot every connection
     coords = list(zip(x, y))
+    print(choice(coords))
     for dot1 in coords:
         # coords2 = shuffle(coords)
         # print(shuffle(coords))
-        for i, dot2 in np.random.choice(coords, 3):
+        new = []
+        for i, dot2 in enumerate(coords):
+            print(dot1, dot2)
             if dot1 != dot2:
                 ax.plot(*zip(*(dot1, dot2)), 'lightgray', zorder=1)
 
