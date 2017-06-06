@@ -36,6 +36,8 @@ public class ex5 {
 		
 		for(Node node : resultNodes){
 			int distance = node.currentDistance;
+			if(distance == Integer.MAX_VALUE)
+				continue;
 			if(currentMax < distance || (currentMax == distance && node.nodeNumber < nodeNumber)){
 				currentMax = distance;
 				nodeNumber = node.nodeNumber;
