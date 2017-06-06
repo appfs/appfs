@@ -1,0 +1,241 @@
+##### New testrun: undirected #####
+data/acycpos-1.gph
+RESULT VERTEX 57109
+
+RESULT DIST 2822
+
+real	0m48.287s
+user	0m47.980s
+sys	0m0.304s
+data/acycpos-x.gph
+RESULT VERTEX 20686
+
+RESULT DIST 1502
+
+real	9m37.381s
+user	9m34.448s
+sys	0m2.844s
+data/b15.gph
+RESULT VERTEX 34
+
+RESULT DIST 87
+
+real	0m0.034s
+user	0m0.012s
+sys	0m0.004s
+data/big8.gph
+RESULT VERTEX 331
+
+RESULT DIST 1640
+
+real	0m9.243s
+user	0m9.192s
+sys	0m0.048s
+data/es10kaz.gph
+RESULT VERTEX 2671
+
+RESULT DIST 3681081
+
+real	0m0.709s
+user	0m0.696s
+sys	0m0.008s
+data/i640-345.gph
+RESULT VERTEX 7
+
+RESULT DIST 393
+
+real	0m0.442s
+user	0m0.440s
+sys	0m0.000s
+data/phard-1.gph
+RESULT VERTEX 16449
+
+RESULT DIST 5928923
+
+real	0m14.422s
+user	0m14.148s
+sys	0m0.272s
+data/phard-x.gph
+RESULT VERTEX 195478
+
+RESULT DIST 7734402
+
+real	1m32.382s
+user	1m30.984s
+sys	0m1.392s
+data/rand14-5.gph
+RESULT VERTEX 380
+
+RESULT DIST 17
+
+real	0m57.538s
+user	0m57.024s
+sys	0m0.500s
+data/rand4-1.gph
+RESULT VERTEX 779658
+
+RESULT DIST 10482
+
+real	1m40.380s
+user	1m39.716s
+sys	0m0.656s
+data/rand4-x.gph
+RESULT VERTEX 21364
+
+RESULT DIST 19
+
+real	9m52.352s
+user	9m48.980s
+sys	0m3.340s
+data/ssquare-1.gph
+RESULT VERTEX 15433
+
+RESULT DIST 81295
+
+real	0m20.006s
+user	0m19.388s
+sys	0m0.400s
+data/ssquare-s-5.gph
+RESULT VERTEX 24530
+
+RESULT DIST 100001442
+
+real	1m5.273s
+user	1m4.436s
+sys	0m0.832s
+data/ssquare-s-x.gph
+./runall.sh: line 5: 18628 Killed                  python3 ex5.py $f
+
+real	14m20.714s
+user	5m0.552s
+sys	0m8.784s
+data/ssquare-x.gph
+RESULT VERTEX 45015
+
+RESULT DIST 145477
+
+real	5m28.863s
+user	5m22.912s
+sys	0m5.596s
+data/world666.gph
+RESULT VERTEX 666
+
+RESULT DIST 20039
+
+real	0m3.697s
+user	0m3.612s
+sys	0m0.036s
+##### New testrun: undirected #####
+data/b15.gph
+RESULT VERTEX 34
+
+RESULT DIST 87
+
+real	0m0.073s
+user	0m0.044s
+sys	0m0.000s
+data/big8.gph
+RESULT VERTEX 331
+
+RESULT DIST 1640
+
+real	0m9.670s
+user	0m9.612s
+sys	0m0.048s
+data/es10kaz.gph
+RESULT VERTEX 2671
+
+RESULT DIST 3681081
+
+real	0m0.738s
+user	0m0.712s
+sys	0m0.024s
+data/i640-345.gph
+RESULT VERTEX 7
+
+RESULT DIST 393
+
+real	0m0.466s
+user	0m0.452s
+sys	0m0.012s
+data/phard-1.gph
+RESULT VERTEX 16449
+
+RESULT DIST 5928923
+
+real	0m14.765s
+user	0m14.508s
+sys	0m0.188s
+data/ssquare-1.gph
+RESULT VERTEX 15433
+
+RESULT DIST 81295
+
+real	0m20.437s
+user	0m19.976s
+sys	0m0.420s
+data/world666.gph
+RESULT VERTEX 666
+
+RESULT DIST 20039
+
+real	0m3.735s
+user	0m3.692s
+sys	0m0.028s
+##### New testrun: directed #####
+data/b15.gph
+RESULT VERTEX 31
+
+RESULT DIST 35
+
+real	0m0.020s
+user	0m0.016s
+sys	0m0.000s
+data/big8.gph
+RESULT VERTEX 1
+
+RESULT DIST 0
+
+real	0m2.892s
+user	0m2.864s
+sys	0m0.024s
+data/es10kaz.gph
+RESULT VERTEX 1
+
+RESULT DIST 0
+
+real	0m0.532s
+user	0m0.524s
+sys	0m0.008s
+data/i640-345.gph
+RESULT VERTEX 1
+
+RESULT DIST 0
+
+real	0m0.141s
+user	0m0.132s
+sys	0m0.008s
+data/phard-1.gph
+RESULT VERTEX 262145
+
+RESULT DIST 1523
+
+real	0m8.456s
+user	0m8.336s
+sys	0m0.116s
+data/ssquare-1.gph
+RESULT VERTEX 508
+
+RESULT DIST 2604229
+
+real	0m13.554s
+user	0m13.320s
+sys	0m0.232s
+data/world666.gph
+RESULT VERTEX 1
+
+RESULT DIST 0
+
+real	0m0.758s
+user	0m0.740s
+sys	0m0.016s

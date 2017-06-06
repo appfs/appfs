@@ -58,7 +58,6 @@ class PrioQueue:
 
     def add(self, obj, weight):
         elem = Element(obj, weight)
-        print("ADD",elem, self)
         if self.empty():
             self.first_elem = elem
             self.last_elem = elem
@@ -125,6 +124,18 @@ class Vertex:
     def __repr__(self):
         return self.__str__()
 
+    def __lt__(self, other):
+        return self.name < other.name
+
+    def __gt__(self, other):
+        return self.name > other.name
+    
+    def __ge__(self, other):
+        return self.name >= other.name
+    
+    def __le__(self, other):
+        return self.name <= other.name
+
     def add_incoming_edge(self, edge):
         self.edges_in.append(edge)
 
@@ -169,8 +180,8 @@ class Edge:
 
 class Graph:
 
-    def __init__(self, filename):
-        self.init_from_file(filename)
+    def __init__(self, filename, directed=False):
+        self.init_from_file(filename, directed)
 
     def __str__(self):
         return "Graph\nVertices: {}\nEdges: {}".format(self.vertices, "\n".join(map(lambda e: "\t"+e.__str__(), self.edges)))
@@ -194,7 +205,7 @@ class Graph:
         self.vertices.append(Vertex(v))
         self.n_vertices = self.n_vertices + 1
 
-    def init_from_file(self, filename):
+    def init_from_file(self, filename, directed=False):
         self.reset()
 
         with open(filename, "r") as f:\
@@ -219,6 +230,8 @@ class Graph:
                 w = int(info[2])
                 
                 self.add_edge(v1, v2, w)
+                if not directed:
+                    self.add_edge(v2, v1, w)
 
     def get_vertex_by_name(self, vertex):
         # vertex is a string
@@ -250,17 +263,26 @@ class Graph:
                     # update unvisited
                     unvisited.add(neighbor, distance[neighbor])
         return distance
+    
+    def get_longest_shortest_to(self, vert):
+        distances = self.calculate_distances_to(vert)
+        max_dist = 0
+        max_vert = vert
+        for v in sorted(self.vertices):
+            dist = distances[v]
+            if dist > max_dist:
+                max_dist = dist
+                max_vert = v
+        return (max_vert, max_dist)
 
 if __name__ == "__main__":
     # read filename from commandlineargs
     filename = sys.argv[1]
-    verti = int(sys.argv[2])
-    g = Graph(filename)
-    print(g)
+    #vert = int(sys.argv[2])
+    vert = int(1)
+    g = Graph(filename, True)
 
-    vert = g.get_vertex_by_name(verti)
-    res = g.calculate_distances_to(vert)
-
-    print("Result: ", res)
-    # print("RESULT VERTEX {}\n\nRESULT DIST {}".format(res[0], res[1]))
+    vert = g.get_vertex_by_name(vert)
+    res = g.get_longest_shortest_to(vert)
     
+    print("RESULT VERTEX {}\n\nRESULT DIST {}".format(res[0].get_name(), res[1]))
