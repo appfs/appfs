@@ -98,7 +98,7 @@ class ParseXML():
         """Print data to csv."""
         fName = '.'.join(self.fileXML.split('/')[1].split('.')[:-1]) + '.csv'
         with open(fName, 'w', newline='') as out:
-            writer = csv.writer(out, delimiter=';')
+            writer = csv.writer(out, delimiter=';', lineterminator='\n')
             # sort dictionary by key
             for key, vals in sorted(self.dict.items()):
                 writer.writerow(['# ' + key])

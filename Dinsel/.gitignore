@@ -1,0 +1,6 @@
+.coverage
+pip-selfcheck.json
+rclint
+/doc
+/html
+/venv
