@@ -7,8 +7,8 @@ doc:
 	doxygen dox-conf
 
 coverage:
-	coverage3 run --omit=../appfs/* ex1.py test/testdata
-	coverage3 report -m
+	python3-coverage run --omit=../appfs/* ex1.py test/testdata
+	python3-coverage report -m
 
 check:
 	pylint3 ex1.py --rcfile=pyl-conf
