@@ -51,23 +51,14 @@ int main(int argc, char *argv[]){
     	int temp2 = 0;
     	long int temp3 = 0;
     	long int** graph = (long int**) malloc(graphSize*sizeof(long int*));
-    	//long int* graph = (long int*) malloc(graphSize*graphSize*sizeof(long int*));
-    	//long int graph[graphSize][graphSize];
-    	//memset(graph, 0, sizeof(long int) * graphSize * graphSize);
     	for (i = 0; i < graphSize; ++i){
     		graph[i] = (long int*) malloc(graphSize*sizeof(long int));
     		for (j = 0; j < graphSize; ++j){
     			if (i==j){
-    				//graph[i][j] = 0;
-    				//*graph = 0;
-    				//printf("d\n");
     				*(*(graph+i)+j) = 0;
-    				//printf("%d + %d\n", i,j);
-    			}
+       			}
     			else{ 
-    				*(*(graph+i)+j) = -1;
-    				//graph[i][j]=-1;
-    				//printf("%d + %d\n", i,j);    				
+    				*(*(graph+i)+j) = -1;   				
     			}	
     		}	
     	}
@@ -86,8 +77,6 @@ int main(int argc, char *argv[]){
 	}
         
 	long int** shortways = (long int**) malloc(graphSize * sizeof(long int*));
-	//long int shortways[graphSize][graphSize];
-    	//memset(shortways, 0, sizeof(long int) * graphSize * graphSize);
         for (i = 0; i < graphSize; ++i){
   		shortways[i] = (long int*) malloc(graphSize * sizeof(long int));
   		for (j = 0; j < graphSize; j++){
