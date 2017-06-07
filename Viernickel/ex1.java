@@ -8,42 +8,65 @@ public class ex1{
     
     public static void main(String[] args){
         FileReader  fr    = null;
-        double[]    logSum  = new double[2];
+        BufferedReader br;
+        double[]     logSum  = new double[2];
         int[]       size    = new int[2];
         double[]    geoMean = new double[2];
-        int seq;
-        int loc;
-        double val;
+        byte[]  loc;
+        float[] val;
+        byte    tmp_loc;
+        float   tmp_val;
+
         int i = 0;
-        
+
         try {
             fr = new FileReader(args[0]);
-            BufferedReader br = new BufferedReader(fr);
+            br = new BufferedReader(fr);
+            /* Count lines for memory allocation */
+            for(i=0; br.readLine() != null; i++) {}
+            br.close();
+            fr = new FileReader(args[0]);
+            br = new BufferedReader(fr);
+
             String line;
-            for(i=0; (line = br.readLine()) != null; i++){
+            loc = new byte[i];
+            val = new float[i];
+            String noCommentLine;
+            String[] parts;
+
+            /* Get all entries in memory */
+            for(i=0; (line = br.readLine()) != null; i++) {
                 try {
                     line.trim();
-                    String noCommentLine = line.split("#")[0];
-                    String[] parts = noCommentLine.split(";");
-                    seq = Integer.valueOf(parts[0].trim());
-                    loc = Integer.valueOf(parts[1].trim());
-                    val = Double.valueOf(parts[2].trim());
+                    noCommentLine = line.split("#")[0];
+                    parts = noCommentLine.split(";");
+                    Integer.valueOf(parts[0].trim());
+                    tmp_loc = Byte.valueOf(parts[1].trim());
+                    tmp_val = Float.valueOf(parts[2].trim());
                 } catch (Exception e) {
                     //System.out.println("Line ignored: " + line);
                     continue;
                 }
-                if( (Double.isNaN(val)) || (2 < loc) || (0 > val) || (1 > loc)){
+                if( (Float.isNaN(tmp_val)) || (2 < tmp_loc) || (0 > tmp_val) || (1 > tmp_loc)){
                     //System.out.println("Line ignored: " + line);
                     continue;
                 }
-                logSum[loc-1] += Math.log(val);
-                size[loc-1]   += 1;
+                loc[i] = tmp_loc;
+                val[i] = tmp_val;
             }
             br.close();
-        } catch (IOException e) {
+
+            for(i=0; i < val.length; i++) {
+                if (loc[i] > 0) {
+                    logSum[loc[i] - 1] += Math.log(val[i]);
+                    size[loc[i] - 1] += 1;
+                }
+            }
+
+            } catch (IOException e) {
             e.printStackTrace();
         }
-        geoMean[0] = Math.exp(logSum[0] / size[0]); 
+        geoMean[0] = Math.exp(logSum[0] / size[0]);
         geoMean[1] = Math.exp(logSum[1] / size[1]);
         String[] pathSplit = args[0].split("/");
         String filename = pathSplit[pathSplit.length-1];

@@ -1,0 +1,7 @@
+latex/*
+html*/*
+
+*.x*
+
+.cov*
+

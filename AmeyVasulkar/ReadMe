@@ -1,0 +1,4 @@
+For ex2 you need the tiny xml header files present in this repository.
+
+Please copy all the header files along with the program in a single folder and then run the program.
+It would be better if you run the program in c++11.

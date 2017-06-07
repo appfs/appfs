@@ -29,7 +29,7 @@
 
 // Note: The constant string is put several times into the code, but the compiler will automatically combine.
 #define print_error_and_continue(ln, lb)  \
-  { fprintf(stderr, "%s(%d): Line %" PRIuFAST32 ": Syntax error [%s]\n", __FILE__, __LINE__, ln, lb); continue; }
+  { fprintf(stderr, "%s(%d): Line %" PRIuFAST32 ": Error [%s]\n", __FILE__, __LINE__, ln, lb); continue; }
 
 /** Print error message with source file name and line number
  */
@@ -154,11 +154,15 @@ int main(int argc, const char* const* const argv)
 
       uint8_t loc   = 0;
       double  value = NAN;
+      
+#if 0 // Shorter but slower
 
-#if 0 // Short but slow
+      char    extra[2];
 
+      int ret = sscanf(s, "%*d ; %" SCNu8 " ; %lf %1s", &loc, &value, extra);
+      
       // We can ignore the sequence no. Just get the location and the value
-      if (2 != sscanf(s, "%*d; %" SCNu8 "; %lf", &loc, &value))
+      if (2 != ret)
          print_error_and_continue(lineno, line);
 
       if (loc < 1 || loc > LOCS)
@@ -211,10 +215,8 @@ int main(int argc, const char* const* const argv)
 #endif
       
       if (!isnormal(value) || value <= 0.0)
-      {         
-         fprintf(stderr, "Line %" PRIuFAST32 ": Invalid value\n", lineno);
-         continue;
-      }
+         print_error_and_continue(lineno, line);
+
       loc--;
 
       assert(loc < LOCS); // Explain signed/unsigned regarding "--" on zero before 
