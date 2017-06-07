@@ -58,10 +58,11 @@ int main(int argc, char *argv[]){
     				*(*(graph+i)+j) = 0;
     			}
     			else{ 
-    				*(*(graph+i)+j) = -1;  				
+    				*(*(graph+i)+j) = -1;    				
     			}	
     		}	
     	}
+    	printf("Graph built\n");
 	while ((getline(&line, &len, fp)) != -1) {
 		if (*(line) != '\n'){
 			ptr = strtok(line, delimiter);
@@ -76,19 +77,14 @@ int main(int argc, char *argv[]){
 		}
 	}
         
-	long int** shortways = (long int**) malloc(graphSize * sizeof(long int*));
-        for (i = 0; i < graphSize; ++i){
-  		shortways[i] = (long int*) malloc(graphSize * sizeof(long int));
-  		for (j = 0; j < graphSize; j++){
-  			shortways[i][j] = *(*(graph+i)+j);
-  	}
-  }
+        printf("Graph built and val fittet\n");
+
 	for (int k = 0; k < graphSize; ++k){
 		for (i = 0; i < graphSize; ++i){
 			for (j = 0; j < graphSize; ++j){
-				if (shortways[i][j] == -1||shortways[i][j] > (shortways[i][k] + shortways[k][j])){
-					if (shortways[i][k] != -1 && shortways[k][j] != -1){ 
-						shortways[i][j] = shortways[i][k]+shortways[k][j];
+				if (graph[i][j] == -1||graph[i][j] > (graph[i][k] + graph[k][j])){
+					if (graph[i][k] != -1 && graph[k][j] != -1){ 
+						graph[i][j] = graph[i][k]+graph[k][j];
 					}
 				}	
 			}
@@ -96,10 +92,10 @@ int main(int argc, char *argv[]){
 	}
     
 	for (i = 0; i < graphSize; ++i){        
-		if (shortways[i][0] > cost && shortways[i][0] != -1){
+		if (graph[i][0] > cost && graph[i][0] != -1){
         		temp = i;
-        		cost = shortways[i][0];
-        		free(shortways[i]);
+        		cost = graph[i][0];
+        		free(graph[i]);
         	}	
         }
 
@@ -107,7 +103,6 @@ int main(int argc, char *argv[]){
         printf("RESULT VERTEX %d \n", temp+1);
         printf("RESULT DIST %ld \n", cost);
         free(graph);
-        free(shortways);
         return 0;
 }
 
