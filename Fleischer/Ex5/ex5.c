@@ -56,9 +56,9 @@ int main(int argc, char *argv[]){
     		for (j = 0; j < graphSize; ++j){
     			if (i==j){
     				*(*(graph+i)+j) = 0;
-       			}
+    			}
     			else{ 
-    				*(*(graph+i)+j) = -1;   				
+    				*(*(graph+i)+j) = -1;  				
     			}	
     		}	
     	}
