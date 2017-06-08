@@ -25,9 +25,9 @@ class ParseXML():
 
         Parameters
         ----------
-        xml -- the xml file to extract the "amountOfPower" from
-        xsd -- the schema file to validate the xml against
-        verbose -- prompt some info on the screen
+        xml : the xml file to extract the "amountOfPower" from
+        xsd : the schema file to validate the xml against
+        verbose : prompt some info on the screen
         """
         self.fileXML = xml
         self.fileXSD = xsd
@@ -69,7 +69,7 @@ class ParseXML():
 
         Parameters
         ----------
-        schema -- validation with a schema is optional
+        schema : validation with a schema is optional
 
         """
         parser = etree.XMLParser(remove_comments=True, schema=schema)
