@@ -36,3 +36,6 @@
 hark/ex1.dat
 
 .idea/
+*.csv
+hark/resources/
+hark/doc/
