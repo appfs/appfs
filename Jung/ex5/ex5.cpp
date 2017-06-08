@@ -9,9 +9,11 @@
 #include <limits>
 
 
-/**
-Program to find the longest shortest path from a graph to vertex 1, uses the dijkstra algo
 
+/**
+* @brief finds the vertex which is unused and have the smallest distance in the current dijsktra step
+* @param vert the vector of the vertexes
+* returns the iterator of the unused vertex with the smallest distance in the vector
 */
 
 std::vector<vertex>::iterator unusedMin(std::vector<vertex>& vert) {				//returns the unused vertex with minimum distance, if everyone is used returns vert.begin()
@@ -40,6 +42,11 @@ std::vector<vertex>::iterator unusedMin(std::vector<vertex>& vert) {				//return
 	return it;
 }
 
+/**
+* @brief finds the maximum distance and maximum weight
+* @param vert the vector of the vertexes
+* returns the iterator of the unused vertex with the smallest distance in the vector
+*/
 
 void findMax(std::vector<vertex>& vert, int& maxD, int& maxP, int& maxW) {
 	std::vector<vertex>::iterator it;
@@ -62,6 +69,11 @@ void findMax(std::vector<vertex>& vert, int& maxD, int& maxP, int& maxW) {
 	}
 }
 
+
+/**
+* @brief dijkstra algorithm to find the longest shortest path to vertex 1
+* @param vert the vector of the vertexes
+*/
 
 void dijkstra(std::vector<vertex>& vert) {
 	
@@ -99,6 +111,11 @@ void dijkstra(std::vector<vertex>& vert) {
 }
 
 
+/**
+* @brief reads in the file and creates a graph
+* @param file the input file to read from
+* @param vert vector where the graphs vertexes will be stored
+*/
 void initialEdges(std::ifstream& file, std::vector<vertex>& vert) {
 	clock_t tStart2 = clock();
 	std::string str;
@@ -127,6 +144,14 @@ void initialEdges(std::ifstream& file, std::vector<vertex>& vert) {
 
 }
 
+/**
+* @brief find the longest shortest path from a graph to vertex 1 using the dijkstra algo
+* @param argv the name of the input file to read from 
+* prints out the node with the longest shortest path to vertex 1 as "RESULT NODE"
+* prints out the distance of that node to node 1 as "RESULT TIME"
+* prints out the maximum weight of the edges which are in a shortest path from any node to node 1
+* prints out the time is needed for reading and for the whole program
+*/
 
 int main(int argc, char* argv[]) {
 	try {
