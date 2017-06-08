@@ -32,10 +32,8 @@ class Ex5:
        
         weights = self.g.edge_properties["c0"]
         to_visit.add(vert)
-        print(to_visit)
         while len(to_visit) != 0:
             curr = self.pop_next_destination(to_visit, distance)
-            print(to_visit, curr)
             visited[curr] = True
             if directed:
                 edges = self.g.get_in_edges(curr)

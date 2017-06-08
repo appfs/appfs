@@ -1,4 +1,5 @@
 #!/usr/bin/env python 
+            irint(to_visit, curr)
 
 import sys
 
