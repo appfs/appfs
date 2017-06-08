@@ -1,5 +1,4 @@
-#!/usr/bin/env python 
-            irint(to_visit, curr)
+#!/usr/bin/env python3 
 
 import sys
 
