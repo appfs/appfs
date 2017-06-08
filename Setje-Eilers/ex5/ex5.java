@@ -71,7 +71,7 @@ public class ex5 {
 	public static void main(String[] args) {
 		Graph g;
 		try {
-			BufferedReader br= new BufferedReader(new FileReader("acycpos-1.gph"));
+			BufferedReader br= new BufferedReader(new FileReader(args[0]));
 			
 		
 		String brline=br.readLine();
