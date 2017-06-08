@@ -10,27 +10,32 @@ class Ex5:
         self.g = load_graph_from_csv(filename, directed=directed, csv_options={"delimiter": " ", "quotechar": '"'}, skip_first=True, string_vals=True)
         self.vertex_names = self.g.vertex_properties["name"]
 
-    def get_min_unvisited(self, visited, distance):
+    def pop_next_destination(self, to_visit, distance):
         mind = -1
         minv = None
-        for v in self.g.get_vertices():
-            if distance[v] != -1 and not visited[v] and (distance[v] < mind or mind == -1): 
+        for v in to_visit:
+            if distance[v] < mind or mind == -1: 
                 mind = distance[v]
                 minv = v
+        to_visit.remove(minv)
         return minv
 
     def calculate_distances_to(self, vert):
         directed = self.g.is_directed()
         distance = {}
         visited = {}
-        for vertex in range(self.g.num_vertices()):
+        for vertex in self.g.get_vertices():
             distance[vertex] = -1
             visited[vertex] = False
         distance[vert] = 0
+        to_visit = set()
        
         weights = self.g.edge_properties["c0"]
-        curr = vert
-        while curr is not None:
+        to_visit.add(vert)
+        print(to_visit)
+        while len(to_visit) != 0:
+            curr = self.pop_next_destination(to_visit, distance)
+            print(to_visit, curr)
             visited[curr] = True
             if directed:
                 edges = self.g.get_in_edges(curr)
@@ -46,7 +51,7 @@ class Ex5:
                     newdist = distance[curr] + int(weights[self.g.edge(s,t)])
                     if distance[neighbor] == -1 or newdist < distance[neighbor]:
                         distance[neighbor] = newdist
-            curr = self.get_min_unvisited(visited, distance)
+                    to_visit.add(neighbor)
         return distance
    
     def vert_index(self, vert):
@@ -55,7 +60,7 @@ class Ex5:
                 return v
    
     def vert_name(self, vert):
-        return self.vertex_names[vert]
+        return int(self.vertex_names[vert])
 
     def get_longest_shortest_to(self, vert):
         # name to index
@@ -65,7 +70,7 @@ class Ex5:
         max_vert = vert
         for v in self.g.get_vertices():
             dist = distances[v]
-            if dist > max_dist or (dist == max_dist and self.vert_name(max_vert) > self.vert_name(v)):
+            if dist > max_dist or (dist == max_dist and self.vert_name(v) < self.vert_name(max_vert)):
                 max_dist = dist
                 max_vert = v
         return (self.vert_name(max_vert), max_dist)
@@ -74,6 +79,7 @@ if __name__ == "__main__":
     # read filename from commandlineargs
     filename = sys.argv[1]
     #vert = int(sys.argv[2])
+    
     vert = 1
     ex = Ex5(file=filename, directed=False, vertex=vert)
     res = ex.get_longest_shortest_to(vert)

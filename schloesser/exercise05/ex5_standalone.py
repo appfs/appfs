@@ -139,6 +139,17 @@ class Graph:
                 minv = v
         return minv
 
+    def pop_next_destination(self, to_visit, distance):
+        mind = -1
+        minv = None
+        for v in to_visit:
+            # assert distance[v] >= 0
+            if distance[v] < mind or mind == -1:
+                mind = distance[v]
+                minv = v
+        to_visit.remove(minv)
+        return minv
+
     def calculate_distances_to(self, vert):
         distance = {}
         visited = {}
@@ -146,9 +157,11 @@ class Graph:
             distance[vertex] = -1
             visited[vertex] = False
         distance[vert] = 0
+        to_visit = set()
         
-        curr = vert
-        while curr is not None:
+        to_visit.add(vert)
+        while len(to_visit) != 0:
+            curr = self.pop_next_destination(to_visit, distance)
             visited[curr] = True
             edges = curr.get_incoming_edges()
             for edge in edges:
@@ -158,7 +171,7 @@ class Graph:
                     newdist = distance[curr] + edge.get_weight()
                     if distance[neighbor] == -1 or newdist < distance[neighbor]:
                         distance[neighbor] = newdist
-            curr = self.get_min_unvisited(visited, distance)
+                    to_visit.add(neighbor)
         return distance
     
     def get_longest_shortest_to(self, vert):
