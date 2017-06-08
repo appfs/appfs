@@ -1,3 +1,9 @@
+/*
+*  @file 		ex5.cpp
+*  @details  	This file is the solution to exercise 5.
+*  @author    	Alexander Rettkowski
+*  @date      	08.06.2017
+*/
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
@@ -54,6 +60,11 @@ namespace exercise5
 	};
 }
 
+/**
+* The main function that reads in a file and processes it.
+* @param argc Number of command line arguments.
+* @param *argv a pointer to the array of command line arguments.
+*/
 int main(int argc, char *argv[])
 {
 	typedef adjacency_list < listS, vecS, undirectedS, no_property, property < edge_weight_t, int > > graph_t;
@@ -92,7 +103,8 @@ int main(int argc, char *argv[])
 
 	file.close();
 
-	graph_t g(&edges[0], &edges[0] + edges.size(), &weights[0], numberOfNodes);
+	graph_t g(edges.data(), edges.data() + edges.size(), weights.data(), numberOfNodes);
+
 	property_map<graph_t, edge_weight_t>::type weightmap = get(edge_weight, g);
 	std::vector<vertex_descriptor> p(num_vertices(g));
 	std::vector<int> d(num_vertices(g));
