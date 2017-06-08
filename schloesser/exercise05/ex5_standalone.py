@@ -2,115 +2,6 @@
 
 import sys
 
-class Element:
-    
-    # obj can be anything, value can be used as a priorty
-    def __init__(self, obj, value):
-        self.obj = obj
-        self.value = value
-        self.successor = None
-        self.predecessor = None
-
-    def __str__(self):
-        return "Elem({}, {})".format(self.value, self.obj)
-
-    def __repr__(self):
-        return self.__str__()
-    
-    def set_successor(self, successor):
-        self.successor = successor
-    
-    def set_predecessor(self, predecessor):
-        self.predecessor = predecessor
-
-    def get_successor(self):
-        return self.successor
-
-    def get_predecessor(self):
-        return self.predecessor
-
-    def get_value(self):
-        return self.value
-
-    def get_obj(self):
-        return self.obj
-
-class PrioQueue:
-    
-    def __init__(self):
-        # elements should be elements
-        self.first_elem = None
-        self.last_elem = None
-
-    def __str__(self):
-        if self.empty():
-            return "PrioQueue: []"
-        out = ""
-        curr = self.first_elem
-        while curr != self.last_elem:
-            out = out + str(curr) + "\n"
-            curr = curr.get_successor()
-        out = out + str(curr)
-        return "PrioQueue: {}".format(out)
-
-    def __repr__(self):
-        return self.__str__()
-
-    def add(self, obj, weight):
-        elem = Element(obj, weight)
-        if self.empty():
-            self.first_elem = elem
-            self.last_elem = elem
-        else:
-            # last element
-            if elem.get_value() >= self.last_elem.get_value():
-                self.last_elem.set_successor(elem)
-                elem.set_predecessor(self.last_elem)
-                self.last_elem = elem
-                return
-            # first element
-            elif elem.get_value() < self.first_elem.get_value():
-                self.first_elem.set_predecessor(elem)
-                elem.set_successor(self.first_elem)
-                self.first_elem = elem 
-                return
-            curr = self.first_elem
-            while curr.get_value() < elem.get_value():
-                curr = curr.get_successor()
-            # assert curr.get_val >= elem.get_val
-            elem.set_predecessor(curr.get_predecessor())
-            elem.set_successor(curr)
-            curr.set_predecessor(elem)
-    
-    def reset(self):
-        self.last_elem = None
-        self.first_elem = None
-
-    def get_max(self):
-        if self.empty():
-            return None
-        maxi = self.last_elem
-        if self.last_elem == self.first_elem:
-            self.reset()
-        else:
-            self.last_elem = self.last_elem.get_predecessor()
-            self.last_elem.set_successor(None)
-        return maxi.get_obj()
-    
-    def get_min(self):
-        if self.empty():
-            return None
-        mini = self.first_elem
-        if self.first_elem == self.last_elem:
-            self.reset()
-        else:
-            self.first_elem = self.first_elem.get_successor()
-            self.first_elem.set_predecessor(None)
-        return mini.get_obj()
-    
-    def empty(self):
-        return self.first_elem is None
-
 class Vertex:
 
     def __init__(self, name):
@@ -239,6 +130,15 @@ class Graph:
             if v.get_name() == vertex:
                 return v
 
+    def get_min_unvisited(self, visited, distance):
+        mind = -1
+        minv = None
+        for v in self.vertices:
+            if distance[v] != -1 and not visited[v] and (distance[v] < mind or mind == -1):
+                mind = distance[v]
+                minv = v
+        return minv
+
     def calculate_distances_to(self, vert):
         distance = {}
         visited = {}
@@ -247,10 +147,8 @@ class Graph:
             visited[vertex] = False
         distance[vert] = 0
         
-        unvisited = PrioQueue()
-        unvisited.add(vert, 0)
-        while not unvisited.empty():
-            curr = unvisited.get_min()
+        curr = vert
+        while curr is not None:
             visited[curr] = True
             edges = curr.get_incoming_edges()
             for edge in edges:
@@ -260,8 +158,7 @@ class Graph:
                     newdist = distance[curr] + edge.get_weight()
                     if distance[neighbor] == -1 or newdist < distance[neighbor]:
                         distance[neighbor] = newdist
-                    # update unvisited
-                    unvisited.add(neighbor, distance[neighbor])
+            curr = self.get_min_unvisited(visited, distance)
         return distance
     
     def get_longest_shortest_to(self, vert):
@@ -280,7 +177,7 @@ if __name__ == "__main__":
     filename = sys.argv[1]
     #vert = int(sys.argv[2])
     vert = int(1)
-    g = Graph(filename, True)
+    g = Graph(filename, False)
 
     vert = g.get_vertex_by_name(vert)
     res = g.get_longest_shortest_to(vert)
