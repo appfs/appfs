@@ -114,10 +114,22 @@ int main(int argc, char *argv[])
 			distance_map(make_iterator_property_map(d.begin(), get(vertex_index, g))));
 
 	graph_traits < graph_t >::vertex_iterator vi, vend;
+	size_t vertex = -1;
+	double distance = -1;
 	for (tie(vi, vend) = vertices(g); vi != vend; ++vi) {
-		std::cout << "RESULT VERTEX " << *vi << std::endl;
-		std::cout << "RESULT DIST " << d[*vi] << std::endl;
+		if (d[*vi] > distance)
+		{
+			distance = d[*vi];
+			vertex = *vi;
+		}
+		if ((d[*vi] == distance) && (*vi > vertex))
+		{
+			vertex = *vi;
+		}
 	}
+
+	std::cout << "RESULT VERTEX " << vertex << std::endl;
+	std::cout << "RESULT DIST " << distance << std::endl;
 
 	return 0;
 }
