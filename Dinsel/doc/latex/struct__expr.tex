@@ -1,0 +1,136 @@
+\hypertarget{struct__expr}{}\section{\+\_\+expr Struct Reference}
+\label{struct__expr}\index{\+\_\+expr@{\+\_\+expr}}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+enum \+\_\+expr\+\_\+kind {\bfseries kind}\hypertarget{struct__expr_a588eb2205de8b0b03e0edd5143a26cd0}{}\label{struct__expr_a588eb2205de8b0b03e0edd5143a26cd0}
+
+\item 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>struct \{\\
+\>\>boolop\_ty {\bfseries op}\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries values}\\
+\>\} {\bfseries BoolOp}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries left}\\
+\>\>operator\_ty {\bfseries op}\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries right}\\
+\>\} {\bfseries BinOp}\\
+\>struct \{\\
+\>\>unaryop\_ty {\bfseries op}\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries operand}\\
+\>\} {\bfseries UnaryOp}\\
+\>struct \{\\
+\>\>\hyperlink{struct__arguments}{arguments\_ty} {\bfseries args}\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries body}\\
+\>\} {\bfseries Lambda}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries test}\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries body}\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries orelse}\\
+\>\} {\bfseries IfExp}\\
+\>struct \{\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries keys}\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries values}\\
+\>\} {\bfseries Dict}\\
+\>struct \{\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries elts}\\
+\>\} {\bfseries Set}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries elt}\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries generators}\\
+\>\} {\bfseries ListComp}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries elt}\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries generators}\\
+\>\} {\bfseries SetComp}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries key}\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries value}\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries generators}\\
+\>\} {\bfseries DictComp}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries elt}\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries generators}\\
+\>\} {\bfseries GeneratorExp}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries value}\\
+\>\} {\bfseries Await}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries value}\\
+\>\} {\bfseries Yield}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries value}\\
+\>\} {\bfseries YieldFrom}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries left}\\
+\>\>\hyperlink{structasdl__int__seq}{asdl\_int\_seq} $\ast$ {\bfseries ops}\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries comparators}\\
+\>\} {\bfseries Compare}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries func}\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries args}\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries keywords}\\
+\>\} {\bfseries Call}\\
+\>struct \{\\
+\>\>\hyperlink{struct__object}{object} {\bfseries n}\\
+\>\} {\bfseries Num}\\
+\>struct \{\\
+\>\>\hyperlink{struct__object}{string} {\bfseries s}\\
+\>\} {\bfseries Str}\\
+\>struct \{\\
+\>\>\hyperlink{struct__object}{bytes} {\bfseries s}\\
+\>\} {\bfseries Bytes}\\
+\>struct \{\\
+\>\>\hyperlink{struct__object}{singleton} {\bfseries value}\\
+\>\} {\bfseries NameConstant}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries value}\\
+\>\>\hyperlink{struct__object}{identifier} {\bfseries attr}\\
+\>\>expr\_context\_ty {\bfseries ctx}\\
+\>\} {\bfseries Attribute}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries value}\\
+\>\>\hyperlink{struct__slice}{slice\_ty} {\bfseries slice}\\
+\>\>expr\_context\_ty {\bfseries ctx}\\
+\>\} {\bfseries Subscript}\\
+\>struct \{\\
+\>\>\hyperlink{struct__expr}{expr\_ty} {\bfseries value}\\
+\>\>expr\_context\_ty {\bfseries ctx}\\
+\>\} {\bfseries Starred}\\
+\>struct \{\\
+\>\>\hyperlink{struct__object}{identifier} {\bfseries id}\\
+\>\>expr\_context\_ty {\bfseries ctx}\\
+\>\} {\bfseries Name}\\
+\>struct \{\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries elts}\\
+\>\>expr\_context\_ty {\bfseries ctx}\\
+\>\} {\bfseries List}\\
+\>struct \{\\
+\>\>\hyperlink{structasdl__seq}{asdl\_seq} $\ast$ {\bfseries elts}\\
+\>\>expr\_context\_ty {\bfseries ctx}\\
+\>\} {\bfseries Tuple}\\
+\} {\bfseries v}\hypertarget{struct__expr_af987b625ff4f671902af36f2e594427c}{}\label{struct__expr_af987b625ff4f671902af36f2e594427c}
+\\
+
+\end{tabbing}\item 
+int {\bfseries lineno}\hypertarget{struct__expr_a998fb97c3e3b6e418e07ba5a0e9673eb}{}\label{struct__expr_a998fb97c3e3b6e418e07ba5a0e9673eb}
+
+\item 
+int {\bfseries col\+\_\+offset}\hypertarget{struct__expr_a9e8fb71f839ec6124be14f3aeec7d721}{}\label{struct__expr_a9e8fb71f839ec6124be14f3aeec7d721}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 207 of file Python-\/ast.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/usr/include/python3.\+5m/Python-\/ast.\+h\end{DoxyCompactItemize}

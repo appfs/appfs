@@ -1,0 +1,180 @@
+\hypertarget{classex1_1_1ex1}{}\section{ex1.\+ex1 Class Reference}
+\label{classex1_1_1ex1}\index{ex1.\+ex1@{ex1.\+ex1}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classex1_1_1ex1_ad56d8905b692c28b24852dcc4612ebc2}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, args)
+\item 
+def \hyperlink{classex1_1_1ex1_ac4a328a121403ce0778069e1aa38a1fc}{get\+Data} (self, fname)
+\item 
+def \hyperlink{classex1_1_1ex1_a1bc2508f80651d0806b57abe1e932f13}{h\+Time} (self, num)
+\item 
+def \hyperlink{classex1_1_1ex1_aa20fde3cf347599b6b6900a9459caaa8}{get\+G\+Mean} (self, args)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}.\end{DoxyVerb}
+ 
+
+Definition at line 16 of file ex1.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{ex1\+::ex1@{ex1\+::ex1}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!ex1\+::ex1@{ex1\+::ex1}}
+\subsubsection[{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+(self, args)}{__init__(self, args)}}]{\setlength{\rightskip}{0pt plus 5cm}def ex1.\+ex1.\+\_\+\+\_\+init\+\_\+\+\_\+ (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{args}
+\end{DoxyParamCaption}
+)}\hypertarget{classex1_1_1ex1_ad56d8905b692c28b24852dcc4612ebc2}{}\label{classex1_1_1ex1_ad56d8905b692c28b24852dcc4612ebc2}
+\begin{DoxyVerb}.\end{DoxyVerb}
+ 
+
+Definition at line 18 of file ex1.\+py.
+
+
+\begin{DoxyCode}
+18     \textcolor{keyword}{def }\hyperlink{classex1_1_1ex1_ad56d8905b692c28b24852dcc4612ebc2}{\_\_init\_\_}(self, args):
+19         \textcolor{stringliteral}{"""."""}
+20         self.\hyperlink{classex1_1_1ex1_aa20fde3cf347599b6b6900a9459caaa8}{getGMean}(args)
+21 
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\index{ex1\+::ex1@{ex1\+::ex1}!get\+Data@{get\+Data}}
+\index{get\+Data@{get\+Data}!ex1\+::ex1@{ex1\+::ex1}}
+\subsubsection[{\texorpdfstring{get\+Data(self, fname)}{getData(self, fname)}}]{\setlength{\rightskip}{0pt plus 5cm}def ex1.\+ex1.\+get\+Data (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{fname}
+\end{DoxyParamCaption}
+)}\hypertarget{classex1_1_1ex1_ac4a328a121403ce0778069e1aa38a1fc}{}\label{classex1_1_1ex1_ac4a328a121403ce0778069e1aa38a1fc}
+\begin{DoxyVerb}Strip down the data file.
+
+Parameters
+----------
+fname -- the name of the data containing file
+\end{DoxyVerb}
+ 
+
+Definition at line 22 of file ex1.\+py.
+
+
+\begin{DoxyCode}
+22     \textcolor{keyword}{def }\hyperlink{classex1_1_1ex1_ac4a328a121403ce0778069e1aa38a1fc}{getData}(self, fname):
+23         \textcolor{stringliteral}{"""}
+24 \textcolor{stringliteral}{        Strip down the data file.}
+25 \textcolor{stringliteral}{}
+26 \textcolor{stringliteral}{        Parameters}
+27 \textcolor{stringliteral}{        ----------}
+28 \textcolor{stringliteral}{        fname -- the name of the data containing file}
+29 \textcolor{stringliteral}{        """}
+30         vals1 = []
+31         vals2 = []
+32         errors = []
+33         with open(fname, \textcolor{stringliteral}{'r') as infile:}
+34 \textcolor{stringliteral}{            }\textcolor{keywordflow}{for} line \textcolor{keywordflow}{in} infile:
+35                 \textcolor{comment}{# line --> array}
+36                 data = line.strip().split(\textcolor{stringliteral}{';'})
+37                 \textcolor{keywordflow}{try}:
+38                     \textcolor{comment}{# check if idx is valid or throw exception}
+39                     \textcolor{comment}{# idx = int(data[0])}
+40                     num = np.float(data[2])
+41                     \textcolor{keywordflow}{if} data[1].strip() == \textcolor{stringliteral}{'1'} \textcolor{keywordflow}{and} num > 0:
+42                         vals1.append(num)
+43                     \textcolor{keywordflow}{elif} data[1].strip() == \textcolor{stringliteral}{'2'} \textcolor{keywordflow}{and} num > 0:
+44                         vals2.append(num)
+45                     \textcolor{keywordflow}{else}:
+46                         \textcolor{keywordflow}{raise} ValueError(\textcolor{stringliteral}{"Found other location than 1 or 2"})
+47                 \textcolor{keywordflow}{except} (ValueError, IndexError, AttributeError):
+48                     errors.append(line)
+49 
+50         \textcolor{keywordflow}{return} vals1, vals2, errors
+51 
+\end{DoxyCode}
+\index{ex1\+::ex1@{ex1\+::ex1}!get\+G\+Mean@{get\+G\+Mean}}
+\index{get\+G\+Mean@{get\+G\+Mean}!ex1\+::ex1@{ex1\+::ex1}}
+\subsubsection[{\texorpdfstring{get\+G\+Mean(self, args)}{getGMean(self, args)}}]{\setlength{\rightskip}{0pt plus 5cm}def ex1.\+ex1.\+get\+G\+Mean (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{args}
+\end{DoxyParamCaption}
+)}\hypertarget{classex1_1_1ex1_aa20fde3cf347599b6b6900a9459caaa8}{}\label{classex1_1_1ex1_aa20fde3cf347599b6b6900a9459caaa8}
+\begin{DoxyVerb}Calculate the geometric mean of file.
+
+Parameters
+----------
+args -- the command line arguments data file and cython option
+\end{DoxyVerb}
+ 
+
+Definition at line 62 of file ex1.\+py.
+
+
+\begin{DoxyCode}
+62     \textcolor{keyword}{def }\hyperlink{classex1_1_1ex1_aa20fde3cf347599b6b6900a9459caaa8}{getGMean}(self, args):
+63         \textcolor{stringliteral}{"""}
+64 \textcolor{stringliteral}{        Calculate the geometric mean of file.}
+65 \textcolor{stringliteral}{}
+66 \textcolor{stringliteral}{        Parameters}
+67 \textcolor{stringliteral}{        ----------}
+68 \textcolor{stringliteral}{        args -- the command line arguments data file and cython option}
+69 \textcolor{stringliteral}{        """}
+70         \textcolor{comment}{# start timing}
+71         \textcolor{comment}{# cython = False}
+72         t0 = time.time()
+73         \textcolor{keywordflow}{if} args.cython:
+74             \textcolor{keyword}{import} cGetData
+75             vals1, vals2, errorLines = cGetData.getData(args.file)
+76         \textcolor{keywordflow}{else}:
+77             vals1, vals2, errorLines = self.\hyperlink{classex1_1_1ex1_ac4a328a121403ce0778069e1aa38a1fc}{getData}(args.file)
+78         print(\textcolor{stringliteral}{"got arrays in \{\}"}.format(self.\hyperlink{classex1_1_1ex1_a1bc2508f80651d0806b57abe1e932f13}{hTime}(time.time() - t0)))
+79         print(\textcolor{stringliteral}{"File \{\} contained \{\} lines."}.format(args.file, len(vals1) + len(vals2) + len(errorLines)))
+80         print(\textcolor{stringliteral}{"\{\} valid values of loc1 with GeoMean: \{\}"}.format(len(vals1), gmean((vals1))))
+81         print(\textcolor{stringliteral}{"\{\} valid values of loc2 with GeoMean: \{\}"}.format(len(vals2), gmean((vals2))))
+82 
+83         t1 = time.time()
+84         print(\textcolor{stringliteral}{"\{\} took \{\} to solve."}.format(\textcolor{stringliteral}{">"}*10, self.\hyperlink{classex1_1_1ex1_a1bc2508f80651d0806b57abe1e932f13}{hTime}(t1-t0)))
+85 
+86 
+\end{DoxyCode}
+\index{ex1\+::ex1@{ex1\+::ex1}!h\+Time@{h\+Time}}
+\index{h\+Time@{h\+Time}!ex1\+::ex1@{ex1\+::ex1}}
+\subsubsection[{\texorpdfstring{h\+Time(self, num)}{hTime(self, num)}}]{\setlength{\rightskip}{0pt plus 5cm}def ex1.\+ex1.\+h\+Time (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{num}
+\end{DoxyParamCaption}
+)}\hypertarget{classex1_1_1ex1_a1bc2508f80651d0806b57abe1e932f13}{}\label{classex1_1_1ex1_a1bc2508f80651d0806b57abe1e932f13}
+\begin{DoxyVerb}Return a string of human readable time.
+
+Parameters
+----------
+num -- the value in seconds to return as a readable time value
+\end{DoxyVerb}
+ 
+
+Definition at line 52 of file ex1.\+py.
+
+
+\begin{DoxyCode}
+52     \textcolor{keyword}{def }\hyperlink{classex1_1_1ex1_a1bc2508f80651d0806b57abe1e932f13}{hTime}(self, num):
+53         \textcolor{stringliteral}{"""}
+54 \textcolor{stringliteral}{        Return a string of human readable time.}
+55 \textcolor{stringliteral}{}
+56 \textcolor{stringliteral}{        Parameters}
+57 \textcolor{stringliteral}{        ----------}
+58 \textcolor{stringliteral}{        num -- the value in seconds to return as a readable time value}
+59 \textcolor{stringliteral}{        """}
+60         \textcolor{keywordflow}{return} str(datetime.timedelta(seconds=num))
+61 
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+O\+P\+T\+I/bzfdinse/appfs/\+Dinsel/ex1/ex1.\+py\end{DoxyCompactItemize}

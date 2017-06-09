@@ -1,0 +1,86 @@
+\hypertarget{structPyExpat__CAPI}{}\section{Py\+Expat\+\_\+\+C\+A\+PI Struct Reference}
+\label{structPyExpat__CAPI}\index{Py\+Expat\+\_\+\+C\+A\+PI@{Py\+Expat\+\_\+\+C\+A\+PI}}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+char $\ast$ {\bfseries magic}\hypertarget{structPyExpat__CAPI_a30fce229975c2354354560dd2e906dc3}{}\label{structPyExpat__CAPI_a30fce229975c2354354560dd2e906dc3}
+
+\item 
+int {\bfseries size}\hypertarget{structPyExpat__CAPI_af92677867a91271e628f211a96c9b5df}{}\label{structPyExpat__CAPI_af92677867a91271e628f211a96c9b5df}
+
+\item 
+int {\bfseries M\+A\+J\+O\+R\+\_\+\+V\+E\+R\+S\+I\+ON}\hypertarget{structPyExpat__CAPI_a584f37c57c8604474f31abda36f06055}{}\label{structPyExpat__CAPI_a584f37c57c8604474f31abda36f06055}
+
+\item 
+int {\bfseries M\+I\+N\+O\+R\+\_\+\+V\+E\+R\+S\+I\+ON}\hypertarget{structPyExpat__CAPI_a4254d96093f733cbed41fded6308b334}{}\label{structPyExpat__CAPI_a4254d96093f733cbed41fded6308b334}
+
+\item 
+int {\bfseries M\+I\+C\+R\+O\+\_\+\+V\+E\+R\+S\+I\+ON}\hypertarget{structPyExpat__CAPI_abd706f536a4b44a93c5207a7e568ce9a}{}\label{structPyExpat__CAPI_abd706f536a4b44a93c5207a7e568ce9a}
+
+\item 
+const X\+M\+L\+\_\+\+L\+Char $\ast$($\ast$ {\bfseries Error\+String} )(enum X\+M\+L\+\_\+\+Error code)\hypertarget{structPyExpat__CAPI_af7c49b4a394f57108377beb4690ccdf9}{}\label{structPyExpat__CAPI_af7c49b4a394f57108377beb4690ccdf9}
+
+\item 
+enum X\+M\+L\+\_\+\+Error($\ast$ {\bfseries Get\+Error\+Code} )(X\+M\+L\+\_\+\+Parser parser)\hypertarget{structPyExpat__CAPI_ae4ba4b470a4d80ba107c556eada59492}{}\label{structPyExpat__CAPI_ae4ba4b470a4d80ba107c556eada59492}
+
+\item 
+X\+M\+L\+\_\+\+Size($\ast$ {\bfseries Get\+Error\+Column\+Number} )(X\+M\+L\+\_\+\+Parser parser)\hypertarget{structPyExpat__CAPI_a52fccb9618f4a0db6c6a5ef8f799f4f7}{}\label{structPyExpat__CAPI_a52fccb9618f4a0db6c6a5ef8f799f4f7}
+
+\item 
+X\+M\+L\+\_\+\+Size($\ast$ {\bfseries Get\+Error\+Line\+Number} )(X\+M\+L\+\_\+\+Parser parser)\hypertarget{structPyExpat__CAPI_a238c98224fe4c4761527fdb823e565cd}{}\label{structPyExpat__CAPI_a238c98224fe4c4761527fdb823e565cd}
+
+\item 
+enum X\+M\+L\+\_\+\+Status($\ast$ {\bfseries Parse} )(X\+M\+L\+\_\+\+Parser parser, const char $\ast$s, int len, int is\+Final)\hypertarget{structPyExpat__CAPI_a7d1e36f41cf7327ea479886dadb31321}{}\label{structPyExpat__CAPI_a7d1e36f41cf7327ea479886dadb31321}
+
+\item 
+X\+M\+L\+\_\+\+Parser($\ast$ {\bfseries Parser\+Create\+\_\+\+MM} )(const X\+M\+L\+\_\+\+Char $\ast$encoding, const X\+M\+L\+\_\+\+Memory\+\_\+\+Handling\+\_\+\+Suite $\ast$memsuite, const X\+M\+L\+\_\+\+Char $\ast$namespace\+Separator)\hypertarget{structPyExpat__CAPI_abb499eb0db9d22b485ed45be20100bd9}{}\label{structPyExpat__CAPI_abb499eb0db9d22b485ed45be20100bd9}
+
+\item 
+void($\ast$ {\bfseries Parser\+Free} )(X\+M\+L\+\_\+\+Parser parser)\hypertarget{structPyExpat__CAPI_a6f02d5578475c187cc6e187a15308eba}{}\label{structPyExpat__CAPI_a6f02d5578475c187cc6e187a15308eba}
+
+\item 
+void($\ast$ {\bfseries Set\+Character\+Data\+Handler} )(X\+M\+L\+\_\+\+Parser parser, X\+M\+L\+\_\+\+Character\+Data\+Handler handler)\hypertarget{structPyExpat__CAPI_a7440612167b3fa8089d41411a0904409}{}\label{structPyExpat__CAPI_a7440612167b3fa8089d41411a0904409}
+
+\item 
+void($\ast$ {\bfseries Set\+Comment\+Handler} )(X\+M\+L\+\_\+\+Parser parser, X\+M\+L\+\_\+\+Comment\+Handler handler)\hypertarget{structPyExpat__CAPI_a9199d4d4f57dda08f2e798351cdbb7ab}{}\label{structPyExpat__CAPI_a9199d4d4f57dda08f2e798351cdbb7ab}
+
+\item 
+void($\ast$ {\bfseries Set\+Default\+Handler\+Expand} )(X\+M\+L\+\_\+\+Parser parser, X\+M\+L\+\_\+\+Default\+Handler handler)\hypertarget{structPyExpat__CAPI_a0bee5d83ab5e9eb578ffb92cd60f8043}{}\label{structPyExpat__CAPI_a0bee5d83ab5e9eb578ffb92cd60f8043}
+
+\item 
+void($\ast$ {\bfseries Set\+Element\+Handler} )(X\+M\+L\+\_\+\+Parser parser, X\+M\+L\+\_\+\+Start\+Element\+Handler start, X\+M\+L\+\_\+\+End\+Element\+Handler end)\hypertarget{structPyExpat__CAPI_a53fc65a60b9dae1d652221e2dfdeb4d0}{}\label{structPyExpat__CAPI_a53fc65a60b9dae1d652221e2dfdeb4d0}
+
+\item 
+void($\ast$ {\bfseries Set\+Namespace\+Decl\+Handler} )(X\+M\+L\+\_\+\+Parser parser, X\+M\+L\+\_\+\+Start\+Namespace\+Decl\+Handler start, X\+M\+L\+\_\+\+End\+Namespace\+Decl\+Handler end)\hypertarget{structPyExpat__CAPI_ad9e94c45149136ca717b975acc06a127}{}\label{structPyExpat__CAPI_ad9e94c45149136ca717b975acc06a127}
+
+\item 
+void($\ast$ {\bfseries Set\+Processing\+Instruction\+Handler} )(X\+M\+L\+\_\+\+Parser parser, X\+M\+L\+\_\+\+Processing\+Instruction\+Handler handler)\hypertarget{structPyExpat__CAPI_a215cc650811061dac3193bcb2c3473db}{}\label{structPyExpat__CAPI_a215cc650811061dac3193bcb2c3473db}
+
+\item 
+void($\ast$ {\bfseries Set\+Unknown\+Encoding\+Handler} )(X\+M\+L\+\_\+\+Parser parser, X\+M\+L\+\_\+\+Unknown\+Encoding\+Handler handler, void $\ast$encoding\+Handler\+Data)\hypertarget{structPyExpat__CAPI_a0e096e97c2371eb148a6af3916cbba8d}{}\label{structPyExpat__CAPI_a0e096e97c2371eb148a6af3916cbba8d}
+
+\item 
+void($\ast$ {\bfseries Set\+User\+Data} )(X\+M\+L\+\_\+\+Parser parser, void $\ast$user\+Data)\hypertarget{structPyExpat__CAPI_a43b5bc9b3ec3772d9edb2295e9a54489}{}\label{structPyExpat__CAPI_a43b5bc9b3ec3772d9edb2295e9a54489}
+
+\item 
+void($\ast$ {\bfseries Set\+Start\+Doctype\+Decl\+Handler} )(X\+M\+L\+\_\+\+Parser parser, X\+M\+L\+\_\+\+Start\+Doctype\+Decl\+Handler start)\hypertarget{structPyExpat__CAPI_aa1fd5da5c573434a703d998b4bbc6c0b}{}\label{structPyExpat__CAPI_aa1fd5da5c573434a703d998b4bbc6c0b}
+
+\item 
+enum X\+M\+L\+\_\+\+Status($\ast$ {\bfseries Set\+Encoding} )(X\+M\+L\+\_\+\+Parser parser, const X\+M\+L\+\_\+\+Char $\ast$encoding)\hypertarget{structPyExpat__CAPI_a4677b403da37d1ea5de125d3a6914499}{}\label{structPyExpat__CAPI_a4677b403da37d1ea5de125d3a6914499}
+
+\item 
+int($\ast$ {\bfseries Default\+Unknown\+Encoding\+Handler} )(void $\ast$encoding\+Handler\+Data, const X\+M\+L\+\_\+\+Char $\ast$name, X\+M\+L\+\_\+\+Encoding $\ast$info)\hypertarget{structPyExpat__CAPI_a92f8f99243fbb7d252efc954b30e123e}{}\label{structPyExpat__CAPI_a92f8f99243fbb7d252efc954b30e123e}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 9 of file pyexpat.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/usr/include/python3.\+5m/pyexpat.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,144 @@
+\hypertarget{classdijkstra_1_1Graph}{}\section{dijkstra.\+Graph Class Reference}
+\label{classdijkstra_1_1Graph}\index{dijkstra.\+Graph@{dijkstra.\+Graph}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classdijkstra_1_1Graph_aa955c424e2a20bd9f14be70d19edb1f6}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self)
+\item 
+def \hyperlink{classdijkstra_1_1Graph_a201ad57b6d07d81c2ae3daf867ec0d56}{add\+Node} (self, value)
+\item 
+def \hyperlink{classdijkstra_1_1Graph_a2103bc1772ccd6f2ffd5eb5788ce070a}{add\+Edge} (self, from\+\_\+node, to\+\_\+node, distance)
+\item 
+def \hyperlink{classdijkstra_1_1Graph_aa23d7edee0ff2e856b55fd22c1485338}{get\+Neighbours\+Of} (self, node)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries nodes}\hypertarget{classdijkstra_1_1Graph_a85596c2cd35f388937e5c72c9eb5fb9c}{}\label{classdijkstra_1_1Graph_a85596c2cd35f388937e5c72c9eb5fb9c}
+
+\item 
+{\bfseries edges}\hypertarget{classdijkstra_1_1Graph_ad50006bfb53462f323ef29124202f3d7}{}\label{classdijkstra_1_1Graph_ad50006bfb53462f323ef29124202f3d7}
+
+\item 
+{\bfseries distances}\hypertarget{classdijkstra_1_1Graph_ab5b849f368ae864e58e5be94a5ac1b16}{}\label{classdijkstra_1_1Graph_ab5b849f368ae864e58e5be94a5ac1b16}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}This class provides the basic functionality for graph handling.\end{DoxyVerb}
+ 
+
+Definition at line 10 of file dijkstra.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{dijkstra\+::\+Graph@{dijkstra\+::\+Graph}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!dijkstra\+::\+Graph@{dijkstra\+::\+Graph}}
+\subsubsection[{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+(self)}{__init__(self)}}]{\setlength{\rightskip}{0pt plus 5cm}def dijkstra.\+Graph.\+\_\+\+\_\+init\+\_\+\+\_\+ (
+\begin{DoxyParamCaption}
+\item[{}]{self}
+\end{DoxyParamCaption}
+)}\hypertarget{classdijkstra_1_1Graph_aa955c424e2a20bd9f14be70d19edb1f6}{}\label{classdijkstra_1_1Graph_aa955c424e2a20bd9f14be70d19edb1f6}
+\begin{DoxyVerb}Initialize the different containers for nodes, edges and dists.\end{DoxyVerb}
+ 
+
+Definition at line 12 of file dijkstra.\+py.
+
+
+\begin{DoxyCode}
+12     \textcolor{keyword}{def }\hyperlink{classdijkstra_1_1Graph_aa955c424e2a20bd9f14be70d19edb1f6}{\_\_init\_\_}(self):
+13         \textcolor{stringliteral}{"""Initialize the different containers for nodes, edges and dists."""}
+14         self.\hyperlink{classdijkstra_1_1Graph_a85596c2cd35f388937e5c72c9eb5fb9c}{nodes} = set()
+15         self.\hyperlink{classdijkstra_1_1Graph_ad50006bfb53462f323ef29124202f3d7}{edges} = defaultdict(list)
+16         self.\hyperlink{classdijkstra_1_1Graph_ab5b849f368ae864e58e5be94a5ac1b16}{distances} = \{\}
+17 
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\index{dijkstra\+::\+Graph@{dijkstra\+::\+Graph}!add\+Edge@{add\+Edge}}
+\index{add\+Edge@{add\+Edge}!dijkstra\+::\+Graph@{dijkstra\+::\+Graph}}
+\subsubsection[{\texorpdfstring{add\+Edge(self, from\+\_\+node, to\+\_\+node, distance)}{addEdge(self, from_node, to_node, distance)}}]{\setlength{\rightskip}{0pt plus 5cm}def dijkstra.\+Graph.\+add\+Edge (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{from\+\_\+node, }
+\item[{}]{to\+\_\+node, }
+\item[{}]{distance}
+\end{DoxyParamCaption}
+)}\hypertarget{classdijkstra_1_1Graph_a2103bc1772ccd6f2ffd5eb5788ce070a}{}\label{classdijkstra_1_1Graph_a2103bc1772ccd6f2ffd5eb5788ce070a}
+\begin{DoxyVerb}Store the connection between node A and node B with a certain distance.
+\end{DoxyVerb}
+ 
+
+Definition at line 22 of file dijkstra.\+py.
+
+
+\begin{DoxyCode}
+22     \textcolor{keyword}{def }\hyperlink{classdijkstra_1_1Graph_a2103bc1772ccd6f2ffd5eb5788ce070a}{addEdge}(self, from\_node, to\_node, distance):
+23         \textcolor{stringliteral}{"""}
+24 \textcolor{stringliteral}{        Store the connection between node A and node B with a certain distance.}
+25 \textcolor{stringliteral}{        """}
+26         self.\hyperlink{classdijkstra_1_1Graph_ad50006bfb53462f323ef29124202f3d7}{edges}[from\_node].append(to\_node)
+27         self.\hyperlink{classdijkstra_1_1Graph_ad50006bfb53462f323ef29124202f3d7}{edges}[to\_node].append(from\_node)
+28         self.\hyperlink{classdijkstra_1_1Graph_ab5b849f368ae864e58e5be94a5ac1b16}{distances}[(from\_node, to\_node)] = distance
+29         \textcolor{comment}{# self.distances[(to\_node, from\_node)] = -distance}
+30 
+\end{DoxyCode}
+\index{dijkstra\+::\+Graph@{dijkstra\+::\+Graph}!add\+Node@{add\+Node}}
+\index{add\+Node@{add\+Node}!dijkstra\+::\+Graph@{dijkstra\+::\+Graph}}
+\subsubsection[{\texorpdfstring{add\+Node(self, value)}{addNode(self, value)}}]{\setlength{\rightskip}{0pt plus 5cm}def dijkstra.\+Graph.\+add\+Node (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{value}
+\end{DoxyParamCaption}
+)}\hypertarget{classdijkstra_1_1Graph_a201ad57b6d07d81c2ae3daf867ec0d56}{}\label{classdijkstra_1_1Graph_a201ad57b6d07d81c2ae3daf867ec0d56}
+\begin{DoxyVerb}Add a node to the graph.\end{DoxyVerb}
+ 
+
+Definition at line 18 of file dijkstra.\+py.
+
+
+\begin{DoxyCode}
+18     \textcolor{keyword}{def }\hyperlink{classdijkstra_1_1Graph_a201ad57b6d07d81c2ae3daf867ec0d56}{addNode}(self, value):
+19         \textcolor{stringliteral}{"""Add a node to the graph."""}
+20         self.nodes.add(value)
+21 
+\end{DoxyCode}
+\index{dijkstra\+::\+Graph@{dijkstra\+::\+Graph}!get\+Neighbours\+Of@{get\+Neighbours\+Of}}
+\index{get\+Neighbours\+Of@{get\+Neighbours\+Of}!dijkstra\+::\+Graph@{dijkstra\+::\+Graph}}
+\subsubsection[{\texorpdfstring{get\+Neighbours\+Of(self, node)}{getNeighboursOf(self, node)}}]{\setlength{\rightskip}{0pt plus 5cm}def dijkstra.\+Graph.\+get\+Neighbours\+Of (
+\begin{DoxyParamCaption}
+\item[{}]{self, }
+\item[{}]{node}
+\end{DoxyParamCaption}
+)}\hypertarget{classdijkstra_1_1Graph_aa23d7edee0ff2e856b55fd22c1485338}{}\label{classdijkstra_1_1Graph_aa23d7edee0ff2e856b55fd22c1485338}
+\begin{DoxyVerb}Find the direct neighbours of a given node. Might be usefull for larger
+sets of nodes with fewer interconnections.
+\end{DoxyVerb}
+ 
+
+Definition at line 31 of file dijkstra.\+py.
+
+
+\begin{DoxyCode}
+31     \textcolor{keyword}{def }\hyperlink{classdijkstra_1_1Graph_aa23d7edee0ff2e856b55fd22c1485338}{getNeighboursOf}(self, node):
+32         \textcolor{stringliteral}{"""}
+33 \textcolor{stringliteral}{        Find the direct neighbours of a given node. Might be usefull for larger}
+34 \textcolor{stringliteral}{        sets of nodes with fewer interconnections.}
+35 \textcolor{stringliteral}{        """}
+36         neighbours = []
+37         \textcolor{keywordflow}{for} a, b \textcolor{keywordflow}{in} self.distances.keys():
+38             \textcolor{keywordflow}{if} a == node:
+39                 neighbours.append(b)
+40 
+41         \textcolor{keywordflow}{return} neighbours
+42 
+43 
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+O\+P\+T\+I/bzfdinse/appfs/\+Dinsel/ex5/dijkstra.\+py\end{DoxyCompactItemize}
