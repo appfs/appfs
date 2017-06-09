@@ -1,0 +1,2 @@
+#/bin/bash
+python ex5.py $1 
