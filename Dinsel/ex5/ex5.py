@@ -88,11 +88,21 @@ class Dijsktra():
         # print("dijkstra finished")
         # print(nodesB, len(nodesB), len(set(nodesB)))
         # sys.exit()
-        # for i in nodesB:
+        dist = list(self.visited.values())
+        idx = dist.index(max(dist))
+        max_dist = dist[idx]
+        node = list(self.visited.keys())[idx]
+        print(max_dist, node)
+        # for i in self.visited.keys():
         #     if i == self.start:
         #         continue
-        # now find for every node the longest way to the start node
-        track = self.getPath()
+        #     # now find for every node the longest way to the start node
+        #     self.getPath()
+
+        # track = self.getPath2(self.start, 23)
+        # print(track)
+        # print(self.visited.keys())
+
         # nodes_taken.append(len(path))
         # path_taken.append(track)
         # dist_taken.append(visited[i])
@@ -167,13 +177,14 @@ class Dijsktra():
                         visited[edge] = weight
                         paths[edge] = min_node
 
-        print(visited, paths)
+        # print(visited, paths)
         # sys.exit()
         return visited, paths
 
     def getPath(self):  # , source, dest):
         """Search for the path as given from dijkstra algorithm."""
-        print(type(self.visited))
+        # print(self.visited)
+        # print(self.paths)
 
 
 
