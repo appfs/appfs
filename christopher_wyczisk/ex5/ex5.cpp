@@ -22,7 +22,7 @@ using namespace std;
 // helper
 vector<pair<int, int>> kanten;
 vector<int> gewichte;
-int anzahlEckenGlobal;
+unsigned int anzahlEckenGlobal;
 
 /**
  *\typedef Adjancen des Graphen
@@ -65,11 +65,9 @@ bool graphEinlesen(int argc, char** argv, ifstream& file) {
  * \param anzahlEcken
  * \param laegsterKuerzesterPfadGewicht
  */
-int ergebnisAusgabe(int anzahlEcken, int laegsterKuerzesterPfadGewicht) {
+void ergebnisAusgabe(int anzahlEcken, int laegsterKuerzesterPfadGewicht) {
 	cout << "RESULT VERTEX " << anzahlEcken << endl;
 	cout << "RESULT DIST " << laegsterKuerzesterPfadGewicht << endl;
-	
-	return 1;
 }
 
 /**
@@ -123,12 +121,10 @@ void berechneLongesteShortesWeigth(graph graph, int& anzahlEcken, int& laegsterK
 					boost::make_iterator_property_map(gewichteList.begin(), get(boost::vertex_index, graph
 					))));
 
-	// berechnet das Gwicht
-	int gewichtSum;
+	// berechnet das Gewicht
 	for(int i = 1; i < anzahlEckenGlobal; i++) {
-		gewichtSum = gewichteList[i + 1];
-		if (gewichtSum > laegsterKuerzesterPfadGewicht){
-			laegsterKuerzesterPfadGewicht = gewichtSum;
+		if (gewichteList[i + 1] > laegsterKuerzesterPfadGewicht) {
+			laegsterKuerzesterPfadGewicht = gewichteList[i + 1];
 			anzahlEcken = i + 1;
 		}
 	}
@@ -141,7 +137,7 @@ int main(int argc, char* argv[]) {
 	ifstream file;
 	bool fileEingelesen = graphEinlesen(argc, argv, file);
 
-	if( fileEingelesen) {
+	if(fileEingelesen) {
 		//erstelle den Graph
 		bool erstellt = graphErstellen(file);
 		if(erstellt) {
