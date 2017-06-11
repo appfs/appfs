@@ -41,7 +41,10 @@ int main(int numargs, char *args[]) {
 	int nLoc[2] {0, 0};
 	long nLines = 0;
 	int err = 0;
-
+	int seqNum = 0;
+	int prevSeqNum = 0;
+	int location = 0;
+	double value = 0;
 
 	while (getline(inputFile, line)) {
 		nLines++;
@@ -72,9 +75,7 @@ int main(int numargs, char *args[]) {
 			continue;
 		}
 
-		int seqNum = 0;
-		int location = 0;
-		double value = 0;
+
 
 		try {
 			string parts[] = {"","",""};
@@ -99,9 +100,18 @@ int main(int numargs, char *args[]) {
 			value = stod(parts[2]);
 
 		} catch (...) {
+			prevSeqNum = seqNum;
 			err++;
 			continue;
 		}
+
+		if (seqNum != prevSeqNum+1) { 	// test for consecutive sequence numbers
+			err++;
+			prevSeqNum = seqNum;
+			continue;
+		}
+
+		prevSeqNum = seqNum;
 
 
 		if (location < 1 || location > 2 || !isnormal(value) || value <= 0. ) {			// value must be positive
@@ -119,7 +129,9 @@ int main(int numargs, char *args[]) {
 
 	// geometric means are calculated
 	for (int i = 0; i < 2; i++) {
-		geoMean[i] = exp(geoMean[i] / (double)nLoc[i]);
+		if (nLoc[i] > 0) {
+			geoMean[i] = exp(geoMean[i] / (double)nLoc[i]);
+		}
 	}
 
 	// writing output
