@@ -3,6 +3,7 @@
 *.ko
 *.obj
 *.elf
+*.d
 
 # Precompiled Headers
 *.gch
@@ -36,4 +37,7 @@
 .cproject
 
 language.settings.xml
+*.prefs
+*.png
 *.dat
+/ex1/
