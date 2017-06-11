@@ -3,7 +3,7 @@ doc: ex2.c
 	doxygen ex2.docu	
 	
 coverage: ex2.c
-	gcc -std=c11 -O3 -g -Wall -Wextra -Wpedantic -LDFLAGS ex2.c -o ex1 -lm --coverage
+	gcc -std=c11 -O3 `xml2-config --cflags --libs` -LDFLAGS ex2.c -o ex2 --coverage 
 	./ex2 measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml
 	lcov --capture --directory ex2.gcno --output-file coverage.info
 	genhtml coverage.info --output-directory coverage
