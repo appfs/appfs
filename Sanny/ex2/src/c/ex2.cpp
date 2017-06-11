@@ -123,5 +123,5 @@ int main(int argn, char *argv[]) {
 
 	XMLPlatformUtils::Terminate();
 
-	return 1;
+	return 0;
 }

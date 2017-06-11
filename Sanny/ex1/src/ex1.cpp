@@ -5,12 +5,13 @@
  */
 
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <iomanip>
 #include <string>
 #include <cstring>
 #include <algorithm>
-#include <cmath>
+#include <vector>
 
 /** Some Constants to avoid "magic"-signs */
 namespace {
@@ -75,7 +76,7 @@ int main(int argn, char *argv[]) {
 
 	if ( (fileStream.rdstate()) != 0 ){
 	    perror("Encoutered Problem");
-	    return 0;
+	    return 1;
 	}
 
 	cout << "Opened File "<< filename << " successfully" << endl;
@@ -127,8 +128,11 @@ int main(int argn, char *argv[]) {
 	printValues(valuesLocation1);
 	printValues(valuesLocation2);
 
+	delete valuesLocation1;
+	delete valuesLocation2;
+
 	fileStream.close();
 
-	return 1;
+	return 0;
 
 }

@@ -48,9 +48,10 @@
 *.gcda
 *.gcno
 *.info
+*.gph
 
-/appfs_exe/ex2
-/src/c/ex2
+/src/c/ex5
 /src/c/html/*
 /src/c/latex/*
 /src/c/out/*
+/exe/
