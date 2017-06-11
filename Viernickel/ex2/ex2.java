@@ -1,5 +1,3 @@
-package ex2;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
@@ -11,6 +9,14 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * @brief Reads an xml file and stores values in csv file
+ * 
+ * Reads xml file and writes csv data in format:
+ * YYYY-MM-DD; HH; amountOfPower-Value
+ * @author merlin
+ * @date June 01 2017
+ */
 public class ex2 {
 
     public static void main(String[] args) {
@@ -37,7 +43,8 @@ public class ex2 {
         int j=0;
         int k=0;
         
-        //Set up writers
+        /** Set up writers
+         */
         try{
             String path = "";
             String[] pathSplit = args[0].split("/");
@@ -54,7 +61,8 @@ public class ex2 {
             return;
         }
         
-        //Set up reading of XML file
+        /** Set up reading of XML file
+         */
         try{
             File fXmlFile = new File(args[0]);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -71,7 +79,8 @@ public class ex2 {
         
         try {
             gasDayList = doc.getElementsByTagName("gasDay");
-            //GasDay loop
+            /** GasDay loop
+             */
             for (i=0; i<gasDayList.getLength(); i++) {
                 gasNode = gasDayList.item(i);
                 boundaryList = gasNode.getChildNodes();
@@ -79,7 +88,8 @@ public class ex2 {
                 gasElement = (Element) gasNode;
                 date = gasElement.getAttribute("date");
 
-                //Boundary loop
+                /** Boundary loop
+                 */
                 for(j=0; j<boundaryList.getLength(); j++){
                     boundaryNode = boundaryList.item(j);
                     if(false == boundaryNode.hasAttributes())
@@ -88,7 +98,8 @@ public class ex2 {
                     boundaryElement = (Element) boundaryNode;
                     timeList = boundaryElement.getElementsByTagName("time");
                     
-                    //Time loop
+                    /** Time loop
+                     */
                     for(k=0; k<timeList.getLength(); k++){
                         timeNode = timeList.item(k);
                         
