@@ -1,4 +1,4 @@
-CFLAGS= -std=c99 -Wall -g
+CFLAGS= -std=c11 -Wall -g
 CC=gcc
 OBJ=
 HEADERS=

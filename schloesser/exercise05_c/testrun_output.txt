@@ -1,0 +1,55 @@
+##### New testrun: #####
+../exercise05/data/acycpos-1.gph
+./runall.sh: line 8:  2653 Segmentation fault      ./main $f
+
+real	0m0.002s
+user	0m0.000s
+sys	0m0.000s
+../exercise05/data/b15.gph
+RESULT VERTEX 42
+
+RESULT DIST 58
+
+real	0m0.002s
+user	0m0.000s
+sys	0m0.000s
+../exercise05/data/big8.gph
+RESULT VERTEX 393
+
+RESULT DIST 1423
+
+real	0m46.078s
+user	0m46.052s
+sys	0m0.016s
+../exercise05/data/es10kaz.gph
+RESULT VERTEX 9423
+
+RESULT DIST 15383931
+
+real	0m0.213s
+user	0m0.204s
+sys	0m0.008s
+../exercise05/data/i640-345.gph
+RESULT VERTEX 7
+
+RESULT DIST 393
+
+real	0m0.064s
+user	0m0.060s
+sys	0m0.000s
+../exercise05/data/small.gph
+RESULT VERTEX 4
+
+RESULT DIST 3
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../exercise05/data/world666.gph
+RESULT VERTEX 666
+
+RESULT DIST 20039
+
+real	0m0.350s
+user	0m0.344s
+sys	0m0.004s
