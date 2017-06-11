@@ -5,6 +5,33 @@
 //
 //////////////////////////////
 
+/**
+ * \file ex1.cxx
+ * \author Ray Chew
+ * \date 5 June 2017
+ * \brief Reads semicolon-delimited file, sort by location and output geometric means.
+ */
+
+/**
+ * \mainpage Ex1
+ * 
+ * \section Description
+ * 
+ * Reads in a semicolon-delimited file with sequence no.; location; value.<br>
+ *
+ * Validity:
+ * -# Sequence no. contains no spaces<br>
+ * -# Location equals 1 or 2<br>
+ * -# Value is not NaN, has no spaces.<br>
+ * -# Ignore lines starting with `#`.<br>
+ * -# Each line must contain only one set of SeqNo; Loc; Value<br>
+ *
+ * 
+ * * compile: `g++ -std=c++11 -O3 ex1.cxx -o ex1`<br>
+ * * run: `./ex1 ex1.dat`
+ */
+
+/** -- Includes -- */
 #include <iostream> // cout
 #include <fstream> // ifstream
 #include <sstream> // istringstream
@@ -16,7 +43,9 @@ using namespace std;
 
 int main(int argc, char* argv[]){
   
-  string str,a,str0; // define variables and constants.
+  string str; ///< to store line in getline().
+  string a; ///< store SeqNo.
+  string str0; ///< store line with exceptions.
   int i=0, loc, ja=0, jb=0; // i iteration of loop. ja and jb are number of SeqNo's with first or last char as whitespace.
   size_t pos, pos1; // positions of string.
   char b; // loc as str.
@@ -59,10 +88,10 @@ int main(int argc, char* argv[]){
     pos = str.find_first_of(" ;"); // check if values are valid, i.e. if there's no space or semicolon.
     if (string::npos!=pos){i++;cout<<str0<<endl;continue;} // remove these offending values.
     
-    val = stof(str); // convert value to float.
-    if (isnan(val)){i++;continue;} // reject line if value is nan.
-    vecL[loc-1].push_back(loc); // store Loc for loc count. 
-    vecV[loc-1].push_back(val); // store Values for GeoMean calculations.
+    val = stof(str); ///< convert value to float.
+    if (isnan(val)){i++;continue;} ///< reject line if value is nan.
+    vecL[loc-1].push_back(loc); ///< store Loc for loc count. 
+    vecV[loc-1].push_back(val); ///< store Values for GeoMean calculations.
     
     loc=0; i++; // reset location for lines skipped and update counter for line count.
   }
