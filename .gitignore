@@ -40,3 +40,6 @@ Blaschke/01/ex1.dat
 hark/ex1.dat
 
 .idea/
+*.csv
+hark/resources/
+hark/doc/
