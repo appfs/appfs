@@ -1,3 +1,10 @@
+/*
+ *  @file 		ex1.cpp
+ *  @details  	This file is the solution to exercise 1.
+ *  @author    	Alexander Rettkowski
+ *  @date      	22.04.2017
+ */
+
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
@@ -11,11 +18,14 @@
 #include <complex>
 #include <fstream>
 
-
 namespace exercise1
 {
 	namespace qi = boost::spirit::qi;
 	namespace ascii = boost::spirit::ascii;
+	
+	/**
+		* This struct is used in the boost::qi parser.
+	*/
 	struct line
 	{
 		int id;
@@ -49,6 +59,11 @@ namespace exercise1
 	};
 }
 
+/**
+ * The main function that reads in a file and processes it.
+ * @param argc Number of command line arguments.
+ * @param *argv a pointer to the array of command line arguments.
+ */
 int main(int argc, char *argv[])
 {
 	using boost::spirit::ascii::space;
@@ -94,3 +109,4 @@ int main(int argc, char *argv[])
 	printf("Valid values Loc2: %ld with GeoMean: %f\n", values[1].size(), mean[1]);
 	return 0;
 }
+
