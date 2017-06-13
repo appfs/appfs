@@ -15,6 +15,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/timer/timer.hpp>
 
 using namespace std;
 
@@ -39,6 +40,9 @@ typedef boost::graph_traits < graph >::vertex_descriptor vertex_descriptor;
  * shortest path to vertex with number 1.
  */
 int main(int argc, char* argv[]){
+	//Initialize timer for time measurement
+	boost::timer::cpu_timer timer;
+
 	ifstream infile;
 
 	if(argc <=1){
@@ -113,5 +117,9 @@ int main(int argc, char* argv[]){
 	cout << "RESULT VERTEX " << indexOfVertex << endl;
 	cout << "RESULT DIST " << weightOfLongestShortestPath << endl;
 
+	//Print measured time
+	boost::timer::cpu_times times = timer.elapsed();
+	cout << "Wall-clock time: " << times.wall * 1e-9 << " seconds" << endl;
+	cout << "User-time: " << times.user * 1e-9 <<  " seconds" << endl;
 	return 0;
 }
