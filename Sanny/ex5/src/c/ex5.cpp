@@ -12,6 +12,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/timer/timer.hpp>
 
 namespace {
 
@@ -45,15 +46,10 @@ std::ifstream openFile(char* argv[]) {
 	return fileStream;
 }
 
-/** Creates a Map for boost, cause a normal vector.begin() doesn't work */
-boost::iterator_property_map<__gnu_cxx:: __normal_iterator <int*,std::vector<int,std::allocator<int> > > ,boost::vec_adj_list_vertex_id_map<boost::no_property,unsigned long int> ,int,int&> getBoostMap(std::vector<int> directions, graph& g)
-{
-	return boost::make_iterator_property_map(directions.begin(), boost::get(boost::vertex_index, g));
-}
 
 /** Reading in a Graphfile, computes the longest shortest path */
 int main(int argn, char *argv[]) {
-
+	boost::timer::auto_cpu_timer t;
 	if (argn <= 1) {
 		cerr << "ERROR : There was no filename" << endl;
 		return 1;
@@ -70,18 +66,20 @@ int main(int argn, char *argv[]) {
 
 	unsigned int edgeCount;
 	unsigned int vertexCount;
+
 	if(std::getline(fileStream, line)){
 		sscanf(line.c_str(), "%d %d", &vertexCount, &edgeCount);
 		cout << "Vertexcount: " << vertexCount << endl;
 		cout << "Edgecount: " << edgeCount << endl;
 		line.clear();
+		vertexCount++;
 	} else {
 		cerr << "ERROR : File was empty" << endl;
 		return 1;
 	}
 
-	std::vector<std::pair<int, int>> edges;
-	std::vector<int> weights;
+	std::vector<std::pair<int, int>> edges(edgeCount);
+	std::vector<int> weights(edgeCount);
 
 	cout << "Reading edges..." << endl;
 	while (getline(fileStream, line)) {
