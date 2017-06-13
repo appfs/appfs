@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
@@ -17,6 +19,9 @@ public class ex5 {
 	 */
 	public static void main(String[] args) {
 	
+		long startTime = System.currentTimeMillis();
+		long startUserTime = getUserTime();
+		
 		Node[] nodeList = null;
 		
 		try {
@@ -44,8 +49,13 @@ public class ex5 {
 			}
 		}
 		
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		long elapsedUserTime = getUserTime() - startUserTime;
+		
 		System.out.println("RESULT VERTEX " + nodeNumber);
 		System.out.println("RESULT DIST " + currentMax);
+		System.out.println("Wall time: " + elapsedTime + "ms"); 
+		System.out.println("User time: " + elapsedUserTime / 1000000 + "ms");
 	
 	}
 	
@@ -147,6 +157,13 @@ public class ex5 {
 
 	}
 	
+	/** Get user time in nanoseconds. */
+	static public long getUserTime( ) {
+	    ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
+	    return bean.isCurrentThreadCpuTimeSupported( ) ?
+	        bean.getCurrentThreadUserTime( ) : 0L;
+	}
+	
 }	
 
 
@@ -200,4 +217,3 @@ class NodeComparator implements Comparator<Node>{
     }
 	 
 }
-
