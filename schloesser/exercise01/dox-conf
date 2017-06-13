@@ -960,7 +960,7 @@ INPUT_FILTER           =
 # need to set EXTENSION_MAPPING for the extension otherwise the files are not
 # properly processed by doxygen.
 
-FILTER_PATTERNS        = *.py=py_filter
+FILTER_PATTERNS        = *.py=doxypypy -a -c 
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will also be used to filter the input files that are used for
@@ -1028,7 +1028,7 @@ REFERENCES_RELATION    = NO
 # link to the documentation.
 # The default value is: YES.
 
-REFERENCES_LINK_SOURCE = YES
+REFERENCES_LINK_SOURCE = NO
 
 # If SOURCE_TOOLTIPS is enabled (the default) then hovering a hyperlink in the
 # source code will show a tooltip with additional information such as prototype,
