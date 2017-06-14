@@ -101,7 +101,6 @@ int main(int argc, char*argv[]){
     // if distance == maxDistance, check if vertex index is smaller.
     if ((distances[*vertexPair.first] == maxDistance) && (*vertexPair.first < maxVertex)){
       maxDistance = distances[*vertexPair.first];
-      maxVertex = *vertexPair.first;
     }
   }
   
