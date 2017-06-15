@@ -86,10 +86,17 @@ int main (int argc, char* argv[]) {
   getline(file, line, '\n');
   const int numE = stoi(line);
   
-  Edge edges[numE];     //array containig edge-pairs
-  int  weights[numE];   //array containing corresponding weights
+  Edge* edges;
+  int* weights;
+
+
+//  Edge edges[numE];     //array containig edge-pairs
+//  int  weights[numE];   //array containing corresponding weights
   int  edgecount = 0;
   
+  edges = new Edge[numE];
+  weights = new int[numE];
+
     //loop over all lines in the file
   while( getline(file, line) ){
 
