@@ -7,6 +7,7 @@
 #include <time.h>
 #include <utility>
 #include <limits>
+#include <boost/timer/timer.hpp>
 
 
 
@@ -155,7 +156,7 @@ void initialEdges(std::ifstream& file, std::vector<vertex>& vert) {
 
 int main(int argc, char* argv[]) {
 	try {
-
+		boost::timer::cpu_timer t;
 		clock_t tStart = clock();
 
 		if (argc < 2) {
@@ -190,8 +191,10 @@ int main(int argc, char* argv[]) {
 		std::cout << "RESULT NODE " << maxPos+1 << std::endl;
 		std::cout <<"RESULT DIST "<< maxDist << std::endl;
 		std::cout <<"RESULT MARC "<< maxWeight << std::endl;
-		std::cout <<"RESULT TIME "<< (double)(clock() - tStart) / CLOCKS_PER_SEC << " seconds" << std::endl;
-
+		std::cout <<"RESULT WALL TIME "<< (double)(clock() - tStart) / CLOCKS_PER_SEC << " seconds" << std::endl;
+		
+		boost::timer::cpu_times time = t.elapsed();
+		std::cout <<"RESULT USER TIME "<< time.user*1e-9<<" seconds"<<std::endl;
 		return 0;
 
 
