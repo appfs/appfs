@@ -69,14 +69,25 @@ public class Dijkstra {
             }
             currNode.visited = true;
             
-            /** Update currNode and highestDistNode
+            /** Update currNode
              */
-            if(currNode.distance > highestDistNode.distance){
-                highestDistNode = nodes[currNode.id];
-            }
             currNode = queue.poll();
         }while(null != currNode);
         
+        return this.getHighestDistNode();
+    }
+    
+    /**
+     * Gets the highest distance node with the lowest id
+     * @return Highest distance node with lowest id
+     */
+    private Node getHighestDistNode(){
+        assert(this.nodes.length > 1);
+        Node highestDistNode = this.nodes[1];
+        for(int i=2; i<this.nodes.length; i++){
+            if(highestDistNode.distance > nodes[i].distance)
+                highestDistNode = nodes[i];
+        }
         return highestDistNode;
     }
 }
