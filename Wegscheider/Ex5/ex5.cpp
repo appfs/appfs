@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <exception>
+#include <boost/timer/timer.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -25,6 +26,8 @@ using namespace boost;
  * @return whether the function operated successfully
  */
 int main(int numargs, char *args[]) {
+
+	timer::auto_cpu_timer t;
 
 	if (numargs != 2) {
 		cout << "Usage: " << args[0] << " filename" << endl;
