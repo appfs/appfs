@@ -41,6 +41,7 @@ class ParseXML():
             self.writeCSV()
         except (XMLSchemaParseError, XMLSyntaxError) as e:
             # stream needs file object
+            # err_log = os.path.join(os.getcwd(), 'ex2/err.log')
             sys.stderr = open('err.log', 'w')
             sys.stderr.write(str(e))
             # possible to get the data although not valid
@@ -96,7 +97,8 @@ class ParseXML():
 
     def writeCSV(self):
         """Print data to csv."""
-        fName = '.'.join(self.fileXML.split('/')[1].split('.')[:-1]) + '.csv'
+        # fName = '.'.join(self.fileXML.split('/')[1].split('.')[:-1]) + '.csv'
+        fName = os.path.join(os.getcwd(), 'ex2/ex2.csv')
         with open(fName, 'w', newline='') as out:
             writer = csv.writer(out, delimiter=';', lineterminator='\n')
             # sort dictionary by key
