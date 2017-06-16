@@ -6,7 +6,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <exception>
 #include <boost/timer/timer.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -27,7 +26,8 @@ using namespace boost;
  */
 int main(int numargs, char *args[]) {
 
-	timer::auto_cpu_timer t;
+
+	timer::cpu_timer t;
 
 	if (numargs != 2) {
 		cout << "Usage: " << args[0] << " filename" << endl;
@@ -41,7 +41,7 @@ int main(int numargs, char *args[]) {
 		exit(EXIT_FAILURE);
 	}
 
-	typedef adjacency_list<listS, vecS, undirectedS,
+	typedef adjacency_list<vecS, vecS, undirectedS,
 			no_property, property<edge_weight_t, double>> Graph;
 	typedef pair<int,int> Edge;
 
@@ -115,6 +115,7 @@ int main(int numargs, char *args[]) {
 
 	cout << "RESULT VERTEX " << (maxIdx+1) << endl;
 	cout << "RESULT DIST " << maxDist << endl;
+	cout << endl << t.format() <<  endl;
 
 	exit(EXIT_SUCCESS);
 }
