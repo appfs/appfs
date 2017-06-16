@@ -1,5 +1,8 @@
+*.log
 .coverage
 pip-selfcheck.json
 rclint
-/html
 /venv
+/doc/html
+__pycache__
+/htmlcov
