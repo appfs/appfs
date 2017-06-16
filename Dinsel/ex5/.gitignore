@@ -1,1 +1,2 @@
-/data
+*.gph
+!b15.gph
