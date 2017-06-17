@@ -15,7 +15,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <libxml/xmlschemas.h>
-//parse with: gcc -std=c11 -O3 xml2-config --cflags --libs`ex2.c -o ex2 -lm
+//parse with: gcc -std=c11 -O3 `xml2-config --cflags --libs`ex2.c -o ex2 -lm
 //run with ./ex2 XML-File Schema
 
 /**
@@ -164,5 +164,5 @@ int main(int argc, char *argv[]){
   printf("Sucessfully converted the data of the XML file %s\n", argv[1]);
  
   xmlCleanupParser();
-  return 1;
+  return 0;
 }
