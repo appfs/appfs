@@ -77,12 +77,35 @@ int main(int argc, char **argv) {
     // assume vertices are numbered 1 .. n
 	// assume each edge is only described once
     // assume graph is undirected
-	signed int edges[n_edges][3];
-	memset(edges, 0, sizeof(edges));
-	signed int n_neighbors[n_verts];
-	memset(n_neighbors, 0, sizeof(n_neighbors));
-	signed int *neighbors[n_verts]; // for each vertex this holds a list of neighbors with weights
-	float density = ((float)n_edges)/(n_verts/2 * n_verts);
+	signed int *n_neighbors = malloc(sizeof(*n_neighbors) * n_verts); // n_neighbors[n_verts];
+	memset(n_neighbors, 0, sizeof(*n_neighbors) * n_verts);
+	signed int **edges = malloc(sizeof(*edges) * n_edges); // edges[n_edges][3];
+	for(int i = 0; i < n_edges; i++) {
+		edges[i] = malloc(sizeof(*edges[i]) * 3);
+		memset(edges[i], 0, sizeof(*edges[i]) * 3);
+	}
+	
+/*
+T **a = malloc(sizeof *a * N);
+if (a)
+{
+  for (i = 0; i < N; i++)
+  {
+    a[i] = malloc(sizeof *a[i] * M);
+  }
+}*/
+
+/*
+T **a = malloc(sizeof *a * N);
+if (a)
+{
+  for (i = 0; i < N; i++)
+  {
+    a[i] = malloc(sizeof *a[i] * length_for_this_element);
+  }
+}*/
+
+	//float density = ((float)n_edges)/(n_verts/2 * n_verts);
 	//bool sparse = (density < 0.1 ? true : false);
 	//printf("Density of Adjecencymatrix: %.2f\n", density); // OUTPUT
 	signed int count = 0;
@@ -99,13 +122,16 @@ int main(int argc, char **argv) {
     }
     fclose(f);
 	// sort edges to neighbors
-	for (int i = 0; i < n_verts; i++) {
-		neighbors[i] = malloc( n_neighbors[i]*sizeof(*neighbors[i])*2 );
+	signed int **neighbors = malloc(sizeof(*neighbors) * n_verts); // *neighbors[n_verts]; // for each vertex this holds a list of neighbors with weights
+	for(int i = 0; i < n_verts; i++) {
+    	neighbors[i] = malloc(sizeof(*neighbors[i]) * n_neighbors[i] * 2);
+		memset(neighbors[i], 0, sizeof(*neighbors[i]) * n_neighbors[i] * 2);
 	}
-	memset(n_neighbors, 0, sizeof(n_neighbors));
+	memset(n_neighbors, 0, sizeof(*n_neighbors) * n_verts);
 	for (int i = 0; i < n_edges; i++) {
         //printf("accessing edge between %d and %d with weight %d\n", edges[i][0], edges[i][1], edges[i][2]); //OUTPUT
 		signed int v[2];
+		memset(v, 0, sizeof(*v) * 2);
 		v[0] = edges[i][0];
 		v[1] = edges[i][1];
 		signed int weight = edges[i][2];
@@ -116,6 +142,10 @@ int main(int argc, char **argv) {
 			n_neighbors[v[j]-1]++;
 		}
 	}
+	for(int i = 0; i < n_edges; i++) {
+		free(edges[i]);
+	}
+	free(edges);
 
 // ##### find lengths of shortest paths to destination
 	//for (int i = 0; i < n_verts; i++) { for (int j = 0; j < n_neighbors[i]; j++) { printf("Vertex %d to %d with weight %d\n", i+1, neighbors[i][2*j], neighbors[i][(2*j)+1]); } } // OUTPUT
@@ -125,8 +155,8 @@ int main(int argc, char **argv) {
 		distances[i] = -1;
 		to_visit[i] = -1;
 	}
-	bool visited[n_verts];
-	memset(visited, 0, sizeof(visited));
+	bool *visited = malloc(sizeof(*visited) * n_verts);// [n_verts];
+	memset(visited, 0, sizeof(*visited) * n_verts);
 
 	distances[destination-1] = 0;
 	to_visit[0] = destination-1;
@@ -168,6 +198,8 @@ int main(int argc, char **argv) {
 	for (int i = 0; i < n_verts; i++) {
 		free(neighbors[i]);
 	}
+	free(neighbors);
+	free(n_neighbors);
 
 // ##### find longest amongst shortests
 	signed long maxd = 0;
