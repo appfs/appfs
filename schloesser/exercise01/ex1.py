@@ -77,7 +77,7 @@ class Ex1:
                 # line broken if we get back less than three values
                 if len(tmp) < 3:
                     # next line
-                    if not line[0] == '#' and not line == "\n":
+                    if not line[0] != '#' and not line != "\n":
                         msg = "ERROR: Line {} does not have required format or is comment:\n{}"
                         print(msg.format(self.total, line))
                     continue

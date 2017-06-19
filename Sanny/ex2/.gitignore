@@ -42,9 +42,15 @@
 *.xml*
 *.pdf
 
-*.md
 *.o
 *.d
 *.csv
+*.gcda
+*.gcno
+*.info
+
 /appfs_exe/ex2
-/appfs_exe/
+/src/c/ex2
+/src/c/html/*
+/src/c/latex/*
+/src/c/out/*

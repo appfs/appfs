@@ -1,0 +1,3 @@
+compile ex5
+
+c++ ex5.cpp -o ex5 -std=c++11
