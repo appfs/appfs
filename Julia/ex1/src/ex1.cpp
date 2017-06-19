@@ -120,7 +120,7 @@ int main(int argc, char* argv[]){
 	cout << "Valid values Loc1: " << sizeLoc1 << " with GeoMean: " << geoMean(loc1, sizeLoc1) << endl;
 	cout << "Valid values Loc2: " << sizeLoc2 << " with GeoMean: " << geoMean(loc2, sizeLoc2) << endl;
 
-	return 1;
+	return 0;
  }
 
 

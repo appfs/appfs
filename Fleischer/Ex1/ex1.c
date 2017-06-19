@@ -42,13 +42,16 @@ typedef struct node {
 double getGeoMean(node_t * head, long int often){
     node_t * current = head;
     double GeoMean = 1;
+    assert(often != 0);
     while (current->next != NULL) {
-        GeoMean = GeoMean * pow(current->val, 1./often);
-        assert(!fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW));
+	assert((current->val) > 0);	    
+        GeoMean = GeoMean * pow(current->val, 1./often);    
+        assert(!fetestexcept(FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW));
         current = current->next;
     }
+    assert((current->val) > 0);	
     GeoMean = GeoMean * pow(current->val, 1./often);
-    assert(!fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW));
+    assert(!fetestexcept(FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW));
     return GeoMean;
 }
 
@@ -175,7 +178,11 @@ FILE *fp;
 			ptr = strtok(NULL, delimiter);
 			temp = strtod(ptr, &bla);
 			if (!isnormal(temp)){
-				printf("Could not convert value in line %s and the string. value is:%s \n", line, ptr);
+				printf("Could not convert value in line %s and the string. Value is:%s \n", line, ptr);
+				continue;
+			}
+			if (temp<= 0){
+				printf("Converted value makes no sense for Geometric Mean. Value is:%s \n", line, ptr);
 				continue;
 			}
 			if (pointer == 0){

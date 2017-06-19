@@ -1,3 +1,10 @@
+/*
+ *  @file 	ex2.cpp
+ *  @details  	This file is the solution to exercise 2.
+ *  @author    	Alexander Rettkowski
+ *  @date      	29.04.2017
+ */
+
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/util/XMLString.hpp>
@@ -25,6 +32,10 @@ using namespace xercesc;
 class SimpleErrorHandler : public ErrorHandler
 {
 private:
+	/**
+ 	 * Prints an error message from an exception while parsing.
+ 	 * @param ex The caught exception.
+ 	*/
 	void printError(const SAXParseException& ex)
 	{
 		char* message = XMLString::transcode(ex.getMessage());
@@ -53,6 +64,11 @@ public:
 	}
 };
 
+/**
+ * The main function that reads in a file and processes it.
+ * @param argc Number of command line arguments.
+ * @param *argv a pointer to the array of command line arguments.
+ */
 int main(int argc, const char *argv[])
 {
 	if (2 != argc)
