@@ -3,6 +3,7 @@
 import sys
 from graph_tool.all import Graph, load_graph_from_csv
 from queue import *
+import time
 
 class Ex5:
 
@@ -74,6 +75,8 @@ class Ex5:
         return (self.vert_name(max_vert), max_dist)
 
 if __name__ == "__main__":
+	t0_clock = time.perf_counter()
+	t0_time = time.process_time()
     # read filename from commandlineargs
     filename = sys.argv[1]
     #vert = int(sys.argv[2])
@@ -83,3 +86,7 @@ if __name__ == "__main__":
     res = ex.get_longest_shortest_to(vert)
     
     print("RESULT VERTEX {}\n\nRESULT DIST {}".format(res[0], res[1]))
+	t1_clock = time.perf_counter()
+	t1_time = time.process_time()
+    print("Program took {} s (wallclock time)".format(t1_clock - t0_clock))
+    print("Program took {} s (process time)".format(t1_time - t0_time))
