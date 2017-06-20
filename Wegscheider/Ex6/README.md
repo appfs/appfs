@@ -12,6 +12,7 @@ The output should look like this:
 [information about which algorithm is used]
 
 RESULT VERTEX 42
+
 RESULT DIST 5553
 
 [information about running time]
