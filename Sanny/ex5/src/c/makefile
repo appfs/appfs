@@ -1,12 +1,12 @@
 compile:
-	g++ -std=c++0x -O3 -Wall ex5.cpp -o ex5 -lboost_system -lboost_timer
+	g++ -std=c++0x -O3 -Wall ex5.cpp Dijkstra.cpp -o ex5 -lboost_system -lboost_timer
 
 doc:
 	doxygen doxy
 	
 coverage:
 	@echo 'Compiling for Debugging'
-	g++ -std=c++0x -O0 -g3 -Wall --coverage ex5.cpp -o ex5 -lboost_system -lboost_timer
+	g++ -std=c++0x -O0 -g3 -Wall --coverage ex5.cpp Dijkstra.cpp -o ex5 -lboost_system -lboost_timer
 	@echo 'Running Program'
 	./ex5 phard-1
 	@echo 'Analysing Coverage Data'
