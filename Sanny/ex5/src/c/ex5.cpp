@@ -17,6 +17,8 @@
 namespace {
 
 const char* FILEEND = ".gph";
+const char* OWNALGO = "-m1";
+const char* LIBALGO = "-m2";
 
 }
 
@@ -33,8 +35,30 @@ typedef boost::graph_traits < graph >::vertex_descriptor vertex_descriptor;
 
 
 /** add's fileending and opens the via ifstream */
-std::ifstream openFile(char* argv[]) {
-	string filename = argv[1];
+char checkPreferredAlgo(char* argv[], int argn) {
+	if(argn == 1){
+		return 0;
+	}
+	string command = argv[1];
+	const string::size_type indexCommandOwnAlgo = command.find(OWNALGO);
+	if(indexCommandOwnAlgo != string::npos){
+		return 1;
+	}
+	const string::size_type indexCommandLibAlgo = command.find(LIBALGO);
+	if(indexCommandLibAlgo != string::npos){
+		return 0;
+	}
+	return 0;
+}
+
+/** add's fileending and opens the via ifstream */
+std::ifstream openFile(char* argv[], int argn) {
+	string filename;
+	if(argn == 1){
+		filename = argv[1];
+	} else {
+		filename = argv[2];
+	}
 	filename += FILEEND;
 	cout << "Going to parse the file " << filename << endl;
 	std::ifstream fileStream;
@@ -51,7 +75,15 @@ int main(int argn, char *argv[]) {
 		return 1;
 	}
 
-	std::ifstream fileStream = openFile(argv);
+	char useOwnAlgo = checkPreferredAlgo(argv, argn);
+	if(useOwnAlgo){
+		cout << "Using own algorithm..." << endl;
+	} else {
+		cout << "Using algorithm from boost-libary..." << endl;
+	}
+
+	std::ifstream fileStream = openFile(argv, argn);
+
 
 	if ( (fileStream.rdstate()) != 0 ){
 		std::perror("ERROR : Encoutered Problem opening file");
