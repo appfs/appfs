@@ -78,8 +78,8 @@ int main(int argn, char *argv[]) {
 		return 1;
 	}
 
-	std::vector<std::pair<int, int>> edges(edgeCount);
-	std::vector<int> weights(edgeCount);
+	std::vector<std::pair<int, int>>* edges = new std::vector<std::pair<int, int>>(edgeCount);
+	std::vector<int>* weights = new std::vector<int>(edgeCount);
 
 	cout << "Reading edges..." << endl;
 	while (getline(fileStream, line)) {
@@ -91,36 +91,41 @@ int main(int argn, char *argv[]) {
 			line.clear();
 			continue;
 		}
-		edges.push_back(std::make_pair(start, end));
-		weights.push_back(weight);
+		edges->push_back(std::make_pair(start, end));
+		weights->push_back(weight);
 		line.clear();
 	}
 
 	cout << "Creating graph..." << endl;
-	graph g{edges.begin(), edges.end(), weights.begin(), vertexCount};
+	graph g{edges->begin(), edges->end(), weights->begin(), vertexCount};
 
-	std::vector<vertex_descriptor> directions(vertexCount);
-	std::vector<int> weightMap(vertexCount);
+	std::vector<vertex_descriptor>* directions = new std::vector<vertex_descriptor>(vertexCount);
+	std::vector<int>* weightMap = new std::vector<int>(vertexCount);
 
 	cout << "Compute shortest paths via Dijkstra..." << endl;
 	boost::dijkstra_shortest_paths(g, 1,
 		boost::predecessor_map(//
-				boost::make_iterator_property_map(directions.begin(), boost::get(boost::vertex_index, g))) //
+				boost::make_iterator_property_map(directions->begin(), boost::get(boost::vertex_index, g))) //
 			.distance_map(//
-				boost::make_iterator_property_map(weightMap.begin(), boost::get(boost::vertex_index, g))));
+				boost::make_iterator_property_map(weightMap->begin(), boost::get(boost::vertex_index, g))));
 
 	cout << "Search longest shortest path..." << endl;
 	int vertex = 1;
 	int distance = 0;
 	for(unsigned int i=2; i<=vertexCount; i++){
-		if(weightMap[i]>distance){
-			distance = weightMap[i];
+		if(weightMap->operator [](i)>distance){
+			distance = weightMap->operator [](i);
 			vertex = i;
 		}
 	}
 
 	cout << "RESULT VERTEX " << vertex << '\n';
 	cout << "RESULT DIST " << distance << '\n';
+
+	delete edges;
+	delete weights;
+	delete directions;
+	delete weightMap;
 
 	return 0;
 }
