@@ -9,9 +9,9 @@ Please note that you need boost to compile and that two non-header-only packages
 The output should look like this:
 
 
-<information about which algorithm is used>
+[information about which algorithm is used]
 
 RESULT VERTEX 42
 RESULT DIST 5553
 
-<information about running time>
+[information about running time]
