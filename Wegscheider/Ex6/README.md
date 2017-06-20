@@ -1,6 +1,6 @@
 ex6.cpp is a solution to exercise 5 with two additional features:
   - it prints the wall clock and user time after completion
-  - it provides two comman line options (--m1 and --m2) to choose whether my own implementation (m1) of dijkstra
+  - it provides two command line options (--m1 and --m2) to choose whether my own implementation (m1) of dijkstra
     or the one from the boost package (m2) should be used. One of the two has to be chosen.
    
 The Makefile provides commands for compilation, documentation, coverage and check.
