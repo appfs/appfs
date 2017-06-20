@@ -31,10 +31,6 @@ typedef boost::adjacency_list<boost::listS, boost::vecS,
   boost::property<boost::edge_weight_t, int>> graph;
 typedef boost::graph_traits < graph >::vertex_descriptor vertex_descriptor;
 
-int readFirstLine(int edgeCount, string& line) {
-
-	return edgeCount;
-}
 
 /** add's fileending and opens the via ifstream */
 std::ifstream openFile(char* argv[]) {
