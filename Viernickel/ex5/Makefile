@@ -5,9 +5,9 @@ DOCDIR=doc
  
 %.class: %.java
 	$(JC) $(JFLAGS) $<
- 
+
 default: classes
- 
+
 classes: $(CLASSES:.java=.class)
  
 .PHONY: clean
