@@ -11,7 +11,6 @@ import sys
 import pandas as pd
 import numpy as np
 
-
 def run(graphfile):
     
     graph = pd.read_csv(graphfile, sep = " ", names = ['src', 'dst', 'weight']).drop(0)
@@ -45,20 +44,12 @@ def run(graphfile):
     
     
 def update_distances(graph, distances, s, unvisited):
-    print('s', s)
-    s_neighbors = list(graph[graph['src'] == s]['dst']) + list(graph[graph['dst'] == s]['src'])
     
-    for dnode in s_neighbors:
-        
-        current_dist = distances[distances.vertex == dnode]['shortest_distance'].iloc[0]
+    for dnode in graph[graph['src'] == s]['dst']:
+
+        current_dist = distances[distances.vertex == dnode].iloc[0]['shortest_distance']
         s_weight = distances.loc[distances.vertex == s, 'shortest_distance']
-        
-        edge_weight1 = graph.loc[(graph['src'] == s) & (graph['dst'] == dnode), 'weight']
-        edge_weight2 = graph.loc[(graph['dst'] == s) & (graph['src'] == dnode), 'weight']
-        
-        if not edge_weight1.empty: edge_weight = edge_weight1.iloc[0]
-        elif not edge_weight2.empty: edge_weight = edge_weight2.iloc[0]
-        
+        edge_weight = graph.loc[(graph['src'] == s) & (graph['dst'] == dnode), 'weight']
         compare_dist = float(s_weight) + float(edge_weight)
         
         if current_dist > compare_dist:
@@ -76,4 +67,3 @@ def update_distances(graph, distances, s, unvisited):
 
 graphfile = sys.argv[1]
 run(graphfile)
-
