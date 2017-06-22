@@ -3,6 +3,9 @@ import dijkstra.*;
 import io.*;
 import java.lang.management.*;
 
+//import org.jgrapht.ListenableGraph;
+//import org.jgrapht.graph.ListenableUndirectedGraph;
+
 /** @brief Main class that reads in a file of the specified format and calculates the
  * furthest vertex from vertex 1 and its distance.
  * 
@@ -19,10 +22,13 @@ import java.lang.management.*;
  * @date June 08 2017
  */
 public class ex5 {
-
+    
+    private static final String MYALGORITHM = "0";
+    private static final String LIBALGORITHM = "1";
+    
     /**
      * Main method
-     * @param args String array with path to file as first entry
+     * @param args String array with algorithm mode (0 or 1) as first entry and path to file as second entry
      */
     public static void main(String[] args){
         long startWallClockTimeNano = System.nanoTime();
@@ -30,19 +36,45 @@ public class ex5 {
         
         Node[] nodes = Reader.readFile(args[0]);
         
-        Dijkstra dijkstra = new Dijkstra(nodes);
-        Node furthestNode = dijkstra.findFurthestNode();
+        /** Mode 0: Use custom Dijkstra implementation */
+        //if(args[0].equals(MYALGORITHM))
+        {
+            Dijkstra dijkstra = new Dijkstra(nodes);
+            Node furthestNode = dijkstra.findFurthestNode();
+            
+            long taskWallClockTimeNano  = System.nanoTime() - startWallClockTimeNano;
+            long taskUserTimeNano    = getUserTime( ) - startUserTimeNano;
+            
+            System.out.println("RESULT VERTEX " + (furthestNode.id+1));
+            System.out.println("RESULT DIST " + furthestNode.distance);
+            
+            System.out.println("RESULT WALL-CLOCK TIME: " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds");
+            System.out.println("RESULT USER TIME: " + (round(taskUserTimeNano/1000000000.0)) + " seconds");
+            
+            
+        /** Mode 1: Use library Dijkstra implementation
+        }else if(args[0].equals(LIBALGORITHM)){
 
-        long taskWallClockTimeNano  = System.nanoTime() - startWallClockTimeNano;
-        long taskUserTimeNano    = getUserTime( ) - startUserTimeNano;
-        
-        System.out.println("Wall-clock time elapsed: " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds");
-        System.out.println("User time elapsed: " + (round(taskUserTimeNano/1000000000.0)) + " seconds");
-        
-        System.out.println("RESULT VERTEX " + (furthestNode.id+1));
-        System.out.println("RESULT DIST " + furthestNode.distance);
-        
-        
+            ListenableGraph<Node, Edge> graph = new ListenableUndirectedGraph<Node, Edge>(Edge.class);
+            
+
+            for(int i=0; i<nodes.length; i++){
+                graph.addVertex(nodes[i]);
+            }
+            
+
+            for(int i=0; i<nodes.length; i++){
+                Node node = nodes[i];
+                for(int j=0; j<node.edges.size(); j++){
+                    if(node.edges.get(j).head.equals(node)){
+                        graph.addEdge(node, node.edges.get(j).tail, node.edges.get(j));
+                    }
+                }
+            }
+        }else{
+            System.out.println("Invalid Algorithm Mode.");
+            */
+        }
     }
     
     /** Round to three decimal places */

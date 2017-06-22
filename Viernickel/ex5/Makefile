@@ -18,3 +18,11 @@ clean:
 doc:
 	mkdir -p $(DOCDIR)
 	doxygen Doxyfile
+
+.PHONY: test
+test :
+	java ex5 test/input.txt > test/output.txt
+	bash -c "diff <(head -n 2 test/correct.txt) <(head -n 2 test/output.txt)"
+	@echo "--------------------------"
+	@echo "Success, all tests passed."
+	@echo "--------------------------"

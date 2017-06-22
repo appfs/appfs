@@ -12,6 +12,8 @@ import java.util.PriorityQueue;
 public class Dijkstra {
     
     private Node[] nodes;
+    private boolean[] touched;
+    private boolean[] visited;
     private PriorityQueue<Node> queue;
     
     /**
@@ -22,6 +24,8 @@ public class Dijkstra {
         assert(null != nodes);
         assert(1 <= nodes.length);
         this.nodes = nodes;
+        this.touched = new boolean[nodes.length];
+        this.visited = new boolean[nodes.length];
         this.queue = new PriorityQueue<Node>();
     }
     
@@ -31,46 +35,43 @@ public class Dijkstra {
      */
     public Node findFurthestNode(){
         Node currNode = nodes[0];
-        Node highestDistNode = nodes[0];
         Node neighbourNode = null;
+        int neighbourId = 0;
         int newDistance;
         boolean changed = false;
         
         queue.add(currNode);
         
         do{
-            for(Neighbour neighbour : currNode.neighbours){
-                neighbourNode = nodes[neighbour.id];
+            for(int i=0; i<currNode.edges.size(); i++){
+                neighbourNode = currNode.getNeighbour(i);
+                neighbourId = neighbourNode.id;
                 
-                /** Skip alread visited nodes
-                 */
-                if(neighbourNode.visited){
+                /** Skip already visited nodes */
+                if(visited[neighbourId]){
                     continue;
                 }
                 
-                /** Update distance
-                 */
-                newDistance = currNode.distance + neighbour.weight;
+                /** Update distance */
+                newDistance = currNode.distance + currNode.getDistanceToNeighbour(i);
                 if(newDistance < neighbourNode.distance){
                     neighbourNode.distance = newDistance;
                     changed = true;
                 }
                 
-                /** Update priorityQueue
-                 */
-                if(neighbourNode.touched && changed){
+                /** Update priorityQueue */
+                if(touched[neighbourId] && changed){
                     queue.remove(neighbourNode);
                     queue.add(neighbourNode);
                 }else if(changed){
                     queue.add(neighbourNode);
                 }
                 
-                neighbourNode.touched = true;
+                touched[neighbourId] = true;
             }
-            currNode.visited = true;
+            visited[currNode.id] = true;
             
-            /** Update currNode
-             */
+            /** Update currNode */
             currNode = queue.poll();
         }while(null != currNode);
         
@@ -85,7 +86,7 @@ public class Dijkstra {
         assert(this.nodes.length > 1);
         Node highestDistNode = this.nodes[1];
         for(int i=2; i<this.nodes.length; i++){
-            if(highestDistNode.distance > nodes[i].distance)
+            if(highestDistNode.distance < nodes[i].distance)
                 highestDistNode = nodes[i];
         }
         return highestDistNode;
