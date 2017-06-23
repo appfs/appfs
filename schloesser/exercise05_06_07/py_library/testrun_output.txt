@@ -1,0 +1,36 @@
+##### New testrun: #####
+../data/b15.gph
+py library
+python3: can't open file 'py_library/ex5_library.py': [Errno 2] No such file or directory
+
+real	0m0.010s
+user	0m0.008s
+sys	0m0.000s
+../data/big8.gph
+py library
+python3: can't open file 'py_library/ex5_library.py': [Errno 2] No such file or directory
+
+real	0m0.010s
+user	0m0.008s
+sys	0m0.000s
+../data/es10kaz.gph
+py library
+python3: can't open file 'py_library/ex5_library.py': [Errno 2] No such file or directory
+
+real	0m0.010s
+user	0m0.008s
+sys	0m0.000s
+../data/i640-345.gph
+py library
+python3: can't open file 'py_library/ex5_library.py': [Errno 2] No such file or directory
+
+real	0m0.010s
+user	0m0.008s
+sys	0m0.000s
+../data/world666.gph
+py library
+python3: can't open file 'py_library/ex5_library.py': [Errno 2] No such file or directory
+
+real	0m0.009s
+user	0m0.008s
+sys	0m0.000s

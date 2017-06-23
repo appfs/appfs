@@ -1,0 +1,36 @@
+##### New testrun: #####
+../data/b15.gph
+bonus c standalone
+./runall.sh: line 13: ./bonus_c_standalone/main: No such file or directory
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/big8.gph
+bonus c standalone
+./runall.sh: line 13: ./bonus_c_standalone/main: No such file or directory
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/es10kaz.gph
+bonus c standalone
+./runall.sh: line 13: ./bonus_c_standalone/main: No such file or directory
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/i640-345.gph
+bonus c standalone
+./runall.sh: line 13: ./bonus_c_standalone/main: No such file or directory
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/world666.gph
+bonus c standalone
+./runall.sh: line 13: ./bonus_c_standalone/main: No such file or directory
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s

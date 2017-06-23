@@ -16,7 +16,7 @@ $(TARGET):
 	$(CC) $(CFLAGS) main.c -o $(TARGET)
 
 run: $(TARGET)
-	./main data/small.gph
+	./main ../data/small.gph
 
 clean:
 	rm -f *.o main
