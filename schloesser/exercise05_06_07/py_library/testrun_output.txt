@@ -1,4 +1,4 @@
-##### New testrun: 1.30GHz, 2 cores #####
+##### New testrun: 1.30GHz, 2 cores, 4GB RAM #####
 ../data/b15.gph
 py library
 RESULT VERTEX 42

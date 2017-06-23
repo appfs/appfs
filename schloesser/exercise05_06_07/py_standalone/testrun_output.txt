@@ -1,4 +1,4 @@
-##### New testrun: 1.30GHz, 2 cores #####
+##### New testrun: 1.30GHz, 2 cores, 4GB RAM #####
 ../data/b15.gph
 py standalone
 RESULT VERTEX 42
@@ -65,3 +65,70 @@ Program took 5.379035108 s (process time)
 real	0m6.825s
 user	0m6.596s
 sys	0m0.124s
+##### New testrun: 3.40GHz, 8 cores, 33 GB RAM #####
+../data/b15.gph
+py standalone
+RESULT VERTEX 42
+
+RESULT DIST 58
+Program took 0.0009142311755567789 s (wallclock time)
+Program took 0.0009136439999999982 s (process time)
+
+real	0m0.027s
+user	0m0.024s
+sys	0m0.000s
+../data/big8.gph
+py standalone
+RESULT VERTEX 393
+
+RESULT DIST 1423
+Program took 136.563958510058 s (wallclock time)
+Program took 136.56723587399998 s (process time)
+
+real	2m17.720s
+user	2m17.648s
+sys	0m0.072s
+../data/es10kaz.gph
+py standalone
+RESULT VERTEX 9423
+
+RESULT DIST 15383931
+Program took 1.5305766200181097 s (wallclock time)
+Program took 1.5305665830000001 s (process time)
+
+real	0m1.786s
+user	0m1.764s
+sys	0m0.020s
+../data/i640-345.gph
+py standalone
+RESULT VERTEX 7
+
+RESULT DIST 393
+Program took 0.2087184509728104 s (wallclock time)
+Program took 0.20872236600000002 s (process time)
+
+real	0m0.274s
+user	0m0.268s
+sys	0m0.004s
+../data/small.gph
+py standalone
+RESULT VERTEX 4
+
+RESULT DIST 3
+Program took 0.00011210190132260323 s (wallclock time)
+Program took 0.00011128100000000127 s (process time)
+
+real	0m0.018s
+user	0m0.016s
+sys	0m0.000s
+../data/world666.gph
+py standalone
+RESULT VERTEX 666
+
+RESULT DIST 20039
+Program took 1.3052092608995736 s (wallclock time)
+Program took 1.305220118 s (process time)
+
+real	0m1.625s
+user	0m1.612s
+sys	0m0.012s
