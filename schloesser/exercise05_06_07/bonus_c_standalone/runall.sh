@@ -10,5 +10,5 @@ do
     echo "Processing file $f..."
     echo $f >> $OUTFILE 
     echo "bonus c standalone" >> $OUTFILE
-    (time ./bonus_c_standalone/main $f) &>> $OUTFILE
+    (time ./main $f) &>> $OUTFILE
 done

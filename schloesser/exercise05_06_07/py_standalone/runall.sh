@@ -10,5 +10,5 @@ do
     echo "Processing file $f..."
     echo $f >> $OUTFILE 
     echo "py standalone" >> $OUTFILE
-    (time python3 py_standalone/ex5_standalone.py $f) &>> $OUTFILE
+    (time python3 ex5_standalone.py $f) &>> $OUTFILE
 done

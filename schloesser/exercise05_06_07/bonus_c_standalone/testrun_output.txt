@@ -1,36 +1,55 @@
-##### New testrun: #####
+##### New testrun: 1.30GHz, 2 cores #####
 ../data/b15.gph
 bonus c standalone
-./runall.sh: line 13: ./bonus_c_standalone/main: No such file or directory
+RESULT VERTEX 42
 
-real	0m0.001s
+RESULT DIST 58
+
+real	0m0.008s
 user	0m0.000s
 sys	0m0.000s
 ../data/big8.gph
 bonus c standalone
-./runall.sh: line 13: ./bonus_c_standalone/main: No such file or directory
+RESULT VERTEX 393
 
-real	0m0.001s
-user	0m0.000s
-sys	0m0.000s
+RESULT DIST 1423
+
+real	2m52.600s
+user	1m52.260s
+sys	0m0.092s
 ../data/es10kaz.gph
 bonus c standalone
-./runall.sh: line 13: ./bonus_c_standalone/main: No such file or directory
+RESULT VERTEX 9423
 
-real	0m0.001s
-user	0m0.000s
+RESULT DIST 15383931
+
+real	0m0.464s
+user	0m0.352s
 sys	0m0.000s
 ../data/i640-345.gph
 bonus c standalone
-./runall.sh: line 13: ./bonus_c_standalone/main: No such file or directory
+RESULT VERTEX 7
 
-real	0m0.001s
+RESULT DIST 393
+
+real	0m0.224s
+user	0m0.140s
+sys	0m0.000s
+../data/small.gph
+bonus c standalone
+RESULT VERTEX 4
+
+RESULT DIST 3
+
+real	0m0.009s
 user	0m0.000s
 sys	0m0.000s
 ../data/world666.gph
 bonus c standalone
-./runall.sh: line 13: ./bonus_c_standalone/main: No such file or directory
+RESULT VERTEX 666
 
-real	0m0.001s
-user	0m0.000s
-sys	0m0.000s
+RESULT DIST 20039
+
+real	0m1.124s
+user	0m0.800s
+sys	0m0.012s

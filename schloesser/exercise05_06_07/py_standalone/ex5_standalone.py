@@ -187,8 +187,8 @@ class Graph:
         return (max_vert, max_dist)
 
 if __name__ == "__main__":
-    t0_clock = time.clock()
-    t0_time = time.time()
+    t0_clock = time.perf_counter()
+    t0_time = time.process_time()
     
 	# read filename from commandlineargs
     filename = sys.argv[1]
