@@ -1,1 +1,3 @@
-please fill tha data directory with some .gph files
+please fill tha data directory with some .gph files.
+py_library needs a working install of graph-tool.
+py_standalone and bonus_c_standalone should work with only python/c resp.

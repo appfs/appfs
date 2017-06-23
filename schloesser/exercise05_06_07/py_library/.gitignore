@@ -1,0 +1,8 @@
+latex/*
+html*/*
+data*
+
+*.x*
+
+.cov*
+
