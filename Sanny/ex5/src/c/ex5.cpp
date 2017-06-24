@@ -29,10 +29,14 @@ using std::endl;
 using std::cerr;
 using std::string;
 
-typedef boost::adjacency_list<boost::listS, boost::vecS,
+using Graph = boost::adjacency_list<boost::listS, boost::vecS,
   boost::undirectedS, boost::no_property,
-  boost::property<boost::edge_weight_t, int>> graph;
-typedef boost::graph_traits < graph >::vertex_descriptor vertex_descriptor;
+  boost::property<boost::edge_weight_t, int>> ;
+using VertexDescriptor = boost::graph_traits < Graph >::vertex_descriptor;
+using Directions = std::vector<VertexDescriptor >;
+using Edge = std::pair<int, int>;
+using Edges = std::vector<Edge >;
+using Weights = std::vector<int >;
 
 
 /** check which method should be used for computing the shortest path */
@@ -107,8 +111,8 @@ int main(int argn, char *argv[]) {
 		return 1;
 	}
 
-	std::vector<std::pair<int, int>>* edges = new std::vector<std::pair<int, int>>(edgeCount);
-	std::vector<int>* weights = new std::vector<int>(edgeCount);
+	Edges* edges = new Edges(edgeCount);
+	Weights* weights = new Weights(edgeCount);
 
 	cout << "Reading edges..." << endl;
 	while (getline(fileStream, line)) {
@@ -126,15 +130,15 @@ int main(int argn, char *argv[]) {
 	}
 
 	cout << "Creating graph..." << endl;
-	graph g{edges->begin(), edges->end(), weights->begin(), vertexCount};
+	Graph g{edges->begin(), edges->end(), weights->begin(), vertexCount};
 
-	std::vector<vertex_descriptor>* directions = new std::vector<vertex_descriptor>(vertexCount);
-	std::vector<int> weightMap;
+	Directions* directions = new std::vector<VertexDescriptor>(vertexCount);
+	Weights weightsForShortestpath;
 
 	if(useOwnAlgo){
 		cout << "Compute shortest paths via Dijkstra(own)..." << endl;
 		Dijkstra* d = new Dijkstra();
-		weightMap = d->dijkstra(vertexCount, *edges, *weights, 1);
+		weightsForShortestpath = d->dijkstra(vertexCount, *edges, *weights, 1);
 	} else {
 		cout << "Compute shortest paths via Dijkstra(boost)..." << endl;
 		std::vector<int>* weightMapPointer = new std::vector<int>(vertexCount);
@@ -143,19 +147,20 @@ int main(int argn, char *argv[]) {
 					boost::make_iterator_property_map(directions->begin(), boost::get(boost::vertex_index, g))) //
 				.distance_map(//
 					boost::make_iterator_property_map(weightMapPointer->begin(), boost::get(boost::vertex_index, g))));
-		weightMap = *weightMapPointer;
+		weightsForShortestpath = *weightMapPointer;
 		delete weightMapPointer;
 	}
+
 	cout << "Search longest shortest path..." << endl;
 	int vertex = 1;
 	int distance = 0;
 
 	for(unsigned int i=0; i<=vertexCount; i++){
-		cout << weightMap[i]<< endl;
+		cout << weightsForShortestpath[i]<< endl;
 	}
 	for(unsigned int i=2; i<vertexCount; i++){
-		if(weightMap[i]>distance){
-			distance = weightMap[i];
+		if(weightsForShortestpath[i]>distance){
+			distance = weightsForShortestpath[i];
 			vertex = i;
 		}
 	}

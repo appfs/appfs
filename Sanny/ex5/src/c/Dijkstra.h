@@ -12,11 +12,15 @@
 #include <climits>
 #include <queue>
 
+using Edge = std::pair<int, int>;
+using Edges = std::vector<Edge >;
+using Weights = std::vector<int >;
+
 class Dijkstra {
 public:
 	Dijkstra();
 	virtual ~Dijkstra();
-	std::vector<int> dijkstra(unsigned int vertexCount, std::vector<std::pair<int, int>>& edges, std::vector<int>& weights, unsigned int source);
+	Weights dijkstra(unsigned int vertexCount, Edges& edges, Weights& weights, unsigned int source);
 };
 
 #endif /* C_DIJKSTRA_H_ */
