@@ -12,9 +12,12 @@
 #include <climits>
 #include <queue>
 
-using Edge = std::pair<int, int>;
+using Edge = std::pair<int, int >;
 using Edges = std::vector<Edge >;
 using Weights = std::vector<int >;
+using EdgeWithWeight = std::pair<int, int >;
+using EdgeWithWeightList = std::vector<EdgeWithWeight >;
+using NodeToEdgeMap = std::vector<EdgeWithWeightList >;
 
 class Dijkstra {
 public:

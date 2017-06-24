@@ -34,6 +34,13 @@ Weights Dijkstra::dijkstra(unsigned int vertexCount, Edges& edges, Weights& weig
 		weightMap[i] = INT_MAX;
 	}
 
+	NodeToEdgeMap vertexToEdges(vertexCount);
+	for(unsigned int i = 0; i < edges.size(); i++){
+		Edge edge = edges[i];
+		vertexToEdges[edge.first].push_back(std::make_pair(edge.second, weights[i]));
+		vertexToEdges[edge.second].push_back(std::make_pair(edge.first, weights[i]));
+	}
+
 	queue Q;
 	Q.push(Edge(source, 0));
 
@@ -45,25 +52,14 @@ Weights Dijkstra::dijkstra(unsigned int vertexCount, Edges& edges, Weights& weig
 		if(dist > weightMap[vertex]){
 			continue;
 		}
-		for(unsigned int i = 0; i < edges.size(); i++){
-			Edge edge = edges[i];
-			int targetVertex;
-
-			if(edge.first == vertex){
-				targetVertex = edge.second;
-			} else if(edge.second == vertex){
-				targetVertex = edge.first;
-			} else {
+		vertexToEdges[vertex];
+		for(EdgeWithWeight edgeWithWeight : vertexToEdges[vertex]){
+			if(weightMap[edgeWithWeight.first] <= weightMap[vertex] + edgeWithWeight.second){
 				continue;
 			}
 
-			int weight = weights[i];
-			if(weightMap[targetVertex] <= weightMap[vertex] + weight){
-				continue;
-			}
-
-			weightMap[targetVertex] = weightMap[vertex] + weight;
-			Q.push(Edge(targetVertex, weightMap[targetVertex]));
+			weightMap[edgeWithWeight.first] = weightMap[vertex] + edgeWithWeight.second;
+			Q.push(Edge(edgeWithWeight.first, weightMap[edgeWithWeight.first]));
 		}
 
 	}

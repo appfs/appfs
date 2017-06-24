@@ -157,9 +157,6 @@ int main(int argn, char *argv[]) {
 	int vertex = 1;
 	int distance = 0;
 
-	for(unsigned int i=0; i<=vertexCount; i++){
-		cout << weightsForShortestpath[i]<< endl;
-	}
 	for(unsigned int i=2; i<vertexCount; i++){
 		if(weightsForShortestpath[i]>distance){
 			distance = weightsForShortestpath[i];
