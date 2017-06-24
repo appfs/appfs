@@ -15,6 +15,7 @@
 #include <boost/timer/timer.hpp>
 #include "Dijkstra.h"
 
+// Constants
 namespace {
 
 const char* FILEEND = ".gph";
@@ -29,6 +30,7 @@ using std::endl;
 using std::cerr;
 using std::string;
 
+// declaring types
 using Graph = boost::adjacency_list<boost::listS, boost::vecS,
   boost::undirectedS, boost::no_property,
   boost::property<boost::edge_weight_t, int>> ;
@@ -165,8 +167,8 @@ int main(int argn, char *argv[]) {
 		}
 	}
 
-	cout << "RESULT VERTEX " << vertex << '\n';
-	cout << "RESULT DIST " << distance << '\n';
+	cout << "RESULT VERTEX " << vertex << endl;
+	cout << "RESULT DIST " << distance << endl;
 
 	delete edges;
 	delete weights;
