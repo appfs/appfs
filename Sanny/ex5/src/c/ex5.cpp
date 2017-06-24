@@ -19,8 +19,8 @@
 namespace {
 
 const char* FILEEND = ".gph";
-const char* OWNALGO = "-m1";
-const char* LIBALGO = "-m2";
+const char* LIBALGO = "-m1";
+const char* OWNALGO = "-m2";
 
 }
 
