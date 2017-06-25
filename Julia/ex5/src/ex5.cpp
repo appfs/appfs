@@ -28,13 +28,13 @@ const char* SOURCE_FILE_PATH = "testgraph.gph";
 /**
  *\typedef defines a graph by undirected adjacency-list with weighted edges
  */
-typedef boost::adjacency_list<boost::listS, boost::vecS,
+using graph =  boost::adjacency_list<boost::listS, boost::vecS,
 	boost::undirectedS, boost::no_property,
-	boost::property<boost::edge_weight_t, int>> graph;
+	boost::property<boost::edge_weight_t, int>>;
 /*
  * \typedef short version for vertex descriptor from boost::graph_traits
  */
-typedef boost::graph_traits < graph >::vertex_descriptor vertex_descriptor;
+using vertex_descriptor = boost::graph_traits < graph >::vertex_descriptor;
 
 /*
  * Main function. Reads some graph data from a given file and computes the longest
@@ -43,21 +43,26 @@ typedef boost::graph_traits < graph >::vertex_descriptor vertex_descriptor;
 int main(int argc, char* argv[]){
 	//Initialize timer for time measurement
 	boost::timer::cpu_timer timer;
-	string changeMethod = argv[1];
-	if (changeMethod.compare("-m1") != 0 || changeMethod.compare("-m2") != 0){
+
+	if(argc != 3){
+		cerr << "Invalid method call. Please call with ./ex5 -m1/-m2 FILENAME" << endl;
+		return EXIT_FAILURE;
+	}
+
+	string method = argv[1];
+	bool boostMethod = false;
+	if (method.compare("-m1") == 0){
+		cout << "Using dijkstra from boost-library" << endl;
+		boostMethod = true;
+	} else if (method.compare("-m2") == 0){
+		cout << "Using my dijkstra" << endl;
+	} else {
 		cerr << "Invalid argument. Please type \"-m1\" for boost-dijkstra or \"-m2\" for manual dijkstra." << endl;
 	}
 
+
 	ifstream infile;
-
-	if(argc <=1){
-		cout << "No file-path found. Try to open default file path." << endl;
-		infile.open(SOURCE_FILE_PATH, ios::in);
-	}
-	else {
-		infile.open(argv[2], ios::in);
-	}
-
+	infile.open(argv[2], ios::in);
 	if (!infile){
 		cout << "File could not be opened." << endl;
 		return 1;
@@ -80,8 +85,8 @@ int main(int argc, char* argv[]){
 	}
 
 	//Reading the edge data
-	vector<pair<int, int>> edges;
-	vector<int> weights;
+	Edges edges;
+	WeightMap weights;
 	int startEdge;
 	int endEdge;
 	int weight;
@@ -94,9 +99,9 @@ int main(int argc, char* argv[]){
 		weights.push_back(weight);
 	}
 
-	vector<int> weightMap(numberVertices);
+	WeightMap weightMap(numberVertices);
 
-	if (changeMethod.compare("-m1") == 0){
+	if (boostMethod){
 		//Creating a graph g
 		graph g{edges.begin(), edges.end(), weights.begin(), numberVertices};
 
@@ -111,8 +116,8 @@ int main(int argc, char* argv[]){
 	}
 
 	else {
-		dijkstra myDijkstra(weights, edges);
-		weightMap = myDijkstra.computeShortestPath(numberVertices);
+		dijkstra myDijkstra(weights, edges, numberVertices);
+		weightMap = myDijkstra.computeShortestPath();
 	}
 
 	//Compute the longest shortest path
