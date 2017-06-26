@@ -1,3 +1,13 @@
+/*
+ * ex1.cpp
+ *
+ * 	\brief     First exercixe
+ *  \details   This class reads in a data document and counts the valid lines
+ *  \pre       Create the data file
+ *  \author    Julia Baumbach
+ *  \date      25.04.2017
+ */
+
 #include <fstream>
 #include <iostream>
 #include <cmath>
@@ -7,61 +17,37 @@
 
 using namespace std;
 
+/**
+ * \paran SOURCE_FILE_PATH default file name
+ * if none is set while starting the program
+ */
+const string SOURCE_FILE_PATH= "ex1.dat";
 
 /**
- * Prueft, ob die Zeile ausgewertet werden soll
+ * \fn bool lineIsValid(string line)
+ * \brief checks if line is empty or a comment
+ * \param line a string representing a line
+ * \return returns if the given line is valid
  */
 bool lineIsValid(string line){
 	if (line.empty()){
 		return false;
 	}
-	if (line[0] == '#'){
-		return false;
-	}
+	size_t pos = line.find('#');
+	if (pos == 0) {
+		cout << "Ignore comment line" << endl;
+			return false;
+		}
 	return true;
 }
 
+
 /**
- * ermittelt die Location einer Zeile
- */
-int getLocation(string line){
-	int location = 0;
-	size_t pos = line.find_first_of(';');
-	stringstream loc;
-	if (pos != string::npos){
-		line = line.substr(pos + 2);
-		pos = line.find_first_of(';');
-		if (pos != string::npos){
-			loc.str(line.substr(0, pos));
-			loc >> location;
-			loc.clear();
-		}
-	}
-	return location;
-}
-
-/*
- * ermittelt den Wert einer Zeile
- */
-double getValue(string line){
-	double value = 0;
-	size_t pos = line.find_first_of(';');
-	stringstream val;
-	if (pos != string::npos){
-		line = line.substr(pos + 2);
-		pos = line.find_first_of(';');
-		if (pos != string::npos){
-			val.str(line.substr(pos + 2));
-			val >> value;
-			val.clear();
-		}
-	}
-	return value;
-}
-
-
-/*
- * berechnet das geometrische Mittel eines Vektors
+ * \fn double geoMean(vector<double> vec, int length)
+ * \brief computes the geoMean of a vector
+ * \param vec a vector with the data as double
+ * \param length the length of the given vector
+ * \return the geometric mean of the data of the vector
  */
 double geoMean(vector<double> vec, int length){
 	double sum = 0.;
@@ -73,20 +59,26 @@ double geoMean(vector<double> vec, int length){
 }
 
 
-
-
+/**
+ * Main function which reads in a document file
+ * and stores its data for computing the geometric mean
+ * Shows a warning if no file path name is given while
+ * starting the program.
+ * Stops if no file could be found.
+ */
 int main(int argc, char* argv[]){
 	ifstream infile;
 
 	if(argc <=1){
-		infile.open("ex1.dat", ios::in);
+		cout << "No file-path found. Try to open default file path." << endl;
+		infile.open(SOURCE_FILE_PATH, ios::in);
 	}
 	else {
 		infile.open(argv[1], ios::in);
 	}
 
 	if (!infile){
-		cout << "Datei konnte nicht geöffnet werden" << endl;
+		cout << "File could not be opened." << endl;
 		return 1;
 	}
 
@@ -95,19 +87,28 @@ int main(int argc, char* argv[]){
 	vector<double> loc1;
 	vector<double> loc2;
 
+	double location;
+	double value;
+
+	char overage[2];
 
 	while (getline(infile, line)){
 		lineCount++;
-		if (lineIsValid(line)){
-			int location = getLocation(line);
-			double value = getValue(line);
-			if (value > 0){
-				if (location == 1){
-					loc1.push_back(value);
-				}else if (location == 2) {
-					loc2.push_back(value);
-				}
-			}
+		if(lineIsValid(line)){
+		 int values = sscanf(line.c_str(), "%*d ; %lf ; %lf %1s", &location, &value, overage);
+		 if (values != 2) {
+			cerr << "Error while parsing data" << endl;
+			continue;
+		 }if (isnan(value) || value <= 0){
+			 cerr << "Invalid value" << endl;
+			 continue;
+		 }
+			 if (location == 1){
+				 loc1.push_back(value);
+			 } else if (location == 2) {
+				 loc2.push_back(value);
+			 }
+
 		}
 	}
 
@@ -119,7 +120,7 @@ int main(int argc, char* argv[]){
 	cout << "Valid values Loc1: " << sizeLoc1 << " with GeoMean: " << geoMean(loc1, sizeLoc1) << endl;
 	cout << "Valid values Loc2: " << sizeLoc2 << " with GeoMean: " << geoMean(loc2, sizeLoc2) << endl;
 
-	return 1;
+	return 0;
  }
 
 

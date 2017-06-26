@@ -1,40 +1,71 @@
+#!/usr/bin/env python3
+
 #ex1 APPFS Martha Karpeter 367847
 
-from math import sqrt
-import decimal
-Decim = decimal.Decimal
 
-file = open("ex2.dat","r") 
-Data = file.readlines() #reads lines from the data set
-decimal.getcontext().prec = 10
+# File ex1-100.dat with 100001235 lines
+# Valid values Loc1: 50004466 with GeoMean: 36.781736117203764
+# Valid values Loc2: 49994581 with GeoMean: 36.78258320024247
 
-#devide Data into Location1 and Location2
-Location1 = [Decim(line[line.index(";")+5:]) for line in Data if ";" in line and line[line.index(";")+5:].count(".")==1 and line.count(" ") == 2 and int(line[line.index(";")+2]) == 1]
-Location2 = [Decim(line[line.index(";")+5:]) for line in Data if ";" in line and line[line.index(";")+5:].count(".")==1 and line.count(" ") == 2 and int(line[line.index(";")+2]) == 2]
+# time 8m18.949s
 
 
-#computes Geometric Mean of a given dataset, returns type decimal.Decimal
-def GeometricMean(dataset):
-    length = Decim(len(dataset))
-    result = Decim(1)
-    for line in dataset:
-        result *= line**(Decim(1)/length)
-    return(Decim(result))
+import sys
+import math
 
-#get the geometric mean for each location
-GeometricMean1 = GeometricMean(Location1)
-GeometricMean2 = GeometricMean(Location2)
+file = open(sys.argv[-1], "r").readlines()
 
-#output 
-print("File ex2.dat with", len(Data), "lines")
-print('Valid values Loc1:', len(Location1), 'with GeoMean:', "%.4f"%GeometricMean1)
-print('Valid values Loc2:', len(Location2), 'with GeoMean:', "%.4f"%GeometricMean2)
+valid = [0,0,0]
+GMean = [0,0]
 
-file.close()
+for line in file:
+    valid[0] += 1
+    # ignore everything after #
+    Data1 = line.split("\n")[0].split("#")[0].strip()
+
+    # ignore empty lines
+    if Data1 == "":
+        continue
+
+    Data = Data1.split(";")
+
+    # through error if line does not have 3 semicolons
+    if len(Data) != 3:
+        print(line)
+        continue
+
+    # through error if line number, location and value are not integer or float (i.e. contain a space)
+    try:
+
+        lin = int(Data[0])
+        loc = int(Data[1])
+        val = float(Data[2])
+
+    except ValueError:
+        print(line)
+        continue
+
+    # through error if value is not a number
+    if math.isnan(val):
+        print(line)
+        continue
+
+    # through error if location is other than 1 or 2
+    if (loc != 1 and loc != 2) or val <= 0.0:
+        print(line)
+        continue
+    else:
+    # seperate and add values according to location
+        valid[loc] += 1
+        GMean[loc-1] += math.log(val,2)
 
 
-# File ex1.dat with 10000128 lines
-# Valid values Loc1: 4998044 with GeoMean: 36.7802
-# Valid values Loc2: 5000938 with GeoMean: 36.7666
+# compute geometric mean for locations 1 and 2 seperately
+for i in [1,2]:
+    GMean[i-1] = pow(2,(GMean[i-1]/valid[i]))
 
-# real    9m42.231s
+
+# output
+print("File", sys.argv[-1], "with", valid[0], "lines")
+print('Valid values Loc1:', valid[1], 'with GeoMean:', GMean[0]) # "%.4f"%GMean[0])
+print('Valid values Loc2:', valid[2], 'with GeoMean:', GMean[1]) # "%.4f"%GMean[1])

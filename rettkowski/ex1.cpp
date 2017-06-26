@@ -1,60 +1,112 @@
+/*
+ *  @file 		ex1.cpp
+ *  @details  	This file is the solution to exercise 1.
+ *  @author    	Alexander Rettkowski
+ *  @date      	22.04.2017
+ */
+
+#include <boost/config/warning_disable.hpp>
+#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/phoenix_core.hpp>
+#include <boost/spirit/include/phoenix_operator.hpp>
+#include <boost/spirit/include/phoenix_object.hpp>
+#include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/fusion/include/io.hpp>
+
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
+#include <complex>
+#include <fstream>
 
-using namespace std;
-using namespace boost;
+namespace exercise1
+{
+	namespace qi = boost::spirit::qi;
+	namespace ascii = boost::spirit::ascii;
+	
+	/**
+		* This struct is used in the boost::qi parser.
+	*/
+	struct line
+	{
+		int id;
+		int location;
+		double value;
+	};
+}
 
+
+BOOST_FUSION_ADAPT_STRUCT(
+	exercise1::line,
+	(int, id)
+	(int, location)
+	(double, value)
+)
+
+namespace exercise1
+{
+	template <typename Iterator>
+	struct line_parser : qi::grammar<Iterator, line(), ascii::space_type>
+	{
+		line_parser() : line_parser::base_type(start)
+		{
+			using qi::int_;
+			using qi::double_;
+
+			start %= int_ >> ';' >> int_ >> ";" >> double_;
+		}
+
+		qi::rule<Iterator, line(), ascii::space_type> start;
+	};
+}
+
+/**
+ * The main function that reads in a file and processes it.
+ * @param argc Number of command line arguments.
+ * @param *argv a pointer to the array of command line arguments.
+ */
 int main(int argc, char *argv[])
 {
-    long loc1size = 0, loc2size = 0, numberOfLines = 0;
+	using boost::spirit::ascii::space;
+	typedef std::string::const_iterator iterator_type;
+	typedef exercise1::line_parser<iterator_type> line_parser;
+	line_parser parser;
+	std::string currentLine;
+	std::ifstream file(argv[1]);
+	std::vector<double> values[2];
+	double mean[2]{0.0, 0.0};
+	long numberOfLines = 0;
 
-    ifstream file(argv[1]);
-    string str;
+	while (getline(file, currentLine))
+	{
+		numberOfLines++;
 
-    double loc1log = 0.0, loc2log = 0.0, value = 0;
-    int pos, location = 0;
-    stringstream tmp;
+		exercise1::line parsedLine;
+		std::string::const_iterator currentPosition = currentLine.begin();
+		std::string::const_iterator lineEnd = currentLine.end();
+		bool parsingSucceeded = phrase_parse(currentPosition, lineEnd, parser, space, parsedLine);
 
-    while (getline(file, str))
-    {
-        numberOfLines++;
-        if (!starts_with(str, "#") && str.length() >= 1)
-        {
-            pos = str.find_first_of(';');
-            if (pos != string::npos)
-            {
-                str = str.substr(pos + 2);
-                pos = str.find_first_of(';');
-                if (pos != string::npos)
-                {
-                    tmp.str(str.substr(0, pos));
-                    tmp >> location;
-                    tmp.clear();
-                    tmp.str(str.substr(pos + 2));
-                    tmp >> value;
-                    tmp.clear();
-                }
-            }
-            if (location == 1)
-            {
-                loc1log += log(value);
-                loc1size++;
-            }
-            else if (location == 2)
-            {
-                loc2log += log(value);
-                loc2size++;
-            }
-        }
-    }
+		if (parsingSucceeded && currentPosition == lineEnd)
+		{
+			if (std::isnan(parsedLine.value) || parsedLine.value <= 0 || parsedLine.location < 1 || parsedLine.location > 2)
+				continue;
+			values[--parsedLine.location].push_back(parsedLine.value);
+		}
+	}
 
-    double loc1mean = exp(loc1log / loc1size);
-    double loc2mean = exp(loc2log / loc2size);
+	file.close();
 
-    printf("File: %s with %ld lines\n", argv[1], numberOfLines);
-    printf("Valid values Loc1: %ld with GeoMean: %f\n", loc1size, loc1mean);
-    printf("Valid values Loc2: %ld with GeoMean: %f\n", loc2size, loc2mean);
+	for (int i = 0; i < 2; i++)
+	{
+		for (double d : values[i])
+		{
+			mean[i] += std::log2(d);
+		}
+		mean[i] = std::exp2(mean[i] / values[i].size());
+	}
+
+	printf("File: %s with %ld lines\n", argv[1], numberOfLines);
+	printf("Valid values Loc1: %ld with GeoMean: %f\n", values[0].size(), mean[0]);
+	printf("Valid values Loc2: %ld with GeoMean: %f\n", values[1].size(), mean[1]);
+	return 0;
 }
+

@@ -18,7 +18,7 @@ def getData(fname):
     """."""
     vals1 = []
     vals2 = []
-    # e = 0
+    errors = []
     with open(fname, 'r') as infile:
         for line in infile:
             # line --> array
@@ -31,12 +31,12 @@ def getData(fname):
                     vals1.append(num)
                 elif data[1].strip() == '2' and num > 0:
                     vals2.append(num)
-            except (IndexError, ValueError, AttributeError):
-                # FIXME: this:
-                # e += 1
-                continue
-    # print("{} exceptions were made due to errors.".format(e))
-    return vals1, vals2
+                else:
+                    raise ValueError("Found other location than 1 or 2")
+            except (ValueError, IndexError, AttributeError):
+                errors.append(line)
+
+    return vals1, vals2, errors
 
 
 def hTime(num):
@@ -51,15 +51,13 @@ def getGMean(args):
     t0 = time.time()
     if args.cython:
         import cGetData
-        vals1, vals2 = cGetData.getData(args.file)
+        vals1, vals2, errorLines = cGetData.getData(args.file)
     else:
-        vals1, vals2 = getData(args.file)
+        vals1, vals2, errorLines = getData(args.file)
     print("got arrays in {}".format(hTime(time.time() - t0)))
-
+    print("File {} contained {} lines.".format(args.file, len(vals1) + len(vals2) + len(errorLines)))
     print("{} valid values of loc1 with GeoMean: {}".format(len(vals1), gmean((vals1))))
     print("{} valid values of loc2 with GeoMean: {}".format(len(vals2), gmean((vals2))))
-    # print("{} valid values of loc1 with GeoMean: {}".format(vals1[1], np.exp(vals1[0]/vals1[1])))
-    # print("{} valid values of loc2 with GeoMean: {}".format(vals2[1], np.exp(vals2[0]/vals2[1])))
 
     t1 = time.time()
     print("{} took {} to solve.".format(">"*10, hTime(t1-t0)))

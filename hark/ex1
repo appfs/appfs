@@ -1,0 +1,2 @@
+#/usr/bin/bash
+python src/ex1/ex1.py $1
