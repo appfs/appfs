@@ -28,6 +28,12 @@
 */
 
 int main(int argc, char *argv[]){
+	clock_t cpu;
+  	double wall;
+  	struct timeval time;
+   	assert(!gettimeofday(&time,NULL));
+     	wall=(double)time.tv_sec + (double)time.tv_usec * .000001;
+  	cpu = clock();
 	int temp = 0;
 	long int cost = -1;
 	FILE *fp;
@@ -148,5 +154,10 @@ int main(int argc, char *argv[]){
         printf("RESULT VERTEX %d \n", temp+1);
         printf("RESULT DIST %ld \n", cost);
         free(graph);
+        cpu = clock() - cpu;
+        assert(!gettimeofday(&time,NULL));
+	wall=(double)time.tv_sec + (double)time.tv_usec * .000001 -wall;
+        printf("The programm used the CPU time of: %fs\n",((float)cpu)/CLOCKS_PER_SEC);
+        printf("The programm used the wall time of: %fs\n", wall);	
         return 0;
 }
