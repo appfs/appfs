@@ -15,13 +15,15 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/timer/timer.hpp>
+#include "dijkstra.h"
 
 using namespace std;
 
 /**
  * \param SOURCE_FILE_PATH default file path if none is hand over while starting the programm
  */
-const string SOURCE_FILE_PATH = "acycpos-1.gph";
+const char* SOURCE_FILE_PATH = "testgraph.gph";
 
 /**
  *\typedef defines a graph by undirected adjacency-list with weighted edges
@@ -39,6 +41,13 @@ typedef boost::graph_traits < graph >::vertex_descriptor vertex_descriptor;
  * shortest path to vertex with number 1.
  */
 int main(int argc, char* argv[]){
+	//Initialize timer for time measurement
+	boost::timer::cpu_timer timer;
+	string changeMethod = argv[1];
+	if (changeMethod.compare("-m1") != 0 || changeMethod.compare("-m2") != 0){
+		cerr << "Invalid argument. Please type \"-m1\" for boost-dijkstra or \"-m2\" for manual dijkstra." << endl;
+	}
+
 	ifstream infile;
 
 	if(argc <=1){
@@ -46,7 +55,7 @@ int main(int argc, char* argv[]){
 		infile.open(SOURCE_FILE_PATH, ios::in);
 	}
 	else {
-		infile.open(argv[1], ios::in);
+		infile.open(argv[2], ios::in);
 	}
 
 	if (!infile){
@@ -63,7 +72,7 @@ int main(int argc, char* argv[]){
 	if (getline(infile, line)){
 		s.str(line);
 		s >> numberVertices >> numberEdges;
-		//Number of vertices is one more than the real number of edges for storing all the edges correctly
+		//Number of vertices is one more than the real number of vertices for storing all the vertices correctly (it's 1-based)
 		numberVertices++;
 	} else {
 		cerr << "Empty file. Exit program" << endl;
@@ -85,24 +94,32 @@ int main(int argc, char* argv[]){
 		weights.push_back(weight);
 	}
 
-	//Creating a graph g
-	graph g{edges.begin(), edges.end(), weights.begin(), numberVertices};
-
-	//storing the shortest paths and its weights
-	vector<vertex_descriptor> directions(numberVertices);
 	vector<int> weightMap(numberVertices);
 
-	boost::dijkstra_shortest_paths(g, 1,//
-			boost::predecessor_map(//
-					boost::make_iterator_property_map(directions.begin(), get(boost::vertex_index, g)))//
-			.distance_map(//
-					boost::make_iterator_property_map(weightMap.begin(), get(boost::vertex_index, g))));
+	if (changeMethod.compare("-m1") == 0){
+		//Creating a graph g
+		graph g{edges.begin(), edges.end(), weights.begin(), numberVertices};
+
+		//storing the shortest paths and its weights
+		vector<vertex_descriptor> directions(numberVertices);
+
+		boost::dijkstra_shortest_paths(g, 1,//
+				boost::predecessor_map(//
+						boost::make_iterator_property_map(directions.begin(), get(boost::vertex_index, g)))//
+				.distance_map(//
+						boost::make_iterator_property_map(weightMap.begin(), get(boost::vertex_index, g))));
+	}
+
+	else {
+		dijkstra myDijkstra(weights, edges);
+		weightMap = myDijkstra.computeShortestPath(numberVertices);
+	}
 
 	//Compute the longest shortest path
 	int weightOfLongestShortestPath = -1;
 	int indexOfVertex = -1;
 	int totalWeight;
-	for(unsigned int i = 2; i < numberVertices + 1; i++){
+	for(unsigned int i = 2; i < numberVertices; i++){
 		totalWeight = weightMap[i];
 		if (totalWeight > weightOfLongestShortestPath){
 			weightOfLongestShortestPath = totalWeight;
@@ -110,8 +127,14 @@ int main(int argc, char* argv[]){
 		}
 	}
 
+
 	cout << "RESULT VERTEX " << indexOfVertex << endl;
 	cout << "RESULT DIST " << weightOfLongestShortestPath << endl;
+
+	//Print measured time
+	boost::timer::cpu_times times = timer.elapsed();
+	cout << "Wall-clock time: " << times.wall * 1e-9 << " seconds" << endl;
+	cout << "User-time: " << times.user * 1e-9 <<  " seconds" << endl;
 
 	return 0;
 }
