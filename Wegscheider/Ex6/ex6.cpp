@@ -13,6 +13,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/spirit/include/qi.hpp>
 
 using namespace std;
 using namespace boost;
@@ -61,7 +62,7 @@ vector<double> myDijkstra(Graph g, int numVertices, int source) {
 
 	Heap heap;
 
-	Heap::handle_type handles[numVertices];
+	Heap::handle_type *handles = new Heap::handle_type[numVertices];
 	handles[0] = heap.push(make_pair(0,0.));
 
 	//initialization of the heap
@@ -92,7 +93,12 @@ vector<double> myDijkstra(Graph g, int numVertices, int source) {
 
 	return distances;
 }
-
+//		split(parts, line, is_any_of(" "));
+//		if (parts.size() != 3) {
+//			cerr << "error in line " << (i+2) << ": line should consists of "
+//					"two integers and a double!" << endl;
+//			exit(EXIT_FAILURE);
+//		}
 
 /**
  * main function which reads a graph from a .gph file, then calculates shortest
@@ -100,9 +106,7 @@ vector<double> myDijkstra(Graph g, int numVertices, int source) {
  * and prints the furthest vertex together with its distance
  * to the standard output
  * @param numargs number of inputs on command line
- * @param args array of * ex6.cpp
-
- *  inputs on command line
+ * @param args array of * inputs on command line
  * @return whether the function operated successfully
  */
 int main(int numargs, char *args[]) {
@@ -110,7 +114,7 @@ int main(int numargs, char *args[]) {
 	timer::cpu_timer t;
 	bool useOwnMethod;
 
-	//parsing command line options
+	/*parsing command line options*/
 	po::options_description desc("Allowed options");
 	desc.add_options()
 			("help,h", "produce help message")
@@ -147,7 +151,7 @@ int main(int numargs, char *args[]) {
 		cerr << "please specify an input file in the .gph format" << endl;
 		exit(EXIT_FAILURE);
 	}
-	//end of parsing command line options
+	/*end of parsing command line options*/
 
 
 	ifstream inputFile;
@@ -183,17 +187,31 @@ int main(int numargs, char *args[]) {
 
 	int i = 0;
 
-	//read line by line
+	using namespace boost::spirit;
+	using qi::int_;
+	using qi::double_;
+	using qi::phrase_parse;
+	using ascii::space;
+
+	//read line by line using boost to parse each line to int,int,double
 	while (getline(inputFile, line)) {
-		split(parts, line, is_any_of(" "));
-		if (parts.size() != 3) {
-			cerr << "error in line " << (i+2) << ": line should consists of "
-					"two integers and a double!" << endl;
-			exit(EXIT_FAILURE);
-		}
 		try {
-			edges[i] = Edge(stoi(parts[0])-1, stoi(parts[1])-1);
-			weights[i] = stod(parts[2]);
+			auto it = line.begin();
+			int start;
+			int end;
+			double weight;
+			bool success = phrase_parse(it, line.end(),
+					int_[([&start](int j){ start = j; })]
+					>> int_[([&end](int j){ end = j; })]
+					>> double_[([&weight](double j){ weight = j; })], space);
+			if (success && it == line.end()) {
+				edges[i] = Edge(start-1, end-1);
+				weights[i] = weight;
+			} else {
+				cerr << "error in line " << (i+2) << ": line should consists of "
+						"two integers and a double!" << endl;
+				exit(EXIT_FAILURE);
+			}
 		} catch(...) {
 			cerr << "error in line " << (i+2) << ": line should consists of "
 					"two integers and a double!" << endl;
