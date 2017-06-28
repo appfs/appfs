@@ -60,10 +60,10 @@ char parseAlgoOption(const po::variables_map& vm, char useOwnAlgo) {
 	if (vm.count("algo")) {
 		useOwnAlgo = vm["algo"].as<int>();
 		useOwnAlgo--;
-		if (useOwnAlgo != 1 && useOwnAlgo != 0) {
-			cout << "No valid Option was given for Algorithm! Fallback: algo from libary" << endl;
-			useOwnAlgo = 0;
-		}
+	}
+	if (useOwnAlgo != 1 && useOwnAlgo != 0) {
+		cout << "No valid Option was given for Algorithm! Fallback: algo from libary" << endl;
+		useOwnAlgo = 0;
 	}
 	if (useOwnAlgo) {
 		cout << "Using own algorithm..." << endl;
