@@ -1,32 +1,12 @@
 #!/usr/bin/env python
 
 '''
-Exercises 5, 6 and 7
-
-This package provides means to solving exercises 5 to 7 from the lecture appfs.
+Wrapper class for graph-tool to compute longest shortest path to a given node.
 '''
-import sys
-import time
 from graph_tool.all import load_graph_from_csv
+from .misc import pop_next_destination
 
-def pop_next_destination(to_visit, distance):
-    '''
-    Return a vertex that still has to be visited and has currently smallest distance to startvertex.
-
-    Args:
-        to_visit (array): an array of bools indicating whether or not a vertex has to be visited.
-        distance (array): an array containing the current shortest distances to the corresponding vertices.
-    '''
-    mind = -1
-    minv = None
-    for vert in to_visit:
-        if distance[vert] < mind or mind == -1:
-            mind = distance[vert]
-            minv = vert
-    to_visit.remove(minv)
-    return minv
-
-class Ex5:
+class GraphWrapper:
     '''
     A class containing methods to read in a graph and calculate the longest shortest path to a particular vertex.
     '''
@@ -128,19 +108,3 @@ class Ex5:
                 max_dist = dist
                 max_vert = vertex
         return (self.vert_name(max_vert), max_dist)
-
-if __name__ == "__main__":
-    T0CLOCK = time.perf_counter()
-    T0TIME = time.process_time()
-    # read filename from commandlineargs
-    FILE = sys.argv[1]
-    VERT = 1
-
-    EX = Ex5(filename=FILE, directed=False)
-    RES = EX.get_longest_shortest_to(VERT)
-
-    print("RESULT VERTEX {}\n\nRESULT DIST {}".format(RES[0], RES[1]))
-    T1CLOCK = time.perf_counter()
-    T1TIME = time.process_time()
-    print("Program took {} s (wallclock time)".format(T1CLOCK - T0CLOCK))
-    print("Program took {} s (process time)".format(T1TIME - T0TIME))

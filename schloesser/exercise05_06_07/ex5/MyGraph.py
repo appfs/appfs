@@ -1,30 +1,9 @@
 #!/usr/bin/env python3
 
 '''
-Exercises 5, 6 and 7
-
-This package provides means to solving exercises 5 to 7 from the lecture appfs.
+Standalone simple graph structure with the means to compute a longest shortest path.
 '''
-import sys
-import time
-
-def pop_next_destination(to_visit, distance):
-    '''
-    Return a vertex that still has to be visited and has currently smallest distance to startvertex.
-
-    Args:
-        to_visit (array): an array of bools indicating whether or not a vertex has to be visited.
-        distance (array): an array containing the current shortest distances to the corresponding vertices.
-    '''
-    mind = -1
-    minv = None
-    for vert in to_visit:
-        # assert distance[v] >= 0
-        if distance[vert] < mind or mind == -1:
-            mind = distance[vert]
-            minv = vert
-    to_visit.remove(minv)
-    return minv
+from .misc import pop_next_destination
 
 class Vertex:
     '''
@@ -134,7 +113,7 @@ class Graph:
     '''
     Graph
 
-    This lass holds all relevant information about a graph.
+    This class holds all relevant information about a graph.
     '''
 
     def __init__(self, filename, directed=False):
@@ -300,6 +279,7 @@ class Graph:
         Return:
             (int, int): pair of vertex and distance.
         '''
+        vert = self.get_vertex_by_name(vert)
         distances = self.calculate_distances_to(vert)
         max_dist = 0
         max_vert = vert
@@ -308,23 +288,4 @@ class Graph:
             if dist > max_dist:
                 max_dist = dist
                 max_vert = vertex
-        return (max_vert, max_dist)
-
-if __name__ == "__main__":
-    T0CLOCK = time.perf_counter()
-    T0TIME = time.process_time()
-
-    # read filename from commandlineargs
-    INFILE = sys.argv[1]
-    #vert = int(sys.argv[2])
-    VERT = int(1)
-    GRAPH = Graph(INFILE, False)
-
-    VERT = GRAPH.get_vertex_by_name(VERT)
-    RES = GRAPH.get_longest_shortest_to(VERT)
-
-    print("RESULT VERTEX {}\n\nRESULT DIST {}".format(RES[0].get_name(), RES[1]))
-    T1CLOCK = time.perf_counter()
-    T1TIME = time.process_time()
-    print("Program took {} s (wallclock time)".format(T1CLOCK - T0CLOCK))
-    print("Program took {} s (process time)".format(T1TIME - T0TIME))
+        return (max_vert.get_name(), max_dist)
