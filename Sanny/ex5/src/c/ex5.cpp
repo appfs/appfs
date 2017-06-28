@@ -12,6 +12,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/program_options.hpp>
 #include <boost/timer/timer.hpp>
 #include "Dijkstra.h"
 
@@ -19,8 +20,6 @@
 namespace {
 
 const char* FILEEND = ".gph";
-const char* LIBALGO = "-m1";
-const char* OWNALGO = "-m2";
 
 }
 
@@ -31,6 +30,7 @@ using std::cerr;
 using std::string;
 
 // declaring types
+namespace po = boost::program_options;
 using Graph = boost::adjacency_list<boost::listS, boost::vecS,
   boost::undirectedS, boost::no_property,
   boost::property<boost::edge_weight_t, int>> ;
@@ -40,39 +40,41 @@ using Edge = std::pair<int, int>;
 using Edges = std::vector<Edge >;
 using Weights = std::vector<int >;
 
-
-/** check which method should be used for computing the shortest path */
-char checkPreferredAlgo(char* argv[], int argn) {
-	if(argn == 2){
-		return 0;
-	}
-	string command = argv[1];
-	const string::size_type indexCommandOwnAlgo = command.find(OWNALGO);
-	if(indexCommandOwnAlgo != string::npos){
-		return 1;
-	}
-	const string::size_type indexCommandLibAlgo = command.find(LIBALGO);
-	if(indexCommandLibAlgo != string::npos){
-		return 0;
-	}
-	return 0;
+po::variables_map parseCommandLine(po::options_description desc, int argn,
+		char* argv[]) {
+	desc.add_options()("help", "produce help message")("algo,m",
+			po::value<int>(),
+			"algorithm to solve shortest Path. \n 1 - libary (boost)\n 2 - own Algo")(
+			"input-file", po::value<string>(), "input file");
+	po::positional_options_description p;
+	p.add("input-file", -1);
+	po::variables_map vm;
+	po::store(
+			po::command_line_parser(argn, argv).options(desc).positional(p).run(),
+			vm);
+	po::notify(vm);
+	return vm;
 }
 
-/** add's fileending and opens the via ifstream */
-std::ifstream openFile(char* argv[], int argn) {
-	string filename;
-	if(argn == 2){
-		filename = argv[1];
+char parseAlgoOption(const po::variables_map& vm, char useOwnAlgo) {
+	if (vm.count("algo")) {
+		useOwnAlgo = vm["algo"].as<int>();
+		if (useOwnAlgo == 2) {
+			useOwnAlgo = 0;
+		}
+		if (useOwnAlgo != 1 && useOwnAlgo != 0) {
+			cout
+					<< "No valid Option was given for Algorithm! Fallback: algo from libary"
+					<< endl;
+		}
+	}
+	if (useOwnAlgo) {
+		cout << "Using own algorithm..." << endl;
 	} else {
-		filename = argv[2];
+		cout << "Using algorithm from boost-libary..." << endl;
 	}
-	filename += FILEEND;
-	cout << "Going to parse the file " << filename << endl;
-	std::ifstream fileStream;
-	fileStream.open(filename.c_str(), std::ios::in);
-	return fileStream;
+	return useOwnAlgo;
 }
-
 
 /** Reading in a Graphfile, computes the longest shortest path */
 int main(int argn, char *argv[]) {
@@ -82,15 +84,26 @@ int main(int argn, char *argv[]) {
 		return 1;
 	}
 
-	char useOwnAlgo = checkPreferredAlgo(argv, argn);
-	if(useOwnAlgo){
-		cout << "Using own algorithm..." << endl;
-	} else {
-		cout << "Using algorithm from boost-libary..." << endl;
+	po::options_description desc("Allowed options");
+	po::variables_map vm = parseCommandLine(desc, argn, argv);
+
+	if (vm.count("help")) {
+	    cout << desc << "\n";
+	    return 1;
+	}
+	char useOwnAlgo = 0;
+	useOwnAlgo = parseAlgoOption(vm, useOwnAlgo);
+
+	std::ifstream fileStream;
+	if(vm.count("input-file") == 0){
+		cerr << "No input-file was given!" << endl;
+		return 1;
 	}
 
-	std::ifstream fileStream = openFile(argv, argn);
-
+	string filename = vm["input-file"].as<string >();
+	filename += FILEEND;
+	cout << "Going to parse the file " << filename << endl;
+	fileStream.open(filename.c_str(), std::ios::in);
 
 	if ( (fileStream.rdstate()) != 0 ){
 		std::perror("ERROR : Encoutered Problem opening file");
@@ -131,10 +144,6 @@ int main(int argn, char *argv[]) {
 		line.clear();
 	}
 
-	cout << "Creating graph..." << endl;
-	Graph g{edges->begin(), edges->end(), weights->begin(), vertexCount};
-
-	Directions* directions = new std::vector<VertexDescriptor>(vertexCount);
 	Weights weightsForShortestpath;
 
 	if(useOwnAlgo){
@@ -142,6 +151,11 @@ int main(int argn, char *argv[]) {
 		Dijkstra* d = new Dijkstra();
 		weightsForShortestpath = d->dijkstra(vertexCount, *edges, *weights, 1);
 	} else {
+
+		cout << "Creating graph..." << endl;
+		Graph g{edges->begin(), edges->end(), weights->begin(), vertexCount};
+
+		Directions* directions = new std::vector<VertexDescriptor>(vertexCount);
 		cout << "Compute shortest paths via Dijkstra(boost)..." << endl;
 		std::vector<int>* weightMapPointer = new std::vector<int>(vertexCount);
 		boost::dijkstra_shortest_paths(g, 1,
@@ -151,6 +165,7 @@ int main(int argn, char *argv[]) {
 					boost::make_iterator_property_map(weightMapPointer->begin(), boost::get(boost::vertex_index, g))));
 		weightsForShortestpath = *weightMapPointer;
 		delete weightMapPointer;
+		delete directions;
 	}
 
 	cout << "Search longest shortest path..." << endl;
@@ -169,7 +184,6 @@ int main(int argn, char *argv[]) {
 
 	delete edges;
 	delete weights;
-	delete directions;
 
 	return 0;
 }
