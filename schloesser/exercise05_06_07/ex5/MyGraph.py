@@ -3,7 +3,7 @@
 '''
 Standalone simple graph structure with the means to compute a longest shortest path.
 '''
-from .misc import pop_next_destination
+from misc import pop_next_destination
 
 class Vertex:
     '''

@@ -4,7 +4,7 @@
 Wrapper class for graph-tool to compute longest shortest path to a given node.
 '''
 from graph_tool.all import load_graph_from_csv
-from .misc import pop_next_destination
+from misc import pop_next_destination
 
 class GraphWrapper:
     '''

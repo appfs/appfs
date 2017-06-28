@@ -47,5 +47,5 @@ if __name__ == "__main__":
     T1CLOCK = time.perf_counter()
     T1TIME = time.process_time()
 
-    print("Program took {} s (wallclock time)".format(T1CLOCK - T0CLOCK))
-    print("Program took {} s (process time)".format(T1TIME - T0TIME))
+#    print("Program took {} s (wallclock time)".format(T1CLOCK - T0CLOCK))
+    print("RESULT TIME {}".format(T1TIME - T0TIME))
