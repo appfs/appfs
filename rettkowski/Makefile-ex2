@@ -8,5 +8,5 @@ coverage: ex2.cpp
 	lcov --capture --directory ex2.gcno --output-file ex2.coverage.info
 	genhtml ex2.coverage.info --output-directory coverage
 	
-check: ex1.cpp
+check: ex2.cpp
 	cppcheck --enable=all ex2.cpp
