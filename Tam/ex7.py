@@ -13,7 +13,7 @@ from resource import getrusage as resource_usage, RUSAGE_SELF
 import networkx as nx
 import operator
 
-def run(graphfile, mode):
+def run(mode, graphfile):
     
     if mode == '-m1': noLibrary(graphfile)
     elif mode == '-m2': yesLibrary(graphfile)
