@@ -55,7 +55,7 @@ using Heap = heap::fibonacci_heap<heap_data>;
  * @param source the source node for Dijkstra
  * @return vector of resulting distances to source
  */
-vector<double> myDijkstra(Graph g, int numVertices, int source) {
+vector<double> myDijkstra(Graph& g, int numVertices, int source) {
 
 	vector<double> distances(numVertices);
 	distances[0] = 0;
