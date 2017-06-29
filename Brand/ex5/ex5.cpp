@@ -63,7 +63,7 @@ end_clock()
         (intmax_t)(en_cpu.tms_stime - st_cpu.tms_stime))*10;
 }
 
-//*
+/**
 * STRUCTURE FOR OWN IMPLEMENTATION
 */
 
@@ -86,8 +86,7 @@ struct Graph
 //* Creates a graph with V vertices and E edges
 struct Graph* createGraph(int V, int E)
 {
-    struct Graph* graph = 
-         (struct Graph*) malloc( sizeof(struct Graph) );
+    struct Graph* graph = (struct Graph*) malloc( sizeof(struct Graph) );
     graph->V = V;
     graph->E = E;
  
@@ -339,7 +338,6 @@ int main (int argc, char* argv[]) {
   //OWN BELLMANFORD FROM COMA
   else if(mode==2){
     //nonboost
-    start_clock();
 
   //Find shortest path to vertex of index...
   int src=1;
@@ -401,16 +399,16 @@ int main (int argc, char* argv[]) {
       } 
     // INDEX SWITCH 1->0,...   
       graph->edge[ecount].src = int(start-1);
-        graph->edge[ecount].dest = int(end-1);
-        graph->edge[ecount].weight = weight;
+      graph->edge[ecount].dest = int(end-1);
+      graph->edge[ecount].weight = weight;
 
-        ecount++;
+      ecount++;
 
-        graph->edge[ecount].src = int(end-1);
-        graph->edge[ecount].dest = int(start-1);
-        graph->edge[ecount].weight = weight;
+      graph->edge[ecount].src = int(end-1);
+      graph->edge[ecount].dest = int(start-1);
+      graph->edge[ecount].weight = weight;
 
-        ecount++;
+      ecount++;
     }
     
   }
