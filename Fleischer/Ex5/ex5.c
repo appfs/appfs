@@ -8,6 +8,7 @@
  *
  * This program parses a graph and parses the longest shortest path from any edge to edge with the index 1.
  */
+//compile with gcc -std=c11 -O3 -g -Wall -Wextra -Wpedantic -LDFLAGS ex5.1.c -o ex5.1 -lm
 
 #define _GNU_SOURCE
 #include<stdio.h>
