@@ -3,9 +3,6 @@ import dijkstra.*;
 import io.*;
 import java.lang.management.*;
 
-//import org.jgrapht.ListenableGraph;
-//import org.jgrapht.graph.ListenableUndirectedGraph;
-
 /** @brief Main class that reads in a file of the specified format and calculates the
  * furthest vertex from vertex 1 and its distance.
  * 
@@ -34,47 +31,35 @@ public class ex5 {
         long startWallClockTimeNano = System.nanoTime();
         long startUserTimeNano   = getUserTime();
         
-        Node[] nodes = Reader.readFile(args[0]);
+        Node[] nodes = Reader.readFile(args[1]);
+        Node furthestNode = null;
         
         /** Mode 0: Use custom Dijkstra implementation */
-        //if(args[0].equals(MYALGORITHM))
+        if(args[0].equals(MYALGORITHM))
         {
             Dijkstra dijkstra = new Dijkstra(nodes);
-            Node furthestNode = dijkstra.findFurthestNode();
-            
-            long taskWallClockTimeNano  = System.nanoTime() - startWallClockTimeNano;
-            long taskUserTimeNano    = getUserTime( ) - startUserTimeNano;
-            
-            System.out.println("RESULT VERTEX " + (furthestNode.id+1));
-            System.out.println("RESULT DIST " + furthestNode.distance);
-            
-            System.out.println("RESULT WALL-CLOCK TIME: " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds");
-            System.out.println("RESULT USER TIME: " + (round(taskUserTimeNano/1000000000.0)) + " seconds");
-            
-            
-        /** Mode 1: Use library Dijkstra implementation
+            furthestNode = dijkstra.findFurthestNode();                   
+        /** Mode 1: Use library Dijkstra implementation */
         }else if(args[0].equals(LIBALGORITHM)){
-
-            ListenableGraph<Node, Edge> graph = new ListenableUndirectedGraph<Node, Edge>(Edge.class);
-            
-
-            for(int i=0; i<nodes.length; i++){
-                graph.addVertex(nodes[i]);
-            }
-            
-
-            for(int i=0; i<nodes.length; i++){
-                Node node = nodes[i];
-                for(int j=0; j<node.edges.size(); j++){
-                    if(node.edges.get(j).head.equals(node)){
-                        graph.addEdge(node, node.edges.get(j).tail, node.edges.get(j));
-                    }
-                }
-            }
+        	JGraphTDijkstra dijkstra = new JGraphTDijkstra(nodes);
+        	furthestNode = dijkstra.findFurthestNode();
         }else{
             System.out.println("Invalid Algorithm Mode.");
-            */
+            System.out.println("Proper usage: ex5 0 path/to/file/file.txt");
+            return;
         }
+        
+        /** Get Wall-clock time and user time */
+        long taskWallClockTimeNano  = System.nanoTime() - startWallClockTimeNano;
+        long taskUserTimeNano    = getUserTime( ) - startUserTimeNano;
+        
+        /** Print results */
+        
+        System.out.println("RESULT VERTEX " + (furthestNode.id+1));
+        System.out.println("RESULT DIST " + furthestNode.distance);
+        
+        System.out.println("RESULT WALL-CLOCK TIME: " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds");
+        System.out.println("RESULT USER TIME: " + (round(taskUserTimeNano/1000000000.0)) + " seconds");
     }
     
     /** Round to three decimal places */
