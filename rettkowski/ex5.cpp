@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 	property_map<graph_t, edge_weight_t>::type weightmap = get(edge_weight, g);
 	std::vector<vertex_descriptor> p(num_vertices(g));
 	std::vector<int> d(num_vertices(g));
-	vertex_descriptor s = vertex(0+constSub, g);
+	vertex_descriptor s = vertex(0, g);
 
 	dijkstra_shortest_paths_no_color_map(g, s, predecessor_map(make_iterator_property_map(p.begin(), get(vertex_index, g))).
 			distance_map(make_iterator_property_map(d.begin(), get(vertex_index, g))));
