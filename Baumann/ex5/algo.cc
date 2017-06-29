@@ -26,6 +26,13 @@ using namespace boost;
 template<class F, class T>
 void dijkstra(const vector<F> &graph, int root, vector<T> &dist);
 
+/* Reads data from a gph-file
+ * and computes the longest shortest path
+ * to the vertex 1.
+ * The boost-graph library is used for
+ * the shortest path computation.
+ * 
+ */
 pair<int,int> algo1(char* filename){
   
   ifstream    file(filename);
@@ -141,7 +148,13 @@ pair<int,int> algo1(char* filename){
 
 
 
-
+/* Reads data from a gph-file
+ * and computes the longest shortest path
+ * to vertex with index 1.
+ * This method uses a self-written
+ * Dijkstra-algorithm.
+ * 
+ */
 pair<int,int> algo2(char*filename){
   
   ifstream    file(filename);
