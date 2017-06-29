@@ -236,7 +236,6 @@ FILE *fp;
    free(line);
    free(val1);
    free(val2);
-   //free(tmp);
    exit(EXIT_SUCCESS);
    return argc;
 
