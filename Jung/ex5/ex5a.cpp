@@ -1,12 +1,5 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <exception>
-#include <vector>
-#include "vertex.h"
-#include <time.h>
-#include <utility>
-#include <limits>
+
+#include "ex5a.h"
 
 
 
@@ -153,14 +146,14 @@ void initialEdges(std::ifstream& file, std::vector<vertex>& vert) {
 * prints out the time is needed for reading and for the whole program
 */
 
-int main(int argc, char* argv[]) {
+void ex5a(int argc, char* argv[]) {
 	try {
 
 		clock_t tStart = clock();
 
 		if (argc < 2) {
 			std::cerr << "wrong input" << std::endl;
-			return 0;
+			return ;
 		}
 
 		std::string str;
@@ -170,7 +163,7 @@ int main(int argc, char* argv[]) {
 
 		if (!file.is_open()) {
 			std::cerr << "there is no file of the name \"" << argv[1] << "\" in the directory" << std::endl;
-			return 0;
+			return ;
 		}
 
 		//TODO is the file valid??
@@ -183,6 +176,9 @@ int main(int argc, char* argv[]) {
 		int vertNumb = std::stoi(str);
 		std::vector<vertex> vert(vertNumb);
 		getline(file, str);
+
+
+		
 		initialEdges(file, vert);
 		dijkstra(vert);
 		findMax(vert, maxDist, maxPos, maxWeight);
@@ -190,9 +186,9 @@ int main(int argc, char* argv[]) {
 		std::cout << "RESULT NODE " << maxPos+1 << std::endl;
 		std::cout <<"RESULT DIST "<< maxDist << std::endl;
 		std::cout <<"RESULT MARC "<< maxWeight << std::endl;
-		std::cout <<"RESULT TIME "<< (double)(clock() - tStart) / CLOCKS_PER_SEC << " seconds" << std::endl;
+		
 
-		return 0;
+		return ;
 
 
 	}
