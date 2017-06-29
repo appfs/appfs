@@ -52,47 +52,45 @@ WeightMap dijkstra::computeShortestPath(){
 
 	std::vector<DijkstraPair> verticesToVisit;
 
-	//Initialize for the first edge. Otherwise there would be a nullptr
-	verticesToVisit.push_back(sortedEdges.at(1).at(0));
-	weightsToVertices.at(sortedEdges.at(1).at(0).first) = sortedEdges.at(1).at(0).second;
-	predecessorMap.at(sortedEdges.at(1).at(0).first) = 1;
-	sortedEdges.at(1).erase(sortedEdges.at(1).begin());
+	//Put the start vertex in the verticesToVisit list
+	verticesToVisit.push_back(std::make_pair(1, 0));
 
 
 	while(!verticesToVisit.empty()){
-		if (!alreadyVisited.at(currentVertex)){
-
+		if (!alreadyVisited.at(verticesToVisit[0].first)){
+			currentVertex = verticesToVisit[0].first;
+			verticesToVisit.erase(verticesToVisit.begin());
 			std::vector<DijkstraPair> currentEdges = sortedEdges.at(currentVertex);
 
 			for (unsigned int i = 0; i<currentEdges.size(); i++){
 				//Search for the right position in verticesToVisit-list. If Vertex is already visited, don't add this edge
 				if (!alreadyVisited.at(currentEdges.at(i).first)){
 					unsigned int pos = 0;
-					while (pos < verticesToVisit.size() && verticesToVisit.at(pos).second < currentEdges.at(i).second){
+					int distanceFromOneToCurrentEdgeEndPoint = currentEdges.at(i).second + weightsToVertices.at(currentVertex);
+					while (pos < verticesToVisit.size() && verticesToVisit.at(pos).second + weightsToVertices.at(currentVertex) <= distanceFromOneToCurrentEdgeEndPoint){
 						pos++;
 					}
 					verticesToVisit.insert(verticesToVisit.begin() + pos, currentEdges.at(i));
 
-					//Find out the current neighbor vertex and the weight of the current edge
-					int neighborVertex = currentEdges.at(i).first;
-					int currentWeight = currentEdges.at(i).second;
+				}
 
-					int currentDistance = weightsToVertices[currentVertex] + currentWeight;
+				//Find out the current neighbor vertex and the weight of the current edge
+				int neighborVertex = currentEdges.at(i).first;
+				int currentWeight = currentEdges.at(i).second;
 
-					//Update the predecessor and weightsToVerices maps
-					if (currentDistance < weightsToVertices[neighborVertex]){
-						weightsToVertices[neighborVertex] = currentDistance;
-						predecessorMap[neighborVertex] = currentVertex;
-					}
+				int currentDistance = weightsToVertices[currentVertex] + currentWeight;
+
+				//Update the predecessor and weightsToVerices maps
+				if (currentDistance < weightsToVertices[neighborVertex]){
+					weightsToVertices[neighborVertex] = currentDistance;
+					predecessorMap[neighborVertex] = currentVertex;
 				}
 			}
+			//Current vertex is visited now
+			alreadyVisited.at(currentVertex) = true;
+		} else {
+			verticesToVisit.erase(verticesToVisit.begin());
 		}
-		//Current vertex is visited now
-		alreadyVisited.at(currentVertex) = true;
-
-		currentVertex = verticesToVisit.at(0).first;
-		verticesToVisit.erase(verticesToVisit.begin());
 	}
-
 	return weightsToVertices;
 }

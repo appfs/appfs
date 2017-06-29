@@ -92,12 +92,16 @@ int main(int argc, char* argv[]){
 	int weight;
 
 	while (getline(infile, line)){
-		s.clear();
-		s.str(line);
-		s >> startEdge >> endEdge >> weight;
-		edges.push_back(make_pair(startEdge, endEdge));
-		weights.push_back(weight);
+		if (!line.empty()){
+			s.clear();
+			s.str(line);
+			s >> startEdge >> endEdge >> weight;
+			edges.push_back(make_pair(startEdge, endEdge));
+			weights.push_back(weight);
+		}
 	}
+	infile.close();
+
 
 	WeightMap weightMap(numberVertices);
 
@@ -114,7 +118,6 @@ int main(int argc, char* argv[]){
 				.distance_map(//
 						boost::make_iterator_property_map(weightMap.begin(), get(boost::vertex_index, g))));
 	}
-
 	else {
 		dijkstra myDijkstra(weights, edges, numberVertices);
 		weightMap = myDijkstra.computeShortestPath();
@@ -131,7 +134,6 @@ int main(int argc, char* argv[]){
 			indexOfVertex = i;
 		}
 	}
-
 
 	cout << "RESULT VERTEX " << indexOfVertex << endl;
 	cout << "RESULT DIST " << weightOfLongestShortestPath << endl;
