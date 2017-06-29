@@ -1,8 +1,8 @@
 /*
-*  @file 		ex5.cpp
-*  @details  	This file is the solution to exercise 5.
+*  @file 		    ex6.cpp
+*  @details  	  This file is the solution to exercise 6.
 *  @author    	Alexander Rettkowski
-*  @date      	08.06.2017
+*  @date      	28.06.2017
 */
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
@@ -16,6 +16,9 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths_no_color_map.hpp>
 #include <boost/property_map/property_map.hpp>
+
+#include <boost/timer/timer.hpp>
+#include <boost/chrono.hpp>
 
 #include <iostream>
 #include <string>
@@ -67,13 +70,14 @@ namespace exercise5
 */
 int main(int argc, char *argv[])
 {
+	timer::cpu_timer boostTimer;
 	typedef adjacency_list < listS, vecS, undirectedS, no_property, property < edge_weight_t, int > > graph_t;
 	typedef graph_traits < graph_t >::vertex_descriptor vertex_descriptor;
 	typedef std::pair<int, int> Edge;
 
 	std::vector<Edge> edges;
 	std::vector<int> weights;
-	
+
 	using boost::spirit::ascii::space;
 	typedef std::string::const_iterator iterator_type;
 	typedef exercise5::line_parser<iterator_type> line_parser;
@@ -93,10 +97,10 @@ int main(int argc, char *argv[])
 		std::string::const_iterator currentPosition = currentLine.begin();
 		std::string::const_iterator lineEnd = currentLine.end();
 		bool parsingSucceeded = phrase_parse(currentPosition, lineEnd, parser, space, parsedLine);
-		
+
 		if (parsingSucceeded && currentPosition == lineEnd)
 		{
-			edges.push_back(Edge(parsedLine.startNode-constSub, parsedLine.endNode-constSub));
+			edges.push_back(Edge(parsedLine.startNode - constSub, parsedLine.endNode - constSub));
 			weights.push_back(parsedLine.length);
 		}
 	}
@@ -111,7 +115,7 @@ int main(int argc, char *argv[])
 	vertex_descriptor s = vertex(0, g);
 
 	dijkstra_shortest_paths_no_color_map(g, s, predecessor_map(make_iterator_property_map(p.begin(), get(vertex_index, g))).
-			distance_map(make_iterator_property_map(d.begin(), get(vertex_index, g))));
+		distance_map(make_iterator_property_map(d.begin(), get(vertex_index, g))));
 
 	graph_traits < graph_t >::vertex_iterator vi, vend;
 	size_t vertex = -1;
@@ -130,6 +134,10 @@ int main(int argc, char *argv[])
 
 	std::cout << "RESULT VERTEX " << vertex << std::endl;
 	std::cout << "RESULT DIST " << distance << std::endl;
+
+	timer::cpu_times time = boostTimer.elapsed();
+	std::cout << "CPU TIME: " << (time.user + time.system) / 1e9 << "s\n";
+	std::cout << "WALL CLOCK TIME: " << time.wall / 1e9 << "s\n";
 
 	return 0;
 }
