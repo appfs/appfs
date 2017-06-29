@@ -1,4 +1,4 @@
-CFLAGS= -std=c99 -Wall -g
+CFLAGS= -std=c11 -Wall -g
 CC=gcc
 OBJ=
 HEADERS=
@@ -16,7 +16,7 @@ $(TARGET):
 	$(CC) $(CFLAGS) main.c -o $(TARGET)
 
 run: $(TARGET)
-	./main data/small.gph
+	./main ../data/small.gph
 
 clean:
 	rm -f *.o main
