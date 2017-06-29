@@ -27,7 +27,7 @@ typedef pair<int, double> Pair;
 typename graph_traits<Graph>::out_edge_iterator out_i, out_end;
 
 
-/*
+/**
  * Data that is stored in one node of a heap. Contains an integer and a double.
  * Comparisons are made by the double, smaller has higher priority
  */
@@ -91,14 +91,10 @@ vector<double> myDijkstra(Graph g, int numVertices, int source) {
 		}
 	}
 
+	delete[] handles;
 	return distances;
 }
-//		split(parts, line, is_any_of(" "));
-//		if (parts.size() != 3) {
-//			cerr << "error in line " << (i+2) << ": line should consists of "
-//					"two integers and a double!" << endl;
-//			exit(EXIT_FAILURE);
-//		}
+
 
 /**
  * main function which reads a graph from a .gph file, then calculates shortest
@@ -251,6 +247,8 @@ int main(int numargs, char *args[]) {
 	cout << "RESULT DIST " << maxDist << endl;
 	cout << endl << "running time: " << t.format() <<  endl;
 
+	delete[] edges;
+	delete[] weights;
 
 	exit(EXIT_SUCCESS);
 }
