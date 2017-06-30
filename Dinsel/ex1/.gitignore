@@ -1,5 +1,7 @@
 /build/
 setup.py
-*.dat
 *.pyx
 *.c
+
+data/ex10mio.dat
+data/ex100mio.dat
