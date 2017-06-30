@@ -10,7 +10,8 @@
 import sys
 import pandas as pd
 import numpy as np
-
+import time
+from resource import getrusage as resource_usage, RUSAGE_SELF
 
 def run(graphfile):
     
@@ -75,5 +76,8 @@ def update_distances(graph, distances, s, unvisited):
 
 
 graphfile = sys.argv[1]
+t0, s0 = time.time(), resource_usage(RUSAGE_SELF)
 run(graphfile)
-
+s1, t1 = resource_usage(RUSAGE_SELF), time.time()
+print("wall clock time", t1 - t0)
+print("user clock time", s1.ru_stime - s0.ru_stime)
