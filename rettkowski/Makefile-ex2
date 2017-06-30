@@ -3,10 +3,17 @@ doc: ex2.cpp
 	doxygen ex2.doxygen.conf
 	
 coverage: ex2.cpp
-	g++ -std=c11 ex2.cpp -o ex2 -lm --coverage
+	g++ -std=c++11 ex2.cpp -o ex2 -lm --coverage
 	./ex2 measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml
 	lcov --capture --directory ex2.gcno --output-file ex2.coverage.info
 	genhtml ex2.coverage.info --output-directory coverage
 	
-check: ex1.cpp
+check: ex2.cpp
 	cppcheck --enable=all ex2.cpp
+	
+build: ex1.cpp
+	g++ -std=c++11 ex2.cpp -o ex2
+	
+run: ex1.cpp
+	g++ -std=c++11 ex2.cpp -o ex2
+	./ex2 measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml
