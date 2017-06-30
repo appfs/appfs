@@ -112,7 +112,6 @@ void dijkstra(std::vector<vertex>& vert) {
 void initialEdges(std::ifstream& file, std::vector<vertex>& vert) {
 	clock_t tStart2 = clock();
 	std::string str;
-	int count = 1;
 	try {
 		
 		while (!file.eof()) {
@@ -130,7 +129,7 @@ void initialEdges(std::ifstream& file, std::vector<vertex>& vert) {
 		}
 
 	}
-	catch (std::exception e) {
+	catch (...) {
 		//std::cout << "something wrong" << std::endl;
 	}
 	std::cout <<"INFORM TIME INITIALIZING GRAPH: "<< (double)(clock() - tStart2) / CLOCKS_PER_SEC << " seconds" << std::endl;
@@ -149,12 +148,6 @@ void initialEdges(std::ifstream& file, std::vector<vertex>& vert) {
 void ex5a(int argc, char* argv[]) {
 	try {
 
-		clock_t tStart = clock();
-
-		if (argc < 2) {
-			std::cerr << "wrong input" << std::endl;
-			return ;
-		}
 
 		std::string str;
 		std::ifstream file;
