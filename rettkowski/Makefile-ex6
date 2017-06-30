@@ -3,7 +3,7 @@ doc: ex6.cpp
 	doxygen ex6.doxygen.conf
 	
 coverage: ex6.cpp
-	g++ -std=c11 ex6.cpp -o ex6 -lm --coverage
+	g++ -std=c++11 ex6.cpp -o ex6 -lm --coverage
 	./ex6 world666.gph
 	lcov --capture --directory ex6.gcno --output-file ex6.coverage.info
 	genhtml ex6.coverage.info --output-directory coverage
