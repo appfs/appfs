@@ -157,6 +157,8 @@ int main(int argc, const char* const* const argv)
 	size_t array_of_edges_next;
 	size_t array_of_edges_length;
 
+	int count = 0;
+
 	int* node_a;
 	int* node_b;
 	double* edge_weight;
@@ -179,8 +181,25 @@ int main(int argc, const char* const* const argv)
 	{
 		error_exit("fopen: ");
 	}
-	int lineno = 0;
+	int lineno = 0, number_of_nodes = 0, number_of_edges = 0;
 	char line[MAX_LINE_LEN];
+
+	fgets(line, sizeof(line), fp);
+
+	lineno++;
+
+	// Remove comments and anything after newline
+	char* s = strpbrk(line, "#\n");
+
+	if (NULL != s)
+		*s = '\0';
+
+	// Skip initial spaces
+	for (s = &line[0]; isspace(*s); s++);
+	assert('\0' != *s);
+	
+	int ret = sscanf(s, "%d %d", &number_of_nodes, &number_of_edges);
+	assert(2 == ret);
 
 	while (NULL != fgets(line, sizeof(line), fp))
 	{
@@ -203,7 +222,7 @@ int main(int argc, const char* const* const argv)
 		int temp_node_a, temp_node_b = 0;
 		double temp_edge_weight = NAN;
 
-		int ret = sscanf(s, "%d %d %lf", &temp_node_a, &temp_node_b, &temp_edge_weight);
+		ret = sscanf(s, "%d %d %lf", &temp_node_a, &temp_node_b, &temp_edge_weight);
 
 		if (3 != ret)
 		{
@@ -252,7 +271,7 @@ int main(int argc, const char* const* const argv)
 	printf("\nFile: %s with %d lines\n", argv[1], lineno);
 	printf("Total number of edges = %d\n", array_of_edges_next);
 
-	dijkstra(node_a, node_b, edge_weight, array_of_edges_next, array_of_edges_next, 0);
+	dijkstra(node_a, node_b, edge_weight, number_of_nodes, number_of_edges, 0);
 
 	free(node_a);
 	free(node_b);
