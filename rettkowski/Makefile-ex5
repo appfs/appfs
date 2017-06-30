@@ -9,4 +9,11 @@ coverage: ex5.cpp
 	genhtml ex5.coverage.info --output-directory coverage
 	
 check: ex5.cpp
-cppcheck --enable=all ex5.cpp
+	cppcheck --enable=all ex5.cpp
+	
+build: ex5.cpp
+	g++ -std=c++11 ex5.cpp -o ex5
+	
+run: ex5.cpp
+	g++ -std=c++11 ex5.cpp -o ex5
+	./ex5 world666.gph
