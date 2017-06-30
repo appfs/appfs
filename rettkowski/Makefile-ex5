@@ -3,7 +3,7 @@ doc: ex5.cpp
 	doxygen ex5.doxygen.conf
 	
 coverage: ex5.cpp
-	g++ -std=c11 ex5.cpp -o ex5 -lm --coverage
+	g++ -std=c++11 ex5.cpp -o ex5 -lm --coverage
 	./ex5 world666.gph
 	lcov --capture --directory ex5.gcno --output-file ex5.coverage.info
 	genhtml ex5.coverage.info --output-directory coverage
