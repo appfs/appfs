@@ -14,6 +14,6 @@ check: ex6.cpp
 build: ex6.cpp
 	g++ -std=c++11 ex6.cpp -o ex6 -lboost_timer -lboost_system
 	
-run: ex5.cpp
+run: ex6.cpp
 	g++ -std=c++11 ex6.cpp -o ex6 -lboost_timer -lboost_system
 	./ex6 world666.gph
