@@ -102,15 +102,21 @@ void ex5b(int argc, char* argv[]){
   
   
   graph_traits < graph_t >::vertex_iterator vi, vend;
-  tie(vi, vend) = vertices(g);
-  vi++;
-  for (; vi != vend; ++vi) { 
-    
-    if(d[*vi] > maxdist){
-      maxdist = d[*vi];
-      vertex  = *vi;
-    }
-  } 	
+  
+ 
+  
+  for (tie(vi, vend) = vertices(g); vi != vend; ++vi) { 
+	    
+	    if(d[*vi] > maxdist){
+	     
+	      maxdist = d[*vi];
+	      vertex  = *vi;
+	    }
+  } 
+
+
+  free(edge_array);
+  free(weights);
 
   		
 	std::cout<< "RESULT VERTEX "<< vertex<<std::endl<<"RESULT DIST  "<< maxdist<<std::endl;
