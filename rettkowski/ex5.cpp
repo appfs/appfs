@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	// get number of nodes
 	char delimiter = ' ';
 	getline(file, currentLine, delimiter);
-	int numberOfNodes = stoi(currentLine);
+	int numberOfNodes = std::stoi(currentLine);
 	getline(file, currentLine);
 	int constSub = 1;
 	while (getline(file, currentLine))
