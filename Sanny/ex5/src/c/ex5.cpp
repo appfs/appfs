@@ -33,12 +33,12 @@ using std::string;
 namespace po = boost::program_options;
 using Graph = boost::adjacency_list<boost::listS, boost::vecS,
   boost::undirectedS, boost::no_property,
-  boost::property<boost::edge_weight_t, int>> ;
+  boost::property<boost::edge_weight_t, double>> ;
 using VertexDescriptor = boost::graph_traits < Graph >::vertex_descriptor;
 using Directions = std::vector<VertexDescriptor >;
-using Edge = std::pair<int, int>;
+using Edge = std::pair<int, int >;
 using Edges = std::vector<Edge >;
-using Weights = std::vector<int >;
+using Weights = std::vector<double >;
 
 po::variables_map parseCommandLine(po::options_description desc, int argn,
 		char* argv[]) {
@@ -130,8 +130,8 @@ int main(int argn, char *argv[]) {
 	while (getline(fileStream, line)) {
 		int start;
 		int end;
-		int weight;
-		int count = sscanf(line.c_str(), "%d %d %d", &start, &end, &weight);
+		double weight;
+		int count = sscanf(line.c_str(), "%d %d %lf", &start, &end, &weight);
 		if (count != 3) {
 			line.clear();
 			continue;
@@ -154,7 +154,7 @@ int main(int argn, char *argv[]) {
 
 		Directions* directions = new std::vector<VertexDescriptor>(vertexCount);
 		cout << "Compute shortest paths via Dijkstra(boost)..." << endl;
-		std::vector<int>* weightMapPointer = new std::vector<int>(vertexCount);
+		Weights* weightMapPointer = new Weights(vertexCount);
 		boost::dijkstra_shortest_paths(g, 1,
 			boost::predecessor_map(//
 					boost::make_iterator_property_map(directions->begin(), boost::get(boost::vertex_index, g))) //
@@ -167,7 +167,7 @@ int main(int argn, char *argv[]) {
 
 	cout << "Search longest shortest path..." << endl;
 	int vertex = 1;
-	int distance = 0;
+	double distance = 0.;
 
 	for(unsigned int i=2; i<vertexCount; i++){
 		if(weightsForShortestpath[i]>distance){

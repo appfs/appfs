@@ -16,17 +16,9 @@ Dijkstra::~Dijkstra() {
 	// nop
 }
 
-class prioritize{
-	public: bool operator ()(Edge&p1 ,Edge&p2){
-		return p1.second>p2.second;
-	}
-};
-
-typedef std::priority_queue<Edge, Edges, prioritize > queue;
-
 Weights Dijkstra::dijkstra(unsigned int vertexCount, Edges& edges, Weights& weights, unsigned int source){
 	Weights weightMap(vertexCount);
-	weightMap[source] = 0;
+	weightMap[source] = 0.;
 	for(unsigned int i = 0; i<vertexCount; i++){
 		if(source == i){
 			continue;
@@ -41,14 +33,14 @@ Weights Dijkstra::dijkstra(unsigned int vertexCount, Edges& edges, Weights& weig
 		vertexToEdges[edge.second].push_back(std::make_pair(edge.first, weights[i]));
 	}
 
-	queue Q;
+	Queue Q;
 	Q.push(Edge(source, 0));
 
 	while(!Q.empty()){
 		Edge top = Q.top();
 		Q.pop();
 		int vertex = top.first;
-		int dist = top.second;
+		double dist = top.second;
 		if(dist > weightMap[vertex]){
 			continue;
 		}
