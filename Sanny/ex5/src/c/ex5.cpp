@@ -5,6 +5,7 @@
  */
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <utility>
 #include <vector>
@@ -177,7 +178,7 @@ int main(int argn, char *argv[]) {
 	}
 
 	cout << "RESULT VERTEX " << vertex << endl;
-	cout << "RESULT DIST " << distance << endl;
+	cout << "RESULT DIST " << std::fixed << std::setprecision(2) << distance << endl;
 
 	delete edges;
 	delete weights;
