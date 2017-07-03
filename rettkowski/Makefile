@@ -10,3 +10,10 @@ coverage: ex1.cpp
 	
 check: ex1.cpp
 	cppcheck --enable=all ex1.cpp
+
+build: ex1.cpp
+	g++ -std=c++11 ex1.cpp -o ex1
+	
+run: ex1.cpp
+	g++ -std=c++11 ex1.cpp -o ex1
+	./ex1 ex1.dat

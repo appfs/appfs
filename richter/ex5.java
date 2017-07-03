@@ -1,9 +1,17 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.Set;
+
+import org.jgrapht.alg.interfaces.ShortestPathAlgorithm.SingleSourcePaths;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 
 /**
  * Advanced Programming: Exercise 5 (calculating longest shortest path)
@@ -17,35 +25,99 @@ public class ex5 {
 	 */
 	public static void main(String[] args) {
 	
+		long startTime = System.currentTimeMillis();
+		long startUserTime = getUserTime();
+		
 		Node[] nodeList = null;
 		
 		try {
-			
 			nodeList = readNodeList(args[0]);
-			
 		} catch (IOException e) {
-			
 			System.err.println("Parsing graph failed.");
+		}
+		
+		String method = args[1];
+		
+		// my method
+		if(method.equals("-m1")){
+			
+			int currentMax = 0;
+			int nodeNumber = 0;
+			
+			ArrayList<Node> resultNodes = shortestPath(nodeList);
+			
+			for(Node node : resultNodes){
+				int distance = node.currentDistance;
+				if(distance == Integer.MAX_VALUE)
+					continue;
+				if(currentMax < distance || (currentMax == distance && node.nodeNumber < nodeNumber)){
+					currentMax = distance;
+					nodeNumber = node.nodeNumber;
+				}
+			}
+			
+			System.out.println("RESULT VERTEX " + nodeNumber);
+			System.out.println("RESULT DIST " + currentMax);
 			
 		}
 		
-		int currentMax = 0;
-		int nodeNumber = 0;
-		
-		ArrayList<Node> resultNodes = shortestPath(nodeList);
-		
-		for(Node node : resultNodes){
-			int distance = node.currentDistance;
-			if(distance == Integer.MAX_VALUE)
-				continue;
-			if(currentMax < distance || (currentMax == distance && node.nodeNumber < nodeNumber)){
-				currentMax = distance;
-				nodeNumber = node.nodeNumber;
+		// library method
+		else if(method.equals("-m2")){
+			
+			SimpleDirectedWeightedGraph<Integer, DefaultWeightedEdge>  graph = new SimpleDirectedWeightedGraph<Integer, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+			
+			for(Node node : nodeList){
+				
+				graph.addVertex(node.nodeNumber);
+				
 			}
+			
+			for(Node node : nodeList){
+				
+				for(AdjacentNode adjNode : node.adjacentNodes){
+					
+					DefaultWeightedEdge edge = graph.addEdge(node.nodeNumber, adjNode.nodeNumber); 
+			        graph.setEdgeWeight(edge, adjNode.distance); 
+					
+				}
+
+			}
+			
+			DijkstraShortestPath<Integer, DefaultWeightedEdge> dijkstra = new DijkstraShortestPath<Integer, DefaultWeightedEdge>(graph); 
+			SingleSourcePaths<Integer, DefaultWeightedEdge> paths = dijkstra.getPaths(1);
+			
+			double maxLength = 0;
+			double currentLength = 0;
+			int currentNode = 0;
+			
+			for(int i = 1; i <= nodeList.length; i++){
+				
+				if(paths.getPath(i) == null)
+					continue;
+				
+				currentLength = paths.getPath(i).getWeight();
+				
+				if(currentLength > maxLength){
+					maxLength = currentLength;
+					currentNode = i;
+				}
+				
+			}
+			System.out.println("RESULT VERTEX " + currentNode);
+			System.out.println("RESULT DIST " + (int)maxLength);
 		}
 		
-		System.out.println("RESULT VERTEX " + nodeNumber);
-		System.out.println("RESULT DIST " + currentMax);
+		else{
+			
+			System.out.println("Invalid input parameter.");
+			
+		}
+		
+		long elapsedTime = System.currentTimeMillis() - startTime;
+		long elapsedUserTime = getUserTime() - startUserTime;
+		
+		System.out.println("Wall time: " + elapsedTime + "ms"); 
+		System.out.println("User time: " + elapsedUserTime / 1000000 + "ms");
 	
 	}
 	
@@ -147,6 +219,13 @@ public class ex5 {
 
 	}
 	
+	/** Get user time in nanoseconds. */
+	static public long getUserTime( ) {
+	    ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
+	    return bean.isCurrentThreadCpuTimeSupported( ) ?
+	        bean.getCurrentThreadUserTime( ) : 0L;
+	}
+	
 }	
 
 
@@ -200,4 +279,7 @@ class NodeComparator implements Comparator<Node>{
     }
 	 
 }
+
+
+
 

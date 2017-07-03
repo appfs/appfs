@@ -1,8 +1,9 @@
-##################################################################
-# Author: Roxana Tapia Campos                                    #
-# Module: Advanced practical programming skills for scientists   #
-# SS17 - TU Berlin                                               #
-##################################################################
+"""@package docstring
+Author: Roxana Tapia Campos
+Module: Advanced practical programming skills for scientists
+SS17 - TU Berlin 
+Exercise 1: GeoMean
+"""
 
 import sys
 
@@ -18,10 +19,13 @@ LOG_SUM_LOC2 = 0
 
 
 def read_file(filename):
+    """
+    Reads a file, counts its lines and yields each line.
+
+    :param filename: A filename from command line.
+    """
     global LINES_COUNT
-    """
-    Reads a file and counts its lines.
-    """
+
     with open(filename) as f:
         for line in f:
             LINES_COUNT += 1
@@ -31,7 +35,10 @@ def read_file(filename):
 
 def is_valid(line):
     """
-    Returns True if the value is correct, False otherwise.
+    Returns True if the line is valid, False otherwise.
+    
+    :param line: A raw input line from the file.
+    :rtype: Boolean
     """
     values = line.split(';')
 
@@ -55,10 +62,14 @@ def is_valid(line):
 
 
 def aggregate_data(line):
+    """
+    Aggregates line counts and logarithm calculations for locations 1 and 2.
+    Checks if location is valid.
+
+    :param line: A validated input line from the file.
+    """
     global VALID_VALUES_LOC1, VALID_VALUES_LOC2, LOG_SUM_LOC1, LOG_SUM_LOC2
-    """
-    Aggregates data to compute the geometric mean for each location.
-    """
+
     values = line.split(';')
     location = int(values[1])
     point = float(values[2])
@@ -77,8 +88,8 @@ def aggregate_data(line):
 
 def compute_result():
     """
-    Computes and displays the final result with the geometric mean for
-    location 1 and 2.
+    Computes the geometric mean for locations 1 and 2 and displays the formatted result. 
+    
     """
 
     geo_mean_loc1 = math.exp(LOG_SUM_LOC1/VALID_VALUES_LOC1)

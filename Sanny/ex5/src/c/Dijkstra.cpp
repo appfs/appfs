@@ -27,7 +27,7 @@ typedef std::priority_queue<Edge, Edges, prioritize > queue;
 Weights Dijkstra::dijkstra(unsigned int vertexCount, Edges& edges, Weights& weights, unsigned int source){
 	Weights weightMap(vertexCount);
 	weightMap[source] = 0;
-	for(unsigned int i = 0; i<=vertexCount; i++){
+	for(unsigned int i = 0; i<vertexCount; i++){
 		if(source == i){
 			continue;
 		}

@@ -1,0 +1,19 @@
+doc: ex7.cpp
+	doxygen -g ex7.doxygen.conf
+	doxygen ex7.doxygen.conf
+	
+coverage: ex7.cpp
+	g++ -std=c++11 ex7.cpp -o ex7 -lm --coverage
+	./ex7 world666.gph
+	lcov --capture --directory ex7.gcno --output-file ex7.coverage.info
+	genhtml ex7.coverage.info --output-directory coverage
+	
+check: ex7.cpp
+	cppcheck --enable=all ex7.cpp
+	
+build: ex7.cpp
+	g++ -std=c++11 ex7.cpp -o ex6 -lboost_timer -lboost_system
+	
+run: ex7.cpp
+	g++ -std=c++11 ex7.cpp -o ex7 -lboost_timer -lboost_system
+	./ex7 world666.gph
