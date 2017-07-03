@@ -1,5 +1,7 @@
 *.swp
 main
 
-data/*
-data/
+data*
+
+html*
+latex*
