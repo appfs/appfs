@@ -1,10 +1,9 @@
 CFLAGS= -std=c11 -Wall -g
 CC=gcc
-OBJ=main.o graph.o
+OBJ=longest_shortest.o graph.o
 HEADERS=graph.h
-TARGET=main
 
-default: $(TARGET)
+default: ex8
 all: default
 
 .PHONY: clean all default run $(TARGET) valgrind doc
@@ -12,18 +11,22 @@ all: default
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $(TARGET) $^
+ex5: $(OBJ)
+	$(CC) $(CFLAGS) -o ex5 $^
 
-run: $(TARGET)
-	./main ../data/small.gph
+ex8: $(OBJ)
+	$(CC) $(CFLAGS) -o ex8 $^
 
-valgrind: $(TARGET)
-	valgrind ./main ../data/small.gph
+run: ex8
+	./ex8 ../data/small.gph
+
+valgrind: ex8
+	valgrind ./ex8 ../data/small.gph
 
 clean:
-	rm -f *.o main
+	rm -f *.o main ex5 ex8
 	rm -r html
+	rm -r latex
 
 doc:
 	doxygen dox-conf

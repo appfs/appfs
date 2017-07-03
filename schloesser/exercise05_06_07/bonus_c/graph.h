@@ -28,6 +28,12 @@ typedef struct Graph {
     signed int **neighbors;
 } Graph;
 
+/** @brief Free the memory allocated in graph.
+ * 
+ * @param g the graph to be freed
+ */
+void free_graph(Graph *g);
+
 /** @brief Get next destination.
  * Get next destination from elements in 'to_visit'.
  *
@@ -38,37 +44,35 @@ signed int get_next_destination(signed int *to_visit, signed int n_to_visit, sig
 
 /** @brief Read numbers from chararry.
  *
- * Read 'n' numbers from 'line' and store them in 'res'
+ * @param n number of numbers
+ * @param line chararray from which to read
+ * @param res store the result here
  */
-void read_numbers(int n, char *line, signed int *res);
+void read_numbers(signed int *res, int n, char *line);
 
 /** @brief Read in a graph from file.
  *
- * Read from file with name 'file'
- * Store edges in 'edges' and numbers of neighbors in 'n_neighbors'
- * Store number of vertices in 'n_verts'
- * Return number of edges
+ * @param file Read graph from file with this filename
+ * @param edges store edges
+ * @return number of edges
  */
-signed int read_graph_file(char *file, signed int **n_neighbors, signed int ***edges, signed int *n_verts);
+signed int read_graph_file(Graph *g, char *file, signed int ***edges);
 
 /** @brief Sort edges into neighbors lists
  *
- * @param n_verts is number of vertices
- * @param n_edges is number of edges
- * @param n_neighbors is array containing number of neighbors of vertices
+ * @param g Graph on which to work on
  * @param edges is array containing edge triples
+ * @param n_edges is number of edges
  * @return Return array containing for each vertex an array of neighbors with weights
  */
-signed int** fill_neighbors(signed int n_verts, signed int n_edges, signed int* n_neighbors, signed int** edges);
+void fill_neighbors(Graph *g, signed int** edges, signed int n_edges);
 
 /** @brief Get shortest distances from all vertices to one destination
  *
+ * @param g Graph on which to work on
  * @param destination the destination vertex to which the distances should be calculated
- * @param n_verts the number of vertices in the graph
- * @param neighbors an array containing the neighbors of each vertex
- * @param n_neighbors an array containing the numbers of neighbors of each vertex
  */
-signed long* shortest_distances_to(signed int destination, signed int n_verts, signed int** neighbors, signed int* n_neighbors);
+signed long* shortest_distances_to(Graph *g, signed int destination);
 
 /** @brief Find the maximum value in an array and return value and position
  *

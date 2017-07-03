@@ -21,35 +21,31 @@ int main(int argc, char **argv) {
     // destination is source node
     signed int destination = 1;
 
-    signed int *n_neighbors;
-    signed int **edges;
+    Graph *g = malloc(sizeof(Graph));
 
-    signed int n_verts = 0;
-    signed int n_edges = read_graph_file(file, &n_neighbors, &edges, &n_verts);
+    signed int **edges;
+    signed int n_edges = read_graph_file(g, file, &edges);
 
     //float density = ((float)n_edges)/(n_verts/2 * n_verts);
     //bool sparse = (density < 0.1 ? true : false);
 
     // sort edges to neighbors
-    signed int **neighbors = fill_neighbors(n_verts, n_edges, n_neighbors, edges); // for each vertex this holds a list of neighbors with weights
+    fill_neighbors(g, edges, n_edges); // for each vertex this holds a list of neighbors with weights
     free(edges);
 
 // ##### find lengths of shortest paths to destination
     // measure time
     clock_t start = clock();
-    signed long *distances = shortest_distances_to(destination, n_verts, neighbors, n_neighbors); 
+    signed long *distances = shortest_distances_to(g, destination);
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
 
 // ##### free memory of graph
-    for (int i = 0; i < n_verts; i++) {
-        free(neighbors[i]);
-    }
-    free(neighbors);
-    free(n_neighbors);
+    free_graph(g);
 
 // ##### find longest amongst shortests
-    signed long *res = find_longest(distances, n_verts);
+    signed long *res = find_longest(distances, g->n_verts);
+    free(g);
 
     free(distances);
 
