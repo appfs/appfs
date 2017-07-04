@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Documentation for APPFS Exercise 7 &#8212; APPFS Ex7 1.0.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="APPFS Ex7 1.0.0 documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="documentation-for-appfs-exercise-7">
+<h1>Documentation for APPFS Exercise 7<a class="headerlink" href="#documentation-for-appfs-exercise-7" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-ex7"></span><p>This program will calculate the longest shortest path of a graph from the vertex 1 and it will use either the library-given method or the self-written method as specified</p>
+<dl class="function">
+<dt id="ex7.noLibrary">
+<code class="descclassname">ex7.</code><code class="descname">noLibrary</code><span class="sig-paren">(</span><em>graphfile</em><span class="sig-paren">)</span><a class="headerlink" href="#ex7.noLibrary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the longest shortest path using self-written Djisktra&#8217;s algorithm and dictionary data objects. With respect to this program, this function is invoked in the run() function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>graphfile: the graph to traverse</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ex7.run">
+<code class="descclassname">ex7.</code><code class="descname">run</code><span class="sig-paren">(</span><em>mode</em>, <em>graphfile</em><span class="sig-paren">)</span><a class="headerlink" href="#ex7.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the program on the given input arguments</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>mode: indicate which method to execute program with
+graphfile: the graph to traverse</dd>
+</dl>
+<p>Returns: print statement indicating the furthest vertex from Vertex 1 and its respective distance</p>
+<p>Raises: ValueError and AssertionError</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ex7.update_distances">
+<code class="descclassname">ex7.</code><code class="descname">update_distances</code><span class="sig-paren">(</span><em>graph</em>, <em>distances</em>, <em>s</em>, <em>unvisited</em><span class="sig-paren">)</span><a class="headerlink" href="#ex7.update_distances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Per iteration of evaluating the distances of paths from a single node, this function updates the data object keeping track of such distances. With respect to this program, this function is invoked in the noLibrary() function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>graph: a dictionary data object containing information of the graph&#8217;s vertices and edges
+distances: a dictionary data object containing the current vertex distances from Vertex 1 and its preceeding vertix for the path from Vertex 1
+s: an index for the current vertex being traversed
+unvisited: a list of the vertices of graph that have not yet been traversed</dd>
+<dt>Returns:</dt>
+<dd>distances: an updated data object
+next_s: the next vertex to traverse</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ex7.yesLibrary">
+<code class="descclassname">ex7.</code><code class="descname">yesLibrary</code><span class="sig-paren">(</span><em>graphfile</em><span class="sig-paren">)</span><a class="headerlink" href="#ex7.yesLibrary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the longest shortest path using the python package NetworkX. With respect to this program, this function is invoked in the run() function.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>graphfile: the graph to traverse</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Code_Documentation.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, Tam Tran.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="_sources/Code_Documentation.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -16,8 +16,10 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/named_function_params.hpp>
+#include <boost/timer/timer.hpp>
 
 using namespace std;
+using namespace boost::timer;
 
 // helper
 vector<pair<int, int>> kanten;
@@ -136,7 +138,8 @@ void berechneLongesteShortesWeigth(graph graph, int& anzahlEcken, int& laegsterK
 int main(int argc, char* argv[]) {
 	ifstream file;
 	bool fileEingelesen = graphEinlesen(argc, argv, file);
-
+	
+	boost::timer::cpu_timer t;
 	if(fileEingelesen) {
 		//erstelle den Graph
 		bool erstellt = graphErstellen(file);
@@ -148,7 +151,11 @@ int main(int argc, char* argv[]) {
 			int anzahlEcken = -1;
 			berechneLongesteShortesWeigth(graph, anzahlEcken, laegsterKuerzesterPfadGewicht);
 		
+			boost::timer::cpu_times zeit = t.elapsed();
+			
 			ergebnisAusgabe(anzahlEcken, laegsterKuerzesterPfadGewicht);
+			std::cout << "WALL-CLOCK " << zeit.wall / 1e9 << "s" << std::endl;
+			std::cout << "USER TIME " << zeit.user / 1e9 << "s" << std::endl;
 		}
 	}
 	return 0;
