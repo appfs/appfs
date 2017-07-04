@@ -49,7 +49,6 @@ int main(int argc, char **argv) {
 
     free(distances);
 
-    // TODO timething
     printf("RESULT VERTEX %li\nRESULT DIST %li\nRESULT TIME %.12f\n", res[1]+1, res[0], seconds);
     free(res);
     return 0; // everything went fine (hopefully)

@@ -7,6 +7,17 @@
 
 #include "graph.h"
 
+void steiner(Graph *g, signed int *vertex_mask) {
+    /*
+    save own edges
+    mask vertices (in vertex_mask?)
+
+    mark first terminal
+    for every new terminal
+        mark shortest path to subgraph
+    */
+}
+
 void free_graph(Graph *g) {
     for (int i = 0; i < g->n_verts; i++) {
         free(g->neighbors[i]);

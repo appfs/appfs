@@ -28,8 +28,15 @@ typedef struct Graph {
     signed int **neighbors;
 } Graph;
 
+/** @brief Calculate a steiner tree
+ *
+ * @param g Graph in question
+ * @param vertex_mask info about which vertices are terminals
+ */
+void steiner(Graph *g, signed int *vertex_mask);
+
 /** @brief Free the memory allocated in graph.
- * 
+ *
  * @param g the graph to be freed
  */
 void free_graph(Graph *g);

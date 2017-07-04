@@ -1,4 +1,4 @@
-CFLAGS= -std=c11 -Wall -g
+CFLAGS= -std=c11 -Wall -g -lm
 CC=gcc
 OBJ=graph.o
 HEADERS=graph.h
@@ -15,7 +15,7 @@ ex5: $(OBJ)
 	$(CC) $(CFLAGS) -o ex5 longest_shortest.c $^
 
 ex8: $(OBJ)
-	$(CC) $(CFLAGS) -o ex8 steiner.c $^
+	$(CC) -o ex8 steiner.c $^ $(CFLAGS)
 
 run5: ex5
 	./ex5 ../data/small.gph
