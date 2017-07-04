@@ -1,6 +1,6 @@
 # Evercise 8: Steiner Tree Heuristic
 
-Consider the input graphs from exercise 6/7 as [Steiner tree problems](https://en.wikipedia.org/wiki/Steiner_tree_problem) by considering
+Consider the input graphs from exercise 6/7 as [Steiner tree problems in graphs](https://en.wikipedia.org/wiki/Steiner_tree_problem) by considering
 each vertex with a prime index (i.e., with vertex number 2,3,5,7...) as a terminal.
 
 ***Implement the so called shortest paths heuristic***:
