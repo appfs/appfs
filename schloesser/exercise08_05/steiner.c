@@ -11,21 +11,21 @@
 
 /** @brief Returns a list of primes
  *
- * @param upper_bound biggest potential prime to be returned
+ * @param upper_bound upper bound, not included 
  * @return sieve number of primes found
  */
-signed int* get_primes(signed int upper_bound) {
+unsigned int* get_primes(unsigned int upper_bound) {
     assert(upper_bound > 1);
-    signed int *sieve = malloc(sizeof(*sieve) * (upper_bound+1));
-    for(int i = 0; i <= upper_bound; i++) {
+    unsigned int *sieve = malloc(sizeof(*sieve) * upper_bound);
+    for(int i = 0; i < upper_bound; i++) {
         sieve[i] = 1;
     }
     sieve[0] = 0; // 1 is not prime
-    signed int bound = sqrt(upper_bound);
+    unsigned int bound = sqrt(upper_bound);
     for(int i = 2; i <= bound; i++) {
         if(sieve[i-1]==1) { // if i is prime
             // multiples of i are not prime
-            signed int j = 2*i;
+            unsigned int j = 2*i;
             while(j <= upper_bound) {
                 sieve[j-1] = 0;
                 j += i;
@@ -45,12 +45,12 @@ int main(int argc, char **argv) {
     // filename is first commandlinearg
     char *file = argv[1];
     // destination is source node
-    signed int destination = 1;
+    unsigned int destination = 1;
 
     Graph *g = malloc(sizeof(Graph));
 
-    signed int **edges;
-    signed int n_edges = read_graph_file(g, file, &edges);
+    unsigned int **edges;
+    unsigned int n_edges = read_graph_file(g, file, &edges);
 
     //float density = ((float)n_edges)/(n_verts/2 * n_verts);
     //bool sparse = (density < 0.1 ? true : false);
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
 // ##### find lengths of shortest paths to destination
     // measure time
     clock_t start = clock();
-    signed int *vertex_mask = get_primes(g->n_verts);
+    unsigned int *vertex_mask = get_primes(g->n_verts);
     // steiner tree connecting prime nodes
     steiner(g, vertex_mask);//TODO
     clock_t end = clock();
@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
     free_graph(g);
     free(g);
 
-    free(terminals);
+    free(vertex_mask);
     return 0; // everything went fine (hopefully)
 }
 

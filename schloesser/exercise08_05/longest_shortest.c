@@ -19,12 +19,12 @@ int main(int argc, char **argv) {
     // filename is first commandlinearg
     char *file = argv[1];
     // destination is source node
-    signed int destination = 1;
+    unsigned int destination = 1;
 
     Graph *g = malloc(sizeof(Graph));
 
-    signed int **edges;
-    signed int n_edges = read_graph_file(g, file, &edges);
+    unsigned int **edges;
+    unsigned int n_edges = read_graph_file(g, file, &edges);
 
     //float density = ((float)n_edges)/(n_verts/2 * n_verts);
     //bool sparse = (density < 0.1 ? true : false);
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 // ##### find lengths of shortest paths to destination
     // measure time
     clock_t start = clock();
-    signed long *distances = shortest_distances_to(g, destination);
+    unsigned long *distances = shortest_distances_to(g, destination);
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
 
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     free_graph(g);
 
 // ##### find longest amongst shortests
-    signed long *res = find_longest(distances, g->n_verts);
+    unsigned long *res = find_longest(distances, g->n_verts);
     free(g);
 
     free(distances);

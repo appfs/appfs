@@ -23,23 +23,54 @@
 typedef enum { false, true } bool;
 
 typedef struct Graph {
-    signed int n_verts;
-    signed int *n_neighbors;
-    signed int **neighbors;
+    unsigned int n_verts;
+    unsigned int *n_neighbors;
+    unsigned int **neighbors;
 } Graph;
+
+/** TODO
+ *
+ */
+void update_neighbor_info(
+         Graph *g, 
+         unsigned long *distances, 
+         bool *visited, 
+         unsigned int *to_visit, 
+         unsigned int *n_to_visit,
+         unsigned int curr);
+
+/** TODO
+ *
+ */
+void run_dijkstra( 
+        Graph *g, 
+        unsigned long *distances, 
+        bool *visited, 
+        unsigned int *to_visit, 
+        unsigned int n_to_visit); 
+
+/** TODO
+ *
+ */
+unsigned int add_closest_terminal( 
+        Graph *g, 
+        unsigned int *vertex_mask); 
 
 /** @brief Calculate a steiner tree
  *
  * @param g Graph in question
  * @param vertex_mask info about which vertices are terminals
  */
-void steiner(Graph *g, signed int *vertex_mask);
+void steiner(
+        Graph *g, 
+        unsigned int *vertex_mask);
 
 /** @brief Free the memory allocated in graph.
  *
  * @param g the graph to be freed
  */
-void free_graph(Graph *g);
+void free_graph(
+        Graph *g);
 
 /** @brief Get next destination.
  * Get next destination from elements in 'to_visit'.
@@ -47,7 +78,10 @@ void free_graph(Graph *g);
  * 'to_visit' contains 'n_to_visit' elements
  * return the element from 'to_visit' for which 'distances' has the lowest value
  */
-signed int get_next_destination(signed int *to_visit, signed int n_to_visit, signed long *distances);
+unsigned int get_next_destination(
+        unsigned int *to_visit, 
+        unsigned int n_to_visit, 
+        unsigned long *distances);
 
 /** @brief Read numbers from chararry.
  *
@@ -55,7 +89,10 @@ signed int get_next_destination(signed int *to_visit, signed int n_to_visit, sig
  * @param line chararray from which to read
  * @param res store the result here
  */
-void read_numbers(signed int *res, int n, char *line);
+void read_numbers(
+        unsigned int *res, 
+        int n, 
+        char *line);
 
 /** @brief Read in a graph from file.
  *
@@ -63,7 +100,10 @@ void read_numbers(signed int *res, int n, char *line);
  * @param edges store edges
  * @return number of edges
  */
-signed int read_graph_file(Graph *g, char *file, signed int ***edges);
+unsigned int read_graph_file(
+        Graph *g, 
+        char *file, 
+        unsigned int ***edges);
 
 /** @brief Sort edges into neighbors lists
  *
@@ -72,14 +112,19 @@ signed int read_graph_file(Graph *g, char *file, signed int ***edges);
  * @param n_edges is number of edges
  * @return Return array containing for each vertex an array of neighbors with weights
  */
-void fill_neighbors(Graph *g, signed int** edges, signed int n_edges);
+void fill_neighbors(
+        Graph *g, 
+        unsigned int** edges, 
+        unsigned int n_edges);
 
 /** @brief Get shortest distances from all vertices to one destination
  *
  * @param g Graph on which to work on
  * @param destination the destination vertex to which the distances should be calculated
  */
-signed long* shortest_distances_to(Graph *g, signed int destination);
+unsigned long* shortest_distances_to(
+        Graph *g, 
+        unsigned int destination);
 
 /** @brief Find the maximum value in an array and return value and position
  *
@@ -87,6 +132,20 @@ signed long* shortest_distances_to(Graph *g, signed int destination);
  * @param n_verts the length of distances
  * @return an array of length two containing value and position of first maximal value in distances
  */
-signed long* find_longest(signed long *distances, int n_verts);
+unsigned long* find_longest(
+        unsigned long *distances, 
+        int n_verts);
+
+/** @brief Find the minimum positive value in an array and return value and position
+ *
+ * @param distances an array containing values
+ * @param n_verts the length of distances
+ * TODO
+ * @return an array of length two containing value and position of first maximal value in distances
+ */
+unsigned int find_closest_terminal(
+        unsigned long *distances, 
+        int n_verts,
+        unsigned int *vertex_mask);
 
 #endif
