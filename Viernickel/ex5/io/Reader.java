@@ -15,7 +15,7 @@ import datastructure.*;
  * .
  * 
  * Saves nodes in an array and edges as neighbours within the Node datastructure
- * @author merlin
+ * @author Merlin Viernickel
  * @date June 08 2017
  */
 public class Reader{
@@ -44,22 +44,19 @@ public class Reader{
             fr = new FileReader(path);
             br = new BufferedReader(fr);
             
-            /** Read first line
-             */
+            /** Read first line */
             line = br.readLine();
             nNodes = Integer.valueOf(line.split(" ")[0]);
             nEdges = Integer.valueOf(line.split(" ")[1]);
             
-            /** Initialize node array
-             */
+            /** Initialize node array */
             nodes = new Node[nNodes];
             for(i=0; i<nNodes; i++){
                 nodes[i] = new Node(i);
             }
             nodes[0].distance = 0;
             
-            /** Read and save edges
-             */
+            /** Read and save edges */
             for(j=0; j<nEdges; j++){
                 line = br.readLine();
                 split = line.split(" ");
@@ -67,8 +64,10 @@ public class Reader{
                 tailId = Integer.valueOf(split[1])-1;
                 weight = Integer.valueOf(split[2]);
                 
-                nodes[headId].neighbours.add(new Neighbour(tailId, weight));
-                nodes[tailId].neighbours.add(new Neighbour(headId, weight));
+                Edge edge = new Edge(nodes[headId], nodes[tailId], weight);
+                
+                nodes[headId].edges.add(edge);
+                nodes[tailId].edges.add(edge);
             }
             
             br.close();

@@ -20,6 +20,15 @@ class ParseXML():
     """XML file handling."""
 
     def __init__(self, xml, xsd, verbose):
+        """
+        Initiate the passed files and options.
+
+        Parameters
+        ----------
+        xml : the xml file to extract the "amountOfPower" from
+        xsd : the schema file to validate the xml against
+        verbose : prompt some info on the screen
+        """
         self.fileXML = xml
         self.fileXSD = xsd
         self.verbose = verbose
@@ -32,6 +41,7 @@ class ParseXML():
             self.writeCSV()
         except (XMLSchemaParseError, XMLSyntaxError) as e:
             # stream needs file object
+            # err_log = os.path.join(os.getcwd(), 'ex2/err.log')
             sys.stderr = open('err.log', 'w')
             sys.stderr.write(str(e))
             # possible to get the data although not valid
@@ -55,7 +65,14 @@ class ParseXML():
         # print(self.schema.validate(etree.parse(self.fileXML)))
 
     def readXML(self, schema=None):
-        """Open XML file and return the root."""
+        """
+        Open XML file and return the root.
+
+        Parameters
+        ----------
+        schema : validation with a schema is optional
+
+        """
         parser = etree.XMLParser(remove_comments=True, schema=schema)
         # validation happens with the schema argument during parsing or throw
         # an error to see whats wrong (in init)
@@ -80,9 +97,10 @@ class ParseXML():
 
     def writeCSV(self):
         """Print data to csv."""
-        fName = '.'.join(self.fileXML.split('/')[1].split('.')[:-1]) + '.csv'
+        # fName = '.'.join(self.fileXML.split('/')[1].split('.')[:-1]) + '.csv'
+        fName = os.path.join(os.getcwd(), 'ex2/ex2.csv')
         with open(fName, 'w', newline='') as out:
-            writer = csv.writer(out, delimiter=';')
+            writer = csv.writer(out, delimiter=';', lineterminator='\n')
             # sort dictionary by key
             for key, vals in sorted(self.dict.items()):
                 writer.writerow(['# ' + key])
@@ -94,7 +112,7 @@ class ParseXML():
 
 
 def main(argv):
-    """."""
+    """Argument handler."""
     import argparse
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,

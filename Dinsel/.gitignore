@@ -1,0 +1,8 @@
+*.log
+.coverage
+pip-selfcheck.json
+rclint
+/venv
+/doc/html
+__pycache__
+/htmlcov

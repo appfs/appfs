@@ -1,8 +1,12 @@
-/EX2/
 /__MACOSX/
-/data/
-*.md
 *.zip
 *.log
-*.dat
 *.csv
+
+/data/example.measured*
+/data/Framework*
+/data/measured-1-1-0.pdf
+/data/measured-1.0.0.2017-02-03.b0050c5c8deb1db59c7b2644414b079d.xml.gz
+/data/PhysicalValues*
+/data/prognosis*
+/data/Topology*

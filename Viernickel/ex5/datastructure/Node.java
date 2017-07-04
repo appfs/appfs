@@ -11,9 +11,7 @@ public class Node implements Comparable<Node>{
     
     public int id;
     public int distance;
-    public boolean visited;
-    public boolean touched;
-    public ArrayList<Neighbour> neighbours;
+    public ArrayList<Edge> edges;
     
     /**
      * Constructor
@@ -22,9 +20,7 @@ public class Node implements Comparable<Node>{
     public Node(int id){
         this.id = id;
         this.distance = Integer.MAX_VALUE;
-        this.visited = false;
-        this.touched = false;
-        this.neighbours = new ArrayList<Neighbour>();
+        this.edges = new ArrayList<Edge>();
     }
 
     /**
@@ -36,6 +32,26 @@ public class Node implements Comparable<Node>{
         return Integer.compare(this.distance, otherNode.distance);
     }
     
+    /**
+     * Returns the i-th neighbour node
+     * @param i i-th neighbour
+     * @return i-th neighbour node
+     */
+    public Node getNeighbour(int i){
+        Edge edge = this.edges.get(i);
+        if(this == edge.head)
+            return edge.tail;
+        else
+            return edge.head;
+    }
     
+    /**
+     * Get the distance to the i-th neighbour node
+     * @param i i-th neighbour
+     * @return distance to the i-th neighbour node
+     */
+    public int getDistanceToNeighbour(int i){
+        return this.edges.get(i).weight;
+    }
 }
 

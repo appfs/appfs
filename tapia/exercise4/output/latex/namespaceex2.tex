@@ -1,0 +1,55 @@
+\hypertarget{namespaceex2}{}\section{ex2 Namespace Reference}
+\label{namespaceex2}\index{ex2@{ex2}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceex2_a0141c6ec7022817f6ff1fafcf5084bb4}{xml\+\_\+to\+\_\+csv} (data)
+\item 
+def \hyperlink{namespaceex2_a9e793b6b572f88680b5add03e52e5cfd}{write\+\_\+csv} (content\+\_\+list)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{namespaceex2_a9abd3e03ae1c6d6a4eee43e549ffc5e0}\label{namespaceex2_a9abd3e03ae1c6d6a4eee43e549ffc5e0}} 
+{\bfseries filename} = sys.\+argv\mbox{[}-\/1\mbox{]}
+\item 
+\mbox{\Hypertarget{namespaceex2_ae4ee37a05da6503a8d80f884f2b8e20f}\label{namespaceex2_ae4ee37a05da6503a8d80f884f2b8e20f}} 
+{\bfseries xml\+\_\+text} = open(filename).read()
+\item 
+\mbox{\Hypertarget{namespaceex2_a321af50e570d6dfba7da48fd26cb5b40}\label{namespaceex2_a321af50e570d6dfba7da48fd26cb5b40}} 
+{\bfseries parsed\+\_\+data} = Beautiful\+Soup(xml\+\_\+text, \textquotesingle{}xml\textquotesingle{})
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}@package docstring
+Author: Roxana Tapia Campos
+Module: Advanced practical programming skills for scientists
+SS17 - TU Berlin 
+Exercise 2: XML to CSV measured
+\end{DoxyVerb}
+ 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceex2_a9e793b6b572f88680b5add03e52e5cfd}\label{namespaceex2_a9e793b6b572f88680b5add03e52e5cfd}} 
+\index{ex2@{ex2}!write\+\_\+csv@{write\+\_\+csv}}
+\index{write\+\_\+csv@{write\+\_\+csv}!ex2@{ex2}}
+\subsubsection{\texorpdfstring{write\+\_\+csv()}{write\_csv()}}
+{\footnotesize\ttfamily def ex2.\+write\+\_\+csv (\begin{DoxyParamCaption}\item[{}]{content\+\_\+list }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Writes a CSV 'output.csv' file with the formatted result.
+
+:param content_list: A list with triplets.
+\end{DoxyVerb}
+ \mbox{\Hypertarget{namespaceex2_a0141c6ec7022817f6ff1fafcf5084bb4}\label{namespaceex2_a0141c6ec7022817f6ff1fafcf5084bb4}} 
+\index{ex2@{ex2}!xml\+\_\+to\+\_\+csv@{xml\+\_\+to\+\_\+csv}}
+\index{xml\+\_\+to\+\_\+csv@{xml\+\_\+to\+\_\+csv}!ex2@{ex2}}
+\subsubsection{\texorpdfstring{xml\+\_\+to\+\_\+csv()}{xml\_to\_csv()}}
+{\footnotesize\ttfamily def ex2.\+xml\+\_\+to\+\_\+csv (\begin{DoxyParamCaption}\item[{}]{data }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Searches all suitable values (tags) to build a response with format:
+YYYY-MM-DD; HH; amountOfPower-Value
+
+:param data: Parsed data from XML file as a tree format.
+\end{DoxyVerb}
+ 
