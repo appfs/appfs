@@ -1,7 +1,10 @@
-package dijkstra;
+package algorithm;
 
 import datastructure.*;
+
+import java.util.ArrayList;
 import java.util.PriorityQueue;
+import java.util.Stack;
 
 /**
  * Main algorithm class representing te Dijkstra algorithm.
@@ -23,6 +26,7 @@ public class Dijkstra {
     public Dijkstra(Node[] nodes){
         assert(null != nodes);
         assert(1 <= nodes.length);
+        
         this.nodes = nodes;
         this.touched = new boolean[nodes.length];
         this.visited = new boolean[nodes.length];
@@ -30,16 +34,16 @@ public class Dijkstra {
     }
     
     /**
-     * Dijkstra algorithm that calculates the distance for all nodes and returns the furthest one
-     * @return Node furthest from the starting node
-     */
-    public Node findFurthestNode(){
-        Node currNode = nodes[0];
+     * Dijkstra's algorithm that calculates the distance for all nodes from the starting node
+     */    
+    public void calculateDistances(Node startNode){
+        Node currNode = startNode;
         Node neighbourNode = null;
         int neighbourId = 0;
         int newDistance;
         boolean changed = false;
         
+        startNode.distance = 0;
         queue.add(currNode);
         
         do{
@@ -56,6 +60,7 @@ public class Dijkstra {
                 newDistance = currNode.distance + currNode.getDistanceToNeighbour(i);
                 if(newDistance < neighbourNode.distance){
                     neighbourNode.distance = newDistance;
+                    neighbourNode.predecessor = currNode;
                     changed = true;
                 }
                 
@@ -68,6 +73,7 @@ public class Dijkstra {
                 }
                 
                 touched[neighbourId] = true;
+                changed = false;
             }
             visited[currNode.id] = true;
             
@@ -75,20 +81,57 @@ public class Dijkstra {
             currNode = queue.poll();
         }while(null != currNode);
         
-        return this.getHighestDistNode();
     }
+    
     
     /**
      * Gets the highest distance node with the lowest id
      * @return Highest distance node with lowest id
      */
-    private Node getHighestDistNode(){
+    public Node getHighestDistNode(){
+        
         assert(this.nodes.length > 1);
-        Node highestDistNode = this.nodes[1];
-        for(int i=2; i<this.nodes.length; i++){
+        
+        Node highestDistNode = this.nodes[0];
+        for(int i=1; i<this.nodes.length; i++){
             if(highestDistNode.distance < nodes[i].distance)
                 highestDistNode = nodes[i];
         }
         return highestDistNode;
+    }
+    
+    public Node getLowestDistNodeToSteinerTree(ArrayList<Node> tree){
+        assert(tree != null);
+        
+        Node lowestDistNode = tree.get(0);
+        
+        for(int i=1; i<tree.size(); i++){
+            if(tree.get(i).distance < lowestDistNode.distance){
+                lowestDistNode = tree.get(i);
+            }
+        }
+        return lowestDistNode;
+    }
+    
+    public Node[] getShortestPath(Node destinationNode){
+        Stack<Node> stack = new Stack<>();
+        Node currNode = destinationNode;
+        
+        assert(destinationNode.predecessor != null);
+        
+        /** Find shortest path from predecessors */
+        stack.push(destinationNode);
+        while(currNode.predecessor != null){
+            stack.push(currNode.predecessor);
+            currNode = currNode.predecessor;
+        }
+        
+        /** Save shortest path in array */
+        Node[] shortestPath = new Node[stack.size()];
+        for(int i=0; i<shortestPath.length; i++){
+            shortestPath[i] = stack.pop();
+        }
+        
+        return shortestPath;
     }
 }

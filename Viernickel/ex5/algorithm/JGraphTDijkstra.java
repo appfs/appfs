@@ -1,4 +1,4 @@
-package dijkstra;
+package algorithm;
 
 import org.jgrapht.ListenableGraph;
 import org.jgrapht.alg.DijkstraShortestPath;
@@ -30,7 +30,7 @@ public class JGraphTDijkstra {
      * Dijkstra algorithm that calculates the distance for all nodes and returns the furthest one
      * @return Node furthest from the starting node
 	 */
-	public Node findFurthestNode(){
+	public Node findFurthestNode(Node startNode){
         ListenableGraph<Node, DefaultWeightedEdge> graph = new ListenableUndirectedWeightedGraph<Node, DefaultWeightedEdge>(DefaultWeightedEdge.class);
         Node furthestNode = nodes[0];
         
@@ -54,7 +54,7 @@ public class JGraphTDijkstra {
         /** Calculate distances and find furthest Node */
         for(int i=1; i<nodes.length; i++){
             DijkstraShortestPath<Node, DefaultWeightedEdge> shortestPath =
-            		new DijkstraShortestPath<Node, DefaultWeightedEdge>(graph, nodes[0], nodes[i]);
+            		new DijkstraShortestPath<Node, DefaultWeightedEdge>(graph, startNode, nodes[i]);
             
             nodes[i].distance = (int) shortestPath.getPathLength();
             if(furthestNode.distance < nodes[i].distance){
@@ -62,7 +62,7 @@ public class JGraphTDijkstra {
             }
         }
         
-        return furthestNode;        
-	}	
+        return furthestNode;
+	}
 
 }
