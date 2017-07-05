@@ -126,7 +126,7 @@ if __name__ == '__main__':
 
     distances = dijkstra(graph)
 
-    result_dist = 2000000000
+    result_dist = 0
     result_vertex = None
 
     for k, v in distances.items():
@@ -134,7 +134,7 @@ if __name__ == '__main__':
         if k == '1':
             continue
 
-        if v < result_dist:
+        if v > result_dist:
             result_dist = v
             result_vertex = k
 
