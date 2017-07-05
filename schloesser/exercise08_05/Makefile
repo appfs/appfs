@@ -1,4 +1,4 @@
-CFLAGS= -std=c11 -Wall -g -lm
+CFLAGS= -std=c11 -Wall -g -lm -fprofile-arcs -ftest-coverage -lgcov
 CC=gcc
 OBJ=graph.o
 HEADERS=graph.h
@@ -6,7 +6,7 @@ HEADERS=graph.h
 default: ex8
 all: ex5 ex8
 
-.PHONY: clean all default run valgrind doc ex5 ex8
+.PHONY: clean all default run5 run8 valgrind5 valgrind8 doc ex5 ex8 check5 check8 coverage5 coverage8
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -23,14 +23,26 @@ run5: ex5
 valgrind5: ex5
 	valgrind ./ex5 ../data/small.gph
 
+check5: 
+	cppcheck graph.c graph.h longest_shortest.c 2> cppcheck5.txt
+
+coverage5: run5
+	gcov longest_shortest.c graph.c
+
 run8: ex8
-	./ex8 ../data/steiner.gph
+	./ex8 ../data/small.gph
 
 valgrind8: ex8
-	valgrind ./ex8 ../data/steiner.gph
+	valgrind ./ex8 ../data/small.gph
+
+coverage8: run8
+	gcov steiner.gph graph.c
+
+check8:
+	cppcheck graph.c graph.h steiner.c 2> cppcheck8.txt
 
 clean:
-	rm -f *.o ex5 ex8
+	rm -f *.o ex5 ex8 *.c.gcov *.gcno *.gcda
 	rm -rf html
 	rm -rf latex
 
