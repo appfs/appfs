@@ -1,5 +1,4 @@
-/**
- * @file main.c
+/** @file steiner.c
  * @author Franziska Schlösser
  * @date July 2017
  * @brief Main programm fulfilling ex8
@@ -35,6 +34,10 @@ unsigned int* get_primes(unsigned int upper_bound) {
     return sieve;
 }
 
+/** @brief Solves Exercise 8
+ *
+ * Reads in a graph from a file and calculates an approximation to a steiner tree on the prime nodes
+ */
 int main(int argc, char **argv) {
     if (argc != 2) {
         printf("Please provide filename as first and only argument.");
@@ -63,11 +66,10 @@ int main(int argc, char **argv) {
     unsigned int *vertex_mask = get_primes(g->n_verts);
     // steiner tree connecting prime nodes
     unsigned int *prev = steiner(g, vertex_mask);
-    for (int i = 0; i < g->n_verts; i++) {
-        printf("vertex %d, mask %d, predecessor %d\n", i+1, vertex_mask[i]/2, prev[i]+1);
-    }
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
+
+    signed long objective = weight_of_tree(g, vertex_mask, prev);
 
 // ##### free memory of graph
     free_graph(g);
@@ -75,6 +77,8 @@ int main(int argc, char **argv) {
     free(prev);
 
     free(vertex_mask);
+    printf("\n");
+    printf("RESULT OBJECTIVE %li\n", objective);
     printf("RESULT TIME %f\n", seconds);
     return 0; // everything went fine (hopefully)
 }

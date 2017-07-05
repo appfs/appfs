@@ -1,5 +1,4 @@
-/**
- * @file main.c
+/** @file longest_shortest.c
  * @author Franziska Schlösser
  * @date July 2017
  * @brief Main programm fulfilling ex5, 6 and 7
@@ -8,6 +7,10 @@
 #include <time.h>
 #include "graph.h"
 
+/** @brief Solve Exercise 5
+ *
+ * Reads in a file containing a graph and calulates the longest shortest path.
+ */
 int main(int argc, char **argv) {
     if (argc != 2) {
         printf("Please provide filename as first and only argument.");
@@ -40,10 +43,6 @@ int main(int argc, char **argv) {
     unsigned long *distances = shortest_distances_to(g, destination, prev);
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
-
-    for (int i = 0; i < g->n_verts; i++) {
-        printf("predecessor of %d is %d\n", i+1, prev[i]+1);
-    }
 
 // ##### free memory of graph
     free_graph(g);

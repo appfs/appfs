@@ -1,5 +1,4 @@
-/**
- * @file graph.c
+/** @file graph.c
  * @author Franziska Schlösser
  * @date July 2017
  * @brief Short c file containing graph functionality
@@ -341,10 +340,49 @@ void join_closest_terminal(
             minv = i;
         }
     }
+    printf("Joining terminal %d to subgraph via path: ", minv+1);
     unsigned int walker = minv;
     // minv holds closest neighboring terminal
     while (vertex_mask[walker] < 2) {
+        printf("%d ", walker+1);
         vertex_mask[walker] = vertex_mask[walker]+2;
         walker = prev[walker];
+    }
+    printf("\n");
+}
+
+unsigned long weight_of_tree(
+        Graph *g,
+        unsigned int *vertex_mask,
+        unsigned int *prev) {
+     
+    unsigned long treeweight = 0;
+    for(int i = 0; i < g->n_verts; i++) {
+        if(vertex_mask[i] > 1 && prev[i] != UINT_MAX) { // for all terminals that are not root
+            treeweight = treeweight + edgeweight(g, i, prev[i], false);
+        }
+    }
+    return treeweight;
+}
+
+unsigned long edgeweight(
+        Graph *g,
+        unsigned int v1,
+        unsigned int v2, 
+        bool directed) {
+
+    if (true == directed) {
+        for (int i = 0; i < g->n_neighbors[v1]; i++) {
+            if (g->neighbors[v1][2*i] == v2 + 1) {
+                return g->neighbors[v1][(2*i)+1];
+            }
+        }
+        return ULONG_MAX;
+    } else {
+        unsigned long w1 = edgeweight(g, v1, v2, true);
+        unsigned long w2 = edgeweight(g, v2, v1, true);
+        unsigned long weight = (w1 < w2 ? w1 : w2);
+        assert(weight < ULONG_MAX);
+        return weight;
     }
 }

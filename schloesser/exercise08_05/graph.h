@@ -1,8 +1,7 @@
 #ifndef GRAPH_H
 #define GRAPH_H
 
-/**
- * @file graph.h
+/** @file graph.h
  * @author Franziska Schlösser
  * @date July 2017
  * @brief Header file of graph.c
@@ -23,35 +22,31 @@
 typedef enum { false, true } bool;
 
 /** @brief Define type Graph
- *
- * Containing 
- * number of vertices as 'n_verts', 
- * number of neighbors as 'n_neighbors' 
- * and all neighbors as 'neighbors'
  */
 typedef struct Graph {
-    unsigned int n_verts;
-    unsigned int *n_neighbors;
-    unsigned int **neighbors;
+    /** number of vertices */
+    unsigned int n_verts; 
+    /** number of neighbors */
+    unsigned int *n_neighbors; 
+    /** and all neighbors */
+    unsigned int **neighbors; 
 } Graph;
 
 /** @brief Define type GraphSearch
- *
- * Containing
- * a graph as 'g',
- * an array of distances as 'distances',
- * an array of bools indicating the visited status as 'visited',
- * an array of vertices that are still to visit as 'to_visit',
- * the size of to_visit as 'n_to_visit'
- * and an array 'prev' containing the predecessors of vertices.
  */
 typedef struct GraphSearch {
-    Graph *g;
-    unsigned long *distances;
-    bool *visited;
-    unsigned int *to_visit;
-    unsigned int n_to_visit;
-    unsigned int *prev;
+    /** a graph */
+    Graph *g; 
+    /** an array of distances */
+    unsigned long *distances; 
+    /** an array of bools indicating the visited status */
+    bool *visited; 
+    /** an array of vertices that are still to visit */
+    unsigned int *to_visit; 
+    /** the size of to_visit */
+    unsigned int n_to_visit; 
+    /** an array containing the predecessors of vertices. */
+    unsigned int *prev; 
 } GraphSearch;
 
 /** @brief Updating the distances and to_visit list via a vertex.
@@ -78,7 +73,7 @@ void run_dijkstra(
  * @param g a graph
  * @param vertex_mask a mask indicating which terminals are vertices (%2 = 1) 
  *     and which vertices are contained in the subgraph (> 1)
- * @param for each vertex the predecessor in a tree
+ * @param prev for each vertex the predecessor in a tree
  * @return the vertex_mask and the predecessors in prev are being updated
  */
 void add_closest_terminal( 
@@ -118,7 +113,8 @@ void free_graph(
 /** @brief Get the closest unvisited vertex.
  *
  * @param to_visit contains elements which still have to be visited
- * @oaram n_to_visit number of elements in 'to_visit'
+ * @param n_to_visit number of elements in 'to_visit'
+ * @param distances the distances 
  * @return the element from 'to_visit' for which 'distances' has the smallest value
  */
 unsigned int get_next_destination(
@@ -139,6 +135,7 @@ void read_numbers(
 
 /** @brief Read in a graph from file.
  *
+ * @param g a graph
  * @param file Read graph from file with this filename
  * @param edges store edges
  * @return number of edges
@@ -166,6 +163,7 @@ void fill_neighbors(
  *
  * @param g Graph on which to work on
  * @param destination the destination vertex to which the distances should be calculated
+ * @param paths the location where to store the paths
  *     destination is being updated
  */
 unsigned long* shortest_distances_to(
@@ -198,4 +196,29 @@ void join_closest_terminal(
         unsigned int *vertex_mask,
         unsigned int *prev);
 
+/** @brief Calculate the weight of a spanning tree.
+ *
+ * @param g a graph
+ * @param vertex_mask the mask indicating the subgraph via values > 1
+ * @param prev the list of predecessors in the tree
+ * @return the total weight
+ */
+unsigned long weight_of_tree(
+        Graph *g,
+        unsigned int *vertex_mask,
+        unsigned int *prev);
+
+/** @brief Find out the edgeweight between two vertices.
+ *
+ * @param g a graph
+ * @param v1 (index of) one vertex
+ * @param v2 (index of) another vertex
+ * @param directed asking for directed edges?
+ * @return weight of edge between v1 and v2
+ */
+unsigned long edgeweight(
+        Graph *g, 
+        unsigned int v1, 
+        unsigned int v2,
+        bool directed);
 #endif
