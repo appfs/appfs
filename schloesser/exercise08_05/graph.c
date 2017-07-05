@@ -9,53 +9,43 @@
 #include "graph.h"
 
 void update_neighbor_info(
-        Graph *g, 
-        unsigned long *distances, 
-        bool *visited, 
-        unsigned int *to_visit, 
-        unsigned int *n_to_visit, 
-        unsigned int *prev,
+        GraphSearch *gs,
         unsigned int curr) {
 
-    for (int i = 0; i < g->n_neighbors[curr]; i++) {
-        unsigned int n = g->neighbors[curr][2*i] - 1; // n is index of neighbor vertex
-        unsigned int w = g->neighbors[curr][(2*i)+1]; // w is weight of edge from curr to n
-        if (!visited[n]) {
-            unsigned int newdist = distances[curr] + w;
-            unsigned int olddist = distances[n];
+    for (int i = 0; i < gs->g->n_neighbors[curr]; i++) {
+        unsigned int n = gs->g->neighbors[curr][2*i] - 1; // n is index of neighbor vertex
+        unsigned int w = gs->g->neighbors[curr][(2*i)+1]; // w is weight of edge from curr to n
+        if (!gs->visited[n]) {
+            unsigned int newdist = gs->distances[curr] + w;
+            unsigned int olddist = gs->distances[n];
             if (olddist == -1 || newdist < olddist) {
-                distances[n] = newdist;
-                prev[n] = curr;
+                gs->distances[n] = newdist;
+                gs->prev[n] = curr;
             }
             bool found = false;
-            for (int k = 0; k < *n_to_visit; k++) {
-                if (to_visit[k] == n) {
+            for (int k = 0; k < gs->n_to_visit; k++) {
+                if (gs->to_visit[k] == n) {
                     found = true;
                 }
             }
             if (!found) {
-                to_visit[*n_to_visit] = n;
-                *n_to_visit = *n_to_visit+1;
-                assert(*n_to_visit <= g->n_verts);
+                gs->to_visit[gs->n_to_visit] = n;
+                gs->n_to_visit = gs->n_to_visit+1;
+                assert(gs->n_to_visit <= gs->g->n_verts);
             }
         }
     }
 }
 
 void run_dijkstra(
-        Graph *g,
-        unsigned long *distances, 
-        bool *visited, 
-        unsigned int *to_visit,
-        unsigned int n_to_visit,
-        unsigned int *prev) {
+        GraphSearch *gs) {
 
-    while (n_to_visit != 0) { 
+    while (gs->n_to_visit != 0) { 
         unsigned int curr; // curr is the index of the current vertex
-        curr = get_next_destination(to_visit, n_to_visit, distances); 
-        n_to_visit--;
-        visited[curr] = true;
-        update_neighbor_info(g, distances, visited, to_visit, &n_to_visit, prev, curr);
+        curr = get_next_destination(gs->to_visit, gs->n_to_visit, gs->distances); 
+        gs->n_to_visit--;
+        gs->visited[curr] = true;
+        update_neighbor_info(gs, curr);
     }
 }
 
@@ -85,27 +75,28 @@ void add_closest_terminal(
         to_visit[i] = UINT_MAX;
     }
 
-    //to_visit[0] = destination-1;
-    unsigned int n_to_visit = 0;
-
-    printf("Add closest terminal\n");
-    for (int i = 0; i < g->n_verts; i++) { printf("dist %d %li\n", i+1, distances[i]); }
-    for (int i = 0; i < g->n_verts; i++) { printf("vertex_mask %d\n", vertex_mask[i]); }
-    for (int i = 0; i < g->n_verts; i++) { printf("prev %u\n", prev[i]+1); }
+    GraphSearch *gs = malloc(sizeof(*gs));
+    gs->g = g;
+    gs->distances = distances;
+    gs->visited = visited;
+    gs->to_visit = to_visit;
+    gs->n_to_visit = 0;
+    gs->prev = prev;
 
     for (int i = 0; i < g->n_verts; i++) {
         if (vertex_mask[i] > 1) {
-            update_neighbor_info(g, distances, visited, to_visit, &n_to_visit, prev, i);
+            update_neighbor_info(gs, i);
         }
     }
     
-    run_dijkstra(g, distances, visited, to_visit, n_to_visit, prev);
+    run_dijkstra(gs);
 
     join_closest_terminal(distances, g->n_verts, vertex_mask, prev);
 
-    for (int i = 0; i < g->n_verts; i++) { printf("dist %d %li\n", i+1, distances[i]); }
-    for (int i = 0; i < g->n_verts; i++) { printf("vertex_mask %d\n", vertex_mask[i]); }
-    for (int i = 0; i < g->n_verts; i++) { printf("prev %u\n", prev[i]+1); }
+    free(distances);
+    free(to_visit);
+    free(visited);
+    free(gs);
 }
 
 bool unconnected_terminals(
@@ -119,7 +110,7 @@ bool unconnected_terminals(
     return false;
 }
 
-void steiner(
+unsigned int* steiner(
         Graph *g, 
         unsigned int *vertex_mask) {
     unsigned int count = 0;
@@ -136,10 +127,6 @@ void steiner(
             break;
         }
     }
-    if (count <=1) {
-        printf("Not enough terminals, provide at least two. Aborting.\n");
-        return;
-    }
     assert(count>1); // want at least two terminals
     assert(found >= 0 && found < g->n_verts);
 
@@ -151,6 +138,7 @@ void steiner(
     while (unconnected_terminals(g, vertex_mask)) { 
         add_closest_terminal(g, vertex_mask, prev);
     }
+    return prev;
 }
 
 void free_graph(
@@ -302,9 +290,20 @@ unsigned long* shortest_distances_to(
 
     distances[destination-1] = 0;
     to_visit[0] = destination-1;
-    unsigned int n_to_visit = 1;
 
-    run_dijkstra(g, distances, visited, to_visit, n_to_visit, prev);
+    GraphSearch *gs = malloc(sizeof(*gs));
+    gs->g = g;
+    gs->distances = distances;
+    gs->visited = visited;
+    gs->to_visit = to_visit;
+    gs->n_to_visit = 1;
+    gs->prev = prev;
+
+    run_dijkstra(gs);
+    
+    free(to_visit);
+    free(visited);
+    free(gs);
     return distances;
 }
 

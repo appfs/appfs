@@ -37,7 +37,7 @@ unsigned int* get_primes(unsigned int upper_bound) {
 
 int main(int argc, char **argv) {
     if (argc != 2) {
-        printf("Please provide filename containing as first and only argument.");
+        printf("Please provide filename as first and only argument.");
         exit(0);
     }
 
@@ -62,13 +62,17 @@ int main(int argc, char **argv) {
     clock_t start = clock();
     unsigned int *vertex_mask = get_primes(g->n_verts);
     // steiner tree connecting prime nodes
-    steiner(g, vertex_mask);//TODO
+    unsigned int *prev = steiner(g, vertex_mask);
+    for (int i = 0; i < g->n_verts; i++) {
+        printf("vertex %d, mask %d, predecessor %d\n", i+1, vertex_mask[i]/2, prev[i]+1);
+    }
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
 
 // ##### free memory of graph
     free_graph(g);
     free(g);
+    free(prev);
 
     free(vertex_mask);
     printf("RESULT TIME %f\n", seconds);
