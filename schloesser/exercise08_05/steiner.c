@@ -44,8 +44,6 @@ int main(int argc, char **argv) {
 // ##### init from file
     // filename is first commandlinearg
     char *file = argv[1];
-    // destination is source node
-    unsigned int destination = 1;
 
     Graph *g = malloc(sizeof(Graph));
 
@@ -73,6 +71,7 @@ int main(int argc, char **argv) {
     free(g);
 
     free(vertex_mask);
+    printf("RESULT TIME %f\n", seconds);
     return 0; // everything went fine (hopefully)
 }
 

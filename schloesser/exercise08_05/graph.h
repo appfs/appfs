@@ -28,6 +28,15 @@ typedef struct Graph {
     unsigned int **neighbors;
 } Graph;
 
+typedef struct GraphSearch {
+    Graph g;
+    unsigned long *distances;
+    bool *visited;
+    unsigned int *to_visit;
+    unsigned int *n_to_visit;
+    unsigned int *prev;
+} GraphSearch;
+
 /** TODO
  *
  */
@@ -37,6 +46,7 @@ void update_neighbor_info(
          bool *visited, 
          unsigned int *to_visit, 
          unsigned int *n_to_visit,
+         unsigned int *prev,
          unsigned int curr);
 
 /** TODO
@@ -47,14 +57,23 @@ void run_dijkstra(
         unsigned long *distances, 
         bool *visited, 
         unsigned int *to_visit, 
-        unsigned int n_to_visit); 
+        unsigned int n_to_visit,
+        unsigned int *prev); 
 
 /** TODO
  *
  */
-unsigned int add_closest_terminal( 
+void add_closest_terminal( 
         Graph *g, 
-        unsigned int *vertex_mask); 
+        unsigned int *vertex_mask, 
+        unsigned int *prev); 
+
+/** TODO
+ *
+ */
+bool unconnected_terminals(
+        Graph *g,
+        unsigned int *vertex_mask);
 
 /** @brief Calculate a steiner tree
  *
@@ -124,7 +143,8 @@ void fill_neighbors(
  */
 unsigned long* shortest_distances_to(
         Graph *g, 
-        unsigned int destination);
+        unsigned int destination,
+        unsigned int *paths);
 
 /** @brief Find the maximum value in an array and return value and position
  *
@@ -141,11 +161,11 @@ unsigned long* find_longest(
  * @param distances an array containing values
  * @param n_verts the length of distances
  * TODO
- * @return an array of length two containing value and position of first maximal value in distances
  */
-unsigned int find_closest_terminal(
+void join_closest_terminal(
         unsigned long *distances, 
         int n_verts,
-        unsigned int *vertex_mask);
+        unsigned int *vertex_mask,
+        unsigned int *prev);
 
 #endif

@@ -24,10 +24,10 @@ valgrind5: ex5
 	valgrind ./ex5 ../data/small.gph
 
 run8: ex8
-	./ex8 ../data/small.gph
+	./ex8 ../data/steiner.gph
 
 valgrind8: ex8
-	valgrind ./ex8 ../data/small.gph
+	valgrind ./ex8 ../data/steiner.gph
 
 clean:
 	rm -f *.o ex5 ex8

@@ -14,6 +14,7 @@ void update_neighbor_info(
         bool *visited, 
         unsigned int *to_visit, 
         unsigned int *n_to_visit, 
+        unsigned int *prev,
         unsigned int curr) {
 
     for (int i = 0; i < g->n_neighbors[curr]; i++) {
@@ -24,6 +25,7 @@ void update_neighbor_info(
             unsigned int olddist = distances[n];
             if (olddist == -1 || newdist < olddist) {
                 distances[n] = newdist;
+                prev[n] = curr;
             }
             bool found = false;
             for (int k = 0; k < *n_to_visit; k++) {
@@ -45,20 +47,22 @@ void run_dijkstra(
         unsigned long *distances, 
         bool *visited, 
         unsigned int *to_visit,
-        unsigned int n_to_visit) {
+        unsigned int n_to_visit,
+        unsigned int *prev) {
 
     while (n_to_visit != 0) { 
         unsigned int curr; // curr is the index of the current vertex
         curr = get_next_destination(to_visit, n_to_visit, distances); 
         n_to_visit--;
         visited[curr] = true;
-        update_neighbor_info(g, distances, visited, to_visit, &n_to_visit, curr);
+        update_neighbor_info(g, distances, visited, to_visit, &n_to_visit, prev, curr);
     }
 }
 
-unsigned int add_closest_terminal(
+void add_closest_terminal(
         Graph *g, 
-        unsigned int *vertex_mask) {
+        unsigned int *vertex_mask,
+        unsigned int *prev) {
     // at i vertex_mask is 0 or 1 on vertices not contained in subgraph, 2 or 3 on vertices that are contained
 
     unsigned long *distances = malloc(sizeof(*distances) * g->n_verts);
@@ -84,51 +88,68 @@ unsigned int add_closest_terminal(
     //to_visit[0] = destination-1;
     unsigned int n_to_visit = 0;
 
-    for (int i = 0; i < g->n_verts; i++) {
-        printf("dist %d %li\n", i, distances[i]);
-    }
+    printf("Add closest terminal\n");
+    for (int i = 0; i < g->n_verts; i++) { printf("dist %d %li\n", i+1, distances[i]); }
+    for (int i = 0; i < g->n_verts; i++) { printf("vertex_mask %d\n", vertex_mask[i]); }
+    for (int i = 0; i < g->n_verts; i++) { printf("prev %u\n", prev[i]+1); }
 
     for (int i = 0; i < g->n_verts; i++) {
         if (vertex_mask[i] > 1) {
-            update_neighbor_info(g, distances, visited, to_visit, &n_to_visit, i);
+            update_neighbor_info(g, distances, visited, to_visit, &n_to_visit, prev, i);
         }
     }
-
-    for (int i = 0; i < g->n_verts; i++) {
-        printf("dist %d %li\n", i, distances[i]);
-    }
     
-    run_dijkstra(g, distances, visited, to_visit, n_to_visit);
+    run_dijkstra(g, distances, visited, to_visit, n_to_visit, prev);
 
+    join_closest_terminal(distances, g->n_verts, vertex_mask, prev);
+
+    for (int i = 0; i < g->n_verts; i++) { printf("dist %d %li\n", i+1, distances[i]); }
+    for (int i = 0; i < g->n_verts; i++) { printf("vertex_mask %d\n", vertex_mask[i]); }
+    for (int i = 0; i < g->n_verts; i++) { printf("prev %u\n", prev[i]+1); }
+}
+
+bool unconnected_terminals(
+        Graph *g, 
+        unsigned int *vertex_mask) {
     for (int i = 0; i < g->n_verts; i++) {
-        printf("dist %d %li\n", i, distances[i]);
+        if (vertex_mask[i] == 1) {
+            return true;
+        } 
     }
-
-    unsigned int result = find_closest_terminal(distances, g->n_verts, vertex_mask);
-    if (result == UINT_MAX) 
-        return 0;
-    else {
-        vertex_mask[result] = vertex_mask[result]+2;
-        return 1;
-    }
+    return false;
 }
 
 void steiner(
         Graph *g, 
         unsigned int *vertex_mask) {
-
     unsigned int count = 0;
-    while (count < g->n_verts) {
-        if (vertex_mask[count] == 0) {
-            vertex_mask[count] = 2;
+    unsigned int found = UINT_MAX;
+    for (int i = 0; i < g->n_verts; i++) {
+        if (vertex_mask[i] == 1) {
+            count = count+1;
+            if (found == UINT_MAX) {
+                vertex_mask[i] = 3;
+                found = i;
+            }
+        }
+        if(count > 1) {
             break;
         }
     }
+    if (count <=1) {
+        printf("Not enough terminals, provide at least two. Aborting.\n");
+        return;
+    }
+    assert(count>1); // want at least two terminals
+    assert(found >= 0 && found < g->n_verts);
 
-    unsigned int result = 1;
+    unsigned int *prev = malloc(sizeof(*prev) * g->n_verts); // holds indices of predecessor in steiner tree
+    for (int i = 0; i < g->n_verts; i++) {
+        prev[i] = UINT_MAX;
+    }
 
-    while (result > 0) { 
-        result = add_closest_terminal(g, vertex_mask);
+    while (unconnected_terminals(g, vertex_mask)) { 
+        add_closest_terminal(g, vertex_mask, prev);
     }
 }
 
@@ -266,13 +287,15 @@ void fill_neighbors(
 
 unsigned long* shortest_distances_to(
         Graph *g, 
-        unsigned int destination) {
+        unsigned int destination,
+        unsigned int *prev) {
 
     unsigned long *distances = malloc(sizeof(*distances) * g->n_verts);
     unsigned int *to_visit = malloc(sizeof(*to_visit) * g->n_verts); // holds indices of vertices in queue to visit
     for (int i = 0; i < g->n_verts; i++) {
         distances[i] = UINT_MAX;
         to_visit[i] = UINT_MAX;
+        prev[i] = UINT_MAX;
     }
     bool *visited = malloc(sizeof(*visited) * g->n_verts);
     memset(visited, 0, sizeof(*visited) * g->n_verts);
@@ -281,7 +304,7 @@ unsigned long* shortest_distances_to(
     to_visit[0] = destination-1;
     unsigned int n_to_visit = 1;
 
-    run_dijkstra(g, distances, visited, to_visit, n_to_visit);
+    run_dijkstra(g, distances, visited, to_visit, n_to_visit, prev);
     return distances;
 }
 
@@ -304,19 +327,25 @@ unsigned long* find_longest(
     return res;
 }
 
-unsigned int find_closest_terminal(
+void join_closest_terminal(
         unsigned long *distances, 
         int n_verts,
-        unsigned int *vertex_mask) {
+        unsigned int *vertex_mask,
+        unsigned int *prev) {
 
     unsigned long mind = ULONG_MAX;
     unsigned int minv = UINT_MAX; // index of vert
     for (int i = 0; i < n_verts; i++) {
         unsigned long dist = distances[i];
-        if (dist < mind && dist != 0 && vertex_mask[i]==0) {
+        if (dist < mind && dist != 0 && vertex_mask[i]==1) {
             mind = dist;
             minv = i;
         }
     }
-    return minv;
+    unsigned int walker = minv;
+    // minv holds closest neighboring terminal
+    while (vertex_mask[walker] < 2) {
+        vertex_mask[walker] = vertex_mask[walker]+2;
+        walker = prev[walker];
+    }
 }

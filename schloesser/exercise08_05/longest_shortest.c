@@ -35,10 +35,15 @@ int main(int argc, char **argv) {
 
 // ##### find lengths of shortest paths to destination
     // measure time
+    unsigned int *prev = malloc(sizeof(*prev) * g->n_verts);
     clock_t start = clock();
-    unsigned long *distances = shortest_distances_to(g, destination);
+    unsigned long *distances = shortest_distances_to(g, destination, prev);
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
+
+    for (int i = 0; i < g->n_verts; i++) {
+        printf("predecessor of %d is %d\n", i+1, prev[i]+1);
+    }
 
 // ##### free memory of graph
     free_graph(g);
@@ -46,7 +51,7 @@ int main(int argc, char **argv) {
 // ##### find longest amongst shortests
     unsigned long *res = find_longest(distances, g->n_verts);
     free(g);
-
+    free(prev);
     free(distances);
 
     printf("RESULT VERTEX %li\nRESULT DIST %li\nRESULT TIME %.12f\n", res[1]+1, res[0], seconds);
