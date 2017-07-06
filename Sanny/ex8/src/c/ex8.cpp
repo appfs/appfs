@@ -12,6 +12,7 @@
 #include <climits>
 #include <boost/program_options.hpp>
 #include <boost/timer/timer.hpp>
+#include "Steiner.h"
 
 // Constants
 namespace {
@@ -118,12 +119,13 @@ int main(int argn, char *argv[]) {
 	Weights weightsForShortestpath;
 
 	cout << "Computes Steiner problem...";
-	Dijkstra* d = new Dijkstra();
-	weightsForShortestpath = d->dijkstra(vertexCount, *edges, *weights, 1);
+	Steiner* s = new Steiner();
+	weightsForShortestpath = s->steiner(vertexCount, *edges, *weights);
 	cout << "done" << endl;
 
 	delete edges;
 	delete weights;
+	delete s;
 
 	return 0;
 }
