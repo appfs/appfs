@@ -1,0 +1,86 @@
+\hypertarget{namespaceex1}{}\section{ex1 Namespace Reference}
+\label{namespaceex1}\index{ex1@{ex1}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespaceex1_a47279d236411a393dd670d53f01534bb}{read\+\_\+file} (filename)
+\item 
+def \hyperlink{namespaceex1_a7225290cae6386f5a1114cfffdd698b6}{is\+\_\+valid} (line)
+\item 
+def \hyperlink{namespaceex1_aec8e1403e8459e0e3e246434aaf5e81c}{aggregate\+\_\+data} (line)
+\item 
+def \hyperlink{namespaceex1_a5ecbebd2f233a7ee96f79960cb134a56}{compute\+\_\+result} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{namespaceex1_a9fd19999831fcd0aa3118f06e5a60707}\label{namespaceex1_a9fd19999831fcd0aa3118f06e5a60707}} 
+int {\bfseries L\+I\+N\+E\+S\+\_\+\+C\+O\+U\+NT} = 0
+\item 
+\mbox{\Hypertarget{namespaceex1_a344c730293791bf47d02595658ff560c}\label{namespaceex1_a344c730293791bf47d02595658ff560c}} 
+int {\bfseries V\+A\+L\+I\+D\+\_\+\+V\+A\+L\+U\+E\+S\+\_\+\+L\+O\+C1} = 0
+\item 
+\mbox{\Hypertarget{namespaceex1_a10e04b6a3c68948cad47856db1ad6c08}\label{namespaceex1_a10e04b6a3c68948cad47856db1ad6c08}} 
+int {\bfseries L\+O\+G\+\_\+\+S\+U\+M\+\_\+\+L\+O\+C1} = 0
+\item 
+\mbox{\Hypertarget{namespaceex1_a255a91989c731cb54c32455ee4aeba4b}\label{namespaceex1_a255a91989c731cb54c32455ee4aeba4b}} 
+int {\bfseries V\+A\+L\+I\+D\+\_\+\+V\+A\+L\+U\+E\+S\+\_\+\+L\+O\+C2} = 0
+\item 
+\mbox{\Hypertarget{namespaceex1_a1cfc9265dbc682a8f1c749af7dfd8c6b}\label{namespaceex1_a1cfc9265dbc682a8f1c749af7dfd8c6b}} 
+int {\bfseries L\+O\+G\+\_\+\+S\+U\+M\+\_\+\+L\+O\+C2} = 0
+\item 
+\mbox{\Hypertarget{namespaceex1_a4e66d9120cff9135b642335398ed686a}\label{namespaceex1_a4e66d9120cff9135b642335398ed686a}} 
+def {\bfseries content} = \hyperlink{namespaceex1_a47279d236411a393dd670d53f01534bb}{read\+\_\+file}(sys.\+argv\mbox{[}-\/1\mbox{]})
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}@package docstring
+Author: Roxana Tapia Campos
+Module: Advanced practical programming skills for scientists
+SS17 - TU Berlin 
+Exercise 1: GeoMean
+\end{DoxyVerb}
+ 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{namespaceex1_aec8e1403e8459e0e3e246434aaf5e81c}\label{namespaceex1_aec8e1403e8459e0e3e246434aaf5e81c}} 
+\index{ex1@{ex1}!aggregate\+\_\+data@{aggregate\+\_\+data}}
+\index{aggregate\+\_\+data@{aggregate\+\_\+data}!ex1@{ex1}}
+\subsubsection{\texorpdfstring{aggregate\+\_\+data()}{aggregate\_data()}}
+{\footnotesize\ttfamily def ex1.\+aggregate\+\_\+data (\begin{DoxyParamCaption}\item[{}]{line }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Aggregates line counts and logarithm calculations for locations 1 and 2.
+Checks if location is valid.
+
+:param line: A validated input line from the file.
+\end{DoxyVerb}
+ \mbox{\Hypertarget{namespaceex1_a5ecbebd2f233a7ee96f79960cb134a56}\label{namespaceex1_a5ecbebd2f233a7ee96f79960cb134a56}} 
+\index{ex1@{ex1}!compute\+\_\+result@{compute\+\_\+result}}
+\index{compute\+\_\+result@{compute\+\_\+result}!ex1@{ex1}}
+\subsubsection{\texorpdfstring{compute\+\_\+result()}{compute\_result()}}
+{\footnotesize\ttfamily def ex1.\+compute\+\_\+result (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Computes the geometric mean for locations 1 and 2 and displays the formatted result. \end{DoxyVerb}
+ \mbox{\Hypertarget{namespaceex1_a7225290cae6386f5a1114cfffdd698b6}\label{namespaceex1_a7225290cae6386f5a1114cfffdd698b6}} 
+\index{ex1@{ex1}!is\+\_\+valid@{is\+\_\+valid}}
+\index{is\+\_\+valid@{is\+\_\+valid}!ex1@{ex1}}
+\subsubsection{\texorpdfstring{is\+\_\+valid()}{is\_valid()}}
+{\footnotesize\ttfamily def ex1.\+is\+\_\+valid (\begin{DoxyParamCaption}\item[{}]{line }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Returns True if the line is valid, False otherwise.
+
+:param line: A raw input line from the file.
+:rtype: Boolean
+\end{DoxyVerb}
+ \mbox{\Hypertarget{namespaceex1_a47279d236411a393dd670d53f01534bb}\label{namespaceex1_a47279d236411a393dd670d53f01534bb}} 
+\index{ex1@{ex1}!read\+\_\+file@{read\+\_\+file}}
+\index{read\+\_\+file@{read\+\_\+file}!ex1@{ex1}}
+\subsubsection{\texorpdfstring{read\+\_\+file()}{read\_file()}}
+{\footnotesize\ttfamily def ex1.\+read\+\_\+file (\begin{DoxyParamCaption}\item[{}]{filename }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Reads a file, counts its lines and yields each line.
+
+:param filename: A filename from command line.
+\end{DoxyVerb}
+ 

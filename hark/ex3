@@ -1,0 +1,4 @@
+#/usr/bin/bash
+python src/ex3/ex3.py
+
+#finally, this is taken from stackoverflow. but it's very short as python syntax indicates

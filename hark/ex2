@@ -1,0 +1,2 @@
+#/usr/bin/bash
+python src/ex2/ex2.py $1 $2 $3
