@@ -1,3 +1,6 @@
+ex5: ex5.c
+	gcc -std=c11 -O3 -g -Wall -Wextra -Wpedantic -LDFLAGS ex5.c -o ex5 -lm
+
 doc: ex5.c
 	doxygen -s -g ex5.docu
 	doxygen ex5.docu	
