@@ -38,6 +38,10 @@ unsigned int Steiner::steiner(unsigned int vertexCount, Edges& edges, Weights& w
 		return 0;
 	}
 	Primes* primes = getPrimes(vertexCount);
+
+	while(!primes->empty()){
+
+	}
 	return 1;
 }
 
