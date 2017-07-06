@@ -13,10 +13,12 @@
 using Edge = std::pair<int, int >;
 using Edges = std::vector<Edge >;
 using Weights = std::vector<double >;
+using Primes = std::vector<int >;
 
 class Steiner {
 private:
 	Dijkstra* dijsktra;
+	Primes* getPrimes(unsigned int vertexCount);
 
 public:
 	Steiner();
