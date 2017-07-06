@@ -316,15 +316,15 @@ void join_closest_terminal(
             minv = i;
         }
     }
-    /*printf("Joining terminal %d to subgraph via path: ", minv+1);
+//    printf("Joining terminal %d to subgraph via path: ", minv+1);
     unsigned int walker = minv;
     // minv holds closest neighboring terminal
     while (vertex_mask[walker] < 2) {
-        printf("%d ", walker+1);
+  //      printf("%d ", walker+1);
         vertex_mask[walker] = vertex_mask[walker]+2;
         walker = prev[walker];
     }
-    printf("\n");*/
+    //printf("\n");
 }
 
 unsigned long weight_of_tree(

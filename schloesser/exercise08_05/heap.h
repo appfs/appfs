@@ -9,7 +9,12 @@
 
 #include "misc.h"
 
-/** @brief Define type Graph
+/** @brief Define type Heap
+ *
+ * A heap is supposed to hold elements that are associated with a value 
+ * (or priority). 
+ * We use this heap as a min heap, providing the user with the element that has smallest value.
+ * The elements are supposed to be integer, distinct and between 0 and max.
  */
 typedef struct Heap {
     /** number of elements */
@@ -24,93 +29,93 @@ typedef struct Heap {
     unsigned long *val;
 } Heap;
 
-/** @brief 
+/** @brief Construct the heap.
  *
- * @param 
- * @return 
+ * Especially allocate memory for arrays.
+ * @param h a heap
+ * @param max the max size of the heap.
+ * @return modifies the heap h 
  */
 void construct_heap(
         Heap *h,
         unsigned int max);
 
-/** @brief 
+/** @brief Deletes the heap. 
  *
- * @param 
- * @return 
+ * Especially frees all the memory.
+ * @param h a heap
+ * @return modifies the heap h 
  */
 void delete_heap(
         Heap *h);
 
-/** @brief 
+/** @brief Adds an element to the heap.
  *
- * @param 
- * @return 
+ * @param h a heap
+ * @param vert an element that is to be added.
+ * @param value the value (or priority) of the element
+ * @return modifies the heap h 
  */
 void push(
         Heap *h,
         unsigned int vert,
         unsigned long value);
 
-/** @brief 
+/** @brief Deletes the element with minimal value and return it.
  *
- * @param 
- * @return 
+ * @param h a heap
+ * @return the element with smalles value, modifies the heap h 
  */
 unsigned int pop(
         Heap *h);
 
-/** @brief 
+/** @brief Decreases the value of an element.
  *
- * @param 
- * @return 
+ * @param h a heap
+ * @param vert the element whose value should be decreased
+ * @param value the new value of element. should be smaller than the current one.
+ * @return modifies the heap h 
  */
 void decrease_value(
         Heap *h,
         unsigned int vert,
         unsigned long value);
 
-/** @brief 
+/** @brief Bubble an element up.
  *
- * @param 
- * @return 
- */
-void push_or_decrease_value(
-        Heap *h,
-        unsigned int vert,
-        unsigned long value);
-
-/** @brief 
- *
- * @param 
- * @return 
+ * @param h a heap
+ * @param index the index of the element that is to be moved upwards to its right position.
+ * @return modifies the heap h 
  */
 void bubble_up(
         Heap *h,
         unsigned int index);
 
-/** @brief 
+/** @brief Bubble an element down.
  *
- * @param 
- * @return 
+ * @param h a heap
+ * @param index the index of the element that is to be moved downwards to a feasible position.
+ * @return modifies the heap h 
  */
 void bubble_down(
         Heap *h,
         unsigned int index);
 
-/** @brief 
+/** @brief Balances out a pair consisting of child and parent.
  *
- * @param 
- * @return 
+ * @param h a heap
+ * @param pos_child the index of the child.
+ * @param pos_parent the index of the parent.
+ * @return if the elements have been swapped, modifies the heap h 
  */
 bool balance_pair(
         Heap *h,
         unsigned int pos_child,
         unsigned int pos_parent);
 
-/** @brief 
+/** @brief Print out information about the heap
  *
- * @param 
- * @return 
+ * @param h a heap
  */
 void print_heap(
         Heap *h);

@@ -71,6 +71,7 @@ void decrease_value(
         unsigned long value) {
 
     assert(h->pos[vert] < h->n);
+    assert(h->val[vert] > value);
     h->val[vert] = value;
     bubble_up(h, h->pos[vert]);
 }
@@ -144,11 +145,10 @@ void print_heap(
 
     printf("heap has length %d\n", h->n);
     for (int i = 0; i < h->n; i++) { 
-        printf("heap %d %d %li %u\n", 
+        printf("pos %d: elem %d, val %li\n", 
                 i, 
                 h->heap[i]+1, 
-                h->val[h->heap[i]], 
-                h->pos[h->heap[i]]); 
+                h->val[h->heap[i]] ); 
     }
 
 }

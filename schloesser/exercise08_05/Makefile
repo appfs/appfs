@@ -1,7 +1,7 @@
 CFLAGS= -std=c11 -Wall -g -lm -fprofile-arcs -ftest-coverage -lgcov
 CC=gcc
 OBJ=graph.o misc.o heap.o
-HEADERS=graph.h misc.c heap.c
+HEADERS=graph.h misc.h heap.h
 
 default: ex8
 all: ex5 ex8
@@ -27,7 +27,7 @@ check5:
 	cppcheck graph.c graph.h longest_shortest.c 2> cppcheck5.txt
 
 coverage5: run5
-	gcov longest_shortest.c graph.c
+	gcov longest_shortest.c graph.c misc.c heap.c
 
 run8: ex8
 	./ex8 ../data/small.gph
@@ -36,7 +36,7 @@ valgrind8: ex8
 	valgrind ./ex8 ../data/small.gph
 
 coverage8: run8
-	gcov steiner.gph graph.c
+	gcov steiner.gph graph.c misc.c heap.c
 
 check8:
 	cppcheck graph.c graph.h steiner.c 2> cppcheck8.txt
