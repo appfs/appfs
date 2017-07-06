@@ -1,4 +1,4 @@
-Program for Steiner Tree Problem Heuristic
+Program for Steiner Tree Problem Heuristic, i use the boost algorithm for dijkstra and the primes from primes.utm.edu
 
 build: run "make" in your console
 run: run "./ex8 filename" in your console
