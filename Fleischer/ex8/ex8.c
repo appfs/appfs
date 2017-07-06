@@ -6,7 +6,7 @@
  *
  * @section DESCRIPTION
  *
- * This program parses a graph and parses the longest shortest path from any edge to edge with the index 1.
+ * This program findes a steiner tree with the given terminal vertices.
  */
 
 #define _GNU_SOURCE
@@ -89,10 +89,10 @@ void buildGraph(FILE *fp){
 }
 
 /**
-* Checks of two edges are connected.
+* Checks of two nodes are connected.
 *
-* @param The two edges, which the method has to check if they are connected
-* @return If two certain edges are connected. 1 if yes, 0 if not
+* @param The two nodes, which the method has to check if they are connected
+* @return If two certain nodes are connected. 1 if yes, 0 if not
 */
 char extPath(size_t a, size_t b){
 	for (size_t i= 0; i < vertexNo[a]; ++i){
