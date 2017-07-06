@@ -1,0 +1,13 @@
+*.swp
+main
+
+data*
+
+html*
+latex*
+
+ex5
+ex8
+
+*check*.txt
+*.gc*
