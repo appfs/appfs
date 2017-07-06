@@ -1,7 +1,7 @@
 CFLAGS= -std=c11 -Wall -g -lm -fprofile-arcs -ftest-coverage -lgcov
 CC=gcc
-OBJ=graph.o
-HEADERS=graph.h
+OBJ=graph.o misc.o heap.o
+HEADERS=graph.h misc.c heap.c
 
 default: ex8
 all: ex5 ex8
@@ -12,7 +12,7 @@ all: ex5 ex8
 	$(CC) $(CFLAGS) -c $< -o $@
 
 ex5: $(OBJ)
-	$(CC) $(CFLAGS) -o ex5 longest_shortest.c $^
+	$(CC) -o ex5 longest_shortest.c $^ $(CFLAGS)
 
 ex8: $(OBJ)
 	$(CC) -o ex8 steiner.c $^ $(CFLAGS)

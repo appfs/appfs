@@ -7,19 +7,11 @@
  * @brief Header file of graph.c
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <assert.h>
+#include "misc.h"
 
 /** @brief define the maximum length of a number to be read from a string
   */
 #define LEN_NUMBER 30
-
-/** @brief Define bool type
-  */
-typedef enum { false, true } bool;
 
 /** @brief Define type Graph
  */
