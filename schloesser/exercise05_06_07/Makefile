@@ -3,17 +3,17 @@
 default: run ;
 
 run:
-	python3 ex5/ex5.py ../data/b15.gph
+	python3 ex5/ex5.py ../data/small.gph
 
 doc:
 	doxygen dox-conf
 
 coverage:
-	coverage3 run --omit=../appfs/* ex5/ex5.py ../data/b15.gph
+	coverage3 run --omit=../appfs/* ex5/ex5.py ../data/small.gph
 	coverage3 report -m
 
 coverage2:
-	python3-coverage run --omit=../appfs/* ex5/ex5.py ../data/b15.gph
+	python3-coverage run --omit=../appfs/* ex5/ex5.py ../data/small.gph
 	python3-coverage report -m
 
 check:

@@ -8,6 +8,7 @@
  */
 
 #include "misc.h"
+#include "heap.h"
 
 /** @brief define the maximum length of a number to be read from a string
   */
@@ -33,10 +34,8 @@ typedef struct GraphSearch {
     unsigned long *distances; 
     /** an array of bools indicating the visited status */
     bool *visited; 
-    /** an array of vertices that are still to visit */
-    unsigned int *to_visit; 
-    /** the size of to_visit */
-    unsigned int n_to_visit; 
+    /** a heap keeping track of vertices that are still to visit */
+    Heap *to_visit; 
     /** an array containing the predecessors of vertices. */
     unsigned int *prev; 
 } GraphSearch;
@@ -101,18 +100,6 @@ unsigned int* steiner(
  */
 void free_graph(
         Graph *g);
-
-/** @brief Get the closest unvisited vertex.
- *
- * @param to_visit contains elements which still have to be visited
- * @param n_to_visit number of elements in 'to_visit'
- * @param distances the distances 
- * @return the element from 'to_visit' for which 'distances' has the smallest value
- */
-unsigned int get_next_destination(
-        unsigned int *to_visit, 
-        unsigned int n_to_visit, 
-        unsigned long *distances);
 
 /** @brief Read numbers from chararry.
  *

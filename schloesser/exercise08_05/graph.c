@@ -21,22 +21,16 @@ void update_neighbor_info(
         unsigned int n = gs->g->neighbors[curr][2*i] - 1; // n is index of neighbor vertex
         unsigned int w = gs->g->neighbors[curr][(2*i)+1]; // w is weight of edge from curr to n
         if (!gs->visited[n]) {
-            unsigned int newdist = gs->distances[curr] + w;
-            unsigned int olddist = gs->distances[n];
-            if (olddist == -1 || newdist < olddist) {
+            unsigned long newdist = gs->distances[curr] + w;
+            unsigned long olddist = gs->distances[n];
+            if (newdist < olddist) {
                 gs->distances[n] = newdist;
                 gs->prev[n] = curr;
-            }
-            bool found = false;
-            for (int k = 0; k < gs->n_to_visit; k++) {
-                if (gs->to_visit[k] == n) {
-                    found = true;
+                if(olddist < ULONG_MAX) {
+                    decrease_value(gs->to_visit, n, gs->distances[n]);
+                } else {
+                    push(gs->to_visit, n, gs->distances[n]);
                 }
-            }
-            if (!found) {
-                gs->to_visit[gs->n_to_visit] = n;
-                gs->n_to_visit = gs->n_to_visit+1;
-                assert(gs->n_to_visit <= gs->g->n_verts);
             }
         }
     }
@@ -45,10 +39,9 @@ void update_neighbor_info(
 void run_dijkstra(
         GraphSearch *gs) {
 
-    while (gs->n_to_visit != 0) { 
+    while (gs->to_visit->n != 0) { 
         unsigned int curr; // curr is the index of the current vertex
-        curr = get_next_destination(gs->to_visit, gs->n_to_visit, gs->distances); 
-        gs->n_to_visit--;
+        curr = pop(gs->to_visit);
         gs->visited[curr] = true;
         update_neighbor_info(gs, curr);
     }
@@ -61,7 +54,6 @@ void add_closest_terminal(
     // at i vertex_mask is 0 or 1 on vertices not contained in subgraph, 2 or 3 on vertices that are contained
 
     unsigned long *distances = malloc(sizeof(*distances) * g->n_verts);
-    unsigned int *to_visit = malloc(sizeof(*to_visit) * g->n_verts); // holds indices of vertices in queue to visit
     bool *visited = malloc(sizeof(*visited) * g->n_verts);
     // copy vertex_mask to mask (all visited and dist 0)
     for (int i = 0; i < g->n_verts; i++) {
@@ -72,20 +64,19 @@ void add_closest_terminal(
             visited[i] = true;
         } else {
             // distances are inf on complement of subgraph
-            distances[i] = UINT_MAX;
+            distances[i] = ULONG_MAX;
             // on complement of subgraph everything is unvisited
             visited[i] = false;
         }
-        // init to_visit. nothing on this list yet
-        to_visit[i] = UINT_MAX;
     }
 
     GraphSearch *gs = malloc(sizeof(*gs));
     gs->g = g;
     gs->distances = distances;
     gs->visited = visited;
-    gs->to_visit = to_visit;
-    gs->n_to_visit = 0;
+    Heap *to_visit = malloc(sizeof(*to_visit));
+    gs->to_visit = to_visit;; 
+    construct_heap(gs->to_visit, g->n_verts);
     gs->prev = prev;
 
     for (int i = 0; i < g->n_verts; i++) {
@@ -99,7 +90,8 @@ void add_closest_terminal(
     join_closest_terminal(distances, g->n_verts, vertex_mask, prev);
 
     free(distances);
-    free(to_visit);
+    delete_heap(gs->to_visit);
+    free(gs->to_visit);
     free(visited);
     free(gs);
 }
@@ -154,27 +146,6 @@ void free_graph(
     }
     free(g->neighbors);
     free(g->n_neighbors);
-}
-
-unsigned int get_next_destination(
-        unsigned int *to_visit, 
-        unsigned int n_to_visit, 
-        unsigned long *distances) {
-    
-    unsigned int mind = UINT_MAX;
-    unsigned int minv = 0;
-    unsigned int ind = 0;
-    for (int i = 0; i < n_to_visit; i++) {
-        unsigned int v = to_visit[i];
-        unsigned long d = distances[v];
-        if (d < mind) {
-            mind = d;
-            minv = v;
-            ind = i;
-        }
-    }
-    to_visit[ind] = to_visit[n_to_visit-1];
-    return minv;
 }
 
 void read_numbers(
@@ -284,29 +255,28 @@ unsigned long* shortest_distances_to(
         unsigned int *prev) {
 
     unsigned long *distances = malloc(sizeof(*distances) * g->n_verts);
-    unsigned int *to_visit = malloc(sizeof(*to_visit) * g->n_verts); // holds indices of vertices in queue to visit
     for (int i = 0; i < g->n_verts; i++) {
-        distances[i] = UINT_MAX;
-        to_visit[i] = UINT_MAX;
+        distances[i] = ULONG_MAX;
         prev[i] = UINT_MAX;
     }
     bool *visited = malloc(sizeof(*visited) * g->n_verts);
     memset(visited, 0, sizeof(*visited) * g->n_verts);
 
-    distances[destination-1] = 0;
-    to_visit[0] = destination-1;
-
     GraphSearch *gs = malloc(sizeof(*gs));
     gs->g = g;
     gs->distances = distances;
     gs->visited = visited;
-    gs->to_visit = to_visit;
-    gs->n_to_visit = 1;
+    Heap *to_visit = malloc(sizeof(*to_visit));
+    gs->to_visit = to_visit;; 
+    construct_heap(gs->to_visit, g->n_verts);
     gs->prev = prev;
 
+    distances[destination-1] = 0;
+    push(gs->to_visit, destination-1, 0);
     run_dijkstra(gs);
     
-    free(to_visit);
+    delete_heap(gs->to_visit);
+    free(gs->to_visit);
     free(visited);
     free(gs);
     return distances;
@@ -346,7 +316,7 @@ void join_closest_terminal(
             minv = i;
         }
     }
-    printf("Joining terminal %d to subgraph via path: ", minv+1);
+    /*printf("Joining terminal %d to subgraph via path: ", minv+1);
     unsigned int walker = minv;
     // minv holds closest neighboring terminal
     while (vertex_mask[walker] < 2) {
@@ -354,7 +324,7 @@ void join_closest_terminal(
         vertex_mask[walker] = vertex_mask[walker]+2;
         walker = prev[walker];
     }
-    printf("\n");
+    printf("\n");*/
 }
 
 unsigned long weight_of_tree(

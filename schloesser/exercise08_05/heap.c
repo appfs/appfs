@@ -4,6 +4,7 @@
  * @brief Short c file containing min heap functionality
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include "misc.h"
@@ -41,13 +42,19 @@ void push(
 
     h->n = h->n + 1;
 
-    bubble_up(h, vert);
+    bubble_up(h, h->n -1);
 }
 
 unsigned int pop(
         Heap *h) {
 
+    assert(h->n > 0);
     unsigned int root = h->heap[0];
+    if(h->n == 1) {
+        h->n = 0;
+        return root;
+    }
+
     unsigned int last_elem = h->heap[h->n - 1];
     h->heap[0] = last_elem;
     h->pos[last_elem] = 0;
@@ -63,16 +70,16 @@ void decrease_value(
         unsigned int vert,
         unsigned long value) {
 
-    assert(vert < h->n);
+    assert(h->pos[vert] < h->n);
     h->val[vert] = value;
-    bubble_up(h, vert);
+    bubble_up(h, h->pos[vert]);
 }
 
 void bubble_up(
         Heap *h, 
         unsigned int index) {
 
-    assert(index<h->n);
+    assert(index < h->n);
     unsigned int pos_child = index;
     bool result = true;
 
@@ -89,24 +96,28 @@ void bubble_down(
         Heap *h, 
         unsigned int index) {
 
-    assert(index<h->n);
+    assert(index < h->n);
     unsigned int pos_parent = index;
     bool result = true;
 
     while (result && h->n > 2*pos_parent + 1) {
         unsigned int pos_child1 = 2*pos_parent + 1;
         unsigned int pos_child2 = 2*pos_parent + 2;
+        unsigned long val_child1 = h->val[h->heap[pos_child1]];
+        unsigned long val_child2 = h->val[h->heap[pos_child2]];
+        unsigned long val_parent = h->val[h->heap[pos_parent]];
+
+        bool gt_both = (val_parent > val_child1 && val_parent > val_child2);
+        bool only_gt_child2 = (val_parent > val_child2 && val_parent <= val_child1);
+        bool child1_gt_child2 = (val_child1 > val_child2);
         
-        unsigned int pos_child;
-        if (h->n > pos_child2 && h->val[h->heap[pos_child1]] > h->val[h->heap[pos_child2]]) {
-            pos_child = pos_child1;
+        if ((gt_both && child1_gt_child2) || only_gt_child2) { 
+            result = balance_pair(h, pos_child2, pos_parent);
+            pos_parent = pos_child2;
         } else {
-            pos_child = pos_child2;
+            result = balance_pair(h, pos_child1, pos_parent);
+            pos_parent = pos_child1;
         }
-
-        balance_pair(h, pos_child, pos_parent);
-
-        pos_parent = pos_child;
     }
 }
 
@@ -126,4 +137,18 @@ bool balance_pair(
     } else {
         return false;
     }
+}
+
+void print_heap(
+        Heap *h) {
+
+    printf("heap has length %d\n", h->n);
+    for (int i = 0; i < h->n; i++) { 
+        printf("heap %d %d %li %u\n", 
+                i, 
+                h->heap[i]+1, 
+                h->val[h->heap[i]], 
+                h->pos[h->heap[i]]); 
+    }
+
 }

@@ -48,7 +48,7 @@ void delete_heap(
  */
 void push(
         Heap *h,
-        unsigned int index,
+        unsigned int vert,
         unsigned long value);
 
 /** @brief 
@@ -66,7 +66,17 @@ unsigned int pop(
  */
 void decrease_value(
         Heap *h,
-        unsigned int index,
+        unsigned int vert,
+        unsigned long value);
+
+/** @brief 
+ *
+ * @param 
+ * @return 
+ */
+void push_or_decrease_value(
+        Heap *h,
+        unsigned int vert,
         unsigned long value);
 
 /** @brief 
@@ -96,5 +106,13 @@ bool balance_pair(
         Heap *h,
         unsigned int pos_child,
         unsigned int pos_parent);
+
+/** @brief 
+ *
+ * @param 
+ * @return 
+ */
+void print_heap(
+        Heap *h);
 
 #endif 

@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     RES = GRAPH.get_longest_shortest_to(VERT)
 
-    print("RESULT VERTEX {}\n\nRESULT DIST {}".format(RES[0], RES[1]))
+    print("RESULT VERTEX {}\nRESULT DIST {}".format(RES[0], RES[1]))
 
     T1CLOCK = time.perf_counter()
     T1TIME = time.process_time()
