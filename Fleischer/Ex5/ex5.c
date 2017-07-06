@@ -22,10 +22,10 @@
 #define MAX_LINE_LEN 512
 
 /**
-* This program parses a graph and parses the longest shortest path from any edge to edge with the index 1. The matrix, which is generated is of half size.
+* This program parses a graph and parses the longest shortest path from any node to node with the index 1. The matrix, which is generated is of half size.
 *
 * @param live at the call of the programm
-* @return The longest shortest path from any edge to edge with the index 1.
+* @return The longest shortest path from any node to node with the index 1.
 */
 
 int main(int argc, char *argv[]){
