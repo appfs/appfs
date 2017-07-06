@@ -3,7 +3,7 @@ import algorithm.*;
 import io.*;
 import java.lang.management.*;
 
-/** @brief Main class that reads in a file of the specified format and calculates the
+/** Main class that reads in a file of the specified format and calculates the
  * furthest vertex from vertex 1 and its distance.
  * 
  * Reads a file of the format:
@@ -25,7 +25,7 @@ public class ex5 {
     
     /**
      * Main method
-     * @param args String array with algorithm mode (0 or 1) as first entry and path to file as second entry
+     * @param args String array with algorithm mode (-m1 or -m2) as first entry and path to file as second entry
      */
     public static void main(String[] args){
         long startWallClockTimeNano = System.nanoTime();
@@ -75,7 +75,7 @@ public class ex5 {
             path = path + pathSplit[i] + "/";
         }
         path = path + "results/";
-        Writer.writeResults(results, path, fileName);
+        Writer.write(results, path, fileName);
     }
     
     /** Round to three decimal places */

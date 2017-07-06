@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 import datastructure.Node;
 
+/**
+ * Algorithm class representing the Steiner tree heuristic algorithm.
+ * @author Merlin Viernickel
+ * @date July 05 2017 
+ */
 public class SteinerTreeHeuristic {
     
     private Node[] nodes;
@@ -11,6 +16,11 @@ public class SteinerTreeHeuristic {
     private ArrayList<Node> tree;
     public int objectiveValue;
     
+    /**
+     * Constructor
+     * @param nodes Nodes of the graph
+     * @param terminals Terminals of the Steiner tree
+     */
     public SteinerTreeHeuristic(Node[] nodes, Node[] terminals){
         this.nodes = nodes;
         this.terminals = terminals;
@@ -18,6 +28,9 @@ public class SteinerTreeHeuristic {
         this.objectiveValue = 0;
     }
     
+    /**
+     * Calculates a Steiner tree using the heuristic algorithm.
+     */
     public void calcSteinerTree(){
         Node dockingNode;
         Node[] shortestPath;
@@ -44,6 +57,9 @@ public class SteinerTreeHeuristic {
         }
     }
     
+    /**
+     * Resets the distance and predecessor values of all nodes in the graph.
+     */
     private void resetNodes(){
         for(int i=0; i<nodes.length; i++){
             nodes[i].distance = Integer.MAX_VALUE;

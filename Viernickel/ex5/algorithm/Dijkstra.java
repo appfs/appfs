@@ -7,7 +7,7 @@ import java.util.PriorityQueue;
 import java.util.Stack;
 
 /**
- * Main algorithm class representing te Dijkstra algorithm.
+ * Main algorithm class representing the Dijkstra algorithm.
  * Assumes first entry of the nodes array as starting node.
  * @author Merlin Viernickel
  * @date June 08 2017
@@ -100,6 +100,11 @@ public class Dijkstra {
         return highestDistNode;
     }
     
+    /**
+     * Gets the node of lowest distance from a given tree
+     * @param tree Tree to minimize distance from
+     * @return Node of tree object with lowest distance
+     */
     public Node getLowestDistNodeToSteinerTree(ArrayList<Node> tree){
         assert(tree != null);
         
@@ -113,6 +118,11 @@ public class Dijkstra {
         return lowestDistNode;
     }
     
+    /**
+     * Gets the shortest path from the starting node to the destination node.
+     * @param destinationNode Destination node of the shortest path
+     * @return Array of nodes contained in the shortest path
+     */
     public Node[] getShortestPath(Node destinationNode){
         Stack<Node> stack = new Stack<>();
         Node currNode = destinationNode;

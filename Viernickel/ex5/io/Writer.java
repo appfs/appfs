@@ -4,9 +4,20 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Output class containing methods to write results to files
+ * @author Merlin Viernickel
+ * @date July 05 2017
+ */
 public class Writer {
     
-    public static void writeResults(String[] lines, String path, String fileName){
+    /**
+     * Writes given lines to a file of specified path
+     * @param lines Array of Strings containing the lines to be written
+     * @param path Path to the file
+     * @param fileName Name of the file
+     */
+    public static void write(String[] lines, String path, String fileName){
         PrintWriter writer = null;
         
         /** Set up writers */

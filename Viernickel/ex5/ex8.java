@@ -6,11 +6,31 @@ import datastructure.Node;
 import algorithm.*;
 import io.Reader;
 
+
+/** Main class that reads in a file of the specified format and calculates a
+ *  Steiner tree using all prime IDs as terminals.
+ * Reads a file of the format:
+ * nVertices nEdges
+ * headId tailId weight
+ * headId tailId weight
+ *          .
+ *          .
+ *          .
+ * 
+ * Prints the objective value of the resulting Steiner tree.
+ * 
+ * @author Merlin Viernickel
+ * @date July 06 2017
+ */
 public class ex8 {
     
     private static final String MYALGORITHM = "-m1";
     private static final String LIBALGORITHM = "-m2";
     
+    /**
+     * Main method
+     * @param args String array with algorithm mode (-m1 or -m2) as first entry and path to file as second entry
+     */
     public static void main(String[] args){
         long startWallClockTimeNano = System.nanoTime();
         long startUserTimeNano   = getUserTime();
@@ -66,6 +86,11 @@ public class ex8 {
             bean.getCurrentThreadUserTime() : 0L;
     }
     
+    /**
+     * Calculates all primes up to a given number and returns them in an array.
+     * @param n The number up to which primes are calculated
+     * @return Array of prime numbers
+     */
     public static Integer[] getPrimesUpToN(int n){
         assert(n>0);
         
@@ -84,6 +109,11 @@ public class ex8 {
         return primeArray;
     }
     
+    /**
+     * Checks whether a certain number is prime.
+     * @param n The number to check
+     * @return True if number is prime. False if not.
+     */
     public static boolean isPrime(int n){
         assert(n>0);
         
