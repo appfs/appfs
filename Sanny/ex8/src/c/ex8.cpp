@@ -34,6 +34,7 @@ using Edge = std::pair<int, int >;
 using Edges = std::vector<Edge >;
 using Weights = std::vector<double >;
 
+/** Parsing the arguments given via command line */
 po::variables_map parseCommandLine(po::options_description desc, int argn,
 		char* argv[]) {
 	desc.add_options()//
