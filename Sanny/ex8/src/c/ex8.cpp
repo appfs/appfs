@@ -30,10 +30,6 @@ using std::string;
 // declaring types
 namespace po = boost::program_options;
 
-using Edge = std::pair<int, int >;
-using Edges = std::vector<Edge >;
-using Weights = std::vector<double >;
-
 /** Parsing the arguments given via command line */
 po::variables_map parseCommandLine(po::options_description desc, int argn,
 		char* argv[]) {
@@ -117,12 +113,18 @@ int main(int argn, char *argv[]) {
 	}
 	cout << "done" << endl;
 
-	Weights weightsForShortestpath;
-
-	cout << "Computes Steiner problem...";
+	cout << "Solves Steiner problem...";
 	Steiner* s = new Steiner();
-	weightsForShortestpath = s->steiner(vertexCount, *edges, *weights);
+	EdgesWithWeight edgesWithWeightMap = s->steiner(vertexCount, *edges, *weights, 2);
 	cout << "done" << endl;
+
+	cout << "Objective value: " << edgesWithWeightMap.second << endl;
+
+	cout << "Edges:" << endl;
+	for(unsigned int i = 0; i < edgesWithWeightMap.first.size(); i++){
+		Edge edge = edgesWithWeightMap.first[i];
+		cout << edge.first << " " << edge.second << endl;
+	}
 
 	delete edges;
 	delete weights;

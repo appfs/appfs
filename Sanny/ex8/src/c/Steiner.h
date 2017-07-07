@@ -8,22 +8,24 @@
 #ifndef C_STEINER_H_
 #define C_STEINER_H_
 
+#include <algorithm>
 #include "Dijkstra.h"
 
-using Edge = std::pair<int, int >;
-using Edges = std::vector<Edge >;
-using Weights = std::vector<double >;
+using EdgesWithWeight = std::pair<std::vector<Edge >, int >;
 using Primes = std::vector<int >;
+using Nodes = std::vector<int >;
 
 class Steiner {
 private:
 	Dijkstra* dijsktra;
-	Primes* getPrimes(unsigned int vertexCount);
+	Primes getPrimes(unsigned int vertexCount);
+	void addToSteiner(Edge edge, unsigned int i,
+			EdgesWithWeight* edgesAndWeight, Weights& weights);
 
 public:
 	Steiner();
 	virtual ~Steiner();
-	unsigned int steiner(unsigned int vertexCount, Edges& edges, Weights& weights);
+	EdgesWithWeight steiner(int vertexCount, Edges& edges, Weights& weights, int startnode);
 };
 
 #endif /* C_STEINER_H_ */

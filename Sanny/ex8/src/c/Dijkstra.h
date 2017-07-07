@@ -15,6 +15,7 @@
 using Edge = std::pair<int, int >;
 using Edges = std::vector<Edge >;
 using Weights = std::vector<double >;
+using WeightsAndPrenodeMap = std::vector<std::pair<double, int >>;
 using EdgeWithWeight = std::pair<int, double >;
 using EdgeWithWeightList = std::vector<EdgeWithWeight >;
 using NodeToEdgeMap = std::vector<EdgeWithWeightList >;
@@ -30,7 +31,7 @@ class Dijkstra {
 public:
 	Dijkstra();
 	virtual ~Dijkstra();
-	Weights dijkstra(unsigned int vertexCount, Edges& edges, Weights& weights, unsigned int source);
+	WeightsAndPrenodeMap dijkstra(int vertexCount, Edges& edges, Weights& weights, int source);
 };
 
 #endif /* C_DIJKSTRA_H_ */
