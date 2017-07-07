@@ -34,7 +34,8 @@ namespace po = boost::program_options;
 po::variables_map parseCommandLine(po::options_description desc, int argn,
 		char* argv[]) {
 	desc.add_options()//
-			("help", "produce help message")//
+			("help,h", "produce help message")//
+			("start_node,sn", "node, where to start")//
 			("input-file", po::value<string>(), "input file");
 	po::positional_options_description p;
 	p.add("input-file", -1);
@@ -66,6 +67,14 @@ int main(int argn, char *argv[]) {
 	if(vm.count("input-file") == 0){
 		cerr << "No input-file was given!" << endl;
 		return 1;
+	}
+
+	int startnode;
+	if(vm.count("start_node") == 0){
+		cout << "using default startnode 2" << endl;
+		startnode = 2;
+	} else {
+		startnode = vm["start_node"].as<int >();
 	}
 
 	string filename = vm["input-file"].as<string >();
@@ -115,7 +124,7 @@ int main(int argn, char *argv[]) {
 
 	cout << "Solves Steiner problem...";
 	Steiner* s = new Steiner();
-	EdgesWithWeight edgesWithWeightMap = s->steiner(vertexCount, *edges, *weights, 2);
+	EdgesWithWeight edgesWithWeightMap = s->steiner(vertexCount, *edges, *weights, startnode);
 	cout << "done" << endl;
 
 	cout << "Objective value: " << edgesWithWeightMap.second << endl;
