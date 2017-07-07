@@ -1,0 +1,395 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/graph/detail/d_ary_heap.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">boost/graph/detail</a> - d_ary_heap.hpp<span style="font-size: 80%;"> (source / <a href="d_ary_heap.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">55</td>
+            <td class="headerCovTableEntry">55</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : //</a>
+<span class="lineNum">       2 </span>            : //=======================================================================
+<span class="lineNum">       3 </span>            : // Copyright 2009 Trustees of Indiana University
+<span class="lineNum">       4 </span>            : // Authors: Jeremiah J. Willcock, Andrew Lumsdaine
+<span class="lineNum">       5 </span>            : //
+<span class="lineNum">       6 </span>            : // Distributed under the Boost Software License, Version 1.0. (See
+<span class="lineNum">       7 </span>            : // accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       8 </span>            : // http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       9 </span>            : //=======================================================================
+<span class="lineNum">      10 </span>            : //
+<span class="lineNum">      11 </span>            : #ifndef BOOST_D_ARY_HEAP_HPP
+<span class="lineNum">      12 </span>            : #define BOOST_D_ARY_HEAP_HPP
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      15 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">      16 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">      17 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/assert.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/static_assert.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/shared_array.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/property_map/property_map.hpp&gt;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : // WARNING: it is not safe to copy a d_ary_heap_indirect and then modify one of
+<span class="lineNum">      24 </span>            : // the copies.  The class is required to be copyable so it can be passed around
+<span class="lineNum">      25 </span>            : // (without move support from C++11), but it deep-copies the heap contents yet
+<span class="lineNum">      26 </span>            : // shallow-copies the index_in_heap_map.
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : namespace boost {
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            :   // Swap two elements in a property map without assuming they model
+<span class="lineNum">      31 </span>            :   // LvaluePropertyMap -- currently not used
+<span class="lineNum">      32 </span>            :   template &lt;typename PropMap&gt;
+<span class="lineNum">      33 </span>            :   inline void property_map_swap(
+<span class="lineNum">      34 </span>            :          PropMap prop_map,
+<span class="lineNum">      35 </span>            :          const typename boost::property_traits&lt;PropMap&gt;::key_type&amp; ka, 
+<span class="lineNum">      36 </span>            :          const typename boost::property_traits&lt;PropMap&gt;::key_type&amp; kb) {
+<span class="lineNum">      37 </span>            :     typename boost::property_traits&lt;PropMap&gt;::value_type va = get(prop_map, ka);
+<span class="lineNum">      38 </span>            :     put(prop_map, ka, get(prop_map, kb));
+<span class="lineNum">      39 </span>            :     put(prop_map, kb, va);
+<span class="lineNum">      40 </span>            :   }
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            :   namespace detail {
+<span class="lineNum">      43 </span>            :     template &lt;typename Value&gt;
+<span class="lineNum">      44 </span>            :     class fixed_max_size_vector {
+<span class="lineNum">      45 </span>            :       boost::shared_array&lt;Value&gt; m_data;
+<span class="lineNum">      46 </span>            :       std::size_t m_size;
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :       public:
+<span class="lineNum">      49 </span>            :       typedef std::size_t size_type;
+<span class="lineNum">      50 </span>            :       fixed_max_size_vector(std::size_t max_size)
+<span class="lineNum">      51 </span>            :         : m_data(new Value[max_size]), m_size(0) {}
+<span class="lineNum">      52 </span>            :       std::size_t size() const {return m_size;}
+<span class="lineNum">      53 </span>            :       bool empty() const {return m_size == 0;}
+<span class="lineNum">      54 </span>            :       Value&amp; operator[](std::size_t i) {return m_data[i];}
+<span class="lineNum">      55 </span>            :       const Value&amp; operator[](std::size_t i) const {return m_data[i];}
+<span class="lineNum">      56 </span>            :       void push_back(Value v) {m_data[m_size++] = v;}
+<span class="lineNum">      57 </span>            :       void pop_back() {--m_size;}
+<span class="lineNum">      58 </span>            :       Value&amp; back() {return m_data[m_size - 1];}
+<span class="lineNum">      59 </span>            :       const Value&amp; back() const {return m_data[m_size - 1];}
+<span class="lineNum">      60 </span>            :     };
+<span class="lineNum">      61 </span>            :   }
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :   // D-ary heap using an indirect compare operator (use identity_property_map
+<span class="lineNum">      64 </span>            :   // as DistanceMap to get a direct compare operator).  This heap appears to be
+<span class="lineNum">      65 </span>            :   // commonly used for Dijkstra's algorithm for its good practical performance
+<span class="lineNum">      66 </span>            :   // on some platforms; asymptotically, it has an O(lg N) decrease-key
+<span class="lineNum">      67 </span>            :   // operation while that can be done in constant time on a relaxed heap.  The
+<span class="lineNum">      68 </span>            :   // implementation is mostly based on the binary heap page on Wikipedia and
+<span class="lineNum">      69 </span>            :   // online sources that state that the operations are the same for d-ary
+<span class="lineNum">      70 </span>            :   // heaps.  This code is not based on the old Boost d-ary heap code.
+<span class="lineNum">      71 </span>            :   //
+<span class="lineNum">      72 </span>            :   // - d_ary_heap_indirect is a model of UpdatableQueue as is needed for
+<span class="lineNum">      73 </span>            :   //   dijkstra_shortest_paths.
+<span class="lineNum">      74 </span>            :   //
+<span class="lineNum">      75 </span>            :   // - Value must model Assignable.
+<span class="lineNum">      76 </span>            :   // - Arity must be at least 2 (optimal value appears to be 4, both in my and
+<span class="lineNum">      77 </span>            :   //   third-party experiments).
+<span class="lineNum">      78 </span>            :   // - IndexInHeapMap must be a ReadWritePropertyMap from Value to
+<span class="lineNum">      79 </span>            :   //   Container::size_type (to store the index of each stored value within the
+<span class="lineNum">      80 </span>            :   //   heap for decrease-key aka update).
+<span class="lineNum">      81 </span>            :   // - DistanceMap must be a ReadablePropertyMap from Value to something
+<span class="lineNum">      82 </span>            :   //   (typedef'ed as distance_type).
+<span class="lineNum">      83 </span>            :   // - Compare must be a BinaryPredicate used as a less-than operator on
+<span class="lineNum">      84 </span>            :   //   distance_type.
+<span class="lineNum">      85 </span>            :   // - Container must be a random-access, contiguous container (in practice,
+<span class="lineNum">      86 </span>            :   //   the operations used probably require that it is std::vector&lt;Value&gt;).
+<span class="lineNum">      87 </span>            :   //
+<span class="lineNum">      88 </span>            :   template &lt;typename Value,
+<span class="lineNum">      89 </span>            :             std::size_t Arity,
+<span class="lineNum">      90 </span>            :             typename IndexInHeapPropertyMap,
+<span class="lineNum">      91 </span>            :             typename DistanceMap,
+<span class="lineNum">      92 </span>            :             typename Compare = std::less&lt;Value&gt;,
+<span class="lineNum">      93 </span>            :             typename Container = std::vector&lt;Value&gt; &gt;
+<span class="lineNum">      94 </span><span class="lineCov">          1 :   class d_ary_heap_indirect {</span>
+<span class="lineNum">      95 </span>            :     BOOST_STATIC_ASSERT (Arity &gt;= 2);
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            :     public:
+<span class="lineNum">      98 </span>            :     typedef typename Container::size_type size_type;
+<span class="lineNum">      99 </span>            :     typedef Value value_type;
+<span class="lineNum">     100 </span>            :     typedef typename boost::property_traits&lt;DistanceMap&gt;::value_type key_type;
+<span class="lineNum">     101 </span>            :     typedef DistanceMap key_map;
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span><span class="lineCov">          1 :     d_ary_heap_indirect(DistanceMap distance,</span>
+<span class="lineNum">     104 </span>            :                         IndexInHeapPropertyMap index_in_heap,
+<span class="lineNum">     105 </span>            :                         const Compare&amp; compare = Compare(),
+<span class="lineNum">     106 </span>            :                         const Container&amp; data = Container())
+<span class="lineNum">     107 </span>            :       : compare(compare), data(data), distance(distance),
+<span class="lineNum">     108 </span><span class="lineCov">          1 :         index_in_heap(index_in_heap) {}</span>
+<span class="lineNum">     109 </span>            :     /* Implicit copy constructor */
+<span class="lineNum">     110 </span>            :     /* Implicit assignment operator */
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            :     size_type size() const {
+<span class="lineNum">     113 </span>            :       return data.size();
+<span class="lineNum">     114 </span>            :     }
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            :     bool empty() const {
+<span class="lineNum">     117 </span>            :       return data.empty();
+<span class="lineNum">     118 </span>            :     }
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span><span class="lineCov">      50000 :     void push(const Value&amp; v) {</span>
+<span class="lineNum">     121 </span>            :       size_type index = data.size();
+<span class="lineNum">     122 </span><span class="lineCov">      50000 :       data.push_back(v);</span>
+<span class="lineNum">     123 </span><span class="lineCov">      50000 :       put(index_in_heap, v, index);</span>
+<span class="lineNum">     124 </span><span class="lineCov">      50000 :       preserve_heap_property_up(index);</span>
+<span class="lineNum">     125 </span>            :       verify_heap();
+<span class="lineNum">     126 </span><span class="lineCov">      50000 :     }</span>
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            :     Value&amp; top() {
+<span class="lineNum">     129 </span>            :       BOOST_ASSERT (!this-&gt;empty());
+<span class="lineNum">     130 </span>            :       return data[0];
+<span class="lineNum">     131 </span>            :     }
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            :     const Value&amp; top() const {
+<span class="lineNum">     134 </span>            :       BOOST_ASSERT (!this-&gt;empty());
+<span class="lineNum">     135 </span>            :       return data[0];
+<span class="lineNum">     136 </span>            :     }
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span><span class="lineCov">      50000 :     void pop() {</span>
+<span class="lineNum">     139 </span><span class="lineCov">      50000 :       BOOST_ASSERT (!this-&gt;empty());</span>
+<span class="lineNum">     140 </span><span class="lineCov">      50000 :       put(index_in_heap, data[0], (size_type)(-1));</span>
+<span class="lineNum">     141 </span><span class="lineCov">      50000 :       if (data.size() != 1) {</span>
+<span class="lineNum">     142 </span><span class="lineCov">      49998 :         data[0] = data.back();</span>
+<span class="lineNum">     143 </span>            :         put(index_in_heap, data[0], (size_type)(0));
+<span class="lineNum">     144 </span>            :         data.pop_back();
+<span class="lineNum">     145 </span><span class="lineCov">      49998 :         preserve_heap_property_down();</span>
+<span class="lineNum">     146 </span>            :         verify_heap();
+<span class="lineNum">     147 </span>            :       } else {
+<span class="lineNum">     148 </span>            :         data.pop_back();
+<span class="lineNum">     149 </span>            :       }
+<span class="lineNum">     150 </span><span class="lineCov">      50000 :     }</span>
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            :     // This function assumes the key has been updated (using an external write
+<span class="lineNum">     153 </span>            :     // to the distance map or such)
+<span class="lineNum">     154 </span>            :     // See http://coding.derkeiler.com/Archive/General/comp.theory/2007-05/msg00043.html
+<span class="lineNum">     155 </span>            :     void update(const Value&amp; v) { /* decrease-key */
+<span class="lineNum">     156 </span><span class="lineCov">      81239 :       size_type index = get(index_in_heap, v);</span>
+<span class="lineNum">     157 </span><span class="lineCov">      81239 :       preserve_heap_property_up(index);</span>
+<span class="lineNum">     158 </span>            :       verify_heap();
+<span class="lineNum">     159 </span>            :     }
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            :     bool contains(const Value&amp; v) const {
+<span class="lineNum">     162 </span>            :       size_type index = get(index_in_heap, v);
+<span class="lineNum">     163 </span>            :       return (index != (size_type)(-1));
+<span class="lineNum">     164 </span>            :     }
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :     void push_or_update(const Value&amp; v) { /* insert if not present, else update */
+<span class="lineNum">     167 </span>            :       size_type index = get(index_in_heap, v);
+<span class="lineNum">     168 </span>            :       if (index == (size_type)(-1)) {
+<span class="lineNum">     169 </span>            :         index = data.size();
+<span class="lineNum">     170 </span>            :         data.push_back(v);
+<span class="lineNum">     171 </span>            :         put(index_in_heap, v, index);
+<span class="lineNum">     172 </span>            :       }
+<span class="lineNum">     173 </span>            :       preserve_heap_property_up(index);
+<span class="lineNum">     174 </span>            :       verify_heap();
+<span class="lineNum">     175 </span>            :     }
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span>            :     DistanceMap keys() const {
+<span class="lineNum">     178 </span>            :       return distance;
+<span class="lineNum">     179 </span>            :     }
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            :     private:
+<span class="lineNum">     182 </span>            :     Compare compare;
+<span class="lineNum">     183 </span>            :     Container data;
+<span class="lineNum">     184 </span>            :     DistanceMap distance;
+<span class="lineNum">     185 </span>            :     IndexInHeapPropertyMap index_in_heap;
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span>            :     // The distances being compared using compare and that are stored in the
+<span class="lineNum">     188 </span>            :     // distance map
+<span class="lineNum">     189 </span>            :     typedef typename boost::property_traits&lt;DistanceMap&gt;::value_type distance_type;
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span>            :     // Get the parent of a given node in the heap
+<span class="lineNum">     192 </span>            :     static size_type parent(size_type index) {
+<span class="lineNum">     193 </span><span class="lineCov">     218417 :       return (index - 1) / Arity;</span>
+<span class="lineNum">     194 </span>            :     }
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :     // Get the child_idx'th child of a given node; 0 &lt;= child_idx &lt; Arity
+<span class="lineNum">     197 </span>            :     static size_type child(size_type index, std::size_t child_idx) {
+<span class="lineNum">     198 </span><span class="lineCov">     388746 :       return index * Arity + child_idx + 1;</span>
+<span class="lineNum">     199 </span>            :     }
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            :     // Swap two elements in the heap by index, updating index_in_heap
+<span class="lineNum">     202 </span>            :     void swap_heap_elements(size_type index_a, size_type index_b) {
+<span class="lineNum">     203 </span>            :       using std::swap;
+<span class="lineNum">     204 </span><span class="lineCov">     338748 :       Value value_a = data[index_a];</span>
+<span class="lineNum">     205 </span><span class="lineCov">     338748 :       Value value_b = data[index_b];</span>
+<span class="lineNum">     206 </span><span class="lineCov">     338748 :       data[index_a] = value_b;</span>
+<span class="lineNum">     207 </span><span class="lineCov">     338748 :       data[index_b] = value_a;</span>
+<span class="lineNum">     208 </span>            :       put(index_in_heap, value_a, index_b);
+<span class="lineNum">     209 </span>            :       put(index_in_heap, value_b, index_a);
+<span class="lineNum">     210 </span>            :     }
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            :     // Emulate the indirect_cmp that is now folded into this heap class
+<span class="lineNum">     213 </span>            :     bool compare_indirect(const Value&amp; a, const Value&amp; b) const {
+<span class="lineNum">     214 </span>            :       return compare(get(distance, a), get(distance, b));
+<span class="lineNum">     215 </span>            :     }
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span>            :     // Verify that the array forms a heap; commented out by default
+<span class="lineNum">     218 </span>            :     void verify_heap() const {
+<span class="lineNum">     219 </span>            :       // This is a very expensive test so it should be disabled even when
+<span class="lineNum">     220 </span>            :       // NDEBUG is not defined
+<span class="lineNum">     221 </span>            : #if 0
+<span class="lineNum">     222 </span>            :       for (size_t i = 1; i &lt; data.size(); ++i) {
+<span class="lineNum">     223 </span>            :         if (compare_indirect(data[i], data[parent(i)])) {
+<span class="lineNum">     224 </span>            :           BOOST_ASSERT (!&quot;Element is smaller than its parent&quot;);
+<span class="lineNum">     225 </span>            :         }
+<span class="lineNum">     226 </span>            :       }
+<span class="lineNum">     227 </span>            : #endif
+<span class="lineNum">     228 </span>            :     }
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span>            :     // Starting at a node, move up the tree swapping elements to preserve the
+<span class="lineNum">     231 </span>            :     // heap property
+<span class="lineNum">     232 </span><span class="lineCov">     131239 :     void preserve_heap_property_up(size_type index) {</span>
+<span class="lineNum">     233 </span>            :       size_type orig_index = index;
+<span class="lineNum">     234 </span>            :       size_type num_levels_moved = 0;
+<span class="lineNum">     235 </span>            :       // The first loop just saves swaps that need to be done in order to avoid
+<span class="lineNum">     236 </span>            :       // aliasing issues in its search; there is a second loop that does the
+<span class="lineNum">     237 </span>            :       // necessary swap operations
+<span class="lineNum">     238 </span><span class="lineCov">     131239 :       if (index == 0) return; // Do nothing on root</span>
+<span class="lineNum">     239 </span><span class="lineCov">     131237 :       Value currently_being_moved = data[index];</span>
+<span class="lineNum">     240 </span><span class="lineCov">     131237 :       distance_type currently_being_moved_dist =</span>
+<span class="lineNum">     241 </span><span class="lineCov">     131237 :         get(distance, currently_being_moved);</span>
+<span class="lineNum">     242 </span><span class="lineCov">      43592 :       for (;;) {</span>
+<span class="lineNum">     243 </span><span class="lineCov">     174829 :         if (index == 0) break; // Stop at root</span>
+<span class="lineNum">     244 </span>            :         size_type parent_index = parent(index);
+<span class="lineNum">     245 </span><span class="lineCov">     174825 :         Value parent_value = data[parent_index];</span>
+<span class="lineNum">     246 </span><span class="lineCov">     218417 :         if (compare(currently_being_moved_dist, get(distance, parent_value))) {</span>
+<span class="lineNum">     247 </span><span class="lineCov">      43592 :           ++num_levels_moved;</span>
+<span class="lineNum">     248 </span>            :           index = parent_index;
+<span class="lineNum">     249 </span>            :           continue;
+<span class="lineNum">     250 </span>            :         } else {
+<span class="lineNum">     251 </span>            :           break; // Heap property satisfied
+<span class="lineNum">     252 </span>            :         }
+<span class="lineNum">     253 </span>            :       }
+<span class="lineNum">     254 </span>            :       // Actually do the moves -- move num_levels_moved elements down in the
+<span class="lineNum">     255 </span>            :       // tree, then put currently_being_moved at the top
+<span class="lineNum">     256 </span>            :       index = orig_index;
+<span class="lineNum">     257 </span><span class="lineCov">     218421 :       for (size_type i = 0; i &lt; num_levels_moved; ++i) {</span>
+<span class="lineNum">     258 </span>            :         size_type parent_index = parent(index);
+<span class="lineNum">     259 </span><span class="lineCov">      43592 :         Value parent_value = data[parent_index];</span>
+<span class="lineNum">     260 </span>            :         put(index_in_heap, parent_value, index);
+<span class="lineNum">     261 </span><span class="lineCov">      43592 :         data[index] = parent_value;</span>
+<span class="lineNum">     262 </span>            :         index = parent_index;
+<span class="lineNum">     263 </span>            :       }
+<span class="lineNum">     264 </span><span class="lineCov">     131237 :       data[index] = currently_being_moved;</span>
+<span class="lineNum">     265 </span>            :       put(index_in_heap, currently_being_moved, index);
+<span class="lineNum">     266 </span>            :       verify_heap();
+<span class="lineNum">     267 </span>            :     }
+<span class="lineNum">     268 </span>            : 
+<span class="lineNum">     269 </span>            :     // From the root, swap elements (each one with its smallest child) if there
+<span class="lineNum">     270 </span>            :     // are any parent-child pairs that violate the heap property
+<span class="lineNum">     271 </span><span class="lineCov">      49998 :     void preserve_heap_property_down() {</span>
+<span class="lineNum">     272 </span><span class="lineCov">      49998 :       if (data.empty()) return;</span>
+<span class="lineNum">     273 </span>            :       size_type index = 0;
+<span class="lineNum">     274 </span><span class="lineCov">      49998 :       Value currently_being_moved = data[0];</span>
+<span class="lineNum">     275 </span><span class="lineCov">      49998 :       distance_type currently_being_moved_dist =</span>
+<span class="lineNum">     276 </span><span class="lineCov">      49998 :         get(distance, currently_being_moved);</span>
+<span class="lineNum">     277 </span>            :       size_type heap_size = data.size();
+<span class="lineNum">     278 </span>            :       Value* data_ptr = &amp;data[0];
+<span class="lineNum">     279 </span>            :       for (;;) {
+<span class="lineNum">     280 </span>            :         size_type first_child_index = child(index, 0);
+<span class="lineNum">     281 </span><span class="lineCov">     388746 :         if (first_child_index &gt;= heap_size) break; /* No children */</span>
+<span class="lineNum">     282 </span><span class="lineCov">     343060 :         Value* child_base_ptr = data_ptr + first_child_index;</span>
+<span class="lineNum">     283 </span>            :         size_type smallest_child_index = 0;
+<span class="lineNum">     284 </span><span class="lineCov">     686120 :         distance_type smallest_child_dist = get(distance, child_base_ptr[smallest_child_index]);</span>
+<span class="lineNum">     285 </span><span class="lineCov">     343060 :         if (first_child_index + Arity &lt;= heap_size) {</span>
+<span class="lineNum">     286 </span>            :           // Special case for a statically known loop count (common case)
+<span class="lineNum">     287 </span><span class="lineCov">    2401175 :           for (size_t i = 1; i &lt; Arity; ++i) {</span>
+<span class="lineNum">     288 </span><span class="lineCov">    1029075 :             Value i_value = child_base_ptr[i];</span>
+<span class="lineNum">     289 </span><span class="lineCov">    1029075 :             distance_type i_dist = get(distance, i_value);</span>
+<span class="lineNum">     290 </span><span class="lineCov">    1029075 :             if (compare(i_dist, smallest_child_dist)) {</span>
+<span class="lineNum">     291 </span>            :               smallest_child_index = i;
+<span class="lineNum">     292 </span>            :               smallest_child_dist = i_dist;
+<span class="lineNum">     293 </span>            :             }
+<span class="lineNum">     294 </span>            :           }
+<span class="lineNum">     295 </span>            :         } else {
+<span class="lineNum">     296 </span><span class="lineCov">        103 :           for (size_t i = 1; i &lt; heap_size - first_child_index; ++i) {</span>
+<span class="lineNum">     297 </span><span class="lineCov">         68 :             distance_type i_dist = get(distance, child_base_ptr[i]);</span>
+<span class="lineNum">     298 </span><span class="lineCov">         34 :             if (compare(i_dist, smallest_child_dist)) {</span>
+<span class="lineNum">     299 </span>            :               smallest_child_index = i;
+<span class="lineNum">     300 </span>            :               smallest_child_dist = i_dist;
+<span class="lineNum">     301 </span>            :             }
+<span class="lineNum">     302 </span>            :           }
+<span class="lineNum">     303 </span>            :         }
+<span class="lineNum">     304 </span><span class="lineCov">     681808 :         if (compare(smallest_child_dist, currently_being_moved_dist)) {</span>
+<span class="lineNum">     305 </span><span class="lineCov">     338748 :           swap_heap_elements(smallest_child_index + first_child_index, index);</span>
+<span class="lineNum">     306 </span>            :           index = smallest_child_index + first_child_index;
+<span class="lineNum">     307 </span>            :           continue;
+<span class="lineNum">     308 </span>            :         } else {
+<span class="lineNum">     309 </span>            :           break; // Heap property satisfied
+<span class="lineNum">     310 </span>            :         }
+<span class="lineNum">     311 </span>            :       }
+<span class="lineNum">     312 </span>            :       verify_heap();
+<span class="lineNum">     313 </span>            :     }
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span>            :   };
+<span class="lineNum">     316 </span>            : 
+<span class="lineNum">     317 </span>            : } // namespace boost
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span>            : #endif // BOOST_D_ARY_HEAP_HPP
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

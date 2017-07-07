@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/spirit/home/qi/detail/fail_function.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">boost/spirit/home/qi/detail</a> - fail_function.hpp<span style="font-size: 80%;"> (source / <a href="fail_function.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :     Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :     Distributed under the Boost Software License, Version 1.0. (See accompanying
+<span class="lineNum">       5 </span>            :     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       6 </span>            : =============================================================================*/
+<span class="lineNum">       7 </span>            : #if !defined(SPIRIT_FAIL_FUNCTION_APRIL_22_2006_0159PM)
+<span class="lineNum">       8 </span>            : #define SPIRIT_FAIL_FUNCTION_APRIL_22_2006_0159PM
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      11 </span>            : #pragma once
+<span class="lineNum">      12 </span>            : #endif
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #include &lt;boost/spirit/home/support/unused.hpp&gt;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : namespace boost { namespace spirit { namespace qi { namespace detail
+<span class="lineNum">      17 </span>            : {
+<span class="lineNum">      18 </span>            :     template &lt;typename Iterator, typename Context, typename Skipper&gt;
+<span class="lineNum">      19 </span>            :     struct fail_function
+<span class="lineNum">      20 </span>            :     {
+<span class="lineNum">      21 </span>            :         typedef Iterator iterator_type;
+<span class="lineNum">      22 </span>            :         typedef Context context_type;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            :         fail_function(
+<span class="lineNum">      25 </span>            :             Iterator&amp; first_, Iterator const&amp; last_
+<span class="lineNum">      26 </span>            :           , Context&amp; context_, Skipper const&amp; skipper_)
+<span class="lineNum">      27 </span>            :           : first(first_)
+<span class="lineNum">      28 </span>            :           , last(last_)
+<span class="lineNum">      29 </span>            :           , context(context_)
+<span class="lineNum">      30 </span>            :           , skipper(skipper_)
+<span class="lineNum">      31 </span>            :         {
+<span class="lineNum">      32 </span>            :         }
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            :         template &lt;typename Component, typename Attribute&gt;
+<span class="lineNum">      35 </span>            :         bool operator()(Component const&amp; component, Attribute&amp; attr) const
+<span class="lineNum">      36 </span>            :         {
+<span class="lineNum">      37 </span>            :             // return true if the parser fails
+<span class="lineNum">      38 </span>            :             return !component.parse(first, last, context, skipper, attr);
+<span class="lineNum">      39 </span>            :         }
+<a name="40"><span class="lineNum">      40 </span>            : </a>
+<span class="lineNum">      41 </span>            :         template &lt;typename Component&gt;
+<span class="lineNum">      42 </span><span class="lineCov">    2000000 :         bool operator()(Component const&amp; component) const</span>
+<span class="lineNum">      43 </span>            :         {
+<span class="lineNum">      44 </span>            :             // return true if the parser fails
+<span class="lineNum">      45 </span><span class="lineCov">    4000000 :             return !component.parse(first, last, context, skipper, unused);</span>
+<span class="lineNum">      46 </span>            :         }
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :         Iterator&amp; first;
+<span class="lineNum">      49 </span>            :         Iterator const&amp; last;
+<span class="lineNum">      50 </span>            :         Context&amp; context;
+<span class="lineNum">      51 </span>            :         Skipper const&amp; skipper;
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            :     private:
+<span class="lineNum">      54 </span>            :         // silence MSVC warning C4512: assignment operator could not be generated
+<span class="lineNum">      55 </span>            :         fail_function&amp; operator= (fail_function const&amp;);
+<span class="lineNum">      56 </span>            :     };
+<span class="lineNum">      57 </span>            : }}}}
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

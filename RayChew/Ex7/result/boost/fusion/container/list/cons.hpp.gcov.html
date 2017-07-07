@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/fusion/container/list/cons.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">boost/fusion/container/list</a> - cons.hpp<span style="font-size: 80%;"> (source / <a href="cons.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :     Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            :     Copyright (c) 2005 Eric Niebler
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            :     Distributed under the Boost Software License, Version 1.0. (See accompanying 
+<span class="lineNum">       6 </span>            :     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       7 </span>            : ==============================================================================*/
+<span class="lineNum">       8 </span>            : #if !defined(FUSION_CONS_07172005_0843)
+<span class="lineNum">       9 </span>            : #define FUSION_CONS_07172005_0843
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &lt;boost/fusion/support/config.hpp&gt;
+<span class="lineNum">      12 </span>            : #include &lt;boost/fusion/support/void.hpp&gt;
+<span class="lineNum">      13 </span>            : #include &lt;boost/fusion/support/detail/enabler.hpp&gt;
+<span class="lineNum">      14 </span>            : #include &lt;boost/fusion/container/list/cons_fwd.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &lt;boost/fusion/support/detail/access.hpp&gt;
+<span class="lineNum">      16 </span>            : #include &lt;boost/fusion/sequence/intrinsic/begin.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/fusion/sequence/intrinsic/end.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/fusion/iterator/next.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/fusion/iterator/deref.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/fusion/container/list/nil.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/fusion/container/list/cons_iterator.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/fusion/container/list/detail/begin_impl.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/fusion/container/list/detail/end_impl.hpp&gt;
+<span class="lineNum">      24 </span>            : #include &lt;boost/fusion/container/list/detail/at_impl.hpp&gt;
+<span class="lineNum">      25 </span>            : #include &lt;boost/fusion/container/list/detail/value_at_impl.hpp&gt;
+<span class="lineNum">      26 </span>            : #include &lt;boost/fusion/container/list/detail/empty_impl.hpp&gt;
+<span class="lineNum">      27 </span>            : #include &lt;boost/type_traits/is_convertible.hpp&gt;
+<span class="lineNum">      28 </span>            : #include &lt;boost/type_traits/is_base_of.hpp&gt;
+<span class="lineNum">      29 </span>            : #include &lt;boost/utility/enable_if.hpp&gt;
+<span class="lineNum">      30 </span>            : #include &lt;boost/fusion/support/sequence_base.hpp&gt;
+<span class="lineNum">      31 </span>            : #include &lt;boost/fusion/support/is_sequence.hpp&gt;
+<span class="lineNum">      32 </span>            : #include &lt;boost/mpl/int.hpp&gt;
+<span class="lineNum">      33 </span>            : #include &lt;boost/mpl/bool.hpp&gt;
+<span class="lineNum">      34 </span>            : #include &lt;boost/mpl/and.hpp&gt;
+<span class="lineNum">      35 </span>            : #include &lt;boost/mpl/not.hpp&gt;
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : namespace boost { namespace fusion
+<span class="lineNum">      38 </span>            : {
+<span class="lineNum">      39 </span>            :     struct cons_tag;
+<span class="lineNum">      40 </span>            :     struct forward_traversal_tag;
+<span class="lineNum">      41 </span>            :     struct fusion_sequence_tag;
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :     template &lt;typename Car, typename Cdr /*= nil_*/&gt;
+<span class="lineNum">      44 </span>            :     struct cons : sequence_base&lt;cons&lt;Car, Cdr&gt; &gt;
+<span class="lineNum">      45 </span>            :     {
+<span class="lineNum">      46 </span>            :         typedef mpl::int_&lt;Cdr::size::value+1&gt; size;
+<span class="lineNum">      47 </span>            :         typedef cons_tag fusion_tag;
+<span class="lineNum">      48 </span>            :         typedef fusion_sequence_tag tag; // this gets picked up by MPL
+<span class="lineNum">      49 </span>            :         typedef mpl::false_ is_view;
+<span class="lineNum">      50 </span>            :         typedef forward_traversal_tag category;
+<span class="lineNum">      51 </span>            :         typedef Car car_type;
+<span class="lineNum">      52 </span>            :         typedef Cdr cdr_type;
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :         BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">      55 </span>            :         cons()
+<span class="lineNum">      56 </span>            :             : car(), cdr() {}
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :         BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">      59 </span>            :         explicit cons(typename detail::call_param&lt;Car&gt;::type in_car)
+<span class="lineNum">      60 </span><span class="lineCov">    3000002 :             : car(in_car), cdr() {}</span>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :         BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">      63 </span>            :         cons(
+<span class="lineNum">      64 </span>            :             typename detail::call_param&lt;Car&gt;::type in_car
+<span class="lineNum">      65 </span>            :           , typename detail::call_param&lt;Cdr&gt;::type in_cdr)
+<span class="lineNum">      66 </span><span class="lineCov">    3000002 :             : car(in_car), cdr(in_cdr) {}</span>
+<span class="lineNum">      67 </span>            :         
+<span class="lineNum">      68 </span>            :         template &lt;typename Car2, typename Cdr2&gt;
+<span class="lineNum">      69 </span>            :         BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">      70 </span>            :         cons(cons&lt;Car2, Cdr2&gt; const&amp; rhs)
+<span class="lineNum">      71 </span>            :             : car(rhs.car), cdr(rhs.cdr) {}
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :         BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">      74 </span><span class="lineCov">    3000000 :         cons(cons const&amp; rhs)</span>
+<span class="lineNum">      75 </span><span class="lineCov">    9000002 :             : car(rhs.car), cdr(rhs.cdr) {}</span>
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :         template &lt;typename Sequence&gt;
+<span class="lineNum">      78 </span>            :         BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">      79 </span>            :         cons(
+<span class="lineNum">      80 </span>            :             Sequence const&amp; seq
+<span class="lineNum">      81 </span>            :           , typename boost::enable_if&lt;
+<span class="lineNum">      82 </span>            :                 mpl::and_&lt;
+<span class="lineNum">      83 </span>            :                     traits::is_sequence&lt;Sequence&gt;
+<span class="lineNum">      84 </span>            :                   , mpl::not_&lt;is_base_of&lt;cons, Sequence&gt; &gt;
+<span class="lineNum">      85 </span>            :                   , mpl::not_&lt;is_convertible&lt;Sequence, Car&gt; &gt; &gt; // use copy to car instead
+<span class="lineNum">      86 </span>            :               , detail::enabler_
+<span class="lineNum">      87 </span>            :             &gt;::type = detail::enabler
+<span class="lineNum">      88 </span>            :         )
+<span class="lineNum">      89 </span>            :             : car(*fusion::begin(seq))
+<span class="lineNum">      90 </span>            :             , cdr(fusion::next(fusion::begin(seq)), mpl::true_()) {}
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            :         template &lt;typename Iterator&gt;
+<span class="lineNum">      93 </span>            :         BOOST_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">      94 </span>            :         cons(Iterator const&amp; iter, mpl::true_ /*this_is_an_iterator*/)
+<span class="lineNum">      95 </span>            :             : car(*iter)
+<span class="lineNum">      96 </span>            :             , cdr(fusion::next(iter), mpl::true_()) {}
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            :         template &lt;typename Car2, typename Cdr2&gt;
+<span class="lineNum">      99 </span>            :         BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">     100 </span>            :         cons&amp; operator=(cons&lt;Car2, Cdr2&gt; const&amp; rhs)
+<span class="lineNum">     101 </span>            :         {
+<span class="lineNum">     102 </span>            :             car = rhs.car;
+<span class="lineNum">     103 </span>            :             cdr = rhs.cdr;
+<span class="lineNum">     104 </span>            :             return *this;
+<span class="lineNum">     105 </span>            :         }
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :         BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">     108 </span>            :         cons&amp; operator=(cons const&amp; rhs)
+<span class="lineNum">     109 </span>            :         {
+<span class="lineNum">     110 </span>            :             car = rhs.car;
+<span class="lineNum">     111 </span>            :             cdr = rhs.cdr;
+<span class="lineNum">     112 </span>            :             return *this;
+<span class="lineNum">     113 </span>            :         }
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            :         template &lt;typename Sequence&gt;
+<span class="lineNum">     116 </span>            :         BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">     117 </span>            :         typename boost::enable_if&lt;
+<span class="lineNum">     118 </span>            :             mpl::and_&lt;
+<span class="lineNum">     119 </span>            :                 traits::is_sequence&lt;Sequence&gt;
+<span class="lineNum">     120 </span>            :               , mpl::not_&lt;is_convertible&lt;Sequence, Car&gt; &gt; &gt;
+<span class="lineNum">     121 </span>            :           , cons&amp;&gt;::type
+<span class="lineNum">     122 </span>            :         operator=(Sequence const&amp; seq)
+<span class="lineNum">     123 </span>            :         {
+<span class="lineNum">     124 </span>            :             typedef typename result_of::begin&lt;Sequence const&gt;::type Iterator;
+<span class="lineNum">     125 </span>            :             Iterator iter = fusion::begin(seq);
+<span class="lineNum">     126 </span>            :             this-&gt;assign_from_iter(iter);
+<span class="lineNum">     127 </span>            :             return *this;
+<span class="lineNum">     128 </span>            :         }
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :         template &lt;typename Iterator&gt;
+<span class="lineNum">     131 </span>            :         BOOST_CXX14_CONSTEXPR BOOST_FUSION_GPU_ENABLED
+<span class="lineNum">     132 </span>            :         void assign_from_iter(Iterator const&amp; iter)
+<span class="lineNum">     133 </span>            :         {
+<span class="lineNum">     134 </span>            :             car = *iter;
+<span class="lineNum">     135 </span>            :             cdr.assign_from_iter(fusion::next(iter));
+<span class="lineNum">     136 </span>            :         }
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            :         car_type car;
+<span class="lineNum">     139 </span>            :         cdr_type cdr;
+<span class="lineNum">     140 </span>            :     };
+<span class="lineNum">     141 </span>            : }}
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            : #endif
+<span class="lineNum">     144 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/proto/transform/make.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">boost/proto/transform</a> - make.hpp<span style="font-size: 80%;"> (source / <a href="make.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : ///////////////////////////////////////////////////////////////////////////////</a>
+<span class="lineNum">       2 </span>            : /// \file make.hpp
+<span class="lineNum">       3 </span>            : /// Contains definition of the make&lt;&gt; transform.
+<span class="lineNum">       4 </span>            : //
+<span class="lineNum">       5 </span>            : //  Copyright 2008 Eric Niebler. Distributed under the Boost
+<span class="lineNum">       6 </span>            : //  Software License, Version 1.0. (See accompanying file
+<span class="lineNum">       7 </span>            : //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #ifndef BOOST_PROTO_TRANSFORM_MAKE_HPP_EAN_12_02_2007
+<span class="lineNum">      10 </span>            : #define BOOST_PROTO_TRANSFORM_MAKE_HPP_EAN_12_02_2007
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &lt;boost/detail/workaround.hpp&gt;
+<span class="lineNum">      13 </span>            : #include &lt;boost/preprocessor/repetition/enum.hpp&gt;
+<span class="lineNum">      14 </span>            : #include &lt;boost/preprocessor/repetition/enum_params.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &lt;boost/preprocessor/repetition/enum_trailing_params.hpp&gt;
+<span class="lineNum">      16 </span>            : #include &lt;boost/preprocessor/repetition/enum_binary_params.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/preprocessor/repetition/enum_params_with_a_default.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/preprocessor/repetition/repeat_from_to.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/preprocessor/facilities/intercept.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/preprocessor/cat.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/preprocessor/iteration/iterate.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/preprocessor/selection/max.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/preprocessor/arithmetic/inc.hpp&gt;
+<span class="lineNum">      24 </span>            : #include &lt;boost/mpl/and.hpp&gt;
+<span class="lineNum">      25 </span>            : #include &lt;boost/mpl/aux_/has_type.hpp&gt;
+<span class="lineNum">      26 </span>            : #include &lt;boost/proto/detail/template_arity.hpp&gt;
+<span class="lineNum">      27 </span>            : #include &lt;boost/utility/result_of.hpp&gt;
+<span class="lineNum">      28 </span>            : #include &lt;boost/proto/proto_fwd.hpp&gt;
+<span class="lineNum">      29 </span>            : #include &lt;boost/proto/traits.hpp&gt;
+<span class="lineNum">      30 </span>            : #include &lt;boost/proto/args.hpp&gt;
+<span class="lineNum">      31 </span>            : #include &lt;boost/proto/transform/impl.hpp&gt;
+<span class="lineNum">      32 </span>            : #include &lt;boost/proto/transform/detail/pack.hpp&gt;
+<span class="lineNum">      33 </span>            : #include &lt;boost/proto/detail/as_lvalue.hpp&gt;
+<span class="lineNum">      34 </span>            : #include &lt;boost/proto/detail/ignore_unused.hpp&gt;
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      37 </span>            : # pragma warning(push)
+<span class="lineNum">      38 </span>            : # pragma warning(disable : 4714) // function 'xxx' marked as __forceinline not inlined
+<span class="lineNum">      39 </span>            : #endif
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : namespace boost { namespace proto
+<span class="lineNum">      42 </span>            : {
+<span class="lineNum">      43 </span>            :     namespace detail
+<span class="lineNum">      44 </span>            :     {
+<span class="lineNum">      45 </span>            :         template&lt;typename T&gt;
+<span class="lineNum">      46 </span>            :         struct is_applyable
+<span class="lineNum">      47 </span>            :           : mpl::and_&lt;is_callable&lt;T&gt;, is_transform&lt;T&gt; &gt;
+<span class="lineNum">      48 </span>            :         {};
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            :         template&lt;typename T, bool HasType = mpl::aux::has_type&lt;T&gt;::value&gt;
+<span class="lineNum">      51 </span>            :         struct nested_type
+<span class="lineNum">      52 </span>            :         {
+<span class="lineNum">      53 </span>            :             typedef typename T::type type;
+<span class="lineNum">      54 </span>            :         };
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :         template&lt;typename T&gt;
+<span class="lineNum">      57 </span>            :         struct nested_type&lt;T, false&gt;
+<span class="lineNum">      58 </span>            :         {
+<span class="lineNum">      59 </span>            :             typedef T type;
+<span class="lineNum">      60 </span>            :         };
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :         template&lt;typename T, bool Applied&gt;
+<span class="lineNum">      63 </span>            :         struct nested_type_if
+<span class="lineNum">      64 </span>            :         {
+<span class="lineNum">      65 </span>            :             typedef T type;
+<span class="lineNum">      66 </span>            :             static bool const applied = false;
+<span class="lineNum">      67 </span>            :         };
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :         template&lt;typename T&gt;
+<span class="lineNum">      70 </span>            :         struct nested_type_if&lt;T, true&gt;
+<span class="lineNum">      71 </span>            :           : nested_type&lt;T&gt;
+<span class="lineNum">      72 </span>            :         {
+<span class="lineNum">      73 </span>            :             static bool const applied = true;
+<span class="lineNum">      74 </span>            :         };
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            :         template&lt;
+<span class="lineNum">      77 </span>            :             typename R
+<span class="lineNum">      78 </span>            :           , typename Expr, typename State, typename Data
+<span class="lineNum">      79 </span>            :             BOOST_PROTO_TEMPLATE_ARITY_PARAM(long Arity = detail::template_arity&lt;R&gt;::value)
+<span class="lineNum">      80 </span>            :         &gt;
+<span class="lineNum">      81 </span>            :         struct make_
+<span class="lineNum">      82 </span>            :         {
+<span class="lineNum">      83 </span>            :             typedef R type;
+<span class="lineNum">      84 </span>            :             static bool const applied = false;
+<span class="lineNum">      85 </span>            :         };
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :         template&lt;
+<span class="lineNum">      88 </span>            :             typename R
+<span class="lineNum">      89 </span>            :           , typename Expr, typename State, typename Data
+<span class="lineNum">      90 </span>            :           , bool IsApplyable = is_applyable&lt;R&gt;::value
+<span class="lineNum">      91 </span>            :         &gt;
+<span class="lineNum">      92 </span>            :         struct make_if_
+<span class="lineNum">      93 </span>            :           : make_&lt;R, Expr, State, Data&gt;
+<span class="lineNum">      94 </span>            :         {};
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :         template&lt;typename R, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">      97 </span>            :         struct make_if_&lt;R, Expr, State, Data, true&gt;
+<span class="lineNum">      98 </span>            :           : uncvref&lt;typename when&lt;_, R&gt;::template impl&lt;Expr, State, Data&gt;::result_type&gt;
+<span class="lineNum">      99 </span>            :         {
+<span class="lineNum">     100 </span>            :             static bool const applied = true;
+<span class="lineNum">     101 </span>            :         };
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            :         #if BOOST_WORKAROUND(__GNUC__, == 3) || (BOOST_WORKAROUND(__GNUC__, == 4) &amp;&amp; __GNUC_MINOR__ == 0)
+<span class="lineNum">     104 </span>            :         // work around GCC bug
+<span class="lineNum">     105 </span>            :         template&lt;typename Tag, typename Args, long N, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     106 </span>            :         struct make_if_&lt;proto::expr&lt;Tag, Args, N&gt;, Expr, State, Data, false&gt;
+<span class="lineNum">     107 </span>            :         {
+<span class="lineNum">     108 </span>            :             typedef proto::expr&lt;Tag, Args, N&gt; type;
+<span class="lineNum">     109 </span>            :             static bool const applied = false;
+<span class="lineNum">     110 </span>            :         };
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            :         // work around GCC bug
+<span class="lineNum">     113 </span>            :         template&lt;typename Tag, typename Args, long N, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     114 </span>            :         struct make_if_&lt;proto::basic_expr&lt;Tag, Args, N&gt;, Expr, State, Data, false&gt;
+<span class="lineNum">     115 </span>            :         {
+<span class="lineNum">     116 </span>            :             typedef proto::basic_expr&lt;Tag, Args, N&gt; type;
+<span class="lineNum">     117 </span>            :             static bool const applied = false;
+<span class="lineNum">     118 </span>            :         };
+<span class="lineNum">     119 </span>            :         #endif
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            :         template&lt;typename Type, bool IsAggregate = detail::is_aggregate_&lt;Type&gt;::value&gt;
+<span class="lineNum">     122 </span>            :         struct construct_
+<span class="lineNum">     123 </span>            :         {
+<span class="lineNum">     124 </span>            :             typedef Type result_type;
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :             BOOST_FORCEINLINE
+<span class="lineNum">     127 </span>            :             Type operator ()() const
+<span class="lineNum">     128 </span>            :             {
+<span class="lineNum">     129 </span>            :                 return Type();
+<span class="lineNum">     130 </span>            :             }
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            :             // Other overloads generated by the preprocessor
+<span class="lineNum">     133 </span>            :             #include &lt;boost/proto/transform/detail/construct_funop.hpp&gt;
+<span class="lineNum">     134 </span>            :         };
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :         template&lt;typename Type&gt;
+<span class="lineNum">     137 </span>            :         struct construct_&lt;Type, true&gt;
+<span class="lineNum">     138 </span>            :         {
+<span class="lineNum">     139 </span>            :             typedef Type result_type;
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            :             BOOST_FORCEINLINE
+<span class="lineNum">     142 </span>            :             Type operator ()() const
+<span class="lineNum">     143 </span>            :             {
+<span class="lineNum">     144 </span>            :                 return Type();
+<span class="lineNum">     145 </span>            :             }
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            :             // Other overloads generated by the preprocessor
+<span class="lineNum">     148 </span>            :             #include &lt;boost/proto/transform/detail/construct_pod_funop.hpp&gt;
+<span class="lineNum">     149 </span>            :         };
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            :     }
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            :     /// \brief A PrimitiveTransform which prevents another PrimitiveTransform
+<span class="lineNum">     154 </span>            :     /// from being applied in an \c ObjectTransform.
+<span class="lineNum">     155 </span>            :     ///
+<span class="lineNum">     156 </span>            :     /// When building higher order transforms with &lt;tt&gt;make\&lt;\&gt;&lt;/tt&gt; or
+<span class="lineNum">     157 </span>            :     /// &lt;tt&gt;lazy\&lt;\&gt;&lt;/tt&gt;, you sometimes would like to build types that
+<span class="lineNum">     158 </span>            :     /// are parameterized with Proto transforms. In such lambda-style
+<span class="lineNum">     159 </span>            :     /// transforms, Proto will unhelpfully find all nested transforms
+<span class="lineNum">     160 </span>            :     /// and apply them, even if you don't want them to be applied. Consider
+<span class="lineNum">     161 </span>            :     /// the following transform, which will replace the \c _ in
+<span class="lineNum">     162 </span>            :     /// &lt;tt&gt;Bar&lt;_&gt;()&lt;/tt&gt; with &lt;tt&gt;proto::terminal\&lt;int\&gt;::type&lt;/tt&gt;:
+<span class="lineNum">     163 </span>            :     ///
+<span class="lineNum">     164 </span>            :     /// \code
+<span class="lineNum">     165 </span>            :     /// template&lt;typename T&gt;
+<span class="lineNum">     166 </span>            :     /// struct Bar
+<span class="lineNum">     167 </span>            :     /// {};
+<span class="lineNum">     168 </span>            :     /// 
+<span class="lineNum">     169 </span>            :     /// struct Foo
+<span class="lineNum">     170 </span>            :     ///   : proto::when&lt;_, Bar&lt;_&gt;() &gt;
+<span class="lineNum">     171 </span>            :     /// {};
+<span class="lineNum">     172 </span>            :     /// 
+<span class="lineNum">     173 </span>            :     /// proto::terminal&lt;int&gt;::type i = {0};
+<span class="lineNum">     174 </span>            :     /// 
+<span class="lineNum">     175 </span>            :     /// int main()
+<span class="lineNum">     176 </span>            :     /// {
+<span class="lineNum">     177 </span>            :     ///     Foo()(i);
+<span class="lineNum">     178 </span>            :     ///     std::cout &lt;&lt; typeid(Foo()(i)).name() &lt;&lt; std::endl;
+<span class="lineNum">     179 </span>            :     /// }
+<span class="lineNum">     180 </span>            :     /// \endcode
+<span class="lineNum">     181 </span>            :     ///
+<span class="lineNum">     182 </span>            :     /// If you actually wanted to default-construct an object of type
+<span class="lineNum">     183 </span>            :     /// &lt;tt&gt;Bar\&lt;_\&gt;&lt;/tt&gt;, you would have to protect the \c _ to prevent
+<span class="lineNum">     184 </span>            :     /// it from being applied. You can use &lt;tt&gt;proto::protect\&lt;\&gt;&lt;/tt&gt;
+<span class="lineNum">     185 </span>            :     /// as follows:
+<span class="lineNum">     186 </span>            :     ///
+<span class="lineNum">     187 </span>            :     /// \code
+<span class="lineNum">     188 </span>            :     /// // OK: replace anything with Bar&lt;_&gt;()
+<span class="lineNum">     189 </span>            :     /// struct Foo
+<span class="lineNum">     190 </span>            :     ///   : proto::when&lt;_, Bar&lt;protect&lt;_&gt; &gt;() &gt;
+<span class="lineNum">     191 </span>            :     /// {};
+<span class="lineNum">     192 </span>            :     /// \endcode
+<span class="lineNum">     193 </span>            :     template&lt;typename PrimitiveTransform&gt;
+<span class="lineNum">     194 </span>            :     struct protect : transform&lt;protect&lt;PrimitiveTransform&gt; &gt;
+<span class="lineNum">     195 </span>            :     {
+<span class="lineNum">     196 </span>            :         template&lt;typename, typename, typename&gt;
+<span class="lineNum">     197 </span>            :         struct impl
+<span class="lineNum">     198 </span>            :         {
+<span class="lineNum">     199 </span>            :             typedef PrimitiveTransform result_type;
+<span class="lineNum">     200 </span>            :         };
+<span class="lineNum">     201 </span>            :     };
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            :     /// \brief A PrimitiveTransform which computes a type by evaluating any
+<span class="lineNum">     204 </span>            :     /// nested transforms and then constructs an object of that type.
+<span class="lineNum">     205 </span>            :     ///
+<span class="lineNum">     206 </span>            :     /// The &lt;tt&gt;make\&lt;\&gt;&lt;/tt&gt; transform checks to see if \c Object is a template.
+<span class="lineNum">     207 </span>            :     /// If it is, the template type is disassembled to find nested transforms.
+<span class="lineNum">     208 </span>            :     /// Proto considers the following types to represent transforms:
+<span class="lineNum">     209 </span>            :     ///
+<span class="lineNum">     210 </span>            :     /// \li Function types
+<span class="lineNum">     211 </span>            :     /// \li Function pointer types
+<span class="lineNum">     212 </span>            :     /// \li Types for which &lt;tt&gt;proto::is_callable\&lt; type \&gt;::value&lt;/tt&gt; is \c true
+<span class="lineNum">     213 </span>            :     ///
+<span class="lineNum">     214 </span>            :     /// &lt;tt&gt;boost::result_of\&lt;make\&lt;T\&lt;X0,X1,...\&gt; \&gt;(Expr, State, Data)\&gt;::type&lt;/tt&gt;
+<span class="lineNum">     215 </span>            :     /// is evaluated as follows. For each \c X in &lt;tt&gt;X0,X1,...&lt;/tt&gt;, do:
+<span class="lineNum">     216 </span>            :     ///
+<span class="lineNum">     217 </span>            :     /// \li If \c X is a template like &lt;tt&gt;U\&lt;Y0,Y1,...\&gt;&lt;/tt&gt;, then let &lt;tt&gt;X'&lt;/tt&gt;
+<span class="lineNum">     218 </span>            :     ///     be &lt;tt&gt;boost::result_of\&lt;make\&lt;U\&lt;Y0,Y1,...\&gt; \&gt;(Expr, State, Data)\&gt;::type&lt;/tt&gt;
+<span class="lineNum">     219 </span>            :     ///     (which evaluates this procedure recursively). Note whether any
+<span class="lineNum">     220 </span>            :     ///     substitutions took place during this operation.
+<span class="lineNum">     221 </span>            :     /// \li Otherwise, if \c X is a transform, then let &lt;tt&gt;X'&lt;/tt&gt; be
+<span class="lineNum">     222 </span>            :     ///     &lt;tt&gt;boost::result_of\&lt;when\&lt;_, X\&gt;(Expr, State, Data)\&gt;::type&lt;/tt&gt;.
+<span class="lineNum">     223 </span>            :     ///     Note that a substitution took place.
+<span class="lineNum">     224 </span>            :     /// \li Otherwise, let &lt;tt&gt;X'&lt;/tt&gt; be \c X, and note that no substitution
+<span class="lineNum">     225 </span>            :     ///     took place.
+<span class="lineNum">     226 </span>            :     /// \li If any substitutions took place in any of the above steps and
+<span class="lineNum">     227 </span>            :     ///     &lt;tt&gt;T\&lt;X0',X1',...\&gt;&lt;/tt&gt; has a nested &lt;tt&gt;::type&lt;/tt&gt; typedef,
+<span class="lineNum">     228 </span>            :     ///     the result type is &lt;tt&gt;T\&lt;X0',X1',...\&gt;::type&lt;/tt&gt;.
+<span class="lineNum">     229 </span>            :     /// \li Otherwise, the result type is &lt;tt&gt;T\&lt;X0',X1',...\&gt;&lt;/tt&gt;.
+<span class="lineNum">     230 </span>            :     ///
+<span class="lineNum">     231 </span>            :     /// Note that &lt;tt&gt;when\&lt;\&gt;&lt;/tt&gt; is implemented in terms of &lt;tt&gt;call\&lt;\&gt;&lt;/tt&gt;
+<span class="lineNum">     232 </span>            :     /// and &lt;tt&gt;make\&lt;\&gt;&lt;/tt&gt;, so the above procedure is evaluated recursively.
+<span class="lineNum">     233 </span>            :     template&lt;typename Object&gt;
+<span class="lineNum">     234 </span>            :     struct make : transform&lt;make&lt;Object&gt; &gt;
+<span class="lineNum">     235 </span>            :     {
+<span class="lineNum">     236 </span>            :         template&lt;typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     237 </span>            :         struct impl : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     238 </span>            :         {
+<span class="lineNum">     239 </span>            :             typedef typename detail::make_if_&lt;Object, Expr, State, Data&gt;::type result_type;
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span>            :             /// \return &lt;tt&gt;result_type()&lt;/tt&gt;
+<span class="lineNum">     242 </span>            :             BOOST_FORCEINLINE
+<span class="lineNum">     243 </span>            :             result_type operator ()(
+<span class="lineNum">     244 </span>            :                 typename impl::expr_param
+<span class="lineNum">     245 </span>            :               , typename impl::state_param
+<span class="lineNum">     246 </span>            :               , typename impl::data_param
+<span class="lineNum">     247 </span>            :             ) const
+<span class="lineNum">     248 </span>            :             {
+<span class="lineNum">     249 </span><span class="lineCov">    1000000 :                 return result_type();</span>
+<span class="lineNum">     250 </span>            :             }
+<span class="lineNum">     251 </span>            :         };
+<span class="lineNum">     252 </span>            :     };
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span>            :     /// INTERNAL ONLY
+<span class="lineNum">     255 </span>            :     template&lt;typename Fun&gt;
+<span class="lineNum">     256 </span>            :     struct make&lt;detail::msvc_fun_workaround&lt;Fun&gt; &gt;
+<span class="lineNum">     257 </span>            :       : make&lt;Fun&gt;
+<span class="lineNum">     258 </span>            :     {};
+<span class="lineNum">     259 </span>            : 
+<span class="lineNum">     260 </span>            :     // Other specializations generated by the preprocessor.
+<span class="lineNum">     261 </span>            :     #include &lt;boost/proto/transform/detail/make.hpp&gt;
+<span class="lineNum">     262 </span>            :     #include &lt;boost/proto/transform/detail/make_gcc_workaround.hpp&gt;
+<span class="lineNum">     263 </span>            : 
+<span class="lineNum">     264 </span>            :     /// INTERNAL ONLY
+<span class="lineNum">     265 </span>            :     ///
+<span class="lineNum">     266 </span>            :     template&lt;typename Object&gt;
+<span class="lineNum">     267 </span>            :     struct is_callable&lt;make&lt;Object&gt; &gt;
+<span class="lineNum">     268 </span>            :       : mpl::true_
+<span class="lineNum">     269 </span>            :     {};
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span>            :     /// INTERNAL ONLY
+<span class="lineNum">     272 </span>            :     ///
+<span class="lineNum">     273 </span>            :     template&lt;typename PrimitiveTransform&gt;
+<span class="lineNum">     274 </span>            :     struct is_callable&lt;protect&lt;PrimitiveTransform&gt; &gt;
+<span class="lineNum">     275 </span>            :       : mpl::true_
+<span class="lineNum">     276 </span>            :     {};
+<span class="lineNum">     277 </span>            : 
+<span class="lineNum">     278 </span>            : }}
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">     281 </span>            : # pragma warning(pop)
+<span class="lineNum">     282 </span>            : #endif
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

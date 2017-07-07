@@ -1,0 +1,628 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/bimap/relation/structured_pair.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">boost/bimap/relation</a> - structured_pair.hpp<span style="font-size: 80%;"> (source / <a href="structured_pair.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // Boost.Bimap</a>
+<span class="lineNum">       2 </span>            : //
+<span class="lineNum">       3 </span>            : // Copyright (c) 2006-2007 Matias Capeletto
+<span class="lineNum">       4 </span>            : //
+<span class="lineNum">       5 </span>            : // Distributed under the Boost Software License, Version 1.0.
+<span class="lineNum">       6 </span>            : // (See accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       7 </span>            : // http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : /// \file relation/structured_pair.hpp
+<span class="lineNum">      10 </span>            : /// \brief Defines the structured_pair class.
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #ifndef BOOST_BIMAP_RELATION_STRUCTURED_PAIR_HPP
+<span class="lineNum">      13 </span>            : #define BOOST_BIMAP_RELATION_STRUCTURED_PAIR_HPP
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      16 </span>            : #pragma once
+<span class="lineNum">      17 </span>            : #endif
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : #include &lt;boost/config.hpp&gt;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : #include &lt;boost/type_traits/remove_const.hpp&gt;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #include &lt;boost/mpl/aux_/na.hpp&gt;
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : #include &lt;boost/call_traits.hpp&gt;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : #include &lt;boost/utility/enable_if.hpp&gt;
+<span class="lineNum">      30 </span>            : #include &lt;boost/type_traits/is_same.hpp&gt;
+<span class="lineNum">      31 </span>            : #include &lt;boost/mpl/if.hpp&gt;
+<span class="lineNum">      32 </span>            : #include &lt;boost/mpl/vector.hpp&gt;
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : #include &lt;boost/bimap/detail/debug/static_error.hpp&gt;
+<span class="lineNum">      35 </span>            : #include &lt;boost/bimap/relation/pair_layout.hpp&gt;
+<span class="lineNum">      36 </span>            : #include &lt;boost/bimap/relation/symmetrical_base.hpp&gt;
+<span class="lineNum">      37 </span>            : #include &lt;boost/bimap/relation/support/get.hpp&gt;
+<span class="lineNum">      38 </span>            : #include &lt;boost/bimap/tags/support/value_type_of.hpp&gt;
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : namespace boost {
+<span class="lineNum">      43 </span>            : namespace bimaps {
+<span class="lineNum">      44 </span>            : namespace relation {
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            : namespace detail {
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : /// \brief Storage definition of the left view of a mutant relation.
+<span class="lineNum">      49 </span>            : /**
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : See also storage_finder, mirror_storage.
+<span class="lineNum">      52 </span>            :                                                                             **/
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : template&lt; class FirstType, class SecondType &gt;
+<span class="lineNum">      55 </span>            : class normal_storage :
+<span class="lineNum">      56 </span>            :     public symmetrical_base&lt;FirstType,SecondType&gt;
+<span class="lineNum">      57 </span>            : {
+<span class="lineNum">      58 </span>            :     typedef symmetrical_base&lt;FirstType,SecondType&gt; base_;
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :     public:
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :     typedef normal_storage storage_;
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :     typedef BOOST_DEDUCED_TYPENAME base_::left_value_type  first_type;
+<span class="lineNum">      65 </span>            :     typedef BOOST_DEDUCED_TYPENAME base_::right_value_type second_type;
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            :     first_type   first;
+<span class="lineNum">      68 </span>            :     second_type  second;
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            :     normal_storage() {}
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span><span class="lineCov">      50000 :     normal_storage(BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;</span>
+<span class="lineNum">      73 </span>            :                         first_type &gt;::param_type f,
+<span class="lineNum">      74 </span>            :                    BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">      75 </span>            :                         second_type&gt;::param_type s)
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span><span class="lineCov">      50000 :         : first(f), second(s) {}</span>
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            :           BOOST_DEDUCED_TYPENAME base_:: left_value_type &amp;  get_left()      { return first;  }
+<span class="lineNum">      80 </span>            :     const BOOST_DEDUCED_TYPENAME base_:: left_value_type &amp;  get_left()const { return first;  }
+<span class="lineNum">      81 </span>            :           BOOST_DEDUCED_TYPENAME base_::right_value_type &amp; get_right()      { return second; }
+<span class="lineNum">      82 </span>            :     const BOOST_DEDUCED_TYPENAME base_::right_value_type &amp; get_right()const { return second; }
+<span class="lineNum">      83 </span>            : };
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : /// \brief Storage definition of the right view of a mutant relation.
+<span class="lineNum">      86 </span>            : /**
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            : See also storage_finder, normal_storage.
+<span class="lineNum">      89 </span>            :                                                                             **/
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : template&lt; class FirstType, class SecondType &gt;
+<span class="lineNum">      92 </span>            : class mirror_storage :
+<span class="lineNum">      93 </span>            :     public symmetrical_base&lt;SecondType,FirstType&gt;
+<span class="lineNum">      94 </span>            : {
+<span class="lineNum">      95 </span>            :     typedef symmetrical_base&lt;SecondType,FirstType&gt; base_;
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            :     public:
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :     typedef mirror_storage storage_;
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            :     typedef BOOST_DEDUCED_TYPENAME base_::left_value_type   second_type;
+<span class="lineNum">     102 </span>            :     typedef BOOST_DEDUCED_TYPENAME base_::right_value_type  first_type;
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            :     second_type  second;
+<span class="lineNum">     105 </span>            :     first_type   first;
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :     mirror_storage() {}
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            :     mirror_storage(BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;first_type  &gt;::param_type f,
+<span class="lineNum">     110 </span>            :                    BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;second_type &gt;::param_type s)
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            :         : second(s), first(f)  {}
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :           BOOST_DEDUCED_TYPENAME base_:: left_value_type &amp;  get_left()      { return second; }
+<span class="lineNum">     115 </span>            :     const BOOST_DEDUCED_TYPENAME base_:: left_value_type &amp;  get_left()const { return second; }
+<span class="lineNum">     116 </span>            :           BOOST_DEDUCED_TYPENAME base_::right_value_type &amp; get_right()      { return first;  }
+<span class="lineNum">     117 </span>            :     const BOOST_DEDUCED_TYPENAME base_::right_value_type &amp; get_right()const { return first;  }
+<span class="lineNum">     118 </span>            : };
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            : /** \struct boost::bimaps::relation::storage_finder
+<span class="lineNum">     121 </span>            : \brief Obtain the a storage with the correct layout.
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            : \code
+<span class="lineNum">     124 </span>            : template&lt; class FirstType, class SecondType, class Layout &gt;
+<span class="lineNum">     125 </span>            : struct storage_finder
+<span class="lineNum">     126 </span>            : {
+<span class="lineNum">     127 </span>            :     typedef {normal/mirror}_storage&lt;FirstType,SecondType&gt; type;
+<span class="lineNum">     128 </span>            : };
+<span class="lineNum">     129 </span>            : \endcode
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            : See also normal_storage, mirror_storage.
+<span class="lineNum">     132 </span>            :                                                                         **/
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : #ifndef BOOST_BIMAP_DOXYGEN_WILL_NOT_PROCESS_THE_FOLLOWING_LINES
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            : template
+<span class="lineNum">     137 </span>            : &lt;
+<span class="lineNum">     138 </span>            :     class FirstType,
+<span class="lineNum">     139 </span>            :     class SecondType,
+<span class="lineNum">     140 </span>            :     class Layout
+<span class="lineNum">     141 </span>            : &gt;
+<span class="lineNum">     142 </span>            : struct storage_finder
+<span class="lineNum">     143 </span>            : {
+<span class="lineNum">     144 </span>            :     typedef normal_storage&lt;FirstType,SecondType&gt; type;
+<span class="lineNum">     145 </span>            : };
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            : template
+<span class="lineNum">     148 </span>            : &lt;
+<span class="lineNum">     149 </span>            :     class FirstType,
+<span class="lineNum">     150 </span>            :     class SecondType
+<span class="lineNum">     151 </span>            : &gt;
+<span class="lineNum">     152 </span>            : struct storage_finder&lt;FirstType,SecondType,mirror_layout&gt;
+<span class="lineNum">     153 </span>            : {
+<span class="lineNum">     154 </span>            :     typedef mirror_storage&lt;FirstType,SecondType&gt; type;
+<span class="lineNum">     155 </span>            : };
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            : #endif // BOOST_BIMAP_DOXYGEN_WILL_NOT_PROCESS_THE_FOLLOWING_LINES
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            : template&lt; class TA, class TB, class Info, class Layout &gt;
+<span class="lineNum">     161 </span>            : class pair_info_hook :
+<span class="lineNum">     162 </span>            :     public ::boost::bimaps::relation::detail::storage_finder&lt;TA,TB,Layout&gt;::type
+<span class="lineNum">     163 </span>            : {
+<span class="lineNum">     164 </span>            :     typedef BOOST_DEDUCED_TYPENAME ::boost::bimaps::relation::detail::storage_finder&lt;TA,TB,Layout&gt;::type base_;
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :     typedef BOOST_DEDUCED_TYPENAME ::boost::bimaps::tags::support::
+<span class="lineNum">     167 </span>            :         default_tagged&lt;Info,member_at::info&gt;::type tagged_info_type;
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :     public:
+<span class="lineNum">     170 </span>            :     typedef BOOST_DEDUCED_TYPENAME tagged_info_type::value_type info_type;
+<span class="lineNum">     171 </span>            :     typedef BOOST_DEDUCED_TYPENAME tagged_info_type::tag        info_tag;
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            :     info_type info;
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            :     protected:
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span>            :     pair_info_hook() {}
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            :     pair_info_hook( BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     180 </span>            :                         BOOST_DEDUCED_TYPENAME base_::first_type
+<span class="lineNum">     181 </span>            :                     &gt;::param_type f,
+<span class="lineNum">     182 </span>            :                     BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     183 </span>            :                         BOOST_DEDUCED_TYPENAME base_::second_type
+<span class="lineNum">     184 </span>            :                     &gt;::param_type s,
+<span class="lineNum">     185 </span>            :                     BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     186 </span>            :                         info_type
+<span class="lineNum">     187 </span>            :                     &gt;::param_type i = info_type() )
+<span class="lineNum">     188 </span>            :         : base_(f,s), info(i) {}
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            :     template&lt; class Pair &gt;
+<span class="lineNum">     191 </span>            :     pair_info_hook( const Pair &amp; p) :
+<span class="lineNum">     192 </span>            :         base_(p.first,p.second),
+<span class="lineNum">     193 </span>            :         info(p.info) {}
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            :     template&lt; class Pair &gt;
+<span class="lineNum">     196 </span>            :     void change_to( const Pair &amp; p )
+<span class="lineNum">     197 </span>            :     {
+<span class="lineNum">     198 </span>            :         base_::first  = p.first ;
+<span class="lineNum">     199 </span>            :         base_::second = p.second;
+<span class="lineNum">     200 </span>            :         info          = p.info  ;
+<span class="lineNum">     201 </span>            :     }
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            :     void clear_info()
+<span class="lineNum">     204 </span>            :     {
+<span class="lineNum">     205 </span>            :         info = info_type();
+<span class="lineNum">     206 </span>            :     };
+<span class="lineNum">     207 </span>            : };
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            : template&lt; class TA, class TB, class Layout&gt;
+<span class="lineNum">     210 </span>            : class pair_info_hook&lt;TA,TB,::boost::mpl::na,Layout&gt; :
+<span class="lineNum">     211 </span>            :     public ::boost::bimaps::relation::detail::storage_finder&lt;TA,TB,Layout&gt;::type
+<span class="lineNum">     212 </span>            : {
+<span class="lineNum">     213 </span>            :     typedef BOOST_DEDUCED_TYPENAME ::boost::bimaps::relation::detail::storage_finder&lt;TA,TB,Layout&gt;::type base_;
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span>            :     public:
+<span class="lineNum">     216 </span>            :     typedef ::boost::mpl::na info_type;
+<span class="lineNum">     217 </span>            :     typedef member_at::info info_tag;
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            :     protected:
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span>            :     pair_info_hook() {}
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span>            :     pair_info_hook( BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     224 </span>            :                         BOOST_DEDUCED_TYPENAME base_::first_type
+<span class="lineNum">     225 </span>            :                     &gt;::param_type f,
+<span class="lineNum">     226 </span>            :                     BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     227 </span>            :                         BOOST_DEDUCED_TYPENAME base_::second_type
+<span class="lineNum">     228 </span>            :                     &gt;::param_type s)
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span>            :         : base_(f,s) {}
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span>            :     template&lt; class Pair &gt;
+<span class="lineNum">     233 </span>            :     pair_info_hook( const Pair &amp; p ) :
+<span class="lineNum">     234 </span>            :         base_(p.first,p.second) {}
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span>            :     template&lt; class Pair &gt;
+<span class="lineNum">     237 </span>            :     void change_to( const Pair &amp; p )
+<span class="lineNum">     238 </span>            :     {
+<span class="lineNum">     239 </span>            :         base_::first  = p.first ;
+<span class="lineNum">     240 </span>            :         base_::second = p.second;
+<span class="lineNum">     241 </span>            :     }
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span>            :     void clear_info() {};
+<span class="lineNum">     244 </span>            : };
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span>            : 
+<span class="lineNum">     248 </span>            : } // namespace detail
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span>            : template&lt; class TA, class TB, class Info, bool FM &gt;
+<span class="lineNum">     251 </span>            : class mutant_relation;
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span>            : /// \brief A std::pair signature compatible class that allows you to control
+<span class="lineNum">     255 </span>            : ///        the internal structure of the data.
+<span class="lineNum">     256 </span>            : /**
+<span class="lineNum">     257 </span>            : This class allows you to specify the order in wich the two data types will be
+<span class="lineNum">     258 </span>            : in the layout of the class.
+<span class="lineNum">     259 </span>            :                                                                                **/
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout = normal_layout &gt;
+<span class="lineNum">     262 </span>            : class structured_pair :
+<span class="lineNum">     263 </span>            : 
+<span class="lineNum">     264 </span>            :     public ::boost::bimaps::relation::detail::pair_info_hook
+<span class="lineNum">     265 </span>            :     &lt;
+<span class="lineNum">     266 </span>            :         FirstType, SecondType,
+<span class="lineNum">     267 </span>            :         Info,
+<span class="lineNum">     268 </span>            :         Layout
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            :     &gt;
+<span class="lineNum">     271 </span>            : 
+<span class="lineNum">     272 </span>            : {
+<span class="lineNum">     273 </span>            :     typedef BOOST_DEDUCED_TYPENAME ::boost::bimaps::relation::detail::pair_info_hook
+<span class="lineNum">     274 </span>            :     &lt;
+<span class="lineNum">     275 </span>            :         FirstType, SecondType,
+<span class="lineNum">     276 </span>            :         Info,
+<span class="lineNum">     277 </span>            :         Layout
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span>            :     &gt; base_;
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            :     public:
+<span class="lineNum">     282 </span>            : 
+<span class="lineNum">     283 </span>            :     typedef ::boost::mpl::vector3&lt;
+<span class="lineNum">     284 </span>            :         structured_pair&lt; FirstType, SecondType, Info, normal_layout &gt;,
+<span class="lineNum">     285 </span>            :         structured_pair&lt; FirstType, SecondType, Info, mirror_layout &gt;,
+<span class="lineNum">     286 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::mpl::if_&lt;
+<span class="lineNum">     287 </span>            :             BOOST_DEDUCED_TYPENAME ::boost::is_same&lt;Layout, normal_layout&gt;::type,
+<span class="lineNum">     288 </span>            :             mutant_relation&lt; FirstType, SecondType, Info, true &gt;,
+<span class="lineNum">     289 </span>            :             mutant_relation&lt; SecondType, FirstType, Info, true &gt;
+<span class="lineNum">     290 </span>            :         &gt;::type
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span>            :     &gt; mutant_views;
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span>            :     structured_pair() {}
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            :     structured_pair(BOOST_DEDUCED_TYPENAME boost::call_traits&lt;
+<span class="lineNum">     297 </span>            :                         BOOST_DEDUCED_TYPENAME base_::first_type  &gt;::param_type f,
+<span class="lineNum">     298 </span>            :                     BOOST_DEDUCED_TYPENAME boost::call_traits&lt;
+<span class="lineNum">     299 </span>            :                         BOOST_DEDUCED_TYPENAME base_::second_type &gt;::param_type s)
+<span class="lineNum">     300 </span>            :         : base_(f,s) {}
+<span class="lineNum">     301 </span>            : 
+<span class="lineNum">     302 </span>            :     structured_pair(BOOST_DEDUCED_TYPENAME boost::call_traits&lt;
+<span class="lineNum">     303 </span>            :                         BOOST_DEDUCED_TYPENAME base_::first_type  &gt;::param_type f,
+<span class="lineNum">     304 </span>            :                     BOOST_DEDUCED_TYPENAME boost::call_traits&lt;
+<span class="lineNum">     305 </span>            :                         BOOST_DEDUCED_TYPENAME base_::second_type &gt;::param_type s,
+<span class="lineNum">     306 </span>            :                     BOOST_DEDUCED_TYPENAME boost::call_traits&lt;
+<span class="lineNum">     307 </span>            :                         BOOST_DEDUCED_TYPENAME base_::info_type   &gt;::param_type i)
+<span class="lineNum">     308 </span>            :         : base_(f,s,i) {}
+<span class="lineNum">     309 </span>            : 
+<span class="lineNum">     310 </span>            :     template&lt; class OtherLayout &gt;
+<span class="lineNum">     311 </span>            :     structured_pair(
+<span class="lineNum">     312 </span>            :         const structured_pair&lt;FirstType,SecondType,Info,OtherLayout&gt; &amp; p)
+<span class="lineNum">     313 </span>            :         : base_(p) {}
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span>            :     template&lt; class OtherLayout &gt;
+<span class="lineNum">     316 </span>            :     structured_pair&amp; operator=(
+<span class="lineNum">     317 </span>            :         const structured_pair&lt;FirstType,SecondType,OtherLayout&gt; &amp; p)
+<span class="lineNum">     318 </span>            :     {
+<span class="lineNum">     319 </span>            :         base_::change_to(p);
+<span class="lineNum">     320 </span>            :         return *this;
+<span class="lineNum">     321 </span>            :     }
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span>            :     template&lt; class First, class Second &gt;
+<span class="lineNum">     324 </span>            :     structured_pair(const std::pair&lt;First,Second&gt; &amp; p) :
+<span class="lineNum">     325 </span>            :         base_(p.first,p.second)
+<span class="lineNum">     326 </span>            :     {}
+<span class="lineNum">     327 </span>            : 
+<span class="lineNum">     328 </span>            :     template&lt; class First, class Second &gt;
+<span class="lineNum">     329 </span>            :     structured_pair&amp; operator=(const std::pair&lt;First,Second&gt; &amp; p)
+<span class="lineNum">     330 </span>            :     {
+<span class="lineNum">     331 </span>            :         base_::first  = p.first;
+<span class="lineNum">     332 </span>            :         base_::second = p.second;
+<span class="lineNum">     333 </span>            :         base_::clear_info();
+<span class="lineNum">     334 </span>            :         return *this;
+<span class="lineNum">     335 </span>            :     }
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span>            :     template&lt; class Tag &gt;
+<span class="lineNum">     338 </span>            :     const BOOST_DEDUCED_TYPENAME ::boost::bimaps::relation::support::
+<span class="lineNum">     339 </span>            :         result_of::get&lt;Tag,const structured_pair&gt;::type
+<span class="lineNum">     340 </span>            :     get() const
+<span class="lineNum">     341 </span>            :     {
+<span class="lineNum">     342 </span>            :         return ::boost::bimaps::relation::support::get&lt;Tag&gt;(*this);
+<span class="lineNum">     343 </span>            :     }
+<span class="lineNum">     344 </span>            : 
+<span class="lineNum">     345 </span>            :     template&lt; class Tag &gt;
+<span class="lineNum">     346 </span>            :     BOOST_DEDUCED_TYPENAME ::boost::bimaps::relation::support::
+<span class="lineNum">     347 </span>            :         result_of::get&lt;Tag,structured_pair&gt;::type
+<span class="lineNum">     348 </span>            :     get()
+<span class="lineNum">     349 </span>            :     {
+<span class="lineNum">     350 </span>            :         return ::boost::bimaps::relation::support::get&lt;Tag&gt;(*this);
+<span class="lineNum">     351 </span>            :     }
+<span class="lineNum">     352 </span>            : };
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span>            : // structured_pair - structured_pair
+<span class="lineNum">     355 </span>            : 
+<span class="lineNum">     356 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout1, class Layout2 &gt;
+<span class="lineNum">     357 </span>            : bool operator==(const structured_pair&lt;FirstType,SecondType,Info,Layout1&gt; &amp; a,
+<span class="lineNum">     358 </span>            :                 const structured_pair&lt;FirstType,SecondType,Info,Layout2&gt; &amp; b)
+<span class="lineNum">     359 </span>            : {
+<span class="lineNum">     360 </span>            :     return ( ( a.first  == b.first  ) &amp;&amp;
+<span class="lineNum">     361 </span>            :              ( a.second == b.second ) );
+<span class="lineNum">     362 </span>            : }
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout1, class Layout2 &gt;
+<span class="lineNum">     365 </span>            : bool operator!=(const structured_pair&lt;FirstType,SecondType,Info,Layout1&gt; &amp; a,
+<span class="lineNum">     366 </span>            :                 const structured_pair&lt;FirstType,SecondType,Info,Layout2&gt; &amp; b)
+<span class="lineNum">     367 </span>            : {
+<span class="lineNum">     368 </span>            :     return ! ( a == b );
+<span class="lineNum">     369 </span>            : }
+<span class="lineNum">     370 </span>            : 
+<span class="lineNum">     371 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout1, class Layout2 &gt;
+<span class="lineNum">     372 </span>            : bool operator&lt;(const structured_pair&lt;FirstType,SecondType,Info,Layout1&gt; &amp; a,
+<span class="lineNum">     373 </span>            :                const structured_pair&lt;FirstType,SecondType,Info,Layout2&gt; &amp; b)
+<span class="lineNum">     374 </span>            : {
+<span class="lineNum">     375 </span>            :     return (  ( a.first  &lt;  b.first  ) ||
+<span class="lineNum">     376 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &lt; b.second )));
+<span class="lineNum">     377 </span>            : }
+<span class="lineNum">     378 </span>            : 
+<span class="lineNum">     379 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout1, class Layout2 &gt;
+<span class="lineNum">     380 </span>            : bool operator&lt;=(const structured_pair&lt;FirstType,SecondType,Info,Layout1&gt; &amp; a,
+<span class="lineNum">     381 </span>            :                 const structured_pair&lt;FirstType,SecondType,Info,Layout2&gt; &amp; b)
+<span class="lineNum">     382 </span>            : {
+<span class="lineNum">     383 </span>            :     return (  ( a.first  &lt;  b.first  ) ||
+<span class="lineNum">     384 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &lt;= b.second )));
+<span class="lineNum">     385 </span>            : }
+<span class="lineNum">     386 </span>            : 
+<span class="lineNum">     387 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout1, class Layout2 &gt;
+<span class="lineNum">     388 </span>            : bool operator&gt;(const structured_pair&lt;FirstType,SecondType,Info,Layout1&gt; &amp; a,
+<span class="lineNum">     389 </span>            :                const structured_pair&lt;FirstType,SecondType,Info,Layout2&gt; &amp; b)
+<span class="lineNum">     390 </span>            : {
+<span class="lineNum">     391 </span>            :     return ( ( a.first  &gt;  b.first  ) ||
+<span class="lineNum">     392 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &gt; b.second )));
+<span class="lineNum">     393 </span>            : }
+<span class="lineNum">     394 </span>            : 
+<span class="lineNum">     395 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout1, class Layout2 &gt;
+<span class="lineNum">     396 </span>            : bool operator&gt;=(const structured_pair&lt;FirstType,SecondType,Info,Layout1&gt; &amp; a,
+<span class="lineNum">     397 </span>            :                 const structured_pair&lt;FirstType,SecondType,Info,Layout2&gt; &amp; b)
+<span class="lineNum">     398 </span>            : {
+<span class="lineNum">     399 </span>            :     return ( ( a.first  &gt;  b.first  ) ||
+<span class="lineNum">     400 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &gt;= b.second )));
+<span class="lineNum">     401 </span>            : }
+<span class="lineNum">     402 </span>            : 
+<span class="lineNum">     403 </span>            : // structured_pair - std::pair
+<span class="lineNum">     404 </span>            : 
+<span class="lineNum">     405 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     406 </span>            : bool operator==(const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; a,
+<span class="lineNum">     407 </span>            :                 const std::pair&lt;F,S&gt; &amp; b)
+<span class="lineNum">     408 </span>            : {
+<span class="lineNum">     409 </span>            :     return ( ( a.first  == b.first  ) &amp;&amp;
+<span class="lineNum">     410 </span>            :              ( a.second == b.second ) );
+<span class="lineNum">     411 </span>            : }
+<span class="lineNum">     412 </span>            : 
+<span class="lineNum">     413 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     414 </span>            : bool operator!=(const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; a,
+<span class="lineNum">     415 </span>            :                 const std::pair&lt;F,S&gt; &amp; b)
+<span class="lineNum">     416 </span>            : {
+<span class="lineNum">     417 </span>            :     return ! ( a == b );
+<span class="lineNum">     418 </span>            : }
+<span class="lineNum">     419 </span>            : 
+<span class="lineNum">     420 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     421 </span>            : bool operator&lt;(const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; a,
+<span class="lineNum">     422 </span>            :                const std::pair&lt;F,S&gt; &amp; b)
+<span class="lineNum">     423 </span>            : {
+<span class="lineNum">     424 </span>            :     return (  ( a.first  &lt;  b.first  ) ||
+<span class="lineNum">     425 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &lt; b.second )));
+<span class="lineNum">     426 </span>            : }
+<span class="lineNum">     427 </span>            : 
+<span class="lineNum">     428 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     429 </span>            : bool operator&lt;=(const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; a,
+<span class="lineNum">     430 </span>            :                 const std::pair&lt;F,S&gt; &amp; b)
+<span class="lineNum">     431 </span>            : {
+<span class="lineNum">     432 </span>            :     return (  ( a.first  &lt;  b.first  ) ||
+<span class="lineNum">     433 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &lt;= b.second )));
+<span class="lineNum">     434 </span>            : }
+<span class="lineNum">     435 </span>            : 
+<span class="lineNum">     436 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     437 </span>            : bool operator&gt;(const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; a,
+<span class="lineNum">     438 </span>            :                const std::pair&lt;F,S&gt; &amp; b)
+<span class="lineNum">     439 </span>            : {
+<span class="lineNum">     440 </span>            :     return ( ( a.first  &gt;  b.first  ) ||
+<span class="lineNum">     441 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &gt; b.second )));
+<span class="lineNum">     442 </span>            : }
+<span class="lineNum">     443 </span>            : 
+<span class="lineNum">     444 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     445 </span>            : bool operator&gt;=(const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; a,
+<span class="lineNum">     446 </span>            :                 const std::pair&lt;F,S&gt; &amp; b)
+<span class="lineNum">     447 </span>            : {
+<span class="lineNum">     448 </span>            :     return ( ( a.first  &gt;  b.first  ) ||
+<span class="lineNum">     449 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &gt;= b.second )));
+<span class="lineNum">     450 </span>            : }
+<span class="lineNum">     451 </span>            : 
+<span class="lineNum">     452 </span>            : // std::pair - sturctured_pair
+<span class="lineNum">     453 </span>            : 
+<span class="lineNum">     454 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     455 </span>            : bool operator==(const std::pair&lt;F,S&gt; &amp; a,
+<span class="lineNum">     456 </span>            :                 const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; b)
+<span class="lineNum">     457 </span>            : {
+<span class="lineNum">     458 </span>            :     return ( ( a.first  == b.first  ) &amp;&amp;
+<span class="lineNum">     459 </span>            :              ( a.second == b.second ) );
+<span class="lineNum">     460 </span>            : }
+<span class="lineNum">     461 </span>            : 
+<span class="lineNum">     462 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     463 </span>            : bool operator!=(const std::pair&lt;F,S&gt; &amp; a,
+<span class="lineNum">     464 </span>            :                 const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; b)
+<span class="lineNum">     465 </span>            : {
+<span class="lineNum">     466 </span>            :     return ! ( a == b );
+<span class="lineNum">     467 </span>            : }
+<span class="lineNum">     468 </span>            : 
+<span class="lineNum">     469 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     470 </span>            : bool operator&lt;(const std::pair&lt;F,S&gt; &amp; a,
+<span class="lineNum">     471 </span>            :                const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; b)
+<span class="lineNum">     472 </span>            : {
+<span class="lineNum">     473 </span>            :     return (  ( a.first  &lt;  b.first  ) ||
+<span class="lineNum">     474 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &lt; b.second )));
+<span class="lineNum">     475 </span>            : }
+<span class="lineNum">     476 </span>            : 
+<span class="lineNum">     477 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     478 </span>            : bool operator&lt;=(const std::pair&lt;F,S&gt; &amp; a,
+<span class="lineNum">     479 </span>            :                 const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; b)
+<span class="lineNum">     480 </span>            : {
+<span class="lineNum">     481 </span>            :     return (  ( a.first  &lt;  b.first  ) ||
+<span class="lineNum">     482 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &lt;= b.second )));
+<span class="lineNum">     483 </span>            : }
+<span class="lineNum">     484 </span>            : 
+<span class="lineNum">     485 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     486 </span>            : bool operator&gt;(const std::pair&lt;F,S&gt; &amp; a,
+<span class="lineNum">     487 </span>            :                const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; b)
+<span class="lineNum">     488 </span>            : {
+<span class="lineNum">     489 </span>            :     return ( ( a.first  &gt;  b.first  ) ||
+<span class="lineNum">     490 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &gt; b.second )));
+<span class="lineNum">     491 </span>            : }
+<span class="lineNum">     492 </span>            : 
+<span class="lineNum">     493 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout, class F, class S &gt;
+<span class="lineNum">     494 </span>            : bool operator&gt;=(const std::pair&lt;F,S&gt; &amp; a,
+<span class="lineNum">     495 </span>            :                 const structured_pair&lt;FirstType,SecondType,Info,Layout&gt; &amp; b)
+<span class="lineNum">     496 </span>            : {
+<span class="lineNum">     497 </span>            :     return ( ( a.first  &gt;  b.first  ) ||
+<span class="lineNum">     498 </span>            :              (( a.first == b.first ) &amp;&amp; ( a.second &gt;= b.second )));
+<span class="lineNum">     499 </span>            : }
+<span class="lineNum">     500 </span>            : 
+<span class="lineNum">     501 </span>            : 
+<span class="lineNum">     502 </span>            : namespace detail {
+<span class="lineNum">     503 </span>            : 
+<span class="lineNum">     504 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout&gt;
+<span class="lineNum">     505 </span>            : structured_pair&lt;FirstType,SecondType,Info,Layout&gt; 
+<span class="lineNum">     506 </span>            :     copy_with_first_replaced(structured_pair&lt;FirstType,SecondType,Info,Layout&gt; const&amp; p,
+<span class="lineNum">     507 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt; BOOST_DEDUCED_TYPENAME 
+<span class="lineNum">     508 </span>            :             structured_pair&lt;FirstType,SecondType,Info,Layout&gt;::first_type&gt;
+<span class="lineNum">     509 </span>            :                 ::param_type f)
+<span class="lineNum">     510 </span>            : {
+<span class="lineNum">     511 </span>            :     return structured_pair&lt;FirstType,SecondType,Info,Layout&gt;(f,p.second,p.info);
+<span class="lineNum">     512 </span>            : }
+<span class="lineNum">     513 </span>            :     
+<span class="lineNum">     514 </span>            : template&lt; class FirstType, class SecondType, class Layout&gt;
+<span class="lineNum">     515 </span>            : structured_pair&lt;FirstType,SecondType,::boost::mpl::na,Layout&gt; 
+<span class="lineNum">     516 </span>            :     copy_with_first_replaced(structured_pair&lt;FirstType,SecondType,::boost::mpl::na,Layout&gt; const&amp; p,
+<span class="lineNum">     517 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt; BOOST_DEDUCED_TYPENAME 
+<span class="lineNum">     518 </span>            :             structured_pair&lt;FirstType,SecondType,::boost::mpl::na,Layout&gt;::first_type&gt;
+<span class="lineNum">     519 </span>            :                 ::param_type f)
+<span class="lineNum">     520 </span>            : {
+<span class="lineNum">     521 </span>            :     return structured_pair&lt;FirstType,SecondType,::boost::mpl::na,Layout&gt;(f,p.second);
+<span class="lineNum">     522 </span>            : }
+<span class="lineNum">     523 </span>            :     
+<span class="lineNum">     524 </span>            : template&lt; class FirstType, class SecondType, class Info, class Layout&gt;
+<span class="lineNum">     525 </span>            : structured_pair&lt;FirstType,SecondType,Info,Layout&gt; 
+<span class="lineNum">     526 </span>            :     copy_with_second_replaced(structured_pair&lt;FirstType,SecondType,Info,Layout&gt; const&amp; p,
+<span class="lineNum">     527 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt; BOOST_DEDUCED_TYPENAME 
+<span class="lineNum">     528 </span>            :             structured_pair&lt;FirstType,SecondType,Info,Layout&gt;::second_type&gt;
+<span class="lineNum">     529 </span>            :                 ::param_type s)
+<span class="lineNum">     530 </span>            : {
+<span class="lineNum">     531 </span>            :     return structured_pair&lt;FirstType,SecondType,Info,Layout&gt;(p.first,s,p.info);
+<span class="lineNum">     532 </span>            : }
+<span class="lineNum">     533 </span>            :     
+<span class="lineNum">     534 </span>            : template&lt; class FirstType, class SecondType, class Layout&gt;
+<span class="lineNum">     535 </span>            : structured_pair&lt;FirstType,SecondType,::boost::mpl::na,Layout&gt; 
+<span class="lineNum">     536 </span>            :     copy_with_second_replaced(structured_pair&lt;FirstType,SecondType,::boost::mpl::na,Layout&gt; const&amp; p,
+<span class="lineNum">     537 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt; BOOST_DEDUCED_TYPENAME 
+<span class="lineNum">     538 </span>            :             structured_pair&lt;FirstType,SecondType,::boost::mpl::na,Layout&gt;::second_type&gt;
+<span class="lineNum">     539 </span>            :                 ::param_type s)
+<span class="lineNum">     540 </span>            : {
+<span class="lineNum">     541 </span>            :     return structured_pair&lt;FirstType,SecondType,::boost::mpl::na,Layout&gt;(p.first,s);
+<span class="lineNum">     542 </span>            : }
+<span class="lineNum">     543 </span>            : 
+<span class="lineNum">     544 </span>            : } // namespace detail
+<span class="lineNum">     545 </span>            : 
+<span class="lineNum">     546 </span>            : 
+<span class="lineNum">     547 </span>            : } // namespace relation
+<span class="lineNum">     548 </span>            : } // namespace bimaps
+<span class="lineNum">     549 </span>            : } // namespace boost
+<span class="lineNum">     550 </span>            : 
+<span class="lineNum">     551 </span>            : #endif // BOOST_BIMAP_RELATION_STRUCTURED_PAIR_HPP
+<span class="lineNum">     552 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

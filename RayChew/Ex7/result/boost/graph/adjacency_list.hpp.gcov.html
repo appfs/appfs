@@ -1,0 +1,509 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/graph/adjacency_list.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">boost/graph</a> - adjacency_list.hpp<span style="font-size: 80%;"> (source / <a href="adjacency_list.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : //=======================================================================</a>
+<span class="lineNum">       2 </span>            : // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
+<span class="lineNum">       3 </span>            : // Copyright 2010 Thomas Claveirole
+<span class="lineNum">       4 </span>            : // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek, Thomas Claveirole
+<span class="lineNum">       5 </span>            : //
+<span class="lineNum">       6 </span>            : // Distributed under the Boost Software License, Version 1.0. (See
+<span class="lineNum">       7 </span>            : // accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       8 </span>            : // http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       9 </span>            : //=======================================================================
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #ifndef BOOST_GRAPH_ADJACENCY_LIST_HPP
+<span class="lineNum">      12 </span>            : #define BOOST_GRAPH_ADJACENCY_LIST_HPP
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #include &lt;boost/config.hpp&gt;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      18 </span>            : #include &lt;list&gt;
+<span class="lineNum">      19 </span>            : #include &lt;set&gt;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #include &lt;boost/unordered_set.hpp&gt;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : #include &lt;boost/scoped_ptr.hpp&gt;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #include &lt;boost/graph/graph_traits.hpp&gt;
+<span class="lineNum">      26 </span>            : #include &lt;boost/graph/graph_mutability_traits.hpp&gt;
+<span class="lineNum">      27 </span>            : #include &lt;boost/graph/graph_selectors.hpp&gt;
+<span class="lineNum">      28 </span>            : #include &lt;boost/property_map/property_map.hpp&gt;
+<span class="lineNum">      29 </span>            : #include &lt;boost/mpl/if.hpp&gt;
+<span class="lineNum">      30 </span>            : #include &lt;boost/mpl/and.hpp&gt;
+<span class="lineNum">      31 </span>            : #include &lt;boost/mpl/not.hpp&gt;
+<span class="lineNum">      32 </span>            : #include &lt;boost/mpl/bool.hpp&gt;
+<span class="lineNum">      33 </span>            : #include &lt;boost/graph/detail/edge.hpp&gt;
+<span class="lineNum">      34 </span>            : #include &lt;boost/type_traits/is_same.hpp&gt;
+<span class="lineNum">      35 </span>            : #include &lt;boost/detail/workaround.hpp&gt;
+<span class="lineNum">      36 </span>            : #include &lt;boost/graph/properties.hpp&gt;
+<span class="lineNum">      37 </span>            : #include &lt;boost/graph/named_graph.hpp&gt;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : namespace boost {
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            :   //===========================================================================
+<span class="lineNum">      42 </span>            :   // Selectors for the VertexList and EdgeList template parameters of
+<span class="lineNum">      43 </span>            :   // adjacency_list, and the container_gen traits class which is used
+<span class="lineNum">      44 </span>            :   // to map the selectors to the container type used to implement the
+<span class="lineNum">      45 </span>            :   // graph.
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :   struct vecS  { };
+<span class="lineNum">      48 </span>            :   struct listS { };
+<span class="lineNum">      49 </span>            :   struct setS { };
+<span class="lineNum">      50 </span>            :   struct mapS  { };
+<span class="lineNum">      51 </span>            :   struct multisetS { };
+<span class="lineNum">      52 </span>            :   struct multimapS { };
+<span class="lineNum">      53 </span>            :   struct hash_setS { };
+<span class="lineNum">      54 </span>            :   struct hash_mapS { };
+<span class="lineNum">      55 </span>            :   struct hash_multisetS { };
+<span class="lineNum">      56 </span>            :   struct hash_multimapS { };
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :   template &lt;class Selector, class ValueType&gt;
+<span class="lineNum">      59 </span>            :   struct container_gen { };
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            :   template &lt;class ValueType&gt;
+<span class="lineNum">      62 </span>            :   struct container_gen&lt;listS, ValueType&gt; {
+<span class="lineNum">      63 </span>            :     typedef std::list&lt;ValueType&gt; type;
+<span class="lineNum">      64 </span>            :   };
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :   template &lt;class ValueType&gt;
+<span class="lineNum">      67 </span>            :   struct container_gen&lt;vecS, ValueType&gt; {
+<span class="lineNum">      68 </span>            :     typedef std::vector&lt;ValueType&gt; type;
+<span class="lineNum">      69 </span>            :   };
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :   template &lt;class ValueType&gt;
+<span class="lineNum">      72 </span>            :   struct container_gen&lt;mapS, ValueType&gt; {
+<span class="lineNum">      73 </span>            :     typedef std::set&lt;ValueType&gt; type;
+<span class="lineNum">      74 </span>            :   };
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            :   template &lt;class ValueType&gt;
+<span class="lineNum">      77 </span>            :   struct container_gen&lt;setS, ValueType&gt; {
+<span class="lineNum">      78 </span>            :     typedef std::set&lt;ValueType&gt; type;
+<span class="lineNum">      79 </span>            :   };
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            :   template &lt;class ValueType&gt;
+<span class="lineNum">      82 </span>            :   struct container_gen&lt;multisetS, ValueType&gt; {
+<span class="lineNum">      83 </span>            :     typedef std::multiset&lt;ValueType&gt; type;
+<span class="lineNum">      84 </span>            :   };
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :   template &lt;class ValueType&gt;
+<span class="lineNum">      87 </span>            :   struct container_gen&lt;multimapS, ValueType&gt; {
+<span class="lineNum">      88 </span>            :     typedef std::multiset&lt;ValueType&gt; type;
+<span class="lineNum">      89 </span>            :   };
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            :   template &lt;class ValueType&gt;
+<span class="lineNum">      92 </span>            :   struct container_gen&lt;hash_setS, ValueType&gt; {
+<span class="lineNum">      93 </span>            :     typedef boost::unordered_set&lt;ValueType&gt; type;
+<span class="lineNum">      94 </span>            :   };
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :   template &lt;class ValueType&gt;
+<span class="lineNum">      97 </span>            :   struct container_gen&lt;hash_mapS, ValueType&gt; {
+<span class="lineNum">      98 </span>            :     typedef boost::unordered_set&lt;ValueType&gt; type;
+<span class="lineNum">      99 </span>            :   };
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            :   template &lt;class ValueType&gt;
+<span class="lineNum">     102 </span>            :   struct container_gen&lt;hash_multisetS, ValueType&gt; {
+<span class="lineNum">     103 </span>            :     typedef boost::unordered_multiset&lt;ValueType&gt; type;
+<span class="lineNum">     104 </span>            :   };
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :   template &lt;class ValueType&gt;
+<span class="lineNum">     107 </span>            :   struct container_gen&lt;hash_multimapS, ValueType&gt; {
+<span class="lineNum">     108 </span>            :     typedef boost::unordered_multiset&lt;ValueType&gt; type;
+<span class="lineNum">     109 </span>            :   };
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :   template &lt;class StorageSelector&gt;
+<span class="lineNum">     112 </span>            :   struct parallel_edge_traits { };
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :   template &lt;&gt;
+<span class="lineNum">     115 </span>            :   struct parallel_edge_traits&lt;vecS&gt; {
+<span class="lineNum">     116 </span>            :     typedef allow_parallel_edge_tag type; };
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            :   template &lt;&gt;
+<span class="lineNum">     119 </span>            :   struct parallel_edge_traits&lt;listS&gt; {
+<span class="lineNum">     120 </span>            :     typedef allow_parallel_edge_tag type; };
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            :   template &lt;&gt;
+<span class="lineNum">     123 </span>            :   struct parallel_edge_traits&lt;setS&gt; {
+<span class="lineNum">     124 </span>            :     typedef disallow_parallel_edge_tag type; };
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :   template &lt;&gt;
+<span class="lineNum">     127 </span>            :   struct parallel_edge_traits&lt;multisetS&gt; {
+<span class="lineNum">     128 </span>            :     typedef allow_parallel_edge_tag type; };
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :   template &lt;&gt;
+<span class="lineNum">     131 </span>            :   struct parallel_edge_traits&lt;hash_setS&gt; {
+<span class="lineNum">     132 </span>            :     typedef disallow_parallel_edge_tag type;
+<span class="lineNum">     133 </span>            :   };
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            :   // mapS is obsolete, replaced with setS
+<span class="lineNum">     136 </span>            :   template &lt;&gt;
+<span class="lineNum">     137 </span>            :   struct parallel_edge_traits&lt;mapS&gt; {
+<span class="lineNum">     138 </span>            :     typedef disallow_parallel_edge_tag type; };
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            :   template &lt;&gt;
+<span class="lineNum">     141 </span>            :   struct parallel_edge_traits&lt;hash_mapS&gt; {
+<span class="lineNum">     142 </span>            :     typedef disallow_parallel_edge_tag type;
+<span class="lineNum">     143 </span>            :   };
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            :   template &lt;&gt;
+<span class="lineNum">     146 </span>            :   struct parallel_edge_traits&lt;hash_multisetS&gt; {
+<span class="lineNum">     147 </span>            :     typedef allow_parallel_edge_tag type;
+<span class="lineNum">     148 </span>            :   };
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span>            :   template &lt;&gt;
+<span class="lineNum">     151 </span>            :   struct parallel_edge_traits&lt;hash_multimapS&gt; {
+<span class="lineNum">     152 </span>            :     typedef allow_parallel_edge_tag type;
+<span class="lineNum">     153 </span>            :   };
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            :   namespace detail {
+<span class="lineNum">     156 </span>            :     template &lt;class Directed&gt; struct is_random_access {
+<span class="lineNum">     157 </span>            :       enum { value = false};
+<span class="lineNum">     158 </span>            :       typedef mpl::false_ type;
+<span class="lineNum">     159 </span>            :     };
+<span class="lineNum">     160 </span>            :     template &lt;&gt;
+<span class="lineNum">     161 </span>            :     struct is_random_access&lt;vecS&gt; {
+<span class="lineNum">     162 </span>            :       enum { value = true };
+<span class="lineNum">     163 </span>            :       typedef mpl::true_ type;
+<span class="lineNum">     164 </span>            :     };
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :   } // namespace detail
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            :   template &lt;typename Selector&gt; struct is_distributed_selector: mpl::false_ {};
+<span class="lineNum">     169 </span>            : 
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            :   //===========================================================================
+<span class="lineNum">     172 </span>            :   // The adjacency_list_traits class, which provides a way to access
+<span class="lineNum">     173 </span>            :   // some of the associated types of an adjacency_list type without
+<span class="lineNum">     174 </span>            :   // having to first create the adjacency_list type. This is useful
+<span class="lineNum">     175 </span>            :   // when trying to create interior vertex or edge properties who's
+<span class="lineNum">     176 </span>            :   // value type is a vertex or edge descriptor.
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :   template &lt;class OutEdgeListS = vecS,
+<span class="lineNum">     179 </span>            :             class VertexListS = vecS,
+<span class="lineNum">     180 </span>            :             class DirectedS = directedS,
+<span class="lineNum">     181 </span>            :             class EdgeListS = listS&gt;
+<span class="lineNum">     182 </span>            :   struct adjacency_list_traits
+<span class="lineNum">     183 </span>            :   {
+<span class="lineNum">     184 </span>            :     typedef typename detail::is_random_access&lt;VertexListS&gt;::type
+<span class="lineNum">     185 </span>            :       is_rand_access;
+<span class="lineNum">     186 </span>            :     typedef typename DirectedS::is_bidir_t is_bidir;
+<span class="lineNum">     187 </span>            :     typedef typename DirectedS::is_directed_t is_directed;
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span>            :     typedef typename mpl::if_&lt;is_bidir,
+<span class="lineNum">     190 </span>            :       bidirectional_tag,
+<span class="lineNum">     191 </span>            :       typename mpl::if_&lt;is_directed,
+<span class="lineNum">     192 </span>            :         directed_tag, undirected_tag
+<span class="lineNum">     193 </span>            :       &gt;::type
+<span class="lineNum">     194 </span>            :     &gt;::type directed_category;
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :     typedef typename parallel_edge_traits&lt;OutEdgeListS&gt;::type
+<span class="lineNum">     197 </span>            :       edge_parallel_category;
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            :     typedef std::size_t vertices_size_type;
+<span class="lineNum">     200 </span>            :     typedef void* vertex_ptr;
+<span class="lineNum">     201 </span>            :     typedef typename mpl::if_&lt;is_rand_access,
+<span class="lineNum">     202 </span>            :       vertices_size_type, vertex_ptr&gt;::type vertex_descriptor;
+<span class="lineNum">     203 </span>            :     typedef detail::edge_desc_impl&lt;directed_category, vertex_descriptor&gt;
+<span class="lineNum">     204 </span>            :       edge_descriptor;
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span>            :   private:
+<span class="lineNum">     207 </span>            :     // Logic to figure out the edges_size_type
+<span class="lineNum">     208 </span>            :     struct dummy {};
+<span class="lineNum">     209 </span>            :     typedef typename container_gen&lt;EdgeListS, dummy&gt;::type EdgeContainer;
+<span class="lineNum">     210 </span>            :     typedef typename DirectedS::is_bidir_t BidirectionalT;
+<span class="lineNum">     211 </span>            :     typedef typename DirectedS::is_directed_t DirectedT;
+<span class="lineNum">     212 </span>            :     typedef typename mpl::and_&lt;DirectedT,
+<span class="lineNum">     213 </span>            :       typename mpl::not_&lt;BidirectionalT&gt;::type &gt;::type on_edge_storage;
+<span class="lineNum">     214 </span>            :   public:
+<span class="lineNum">     215 </span>            :     typedef typename mpl::if_&lt;on_edge_storage,
+<span class="lineNum">     216 </span>            :        std::size_t, typename EdgeContainer::size_type
+<span class="lineNum">     217 </span>            :     &gt;::type edges_size_type;
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            :   };
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span>            : } // namespace boost
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span>            : #include &lt;boost/graph/detail/adjacency_list.hpp&gt;
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            : namespace boost {
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span>            :   //===========================================================================
+<span class="lineNum">     228 </span>            :   // The adjacency_list class.
+<span class="lineNum">     229 </span>            :   //
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span>            :   template &lt;class OutEdgeListS = vecS, // a Sequence or an AssociativeContainer
+<span class="lineNum">     232 </span>            :             class VertexListS = vecS, // a Sequence or a RandomAccessContainer
+<span class="lineNum">     233 </span>            :             class DirectedS = directedS,
+<span class="lineNum">     234 </span>            :             class VertexProperty = no_property,
+<span class="lineNum">     235 </span>            :             class EdgeProperty = no_property,
+<span class="lineNum">     236 </span>            :             class GraphProperty = no_property,
+<span class="lineNum">     237 </span>            :             class EdgeListS = listS&gt;
+<span class="lineNum">     238 </span><span class="lineCov">          1 :   class adjacency_list</span>
+<span class="lineNum">     239 </span>            :     : public detail::adj_list_gen&lt;
+<span class="lineNum">     240 </span>            :       adjacency_list&lt;OutEdgeListS,VertexListS,DirectedS,
+<span class="lineNum">     241 </span>            :                      VertexProperty,EdgeProperty,GraphProperty,EdgeListS&gt;,
+<span class="lineNum">     242 </span>            :       VertexListS, OutEdgeListS, DirectedS,
+<span class="lineNum">     243 </span>            :       VertexProperty, EdgeProperty,
+<span class="lineNum">     244 </span>            :       GraphProperty, EdgeListS&gt;::type,
+<span class="lineNum">     245 </span>            :       // Support for named vertices
+<span class="lineNum">     246 </span>            :       public graph::maybe_named_graph&lt;
+<span class="lineNum">     247 </span>            :         adjacency_list&lt;OutEdgeListS,VertexListS,DirectedS,
+<span class="lineNum">     248 </span>            :                        VertexProperty,EdgeProperty,GraphProperty,EdgeListS&gt;,
+<span class="lineNum">     249 </span>            :         typename adjacency_list_traits&lt;OutEdgeListS, VertexListS, DirectedS,
+<span class="lineNum">     250 </span>            :                                        EdgeListS&gt;::vertex_descriptor,
+<span class="lineNum">     251 </span>            :         VertexProperty&gt;
+<span class="lineNum">     252 </span>            :   {
+<span class="lineNum">     253 </span>            :       public:
+<span class="lineNum">     254 </span>            :     typedef GraphProperty graph_property_type;
+<span class="lineNum">     255 </span>            :     typedef typename lookup_one_property&lt;GraphProperty, graph_bundle_t&gt;::type graph_bundled;
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span>            :     typedef VertexProperty vertex_property_type;
+<span class="lineNum">     258 </span>            :     typedef typename lookup_one_property&lt;VertexProperty, vertex_bundle_t&gt;::type vertex_bundled;
+<span class="lineNum">     259 </span>            : 
+<span class="lineNum">     260 </span>            :     typedef EdgeProperty edge_property_type;
+<span class="lineNum">     261 </span>            :     typedef typename lookup_one_property&lt;EdgeProperty, edge_bundle_t&gt;::type edge_bundled;
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span>            :   private:
+<span class="lineNum">     264 </span>            :     typedef adjacency_list self;
+<span class="lineNum">     265 </span>            :     typedef typename detail::adj_list_gen&lt;
+<span class="lineNum">     266 </span>            :       self, VertexListS, OutEdgeListS, DirectedS,
+<span class="lineNum">     267 </span>            :       vertex_property_type, edge_property_type, GraphProperty, EdgeListS
+<span class="lineNum">     268 </span>            :     &gt;::type Base;
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            :   public:
+<span class="lineNum">     271 </span>            :     typedef typename Base::stored_vertex stored_vertex;
+<span class="lineNum">     272 </span>            :     typedef typename Base::vertices_size_type vertices_size_type;
+<span class="lineNum">     273 </span>            :     typedef typename Base::edges_size_type edges_size_type;
+<span class="lineNum">     274 </span>            :     typedef typename Base::degree_size_type degree_size_type;
+<span class="lineNum">     275 </span>            :     typedef typename Base::vertex_descriptor vertex_descriptor;
+<span class="lineNum">     276 </span>            :     typedef typename Base::edge_descriptor edge_descriptor;
+<span class="lineNum">     277 </span>            :     typedef OutEdgeListS out_edge_list_selector;
+<span class="lineNum">     278 </span>            :     typedef VertexListS vertex_list_selector;
+<span class="lineNum">     279 </span>            :     typedef DirectedS directed_selector;
+<span class="lineNum">     280 </span>            :     typedef EdgeListS edge_list_selector;
+<span class="lineNum">     281 </span>            : 
+<span class="lineNum">     282 </span>            : 
+<span class="lineNum">     283 </span>            :     adjacency_list(const GraphProperty&amp; p = GraphProperty())
+<span class="lineNum">     284 </span>            :       : m_property(new graph_property_type(p))
+<span class="lineNum">     285 </span>            :     { }
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span>            :     adjacency_list(const adjacency_list&amp; x)
+<span class="lineNum">     288 </span>            :       : Base(x), m_property(new graph_property_type(*x.m_property))
+<span class="lineNum">     289 </span>            :     { }
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span>            :     adjacency_list&amp; operator=(const adjacency_list&amp; x) {
+<span class="lineNum">     292 </span>            :       // TBD: probably should give the strong guarantee
+<span class="lineNum">     293 </span>            :       if (&amp;x != this) {
+<span class="lineNum">     294 </span>            :         Base::operator=(x);
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            :         // Copy/swap the ptr since we can't just assign it...
+<span class="lineNum">     297 </span>            :         property_ptr p(new graph_property_type(*x.m_property));
+<span class="lineNum">     298 </span>            :         m_property.swap(p);
+<span class="lineNum">     299 </span>            :       }
+<span class="lineNum">     300 </span>            :       return *this;
+<span class="lineNum">     301 </span>            :     }
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span>            :     // Required by Mutable Graph
+<span class="lineNum">     304 </span>            :     adjacency_list(vertices_size_type num_vertices,
+<span class="lineNum">     305 </span>            :                           const GraphProperty&amp; p = GraphProperty())
+<span class="lineNum">     306 </span>            :       : Base(num_vertices), m_property(new graph_property_type(p))
+<span class="lineNum">     307 </span>            :     { }
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span>            :     // Required by Iterator Constructible Graph
+<span class="lineNum">     310 </span>            :     template &lt;class EdgeIterator&gt;
+<span class="lineNum">     311 </span>            :     adjacency_list(EdgeIterator first, EdgeIterator last,
+<span class="lineNum">     312 </span>            :                           vertices_size_type n,
+<span class="lineNum">     313 </span>            :                           edges_size_type = 0,
+<span class="lineNum">     314 </span>            :                           const GraphProperty&amp; p = GraphProperty())
+<span class="lineNum">     315 </span>            :       : Base(n, first, last), m_property(new graph_property_type(p))
+<span class="lineNum">     316 </span>            :     { }
+<a name="317"><span class="lineNum">     317 </span>            : </a>
+<span class="lineNum">     318 </span>            :     template &lt;class EdgeIterator, class EdgePropertyIterator&gt;
+<span class="lineNum">     319 </span><span class="lineCov">          1 :     adjacency_list(EdgeIterator first, EdgeIterator last,</span>
+<span class="lineNum">     320 </span>            :                           EdgePropertyIterator ep_iter,
+<span class="lineNum">     321 </span>            :                           vertices_size_type n,
+<span class="lineNum">     322 </span>            :                           edges_size_type = 0,
+<span class="lineNum">     323 </span>            :                           const GraphProperty&amp; p = GraphProperty())
+<span class="lineNum">     324 </span><span class="lineCov">          1 :       : Base(n, first, last, ep_iter), m_property(new graph_property_type(p))</span>
+<span class="lineNum">     325 </span><span class="lineCov">          1 :     { }</span>
+<span class="lineNum">     326 </span>            : 
+<span class="lineNum">     327 </span>            :     void swap(adjacency_list&amp; x) {
+<span class="lineNum">     328 </span>            :       // Is there a more efficient way to do this?
+<span class="lineNum">     329 </span>            :       adjacency_list tmp(x);
+<span class="lineNum">     330 </span>            :       x = *this;
+<span class="lineNum">     331 </span>            :       *this = tmp;
+<span class="lineNum">     332 </span>            :     }
+<span class="lineNum">     333 </span>            : 
+<span class="lineNum">     334 </span>            :     void clear()
+<span class="lineNum">     335 </span>            :     {
+<span class="lineNum">     336 </span>            :       this-&gt;clearing_graph();
+<span class="lineNum">     337 </span>            :       Base::clear();
+<span class="lineNum">     338 </span>            :     }
+<span class="lineNum">     339 </span>            : 
+<span class="lineNum">     340 </span>            : #ifndef BOOST_GRAPH_NO_BUNDLED_PROPERTIES
+<span class="lineNum">     341 </span>            :     // Directly access a vertex or edge bundle
+<span class="lineNum">     342 </span>            :     vertex_bundled&amp; operator[](vertex_descriptor v)
+<span class="lineNum">     343 </span>            :     { return get(vertex_bundle, *this)[v]; }
+<span class="lineNum">     344 </span>            : 
+<span class="lineNum">     345 </span>            :     const vertex_bundled&amp; operator[](vertex_descriptor v) const
+<span class="lineNum">     346 </span>            :     { return get(vertex_bundle, *this)[v]; }
+<span class="lineNum">     347 </span>            : 
+<span class="lineNum">     348 </span>            :     edge_bundled&amp; operator[](edge_descriptor e)
+<span class="lineNum">     349 </span>            :     { return get(edge_bundle, *this)[e]; }
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span>            :     const edge_bundled&amp; operator[](edge_descriptor e) const
+<span class="lineNum">     352 </span>            :     { return get(edge_bundle, *this)[e]; }
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span>            :     graph_bundled&amp; operator[](graph_bundle_t)
+<span class="lineNum">     355 </span>            :     { return get_property(*this); }
+<span class="lineNum">     356 </span>            : 
+<span class="lineNum">     357 </span>            :     graph_bundled const&amp; operator[](graph_bundle_t) const
+<span class="lineNum">     358 </span>            :     { return get_property(*this); }
+<span class="lineNum">     359 </span>            : #endif
+<span class="lineNum">     360 </span>            : 
+<span class="lineNum">     361 </span>            :     //  protected:  (would be protected if friends were more portable)
+<span class="lineNum">     362 </span>            :     typedef scoped_ptr&lt;graph_property_type&gt; property_ptr;
+<span class="lineNum">     363 </span>            :     property_ptr  m_property;
+<span class="lineNum">     364 </span>            :   };
+<span class="lineNum">     365 </span>            : 
+<span class="lineNum">     366 </span>            : #define ADJLIST_PARAMS \
+<span class="lineNum">     367 </span>            :     typename OEL, typename VL, typename D, typename VP, typename EP, \
+<span class="lineNum">     368 </span>            :     typename GP, typename EL
+<span class="lineNum">     369 </span>            : #define ADJLIST adjacency_list&lt;OEL,VL,D,VP,EP,GP,EL&gt;
+<span class="lineNum">     370 </span>            : 
+<span class="lineNum">     371 </span>            :   template&lt;ADJLIST_PARAMS, typename Tag, typename Value&gt;
+<span class="lineNum">     372 </span>            :   inline void set_property(ADJLIST&amp; g, Tag tag, Value const&amp; value) {
+<span class="lineNum">     373 </span>            :     get_property_value(*g.m_property, tag) = value;
+<span class="lineNum">     374 </span>            :   }
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span>            :   template&lt;ADJLIST_PARAMS, typename Tag&gt;
+<span class="lineNum">     377 </span>            :   inline typename graph_property&lt;ADJLIST, Tag&gt;::type&amp;
+<span class="lineNum">     378 </span>            :   get_property(ADJLIST&amp; g, Tag tag) {
+<span class="lineNum">     379 </span>            :     return get_property_value(*g.m_property, tag);
+<span class="lineNum">     380 </span>            :   }
+<span class="lineNum">     381 </span>            : 
+<span class="lineNum">     382 </span>            :   template&lt;ADJLIST_PARAMS, typename Tag&gt;
+<span class="lineNum">     383 </span>            :   inline typename graph_property&lt;ADJLIST, Tag&gt;::type const&amp;
+<span class="lineNum">     384 </span>            :   get_property(ADJLIST const&amp; g, Tag tag) {
+<span class="lineNum">     385 </span>            :     return get_property_value(*g.m_property, tag);
+<span class="lineNum">     386 </span>            :   }
+<span class="lineNum">     387 </span>            : 
+<span class="lineNum">     388 </span>            :   // dwa 09/25/00 - needed to be more explicit so reverse_graph would work.
+<span class="lineNum">     389 </span>            :   template &lt;class Directed, class Vertex,
+<span class="lineNum">     390 </span>            :       class OutEdgeListS,
+<span class="lineNum">     391 </span>            :       class VertexListS,
+<span class="lineNum">     392 </span>            :       class DirectedS,
+<span class="lineNum">     393 </span>            :       class VertexProperty,
+<span class="lineNum">     394 </span>            :       class EdgeProperty,
+<span class="lineNum">     395 </span>            :       class GraphProperty, class EdgeListS&gt;
+<span class="lineNum">     396 </span>            :   inline Vertex
+<span class="lineNum">     397 </span>            :   source(const detail::edge_base&lt;Directed,Vertex&gt;&amp; e,
+<span class="lineNum">     398 </span>            :          const adjacency_list&lt;OutEdgeListS, VertexListS, DirectedS,
+<span class="lineNum">     399 </span>            :                  VertexProperty, EdgeProperty, GraphProperty, EdgeListS&gt;&amp;)
+<span class="lineNum">     400 </span>            :   {
+<span class="lineNum">     401 </span>            :     return e.m_source;
+<span class="lineNum">     402 </span>            :   }
+<span class="lineNum">     403 </span>            : 
+<span class="lineNum">     404 </span>            :   template &lt;class Directed, class Vertex, class OutEdgeListS,
+<span class="lineNum">     405 </span>            :       class VertexListS, class DirectedS, class VertexProperty,
+<span class="lineNum">     406 </span>            :       class EdgeProperty, class GraphProperty, class EdgeListS&gt;
+<span class="lineNum">     407 </span>            :   inline Vertex
+<span class="lineNum">     408 </span>            :   target(const detail::edge_base&lt;Directed,Vertex&gt;&amp; e,
+<span class="lineNum">     409 </span>            :          const adjacency_list&lt;OutEdgeListS, VertexListS, DirectedS,
+<span class="lineNum">     410 </span>            :               VertexProperty, EdgeProperty, GraphProperty, EdgeListS&gt;&amp;)
+<span class="lineNum">     411 </span>            :   {
+<span class="lineNum">     412 </span>            :     return e.m_target;
+<span class="lineNum">     413 </span>            :   }
+<span class="lineNum">     414 </span>            : 
+<span class="lineNum">     415 </span>            : // Mutability Traits
+<span class="lineNum">     416 </span>            : template &lt;ADJLIST_PARAMS&gt;
+<span class="lineNum">     417 </span>            : struct graph_mutability_traits&lt;ADJLIST&gt; {
+<span class="lineNum">     418 </span>            :     typedef mutable_property_graph_tag category;
+<span class="lineNum">     419 </span>            : };
+<span class="lineNum">     420 </span>            : 
+<span class="lineNum">     421 </span>            : // Can't remove vertices from adjacency lists with VL==vecS
+<span class="lineNum">     422 </span>            : template &lt;typename OEL, typename D, typename VP, typename EP, typename GP, typename EL&gt;
+<span class="lineNum">     423 </span>            : struct graph_mutability_traits&lt; adjacency_list&lt;OEL,vecS,D,VP,EP,GP,EL&gt; &gt; {
+<span class="lineNum">     424 </span>            :     typedef add_only_property_graph_tag category;
+<span class="lineNum">     425 </span>            : };
+<span class="lineNum">     426 </span>            : #undef ADJLIST_PARAMS
+<span class="lineNum">     427 </span>            : #undef ADJLIST
+<span class="lineNum">     428 </span>            : 
+<span class="lineNum">     429 </span>            : 
+<span class="lineNum">     430 </span>            : } // namespace boost
+<span class="lineNum">     431 </span>            : 
+<span class="lineNum">     432 </span>            : 
+<span class="lineNum">     433 </span>            : #endif // BOOST_GRAPH_ADJACENCY_LIST_HPP
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
