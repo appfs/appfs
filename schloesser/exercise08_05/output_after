@@ -1,0 +1,25 @@
+fari@grenouille:~/projects/github/appfs/schloesser/exercise08_05$ ./ex8 ../data/world666.gph 
+
+RESULT OBJECTIVE 117613
+RESULT TIME 0.883166
+fari@grenouille:~/projects/github/appfs/schloesser/exercise08_05$ ./ex8 ../data/example1.gph 
+
+RESULT OBJECTIVE 12
+RESULT TIME 0.000020
+fari@grenouille:~/projects/github/appfs/schloesser/exercise08_05$ ./ex8 ../data/example2.gph 
+
+RESULT OBJECTIVE 150
+RESULT TIME 0.000075
+fari@grenouille:~/projects/github/appfs/schloesser/exercise08_05$ ./ex8 ../data/small.gph 
+
+RESULT OBJECTIVE 3
+RESULT TIME 0.000010
+fari@grenouille:~/projects/github/appfs/schloesser/exercise08_05$ ./ex8 ../data/b15.gph 
+
+RESULT OBJECTIVE 215
+RESULT TIME 0.000728
+fari@grenouille:~/projects/github/appfs/schloesser/exercise08_05$ ./ex8 ../data/i640-345.gph 
+
+RESULT OBJECTIVE 14156
+RESULT TIME 0.198748
+

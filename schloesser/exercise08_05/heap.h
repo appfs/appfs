@@ -81,6 +81,18 @@ void decrease_value(
         unsigned int vert,
         unsigned long value);
 
+/** @brief Decreases the value of an element if present or pushes it into heap.
+ *
+ * @param h a heap
+ * @param vert the element whose value should be decreased
+ * @param value the new value of element. should be smaller than the current one.
+ * @return modifies the heap h 
+ */
+void push_or_decrease_value(
+        Heap *h,
+        unsigned int vert,
+        unsigned long value);
+
 /** @brief Bubble an element up.
  *
  * @param h a heap

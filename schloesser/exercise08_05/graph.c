@@ -26,12 +26,8 @@ void update_neighbor_info(
             if (newdist < olddist) {
                 gs->distances[n] = newdist;
                 gs->prev[n] = curr;
-                if(olddist < ULONG_MAX) {
-                    decrease_value(gs->to_visit, n, gs->distances[n]);
-                } else {
-                    push(gs->to_visit, n, gs->distances[n]);
-                }
             }
+			push_or_decrease_value(gs->to_visit, n, gs->distances[n]);
         }
     }
 }

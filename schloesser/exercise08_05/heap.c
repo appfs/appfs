@@ -76,6 +76,21 @@ void decrease_value(
     bubble_up(h, h->pos[vert]);
 }
 
+void push_or_decrease_value(
+		Heap *h,
+		unsigned int vert,
+		unsigned long value) {
+	
+	unsigned int pos = h->pos[vert];
+	if( pos < h->n && h->heap[pos] == vert ) {
+		if( h->val[vert] > value) {
+			decrease_value(h, vert, value);
+		}
+	} else {
+		push(h, vert, value);
+	}
+}
+
 void bubble_up(
         Heap *h, 
         unsigned int index) {
