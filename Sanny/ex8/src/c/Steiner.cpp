@@ -9,11 +9,29 @@
 
 Steiner::Steiner() {
 	dijsktra = new Dijkstra();
-
+	nodesInTree = new Nodes();
+	steinerEdges = new Edges();
 }
 
 Steiner::~Steiner() {
 	delete dijsktra;
+	delete nodesInTree;
+	delete steinerEdges;
+}
+
+/** Getter for number of nodes */
+int Steiner::getNodeCount() {
+	return nodesInTree->size();
+}
+
+/** Getter for Edges in Steiner-tree */
+Edges Steiner::getEdges() {
+	return *steinerEdges;
+}
+
+/** Getter for Edges in Steiner-tree */
+int Steiner::getWeight() {
+	return steinerWeight;
 }
 
 /** Computes all primes less than vertexCount */
@@ -34,17 +52,19 @@ Primes Steiner::getPrimes(unsigned int vertexCount) {
 	return primes;
 }
 
-void Steiner::addToSteiner(Edge edge, unsigned int i,
-		EdgesWithWeight* edgesAndWeight, Weights& weights) {
-	edgesAndWeight->first.push_back(edge);
-	(*edgesAndWeight).second += weights[i];
+void Steiner::addToSteiner(Edge edge, unsigned int i, Weights& weights) {
+	steinerEdges->push_back(edge);
+	steinerWeight += weights[i];
 	weights[i] = 0;
 }
 
 /** Uses prime numbers for terminals and solves the Steiner-tree problem */
-EdgesWithWeight Steiner::steiner(int vertexCount, Edges& edges, Weights& weights, int startnode) {
+void Steiner::steiner(int vertexCount, Edges& edges, Weights& weights, int startnode) {
+	steinerEdges->clear();
+	nodesInTree->clear();
+
 	if(vertexCount < startnode){
-		return EdgesWithWeight();
+		return;
 	}
 
 	Primes primes = getPrimes(vertexCount);
@@ -53,7 +73,6 @@ EdgesWithWeight Steiner::steiner(int vertexCount, Edges& edges, Weights& weights
 	}
 	Nodes* nodesInTree = new Nodes();
 	nodesInTree->push_back(startnode);
-	EdgesWithWeight* edgesAndWeight = new EdgesWithWeight();
 
 	// while there aren't all primes in the steiner-tree
 	while(!primes.empty()){
@@ -77,16 +96,16 @@ EdgesWithWeight Steiner::steiner(int vertexCount, Edges& edges, Weights& weights
 			if(std::find(nodesInTree->begin(), nodesInTree->end(), node) != nodesInTree->end()){
 				break;
 			}
-			// add node and edge to steiner-tree and set edgeweight to 0 for included edges
+			// add node and edge to steiner-tree and set edgeweight to 0 for included steinerEdges
 			nodesInTree->push_back(node);
 			for (unsigned int i = 0; i < edges.size(); i++) {
 				Edge edge = edges.at(i);
 				if(edge.first == node && edge.second == preNode){
-					addToSteiner(edge, i, edgesAndWeight, weights);
+					addToSteiner(edge, i, weights);
 					break;
 				}
 				if(edge.second == node && edge.first == preNode){
-					addToSteiner(edge, i, edgesAndWeight, weights);
+					addToSteiner(edge, i, weights);
 					break;
 				}
 			}
@@ -97,9 +116,5 @@ EdgesWithWeight Steiner::steiner(int vertexCount, Edges& edges, Weights& weights
 		primes.erase(std::find(primes.begin(), primes.end(), primeToAdd));
 	}
 
-	delete nodesInTree;
-	EdgesWithWeight returnValue = *edgesAndWeight;
-	delete edgesAndWeight;
-	return returnValue;
 }
 

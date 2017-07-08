@@ -11,21 +11,26 @@
 #include <algorithm>
 #include "Dijkstra.h"
 
-using EdgesWithWeight = std::pair<std::vector<Edge >, int >;
 using Primes = std::vector<int >;
 using Nodes = std::vector<int >;
 
 class Steiner {
 private:
+	int steinerWeight = 0;
+	Nodes* nodesInTree;
+	Edges* steinerEdges;
 	Dijkstra* dijsktra;
 	Primes getPrimes(unsigned int vertexCount);
-	void addToSteiner(Edge edge, unsigned int i,
-			EdgesWithWeight* edgesAndWeight, Weights& weights);
+	void addToSteiner(Edge edge, unsigned int i, Weights& weights);
 
 public:
 	Steiner();
 	virtual ~Steiner();
-	EdgesWithWeight steiner(int vertexCount, Edges& edges, Weights& weights, int startnode);
+	void steiner(int vertexCount, Edges& edges, Weights& weights, int startnode);
+	int getWeight();
+	int getNodeCount();
+	Edges getEdges();
+	//Nodes getNodes();
 };
 
 #endif /* C_STEINER_H_ */

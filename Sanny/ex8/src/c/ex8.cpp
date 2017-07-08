@@ -8,22 +8,22 @@
 #include <iomanip>
 #include <fstream>
 #include <utility>
-#include <vector>
-#include <climits>
 #include <boost/program_options.hpp>
 #include <boost/timer/timer.hpp>
 #include "Steiner.h"
+#include "GraphChecker.h"
 
 // Constants
 namespace {
 
-const char* FILEEND = ".gph";
+	const char* FILEEND = ".gph";
 
 }
 
 // declaring print
 using std::cout;
 using std::endl;
+using std::flush;
 using std::cerr;
 using std::string;
 
@@ -77,6 +77,7 @@ int main(int argn, char *argv[]) {
 		startnode = vm["start_node"].as<int >();
 	}
 
+
 	string filename = vm["input-file"].as<string >();
 	filename += FILEEND;
 	cout << "Going to parse the file " << filename << endl;
@@ -106,7 +107,7 @@ int main(int argn, char *argv[]) {
 	Edges* edges = new Edges(edgeCount);
 	Weights* weights = new Weights(edgeCount);
 
-	cout << "Reading edges..." ;
+	cout << "Reading edges..." << flush;
 	while (getline(fileStream, line)) {
 		int start;
 		int end;
@@ -122,16 +123,32 @@ int main(int argn, char *argv[]) {
 	}
 	cout << "done" << endl;
 
-	cout << "Solves Steiner problem...";
+	cout << "Solves Steiner problem..." << flush;
 	Steiner* s = new Steiner();
-	EdgesWithWeight edgesWithWeightMap = s->steiner(vertexCount, *edges, *weights, startnode);
+	s->steiner(vertexCount, *edges, *weights, startnode);
 	cout << "done" << endl;
+	Edges steinerEdges = s->getEdges();
+	GraphChecker* checker = new GraphChecker(steinerEdges, s->getNodeCount());
+	cout << "Checking for cycle..." << flush;
+	if(checker->hasCycle()){
+		cout << "failed" << endl;
+		return 1;
+	}
+	cout << "passed" << endl;
 
-	cout << "Objective value: " << edgesWithWeightMap.second << endl;
+	cout << "Checking if graph is connected..." << flush;
+	if(!checker->isConnected()){
+		cout << "failed" << endl;
+		return 1;
+	}
+	cout << "passed" << endl;
+
+
+	cout << "Objective value: " << s->getWeight() << endl;
 
 	cout << "Edges:" << endl;
-	for(unsigned int i = 0; i < edgesWithWeightMap.first.size(); i++){
-		Edge edge = edgesWithWeightMap.first[i];
+	for(unsigned int i = 0; i < steinerEdges.size(); i++){
+		Edge edge = steinerEdges[i];
 		cout << edge.first << " " << edge.second << endl;
 	}
 
