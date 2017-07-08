@@ -64,12 +64,15 @@ void run_dijkstra(
  * @param g a graph
  * @param vertex_mask a mask indicating which terminals are vertices (%2 = 1) 
  *     and which vertices are contained in the subgraph (> 1)
+ * @param distances the (previously calculated) distances (helper)
  * @param prev for each vertex the predecessor in a tree
  * @return the vertex_mask and the predecessors in prev are being updated
+ *     modifies distances
  */
 void add_closest_terminal( 
         Graph *g, 
         unsigned int *vertex_mask, 
+		unsigned long *distances,
         unsigned int *prev); 
 
 /** @brief Decide if there are unconnected terminals.
@@ -168,6 +171,7 @@ unsigned long* find_longest(
  *     and which vertices are terminals (%2 = 1).
  * @param prev an array containing the predecessors of vertices on a tree
  * @return the vertex_mask is being updated
+ *     modifies distances
  */
 void join_closest_terminal(
         unsigned long *distances, 

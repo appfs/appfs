@@ -50,21 +50,17 @@ void run_dijkstra(
 void add_closest_terminal(
         Graph *g, 
         unsigned int *vertex_mask,
+		unsigned long *distances,
         unsigned int *prev) {
     // at i vertex_mask is 0 or 1 on vertices not contained in subgraph, 2 or 3 on vertices that are contained
 
-    unsigned long *distances = malloc(sizeof(*distances) * g->n_verts);
     bool *visited = malloc(sizeof(*visited) * g->n_verts);
     // copy vertex_mask to mask (all visited and dist 0)
     for (int i = 0; i < g->n_verts; i++) {
         if (vertex_mask[i] > 1) {
-            // distances on subgraph are 0
-            distances[i] = 0;
             // on subgraph everything is visited
             visited[i] = true;
         } else {
-            // distances are inf on complement of subgraph
-            distances[i] = ULONG_MAX;
             // on complement of subgraph everything is unvisited
             visited[i] = false;
         }
@@ -75,7 +71,7 @@ void add_closest_terminal(
     gs->distances = distances;
     gs->visited = visited;
     Heap *to_visit = malloc(sizeof(*to_visit));
-    gs->to_visit = to_visit;; 
+    gs->to_visit = to_visit; 
     construct_heap(gs->to_visit, g->n_verts);
     gs->prev = prev;
 
@@ -89,7 +85,6 @@ void add_closest_terminal(
 
     join_closest_terminal(distances, g->n_verts, vertex_mask, prev);
 
-    free(distances);
     delete_heap(gs->to_visit);
     free(gs->to_visit);
     free(visited);
@@ -128,13 +123,22 @@ unsigned int* steiner(
     assert(found >= 0 && found < g->n_verts);
 
     unsigned int *prev = malloc(sizeof(*prev) * g->n_verts); // holds indices of predecessor in steiner tree
+    unsigned long *distances = malloc(sizeof(*distances) * g->n_verts);
     for (int i = 0; i < g->n_verts; i++) {
         prev[i] = UINT_MAX;
+        if (vertex_mask[i] > 1) {
+            // distances on subgraph are 0
+            distances[i] = 0;
+        } else {
+            // distances are inf on complement of subgraph
+            distances[i] = ULONG_MAX;
+        }
     }
 
     while (unconnected_terminals(g, vertex_mask)) { 
-        add_closest_terminal(g, vertex_mask, prev);
+        add_closest_terminal(g, vertex_mask, distances, prev);
     }
+    free(distances);
     return prev;
 }
 
@@ -322,6 +326,7 @@ void join_closest_terminal(
     while (vertex_mask[walker] < 2) {
   //      printf("%d ", walker+1);
         vertex_mask[walker] = vertex_mask[walker]+2;
+		distances[walker] = 0;
         walker = prev[walker];
     }
     //printf("\n");
