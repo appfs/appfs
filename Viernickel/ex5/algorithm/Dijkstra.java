@@ -83,6 +83,73 @@ public class Dijkstra {
         
     }
     
+    /**
+     * Calculates a Steiner tree using the Dijkstra algorithm heuristic method.
+     */
+    public long calcSteinerTree(boolean[] isTerminal, Node startTerminal){
+        assert(isTerminal.length == this.nodes.length);
+        
+        Node currNode = startTerminal;
+        Node neighbourNode = null;
+        ArrayList<Node> tree = new ArrayList<Node>();
+        Node[] pathToTree;
+        long objectiveValue = 0;
+        int neighbourId = 0;
+        int newDistance;
+        boolean changed = false;
+        
+        startTerminal.distance = 0;
+        queue.add(currNode);
+        
+        do{
+            /** If we found a terminal, add its path to the Steiner tree */
+            if(isTerminal[currNode.id]){
+                pathToTree = getShortestPath(currNode);
+                for(int i=0; i<pathToTree.length; i++){
+                    objectiveValue += pathToTree[i].distance;
+                    pathToTree[i].distance = 0;
+                    pathToTree[i].predecessor = null;
+                    tree.add(pathToTree[i]);
+                }
+            }
+            /** Touch all neighboring nodes */
+            for(int i=0; i<currNode.edges.size(); i++){
+                neighbourNode = currNode.getNeighbour(i);
+                neighbourId = neighbourNode.id;
+                
+                /** Skip already visited nodes */
+                if(visited[neighbourId]){
+                    continue;
+                }
+                
+                /** Update distance */
+                newDistance = currNode.distance + currNode.getDistanceToNeighbour(i);
+                if(newDistance < neighbourNode.distance){
+                    neighbourNode.distance = newDistance;
+                    neighbourNode.predecessor = currNode;
+                    changed = true;
+                }
+                
+                /** Update priorityQueue */
+                if(touched[neighbourId] && changed){
+                    queue.remove(neighbourNode);
+                    queue.add(neighbourNode);
+                }else if(changed){
+                    queue.add(neighbourNode);
+                }
+                
+                touched[neighbourId] = true;
+                changed = false;
+            }
+            visited[currNode.id] = true;
+            
+            /** Update currNode */
+            currNode = queue.poll();
+        }while(null != currNode);
+        return objectiveValue;
+    }
+
+    
     
     /**
      * Gets the highest distance node with the lowest id
@@ -98,24 +165,6 @@ public class Dijkstra {
                 highestDistNode = nodes[i];
         }
         return highestDistNode;
-    }
-    
-    /**
-     * Gets the node of lowest distance from a given tree
-     * @param tree Tree to minimize distance from
-     * @return Node of tree object with lowest distance
-     */
-    public Node getLowestDistNodeToSteinerTree(ArrayList<Node> tree){
-        assert(tree != null);
-        
-        Node lowestDistNode = tree.get(0);
-        
-        for(int i=1; i<tree.size(); i++){
-            if(tree.get(i).distance < lowestDistNode.distance){
-                lowestDistNode = tree.get(i);
-            }
-        }
-        return lowestDistNode;
     }
     
     /**

@@ -58,8 +58,8 @@ public class ex5 {
         String fileName = args[1].split("/")[args[1].split("/").length-1];
         String resultVertex = "RESULT VERTEX " + (furthestNode.id+1);
         String resultDist = "RESULT DIST " + furthestNode.distance;
-        String wallClockTime = "RESULT WALL-CLOCK TIME: " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds";
-        String userTime = "RESULT USER TIME: " + (round(taskUserTimeNano/1000000000.0)) + " seconds";
+        String wallClockTime = "RESULT WALL-CLOCK TIME " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds";
+        String userTime = "RESULT USER TIME " + (round(taskUserTimeNano/1000000000.0)) + " seconds";
         
         String[] results = {fileName, resultVertex, resultDist, wallClockTime, userTime};
         
@@ -74,7 +74,7 @@ public class ex5 {
         for(int i=0; i<pathSplit.length-1; i++){
             path = path + pathSplit[i] + "/";
         }
-        path = path + "results/";
+        path = path + "ex5_results/";
         Writer.write(results, path, fileName);
     }
     

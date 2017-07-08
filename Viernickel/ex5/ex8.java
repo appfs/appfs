@@ -1,10 +1,10 @@
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
 
 import datastructure.Node;
-import algorithm.*;
+import algorithm.Dijkstra;
 import io.Reader;
+import io.Writer;
 
 
 /** Main class that reads in a file of the specified format and calculates a
@@ -36,30 +36,30 @@ public class ex8 {
         long startUserTimeNano   = getUserTime();
         
         Node[] nodes;
-        Node[] terminals;
-        Integer[] primes;
-        int objectiveValue;
+        boolean[] isTerminal;
+        long objectiveValue;
         
         /** Read and save nodes and terminals */
         nodes = Reader.readFile(args[1]);
-        primes = getPrimesUpToN(nodes.length+1);
-        terminals = new Node[primes.length];
-        for(int i=0; i<primes.length; i++){
-            terminals[i] = nodes[primes[i]-1];
+        isTerminal = new boolean[nodes.length];
+        for(int i=0; i<nodes.length; i++){
+            if(isPrime(i+1)){
+                isTerminal[i] = true;
+            }
         }
+
         
         /** Calculate Steiner tree and objective value */
         /** Mode 0: Use custom Dijkstra implementation */
         if(args[0].equals(MYALGORITHM)){
-            SteinerTreeHeuristic sth = new SteinerTreeHeuristic(nodes, terminals);
-            sth.calcSteinerTree();
-            objectiveValue = sth.objectiveValue;
+            Dijkstra dijkstra = new Dijkstra(nodes);
+            objectiveValue = dijkstra.calcSteinerTree(isTerminal, nodes[1]);
         /** Mode 1: Use library Dijkstra implementation */
         }else if(args[0].equals(LIBALGORITHM)){
             objectiveValue = 0;
         }else{
             System.out.println("Invalid Algorithm Mode.");
-            System.out.println("Proper usage: ex5 -m1 path/to/file/file.txt");
+            System.out.println("Proper usage: ex8 -m1 path/to/file/file.txt");
             return;
         }
         
@@ -67,11 +67,27 @@ public class ex8 {
         long taskWallClockTimeNano  = System.nanoTime() - startWallClockTimeNano;
         long taskUserTimeNano    = getUserTime( ) - startUserTimeNano;
         
-        /** Print results */
-        System.out.println("RESULT OBJECTIVE VALUE: " + objectiveValue);
+        /** Get results */
+        String fileName = args[1].split("/")[args[1].split("/").length-1];
+        String resultValue = "RESULT OBJECTIVE VALUE " + (objectiveValue);
+        String wallClockTime = "RESULT WALL-CLOCK TIME " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds";
+        String userTime = "RESULT USER TIME " + (round(taskUserTimeNano/1000000000.0)) + " seconds";
         
-        System.out.println("RESULT WALL-CLOCK TIME: " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds");
-        System.out.println("RESULT USER TIME: " + (round(taskUserTimeNano/1000000000.0)) + " seconds");
+        String[] results = {fileName, resultValue, wallClockTime, userTime};
+        
+        /** Print results */
+        for(int i=0; i<results.length; i++){
+            System.out.println(results[i]);
+        }
+        
+        /** Save results to file */
+        String path = "";
+        String[] pathSplit = args[1].split("/");
+        for(int i=0; i<pathSplit.length-1; i++){
+            path = path + pathSplit[i] + "/";
+        }
+        path = path + "ex8_results/";
+        Writer.write(results, path, fileName);
     }
     
     /** Round to three decimal places */
@@ -86,28 +102,6 @@ public class ex8 {
             bean.getCurrentThreadUserTime() : 0L;
     }
     
-    /**
-     * Calculates all primes up to a given number and returns them in an array.
-     * @param n The number up to which primes are calculated
-     * @return Array of prime numbers
-     */
-    public static Integer[] getPrimesUpToN(int n){
-        assert(n>0);
-        
-        Integer[] primeArray;
-        ArrayList<Integer> primes = new ArrayList<Integer>();
-        
-        for(int i=0; i<n; i++){
-            if(isPrime(i)){
-                primes.add(i);
-            }
-        }
-        primeArray = new Integer[primes.size()];
-        for(int i=0; i< primeArray.length; i++){
-            primeArray[i] = primes.get(i);
-        }
-        return primeArray;
-    }
     
     /**
      * Checks whether a certain number is prime.
