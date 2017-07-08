@@ -148,6 +148,7 @@ int main(int argn, char *argv[]) {
 		cout << "Compute shortest paths via Dijkstra(own)..." << endl;
 		Dijkstra* d = new Dijkstra();
 		weightsForShortestpath = d->dijkstra(vertexCount, *edges, *weights, 1);
+		delete d;
 	} else {
 
 		cout << "Creating graph..." << endl;
