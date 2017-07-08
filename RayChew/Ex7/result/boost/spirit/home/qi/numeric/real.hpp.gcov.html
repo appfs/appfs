@@ -1,0 +1,418 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/spirit/home/qi/numeric/real.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">boost/spirit/home/qi/numeric</a> - real.hpp<span style="font-size: 80%;"> (source / <a href="real.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :     Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            :     Copyright (c) 2011      Bryce Lelbach
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            :     Distributed under the Boost Software License, Version 1.0. (See accompanying
+<span class="lineNum">       6 </span>            :     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       7 </span>            : ==============================================================================*/
+<span class="lineNum">       8 </span>            : #if !defined(BOOST_SPIRIT_REAL_APRIL_18_2006_0850AM)
+<span class="lineNum">       9 </span>            : #define BOOST_SPIRIT_REAL_APRIL_18_2006_0850AM
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      12 </span>            : #pragma once
+<span class="lineNum">      13 </span>            : #endif
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #include &lt;boost/spirit/home/qi/skip_over.hpp&gt;
+<span class="lineNum">      16 </span>            : #include &lt;boost/spirit/home/qi/detail/enable_lit.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/spirit/home/qi/meta_compiler.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/spirit/home/qi/parser.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/spirit/home/qi/numeric/real_policies.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/spirit/home/qi/numeric/numeric_utils.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/spirit/home/qi/numeric/detail/real_impl.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/spirit/home/support/common_terminals.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/type_traits/is_same.hpp&gt;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : namespace boost { namespace spirit
+<span class="lineNum">      26 </span>            : {
+<span class="lineNum">      27 </span>            :     namespace qi
+<span class="lineNum">      28 </span>            :     {
+<span class="lineNum">      29 </span>            :         ///////////////////////////////////////////////////////////////////////
+<span class="lineNum">      30 </span>            :         // forward declaration only
+<span class="lineNum">      31 </span>            :         template &lt;typename T&gt;
+<span class="lineNum">      32 </span>            :         struct real_policies;
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            :         ///////////////////////////////////////////////////////////////////////
+<span class="lineNum">      35 </span>            :         // This is the class that the user can instantiate directly in
+<span class="lineNum">      36 </span>            :         // order to create a customized real parser
+<span class="lineNum">      37 </span>            :         template &lt;typename T = double, typename Policies = real_policies&lt;T&gt; &gt;
+<span class="lineNum">      38 </span>            :         struct real_parser
+<span class="lineNum">      39 </span>            :           : spirit::terminal&lt;tag::stateful_tag&lt;Policies, tag::double_, T&gt; &gt;
+<span class="lineNum">      40 </span>            :         {
+<span class="lineNum">      41 </span>            :             typedef tag::stateful_tag&lt;Policies, tag::double_, T&gt; tag_type;
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :             real_parser() {}
+<span class="lineNum">      44 </span>            :             real_parser(Policies const&amp; p)
+<span class="lineNum">      45 </span>            :               : spirit::terminal&lt;tag_type&gt;(p) {}
+<span class="lineNum">      46 </span>            :         };
+<span class="lineNum">      47 </span>            :     }
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      50 </span>            :     // Enablers
+<span class="lineNum">      51 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      52 </span>            :     template &lt;&gt; // enables float_
+<span class="lineNum">      53 </span>            :     struct use_terminal&lt;qi::domain, tag::float_&gt;
+<span class="lineNum">      54 </span>            :       : mpl::true_ {};
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :     template &lt;&gt; // enables double_
+<span class="lineNum">      57 </span>            :     struct use_terminal&lt;qi::domain, tag::double_&gt;
+<span class="lineNum">      58 </span>            :       : mpl::true_ {};
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :     template &lt;&gt; // enables long_double
+<span class="lineNum">      61 </span>            :     struct use_terminal&lt;qi::domain, tag::long_double&gt;
+<span class="lineNum">      62 </span>            :       : mpl::true_ {};
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      65 </span>            :     template &lt;typename A0&gt; // enables lit(n)
+<span class="lineNum">      66 </span>            :     struct use_terminal&lt;qi::domain
+<span class="lineNum">      67 </span>            :         , terminal_ex&lt;tag::lit, fusion::vector1&lt;A0&gt; &gt;
+<span class="lineNum">      68 </span>            :         , typename enable_if&lt;is_same&lt;A0, float&gt; &gt;::type&gt;
+<span class="lineNum">      69 </span>            :       : mpl::true_ {};
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :     template &lt;typename A0&gt; // enables lit(n)
+<span class="lineNum">      72 </span>            :     struct use_terminal&lt;qi::domain
+<span class="lineNum">      73 </span>            :         , terminal_ex&lt;tag::lit, fusion::vector1&lt;A0&gt; &gt;
+<span class="lineNum">      74 </span>            :         , typename enable_if&lt;is_same&lt;A0, double&gt; &gt;::type&gt;
+<span class="lineNum">      75 </span>            :       : mpl::true_ {};
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :     template &lt;typename A0&gt; // enables lit(n)
+<span class="lineNum">      78 </span>            :     struct use_terminal&lt;qi::domain
+<span class="lineNum">      79 </span>            :         , terminal_ex&lt;tag::lit, fusion::vector1&lt;A0&gt; &gt;
+<span class="lineNum">      80 </span>            :         , typename enable_if&lt;is_same&lt;A0, long double&gt; &gt;::type&gt;
+<span class="lineNum">      81 </span>            :       : mpl::true_ {};
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      84 </span>            :     template &lt;typename A0&gt; // enables float_(...)
+<span class="lineNum">      85 </span>            :     struct use_terminal&lt;qi::domain
+<span class="lineNum">      86 </span>            :       , terminal_ex&lt;tag::float_, fusion::vector1&lt;A0&gt; &gt;
+<span class="lineNum">      87 </span>            :     &gt; : mpl::true_ {};
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            :     template &lt;typename A0&gt; // enables double_(...)
+<span class="lineNum">      90 </span>            :     struct use_terminal&lt;qi::domain
+<span class="lineNum">      91 </span>            :       , terminal_ex&lt;tag::double_, fusion::vector1&lt;A0&gt; &gt;
+<span class="lineNum">      92 </span>            :     &gt; : mpl::true_ {};
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            :     template &lt;typename A0&gt; // enables long_double(...)
+<span class="lineNum">      95 </span>            :     struct use_terminal&lt;qi::domain
+<span class="lineNum">      96 </span>            :       , terminal_ex&lt;tag::long_double, fusion::vector1&lt;A0&gt; &gt;
+<span class="lineNum">      97 </span>            :     &gt; : mpl::true_ {};
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :     template &lt;&gt; // enables *lazy* float_(...)
+<span class="lineNum">     100 </span>            :     struct use_lazy_terminal&lt;qi::domain, tag::float_, 1&gt;
+<span class="lineNum">     101 </span>            :       : mpl::true_ {};
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            :     template &lt;&gt; // enables *lazy* double_(...)
+<span class="lineNum">     104 </span>            :     struct use_lazy_terminal&lt;qi::domain, tag::double_, 1&gt;
+<span class="lineNum">     105 </span>            :       : mpl::true_ {};
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :     template &lt;&gt; // enables *lazy* long_double_(...)
+<span class="lineNum">     108 </span>            :     struct use_lazy_terminal&lt;qi::domain, tag::long_double, 1&gt;
+<span class="lineNum">     109 </span>            :       : mpl::true_ {};
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     112 </span>            :     // enables custom real_parser
+<span class="lineNum">     113 </span>            :     template &lt;typename T, typename Policies&gt;
+<span class="lineNum">     114 </span>            :     struct use_terminal&lt;qi::domain
+<span class="lineNum">     115 </span>            :         , tag::stateful_tag&lt;Policies, tag::double_, T&gt; &gt;
+<span class="lineNum">     116 </span>            :       : mpl::true_ {};
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            :     // enables custom real_parser(...)
+<span class="lineNum">     119 </span>            :     template &lt;typename T, typename Policies, typename A0&gt;
+<span class="lineNum">     120 </span>            :     struct use_terminal&lt;qi::domain
+<span class="lineNum">     121 </span>            :         , terminal_ex&lt;tag::stateful_tag&lt;Policies, tag::double_, T&gt;
+<span class="lineNum">     122 </span>            :         , fusion::vector1&lt;A0&gt; &gt; &gt;
+<span class="lineNum">     123 </span>            :       : mpl::true_ {};
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            :     // enables *lazy* custom real_parser(...)
+<span class="lineNum">     126 </span>            :     template &lt;typename T, typename Policies&gt;
+<span class="lineNum">     127 </span>            :     struct use_lazy_terminal&lt;
+<span class="lineNum">     128 </span>            :         qi::domain
+<span class="lineNum">     129 </span>            :       , tag::stateful_tag&lt;Policies, tag::double_, T&gt;
+<span class="lineNum">     130 </span>            :       , 1 // arity
+<span class="lineNum">     131 </span>            :     &gt; : mpl::true_ {};
+<span class="lineNum">     132 </span>            : }}
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : namespace boost { namespace spirit { namespace qi
+<span class="lineNum">     135 </span>            : {
+<span class="lineNum">     136 </span>            : #ifndef BOOST_SPIRIT_NO_PREDEFINED_TERMINALS
+<span class="lineNum">     137 </span>            :     using spirit::float_;
+<span class="lineNum">     138 </span>            :     using spirit::double_;
+<span class="lineNum">     139 </span>            :     using spirit::long_double;
+<span class="lineNum">     140 </span>            :     using spirit::lit; // lit(1.0) is equivalent to 1.0
+<span class="lineNum">     141 </span>            : #endif
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            :     using spirit::float_type;
+<span class="lineNum">     144 </span>            :     using spirit::double_type;
+<span class="lineNum">     145 </span>            :     using spirit::long_double_type;
+<span class="lineNum">     146 </span>            :     using spirit::lit_type;
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     149 </span>            :     // This is the actual real number parser
+<span class="lineNum">     150 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     151 </span>            :     template &lt;typename T, typename RealPolicies = real_policies&lt;T&gt; &gt;
+<span class="lineNum">     152 </span>            :     struct any_real_parser
+<span class="lineNum">     153 </span>            :       : primitive_parser&lt;any_real_parser&lt;T, RealPolicies&gt; &gt;
+<span class="lineNum">     154 </span>            :     {
+<span class="lineNum">     155 </span>            :         template &lt;typename Context, typename Iterator&gt;
+<span class="lineNum">     156 </span>            :         struct attribute
+<span class="lineNum">     157 </span>            :         {
+<span class="lineNum">     158 </span>            :             typedef T type;
+<span class="lineNum">     159 </span>            :         };
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            :         template &lt;typename Iterator, typename Context, typename Skipper&gt;
+<span class="lineNum">     162 </span>            :         bool parse(Iterator&amp; first, Iterator const&amp; last
+<span class="lineNum">     163 </span>            :           , Context&amp; /*context*/, Skipper const&amp; skipper
+<span class="lineNum">     164 </span>            :           , T&amp; attr_) const
+<span class="lineNum">     165 </span>            :         {
+<span class="lineNum">     166 </span>            :             typedef detail::real_impl&lt;T, RealPolicies&gt; extract;
+<span class="lineNum">     167 </span>            :             qi::skip_over(first, last, skipper);
+<span class="lineNum">     168 </span><span class="lineCov">    1000000 :             return extract::parse(first, last, attr_, RealPolicies());</span>
+<span class="lineNum">     169 </span>            :         }
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            :         template &lt;typename Iterator, typename Context
+<span class="lineNum">     172 </span>            :           , typename Skipper, typename Attribute&gt;
+<span class="lineNum">     173 </span>            :         bool parse(Iterator&amp; first, Iterator const&amp; last
+<span class="lineNum">     174 </span>            :           , Context&amp; context, Skipper const&amp; skipper
+<span class="lineNum">     175 </span>            :           , Attribute&amp; attr_param) const
+<span class="lineNum">     176 </span>            :         {
+<span class="lineNum">     177 </span>            :             // this case is called when Attribute is not T
+<span class="lineNum">     178 </span>            :             T attr_;
+<span class="lineNum">     179 </span>            :             if (parse(first, last, context, skipper, attr_))
+<span class="lineNum">     180 </span>            :             {
+<span class="lineNum">     181 </span>            :                 traits::assign_to(attr_, attr_param);
+<span class="lineNum">     182 </span>            :                 return true;
+<span class="lineNum">     183 </span>            :             }
+<span class="lineNum">     184 </span>            :             return false;
+<span class="lineNum">     185 </span>            :         }
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span>            :         template &lt;typename Context&gt;
+<span class="lineNum">     188 </span>            :         info what(Context&amp; /*context*/) const
+<span class="lineNum">     189 </span>            :         {
+<span class="lineNum">     190 </span>            :             return info(&quot;real&quot;);
+<span class="lineNum">     191 </span>            :         }
+<span class="lineNum">     192 </span>            :     };
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span>            :     template &lt;typename T, typename RealPolicies = real_policies&lt;T&gt;
+<span class="lineNum">     195 </span>            :             , bool no_attribute = true&gt;
+<span class="lineNum">     196 </span>            :     struct literal_real_parser
+<span class="lineNum">     197 </span>            :       : primitive_parser&lt;literal_real_parser&lt;T, RealPolicies, no_attribute&gt; &gt;
+<span class="lineNum">     198 </span>            :     {
+<span class="lineNum">     199 </span>            :         template &lt;typename Value&gt;
+<span class="lineNum">     200 </span>            :         literal_real_parser(Value const&amp; n) : n_(n) {}
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            :         template &lt;typename Context, typename Iterator&gt;
+<span class="lineNum">     203 </span>            :         struct attribute
+<span class="lineNum">     204 </span>            :           : mpl::if_c&lt;no_attribute, unused_type, T&gt;
+<span class="lineNum">     205 </span>            :         {};
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span>            :         template &lt;typename Iterator, typename Context
+<span class="lineNum">     208 </span>            :           , typename Skipper, typename Attribute&gt;
+<span class="lineNum">     209 </span>            :         bool parse(Iterator&amp; first, Iterator const&amp; last
+<span class="lineNum">     210 </span>            :           , Context&amp;, Skipper const&amp; skipper
+<span class="lineNum">     211 </span>            :           , Attribute&amp; attr_param) const
+<span class="lineNum">     212 </span>            :         {
+<span class="lineNum">     213 </span>            :             typedef detail::real_impl&lt;T, RealPolicies&gt; extract;
+<span class="lineNum">     214 </span>            :             qi::skip_over(first, last, skipper);
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span>            :             Iterator save = first;
+<span class="lineNum">     217 </span>            :             T attr_;
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            :             if (extract::parse(first, last, attr_, RealPolicies()) &amp;&amp;
+<span class="lineNum">     220 </span>            :                 (attr_ == n_))
+<span class="lineNum">     221 </span>            :             {
+<span class="lineNum">     222 </span>            :                 traits::assign_to(attr_, attr_param);
+<span class="lineNum">     223 </span>            :                 return true;
+<span class="lineNum">     224 </span>            :             }
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span>            :             first = save;
+<span class="lineNum">     227 </span>            :             return false;
+<span class="lineNum">     228 </span>            :         }
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span>            :         template &lt;typename Context&gt;
+<span class="lineNum">     231 </span>            :         info what(Context&amp; /*context*/) const
+<span class="lineNum">     232 </span>            :         {
+<span class="lineNum">     233 </span>            :             return info(&quot;real&quot;);
+<span class="lineNum">     234 </span>            :         }
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span>            :         T n_;
+<span class="lineNum">     237 </span>            :     };
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     240 </span>            :     // Parser generators: make_xxx function (objects)
+<span class="lineNum">     241 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     242 </span>            :     template &lt;typename T, typename Policies = real_policies&lt;T&gt; &gt;
+<span class="lineNum">     243 </span>            :     struct make_real
+<span class="lineNum">     244 </span>            :     {
+<span class="lineNum">     245 </span>            :         typedef any_real_parser&lt;T, Policies&gt; result_type;
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span>            :         result_type operator()(unused_type, unused_type) const
+<span class="lineNum">     248 </span>            :         {
+<span class="lineNum">     249 </span>            :             return result_type();
+<span class="lineNum">     250 </span>            :         }
+<span class="lineNum">     251 </span>            :     };
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            :     template &lt;typename T, typename Policies = real_policies&lt;T&gt; &gt;
+<span class="lineNum">     254 </span>            :     struct make_direct_real
+<span class="lineNum">     255 </span>            :     {
+<span class="lineNum">     256 </span>            :         typedef literal_real_parser&lt;T, Policies, false&gt; result_type;
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            :         template &lt;typename Terminal&gt;
+<span class="lineNum">     259 </span>            :         result_type operator()(Terminal const&amp; term, unused_type) const
+<span class="lineNum">     260 </span>            :         {
+<span class="lineNum">     261 </span>            :             return result_type(T(fusion::at_c&lt;0&gt;(term.args)));
+<span class="lineNum">     262 </span>            :         }
+<span class="lineNum">     263 </span>            :     };
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span>            :     template &lt;typename T, typename Policies = real_policies&lt;T&gt; &gt;
+<span class="lineNum">     266 </span>            :     struct make_literal_real
+<span class="lineNum">     267 </span>            :     {
+<span class="lineNum">     268 </span>            :         typedef literal_real_parser&lt;T, Policies&gt; result_type;
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            :         template &lt;typename Terminal&gt;
+<span class="lineNum">     271 </span>            :         result_type operator()(Terminal const&amp; term, unused_type) const
+<span class="lineNum">     272 </span>            :         {
+<span class="lineNum">     273 </span>            :             return result_type(fusion::at_c&lt;0&gt;(term.args));
+<span class="lineNum">     274 </span>            :         }
+<span class="lineNum">     275 </span>            :     };
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     278 </span>            :     template &lt;typename Modifiers, typename A0&gt;
+<span class="lineNum">     279 </span>            :     struct make_primitive&lt;
+<span class="lineNum">     280 </span>            :           terminal_ex&lt;tag::lit, fusion::vector1&lt;A0&gt; &gt;
+<span class="lineNum">     281 </span>            :         , Modifiers, typename enable_if&lt;is_same&lt;A0, float&gt; &gt;::type&gt;
+<span class="lineNum">     282 </span>            :       : make_literal_real&lt;float&gt; {};
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            :     template &lt;typename Modifiers, typename A0&gt;
+<span class="lineNum">     285 </span>            :     struct make_primitive&lt;
+<span class="lineNum">     286 </span>            :           terminal_ex&lt;tag::lit, fusion::vector1&lt;A0&gt; &gt;
+<span class="lineNum">     287 </span>            :         , Modifiers, typename enable_if&lt;is_same&lt;A0, double&gt; &gt;::type&gt;
+<span class="lineNum">     288 </span>            :       : make_literal_real&lt;double&gt; {};
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span>            :     template &lt;typename Modifiers, typename A0&gt;
+<span class="lineNum">     291 </span>            :     struct make_primitive&lt;
+<span class="lineNum">     292 </span>            :           terminal_ex&lt;tag::lit, fusion::vector1&lt;A0&gt; &gt;
+<span class="lineNum">     293 </span>            :         , Modifiers, typename enable_if&lt;is_same&lt;A0, long double&gt; &gt;::type&gt;
+<span class="lineNum">     294 </span>            :       : make_literal_real&lt;long double&gt; {};
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     297 </span>            :     template &lt;typename T, typename Policies, typename Modifiers&gt;
+<span class="lineNum">     298 </span>            :     struct make_primitive&lt;
+<span class="lineNum">     299 </span>            :         tag::stateful_tag&lt;Policies, tag::double_, T&gt;, Modifiers&gt;
+<span class="lineNum">     300 </span>            :       : make_real&lt;T, Policies&gt; {};
+<span class="lineNum">     301 </span>            : 
+<span class="lineNum">     302 </span>            :     template &lt;typename T, typename Policies, typename A0, typename Modifiers&gt;
+<span class="lineNum">     303 </span>            :     struct make_primitive&lt;
+<span class="lineNum">     304 </span>            :         terminal_ex&lt;tag::stateful_tag&lt;Policies, tag::double_, T&gt;
+<span class="lineNum">     305 </span>            :       , fusion::vector1&lt;A0&gt; &gt;, Modifiers&gt;
+<span class="lineNum">     306 </span>            :       : make_direct_real&lt;T, Policies&gt; {};
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     309 </span>            :     template &lt;typename Modifiers&gt;
+<span class="lineNum">     310 </span>            :     struct make_primitive&lt;tag::float_, Modifiers&gt;
+<span class="lineNum">     311 </span>            :       : make_real&lt;float&gt; {};
+<span class="lineNum">     312 </span>            : 
+<span class="lineNum">     313 </span>            :     template &lt;typename Modifiers, typename A0&gt;
+<span class="lineNum">     314 </span>            :     struct make_primitive&lt;
+<span class="lineNum">     315 </span>            :         terminal_ex&lt;tag::float_
+<span class="lineNum">     316 </span>            :       , fusion::vector1&lt;A0&gt; &gt;, Modifiers&gt;
+<span class="lineNum">     317 </span>            :       : make_direct_real&lt;float&gt; {};
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     320 </span>            :     template &lt;typename Modifiers&gt;
+<span class="lineNum">     321 </span>            :     struct make_primitive&lt;tag::double_, Modifiers&gt;
+<span class="lineNum">     322 </span>            :       : make_real&lt;double&gt; {};
+<span class="lineNum">     323 </span>            : 
+<span class="lineNum">     324 </span>            :     template &lt;typename Modifiers, typename A0&gt;
+<span class="lineNum">     325 </span>            :     struct make_primitive&lt;
+<span class="lineNum">     326 </span>            :         terminal_ex&lt;tag::double_
+<span class="lineNum">     327 </span>            :       , fusion::vector1&lt;A0&gt; &gt;, Modifiers&gt;
+<span class="lineNum">     328 </span>            :       : make_direct_real&lt;double&gt; {};
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     331 </span>            :     template &lt;typename Modifiers&gt;
+<span class="lineNum">     332 </span>            :     struct make_primitive&lt;tag::long_double, Modifiers&gt;
+<span class="lineNum">     333 </span>            :       : make_real&lt;long double&gt; {};
+<span class="lineNum">     334 </span>            : 
+<span class="lineNum">     335 </span>            :     template &lt;typename Modifiers, typename A0&gt;
+<span class="lineNum">     336 </span>            :     struct make_primitive&lt;
+<span class="lineNum">     337 </span>            :         terminal_ex&lt;tag::long_double
+<span class="lineNum">     338 </span>            :       , fusion::vector1&lt;A0&gt; &gt;, Modifiers&gt;
+<span class="lineNum">     339 </span>            :       : make_direct_real&lt;long double&gt; {};
+<span class="lineNum">     340 </span>            : }}}
+<span class="lineNum">     341 </span>            : 
+<span class="lineNum">     342 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/bimap/relation/mutant_relation.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">boost/bimap/relation</a> - mutant_relation.hpp<span style="font-size: 80%;"> (source / <a href="mutant_relation.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // Boost.Bimap</a>
+<span class="lineNum">       2 </span>            : //
+<span class="lineNum">       3 </span>            : // Copyright (c) 2006-2007 Matias Capeletto
+<span class="lineNum">       4 </span>            : //
+<span class="lineNum">       5 </span>            : // Distributed under the Boost Software License, Version 1.0.
+<span class="lineNum">       6 </span>            : // (See accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       7 </span>            : // http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : /// \file relation/mutant_relation.hpp
+<span class="lineNum">      10 </span>            : /// \brief Defines the mutant_relation class
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #ifndef BOOST_BIMAP_RELATION_MUTANT_RELATION_HPP
+<span class="lineNum">      13 </span>            : #define BOOST_BIMAP_RELATION_MUTANT_RELATION_HPP
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      16 </span>            : #pragma once
+<span class="lineNum">      17 </span>            : #endif
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : #include &lt;boost/config.hpp&gt;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #include &lt;boost/mpl/vector.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/operators.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/call_traits.hpp&gt;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #ifndef BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">      26 </span>            :   #include &lt;boost/serialization/nvp.hpp&gt;
+<span class="lineNum">      27 </span>            : #endif // BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : #include &lt;boost/functional/hash/hash.hpp&gt;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : #include &lt;boost/mpl/aux_/na.hpp&gt;
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : // Boost.Bimap
+<span class="lineNum">      34 </span>            : #include &lt;boost/bimap/tags/tagged.hpp&gt;
+<span class="lineNum">      35 </span>            : #include &lt;boost/bimap/tags/support/default_tagged.hpp&gt;
+<span class="lineNum">      36 </span>            : #include &lt;boost/bimap/tags/support/tag_of.hpp&gt;
+<span class="lineNum">      37 </span>            : #include &lt;boost/bimap/tags/support/value_type_of.hpp&gt;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : #include &lt;boost/bimap/relation/member_at.hpp&gt;
+<span class="lineNum">      40 </span>            : #include &lt;boost/bimap/relation/detail/mutant.hpp&gt;
+<span class="lineNum">      41 </span>            : #include &lt;boost/bimap/relation/structured_pair.hpp&gt;
+<span class="lineNum">      42 </span>            : #include &lt;boost/bimap/relation/symmetrical_base.hpp&gt;
+<span class="lineNum">      43 </span>            : #include &lt;boost/bimap/relation/support/get.hpp&gt;
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : namespace boost {
+<span class="lineNum">      46 </span>            : namespace bimaps {
+<span class="lineNum">      47 </span>            : namespace relation {
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : namespace detail {
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : // This class is included so structured_pair and mutant_relation share
+<span class="lineNum">      52 </span>            : // exactly the same class layout
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : template&lt; class LeftType, class RightType, bool force_mutable &gt;
+<span class="lineNum">      55 </span>            : class relation_storage :
+<span class="lineNum">      56 </span>            :     public symmetrical_base&lt;LeftType,RightType,force_mutable&gt;
+<span class="lineNum">      57 </span>            : {
+<span class="lineNum">      58 </span>            :     typedef symmetrical_base&lt;LeftType,RightType,force_mutable&gt; base_;
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :     typedef relation_storage storage_;
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :     public:
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :     typedef relation_storage&lt;LeftType,RightType,false&gt; non_mutable_storage;
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :     typedef ::boost::mpl::vector2
+<span class="lineNum">      67 </span>            :     &lt;
+<span class="lineNum">      68 </span>            :         relation_storage&lt; LeftType, RightType, true  &gt;,
+<span class="lineNum">      69 </span>            :         relation_storage&lt; LeftType, RightType, false &gt;
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :     &gt; mutant_views;
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :     //@{
+<span class="lineNum">      74 </span>            :         /// data
+<span class="lineNum">      75 </span>            :         BOOST_DEDUCED_TYPENAME base_::left_value_type  left;
+<span class="lineNum">      76 </span>            :         BOOST_DEDUCED_TYPENAME base_::right_value_type right;
+<span class="lineNum">      77 </span>            :     //@}
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            :     relation_storage() {}
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span><span class="lineCov">      50000 :     relation_storage(BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;</span>
+<span class="lineNum">      82 </span>            :                          BOOST_DEDUCED_TYPENAME base_::left_value_type
+<span class="lineNum">      83 </span>            :                      &gt;::param_type l,
+<span class="lineNum">      84 </span>            :                      BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">      85 </span>            :                         BOOST_DEDUCED_TYPENAME base_::right_value_type
+<span class="lineNum">      86 </span>            :                      &gt;::param_type r)
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineCov">      50000 :         : left(l), right(r) {}</span>
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :           BOOST_DEDUCED_TYPENAME base_:: left_value_type &amp;  get_left()      { return left;  }
+<span class="lineNum">      91 </span>            :     const BOOST_DEDUCED_TYPENAME base_:: left_value_type &amp;  get_left()const { return left;  }
+<span class="lineNum">      92 </span>            :           BOOST_DEDUCED_TYPENAME base_::right_value_type &amp; get_right()      { return right; }
+<span class="lineNum">      93 </span>            :     const BOOST_DEDUCED_TYPENAME base_::right_value_type &amp; get_right()const { return right; }
+<span class="lineNum">      94 </span>            : };
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            : template&lt; class TA, class TB, class Info, bool force_mutable &gt;
+<span class="lineNum">      99 </span>            : class relation_info_hook : public
+<span class="lineNum">     100 </span>            :  ::boost::bimaps::relation::detail::relation_storage&lt;TA,TB,force_mutable&gt;
+<span class="lineNum">     101 </span>            : {
+<span class="lineNum">     102 </span>            :     typedef ::boost::bimaps::relation::detail::
+<span class="lineNum">     103 </span>            :                 relation_storage&lt;TA,TB,force_mutable&gt; base_;
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            :     typedef BOOST_DEDUCED_TYPENAME ::boost::bimaps::tags::support::
+<span class="lineNum">     106 </span>            :         default_tagged&lt;Info,member_at::info&gt;::type tagged_info_type;
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :     public:
+<span class="lineNum">     109 </span>            :     typedef BOOST_DEDUCED_TYPENAME tagged_info_type::value_type info_type;
+<span class="lineNum">     110 </span>            :     typedef BOOST_DEDUCED_TYPENAME tagged_info_type::tag        info_tag;
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            :     info_type info;
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :     protected:
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            :     relation_info_hook() {}
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            :     relation_info_hook( BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     119 </span>            :                            BOOST_DEDUCED_TYPENAME base_::left_value_type
+<span class="lineNum">     120 </span>            :                         &gt;::param_type l,
+<span class="lineNum">     121 </span>            :                         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     122 </span>            :                             BOOST_DEDUCED_TYPENAME base_::right_value_type
+<span class="lineNum">     123 </span>            :                         &gt;::param_type r,
+<span class="lineNum">     124 </span>            :                         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     125 </span>            :                             info_type
+<span class="lineNum">     126 </span>            :                         &gt;::param_type i = info_type() )
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            :         : base_(l,r), info(i) {}
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :     template&lt; class Relation &gt;
+<span class="lineNum">     131 </span>            :     relation_info_hook( const Relation &amp; rel ) :
+<span class="lineNum">     132 </span>            :         base_(rel.left,rel.right),
+<span class="lineNum">     133 </span>            :         info(rel.info) {}
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            :     template&lt; class Relation &gt;
+<span class="lineNum">     136 </span>            :     void change_to( const Relation &amp; rel )
+<span class="lineNum">     137 </span>            :     {
+<span class="lineNum">     138 </span>            :         base_::left  = rel.left ;
+<span class="lineNum">     139 </span>            :         base_::right = rel.right;
+<span class="lineNum">     140 </span>            :         info         = rel.info ;
+<span class="lineNum">     141 </span>            :     }
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            :     #ifndef BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">     144 </span>            :     template&lt; class Archive &gt;
+<span class="lineNum">     145 </span>            :     void serialize(Archive &amp; ar, const unsigned int)
+<span class="lineNum">     146 </span>            :     {
+<span class="lineNum">     147 </span>            :         ar &amp; ::boost::serialization::make_nvp(&quot;left&quot; , base_::left );
+<span class="lineNum">     148 </span>            :         ar &amp; ::boost::serialization::make_nvp(&quot;right&quot;, base_::right);
+<span class="lineNum">     149 </span>            :         ar &amp; ::boost::serialization::make_nvp(&quot;info&quot; , info        );
+<span class="lineNum">     150 </span>            :     }
+<span class="lineNum">     151 </span>            :     #endif // BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">     152 </span>            : };
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span>            : template&lt; class TA, class TB, bool force_mutable&gt;
+<span class="lineNum">     155 </span>            : class relation_info_hook&lt;TA,TB,::boost::mpl::na,force_mutable&gt; :
+<span class="lineNum">     156 </span>            :     public ::boost::bimaps::relation::detail::relation_storage&lt;TA,TB,force_mutable&gt;
+<span class="lineNum">     157 </span>            : {
+<span class="lineNum">     158 </span>            :     typedef ::boost::bimaps::relation::detail::
+<span class="lineNum">     159 </span>            :                 relation_storage&lt;TA,TB,force_mutable&gt; base_;
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            :     public:
+<span class="lineNum">     162 </span>            :     typedef ::boost::mpl::na info_type;
+<span class="lineNum">     163 </span>            :     typedef member_at::info info_tag;
+<span class="lineNum">     164 </span>            : 
+<span class="lineNum">     165 </span>            :     protected:
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            :     relation_info_hook() {}
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :     relation_info_hook( BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     170 </span>            :                            BOOST_DEDUCED_TYPENAME base_::left_value_type
+<span class="lineNum">     171 </span>            :                         &gt;::param_type l,
+<span class="lineNum">     172 </span>            :                         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     173 </span>            :                             BOOST_DEDUCED_TYPENAME base_::right_value_type
+<span class="lineNum">     174 </span>            :                         &gt;::param_type r)
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span>            :         : base_(l,r) {}
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :     template&lt; class Relation &gt;
+<span class="lineNum">     179 </span>            :     relation_info_hook( const Relation &amp; rel ) :
+<span class="lineNum">     180 </span><span class="lineCov">      50000 :         base_(rel.left,rel.right) {}</span>
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span>            :     template&lt; class Relation &gt;
+<span class="lineNum">     183 </span>            :     void change_to( const Relation &amp; rel )
+<span class="lineNum">     184 </span>            :     {
+<span class="lineNum">     185 </span>            :         base_::left  = rel.left ;
+<span class="lineNum">     186 </span>            :         base_::right = rel.right;
+<span class="lineNum">     187 </span>            :     }
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span>            :     #ifndef BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">     190 </span>            :     template&lt; class Archive &gt;
+<span class="lineNum">     191 </span>            :     void serialize(Archive &amp; ar, const unsigned int)
+<span class="lineNum">     192 </span>            :     {
+<span class="lineNum">     193 </span>            :         ar &amp; ::boost::serialization::make_nvp(&quot;left&quot; , base_::left );
+<span class="lineNum">     194 </span>            :         ar &amp; ::boost::serialization::make_nvp(&quot;right&quot;, base_::right);
+<span class="lineNum">     195 </span>            :     }
+<span class="lineNum">     196 </span>            :     #endif // BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">     197 </span>            : };
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span>            : } // namespace detail
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            : /// \brief Abstraction of a related pair of values, that extends the std::pair class.
+<span class="lineNum">     203 </span>            : /**
+<span class="lineNum">     204 </span>            : The mutant_relation is a mutant class. A mutant class can mutate
+<span class="lineNum">     205 </span>            : with zero overhead in other classes that are called views.
+<span class="lineNum">     206 </span>            : Each view has to be StorageCompatible with the base class
+<span class="lineNum">     207 </span>            : of the mutant. Note that all the views have the following
+<span class="lineNum">     208 </span>            : storage structure:
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span>            : \verbatim
+<span class="lineNum">     211 </span>            :                         __________
+<span class="lineNum">     212 </span>            :                        |          |
+<span class="lineNum">     213 </span>            :                        |    TA    |
+<span class="lineNum">     214 </span>            :                        |__________|
+<span class="lineNum">     215 </span>            :                        |          |
+<span class="lineNum">     216 </span>            :                        |    TB    |
+<span class="lineNum">     217 </span>            :                        |__________|
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            : \endverbatim
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span>            : See also select_relation, standard_relation.
+<span class="lineNum">     222 </span>            : \ingroup relation_group
+<span class="lineNum">     223 </span>            :                                                            **/
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span>            : template&lt; class TA, class TB, class Info = ::boost::mpl::na, bool force_mutable = false &gt;
+<span class="lineNum">     227 </span>            : class mutant_relation : public
+<span class="lineNum">     228 </span>            :     ::boost::bimaps::relation::detail::
+<span class="lineNum">     229 </span>            :         relation_info_hook&lt;TA,TB,Info,force_mutable&gt;
+<span class="lineNum">     230 </span>            : {
+<span class="lineNum">     231 </span>            :     typedef ::boost::bimaps::relation::detail::
+<span class="lineNum">     232 </span>            :         relation_info_hook&lt;TA,TB,Info,force_mutable&gt; base_;
+<span class="lineNum">     233 </span>            : 
+<span class="lineNum">     234 </span>            :     public:
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span>            :     // We have to know the type of the base where the types are
+<span class="lineNum">     237 </span>            :     // defined because Boost.MultiIndex requires it.
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span>            :     typedef ::boost::bimaps::relation::detail::
+<span class="lineNum">     240 </span>            :                 relation_storage&lt;TA,TB,force_mutable&gt; storage_base;
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span>            :     /// Above view, non mutable view of the relation
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            :     typedef mutant_relation&lt;TA,TB,Info,false&gt; above_view;
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            :     //@{
+<span class="lineNum">     247 </span>            :         /// A signature compatible std::pair that is a view of the relation.
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span>            :         typedef structured_pair&lt; TA, TB, Info, normal_layout &gt;  left_pair;
+<span class="lineNum">     250 </span>            :         typedef structured_pair&lt; TB, TA, Info, mirror_layout &gt; right_pair;
+<span class="lineNum">     251 </span>            :     //@}
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            :     typedef ::boost::mpl::vector4
+<span class="lineNum">     254 </span>            :     &lt;
+<span class="lineNum">     255 </span>            :          left_pair,
+<span class="lineNum">     256 </span>            :         right_pair,
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            :         mutant_relation&lt; TA, TB, Info, true  &gt;,
+<span class="lineNum">     259 </span>            :         mutant_relation&lt; TA, TB, Info, false &gt;
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span>            :     &gt; mutant_views;
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span>            :     mutant_relation() {}
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span>            :     mutant_relation(BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     266 </span>            :                         BOOST_DEDUCED_TYPENAME base_:: left_value_type
+<span class="lineNum">     267 </span>            :                     &gt;::param_type l,
+<span class="lineNum">     268 </span>            :                     BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     269 </span>            :                         BOOST_DEDUCED_TYPENAME base_::right_value_type
+<span class="lineNum">     270 </span>            :                     &gt;::param_type r) :
+<span class="lineNum">     271 </span>            :         base_(l,r) {}
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span>            :     mutant_relation(BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     274 </span>            :                         BOOST_DEDUCED_TYPENAME base_:: left_value_type
+<span class="lineNum">     275 </span>            :                     &gt;::param_type l,
+<span class="lineNum">     276 </span>            :                     BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     277 </span>            :                         BOOST_DEDUCED_TYPENAME base_::right_value_type
+<span class="lineNum">     278 </span>            :                     &gt;::param_type r,
+<span class="lineNum">     279 </span>            :                     BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt;
+<span class="lineNum">     280 </span>            :                         BOOST_DEDUCED_TYPENAME base_::info_type
+<span class="lineNum">     281 </span>            :                     &gt;::param_type i) :
+<span class="lineNum">     282 </span>            :         base_(l,r,i) {}
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            :     mutant_relation(const mutant_relation&lt;TA,TB,Info,false&gt; &amp; rel) :
+<span class="lineNum">     285 </span>            :         base_(rel) {}
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span>            :     mutant_relation(const mutant_relation&lt;TA,TB,Info,true&gt; &amp; rel) :
+<span class="lineNum">     288 </span>            :         base_(rel) {}
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span>            :     // Operators
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span>            :     template&lt; bool FM &gt;
+<span class="lineNum">     293 </span>            :     mutant_relation&amp; operator=(const mutant_relation&lt;TA,TB,Info,FM&gt; &amp; rel)
+<span class="lineNum">     294 </span>            :     {
+<span class="lineNum">     295 </span>            :         base_::change_to(rel);
+<span class="lineNum">     296 </span>            :         return *this;
+<span class="lineNum">     297 </span>            :     }
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span>            :     // The following functions are redundant if you only consider this class.
+<span class="lineNum">     300 </span>            :     // They are included to make easier the construction of the get and the
+<span class="lineNum">     301 </span>            :     // pair_by metafunction. Remember that not all compiler supports the mutant
+<span class="lineNum">     302 </span>            :     // idiom.
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span>            :     left_pair &amp; get_left_pair()
+<span class="lineNum">     305 </span>            :     {
+<span class="lineNum">     306 </span>            :         return ::boost::bimaps::relation::detail::mutate&lt;left_pair&gt;(*this);
+<span class="lineNum">     307 </span>            :     }
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span>            :     const left_pair &amp; get_left_pair() const
+<span class="lineNum">     310 </span>            :     {
+<span class="lineNum">     311 </span>            :         return ::boost::bimaps::relation::detail::mutate&lt;left_pair&gt;(*this);
+<span class="lineNum">     312 </span>            :     }
+<span class="lineNum">     313 </span>            : 
+<span class="lineNum">     314 </span>            :     right_pair &amp; get_right_pair()
+<span class="lineNum">     315 </span>            :     {
+<span class="lineNum">     316 </span>            :         return ::boost::bimaps::relation::detail::mutate&lt;right_pair&gt;(*this);
+<span class="lineNum">     317 </span>            :     }
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span>            :     const right_pair &amp; get_right_pair() const
+<span class="lineNum">     320 </span>            :     {
+<span class="lineNum">     321 </span>            :         return ::boost::bimaps::relation::detail::mutate&lt;right_pair&gt;(*this);
+<span class="lineNum">     322 </span>            :     }
+<span class="lineNum">     323 </span>            : 
+<span class="lineNum">     324 </span>            :     above_view &amp; get_view()
+<span class="lineNum">     325 </span>            :     {
+<span class="lineNum">     326 </span>            :         return ::boost::bimaps::relation::detail::mutate&lt;above_view&gt;(*this);
+<span class="lineNum">     327 </span>            :     }
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span>            :     const above_view &amp; get_view() const
+<span class="lineNum">     330 </span>            :     {
+<span class="lineNum">     331 </span>            :         return ::boost::bimaps::relation::detail::mutate&lt;above_view&gt;(*this);
+<span class="lineNum">     332 </span>            :     }
+<span class="lineNum">     333 </span>            : 
+<span class="lineNum">     334 </span>            :     template&lt; class Tag &gt;
+<span class="lineNum">     335 </span>            :     const BOOST_DEDUCED_TYPENAME ::boost::bimaps::relation::support::
+<span class="lineNum">     336 </span>            :         result_of::get&lt;Tag,const mutant_relation&gt;::type
+<span class="lineNum">     337 </span>            :     get() const
+<span class="lineNum">     338 </span>            :     {
+<span class="lineNum">     339 </span>            :         return ::boost::bimaps::relation::support::get&lt;Tag&gt;(*this);
+<span class="lineNum">     340 </span>            :     }
+<span class="lineNum">     341 </span>            : 
+<span class="lineNum">     342 </span>            :     template&lt; class Tag &gt;
+<span class="lineNum">     343 </span>            :     BOOST_DEDUCED_TYPENAME ::boost::bimaps::relation::support::
+<span class="lineNum">     344 </span>            :         result_of::get&lt;Tag,mutant_relation&gt;::type
+<span class="lineNum">     345 </span>            :     get()
+<span class="lineNum">     346 </span>            :     {
+<span class="lineNum">     347 </span>            :         return ::boost::bimaps::relation::support::get&lt;Tag&gt;(*this);
+<span class="lineNum">     348 </span>            :     }
+<span class="lineNum">     349 </span>            :     
+<span class="lineNum">     350 </span>            :     #ifndef BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">     351 </span>            : 
+<span class="lineNum">     352 </span>            :     private:
+<span class="lineNum">     353 </span>            :     friend class ::boost::serialization::access;
+<span class="lineNum">     354 </span>            : 
+<span class="lineNum">     355 </span>            :     template&lt;class Archive&gt;
+<span class="lineNum">     356 </span>            :     void serialize(Archive &amp; ar, const unsigned int version)
+<span class="lineNum">     357 </span>            :     {
+<span class="lineNum">     358 </span>            :         base_::serialize(ar,version);
+<span class="lineNum">     359 </span>            :     }
+<span class="lineNum">     360 </span>            : 
+<span class="lineNum">     361 </span>            :     #endif // BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">     362 </span>            : };
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span>            : // hash value
+<span class="lineNum">     365 </span>            : 
+<span class="lineNum">     366 </span>            : template&lt; class FirstType, class SecondType, bool FM &gt;
+<span class="lineNum">     367 </span>            : std::size_t hash_value(const detail::relation_storage&lt;FirstType,SecondType,FM&gt; &amp; r)
+<span class="lineNum">     368 </span>            : {
+<span class="lineNum">     369 </span>            :     std::size_t seed = 0;
+<span class="lineNum">     370 </span>            :     ::boost::hash_combine(seed, r. left );
+<span class="lineNum">     371 </span>            :     ::boost::hash_combine(seed, r.right );
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span>            :     return seed;
+<span class="lineNum">     374 </span>            : }
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span>            : // mutant_relation - mutant_relation
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span>            : template&lt; class FirstType, class SecondType, bool FM1, bool FM2 &gt;
+<span class="lineNum">     379 </span>            : bool operator==(const detail::relation_storage&lt;FirstType,SecondType,FM1&gt; &amp; a,
+<span class="lineNum">     380 </span>            :                 const detail::relation_storage&lt;FirstType,SecondType,FM2&gt; &amp; b)
+<span class="lineNum">     381 </span>            : {
+<span class="lineNum">     382 </span>            :     return ( ( a.left  == b.left  ) &amp;&amp;
+<span class="lineNum">     383 </span>            :              ( a.right == b.right ) );
+<span class="lineNum">     384 </span>            : }
+<span class="lineNum">     385 </span>            : 
+<span class="lineNum">     386 </span>            : template&lt; class FirstType, class SecondType, bool FM1, bool FM2 &gt;
+<span class="lineNum">     387 </span>            : bool operator!=(const detail::relation_storage&lt;FirstType,SecondType,FM1&gt; &amp; a,
+<span class="lineNum">     388 </span>            :                 const detail::relation_storage&lt;FirstType,SecondType,FM2&gt; &amp; b)
+<span class="lineNum">     389 </span>            : {
+<span class="lineNum">     390 </span>            :     return ! ( a == b );
+<span class="lineNum">     391 </span>            : }
+<span class="lineNum">     392 </span>            : 
+<span class="lineNum">     393 </span>            : template&lt; class FirstType, class SecondType, bool FM1, bool FM2 &gt;
+<span class="lineNum">     394 </span>            : bool operator&lt;(const detail::relation_storage&lt;FirstType,SecondType,FM1&gt; &amp; a,
+<span class="lineNum">     395 </span>            :                const detail::relation_storage&lt;FirstType,SecondType,FM2&gt; &amp; b)
+<span class="lineNum">     396 </span>            : {
+<span class="lineNum">     397 </span>            :     return (  ( a.left  &lt;  b.left  ) ||
+<span class="lineNum">     398 </span>            :              (( a.left == b.left ) &amp;&amp; ( a.right &lt; b.right )));
+<span class="lineNum">     399 </span>            : }
+<span class="lineNum">     400 </span>            : 
+<span class="lineNum">     401 </span>            : template&lt; class FirstType, class SecondType, bool FM1, bool FM2 &gt;
+<span class="lineNum">     402 </span>            : bool operator&lt;=(const detail::relation_storage&lt;FirstType,SecondType,FM1&gt; &amp; a,
+<span class="lineNum">     403 </span>            :                 const detail::relation_storage&lt;FirstType,SecondType,FM2&gt; &amp; b)
+<span class="lineNum">     404 </span>            : {
+<span class="lineNum">     405 </span>            :     return (  ( a.left  &lt;  b.left  ) ||
+<span class="lineNum">     406 </span>            :              (( a.left == b.left ) &amp;&amp; ( a.right &lt;= b.right )));
+<span class="lineNum">     407 </span>            : }
+<span class="lineNum">     408 </span>            : 
+<span class="lineNum">     409 </span>            : template&lt; class FirstType, class SecondType, bool FM1, bool FM2 &gt;
+<span class="lineNum">     410 </span>            : bool operator&gt;(const detail::relation_storage&lt;FirstType,SecondType,FM1&gt; &amp; a,
+<span class="lineNum">     411 </span>            :                const detail::relation_storage&lt;FirstType,SecondType,FM2&gt; &amp; b)
+<span class="lineNum">     412 </span>            : {
+<span class="lineNum">     413 </span>            :     return ( ( a.left  &gt;  b.left  ) ||
+<span class="lineNum">     414 </span>            :              (( a.left == b.left ) &amp;&amp; ( a.right &gt; b.right )));
+<span class="lineNum">     415 </span>            : }
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span>            : template&lt; class FirstType, class SecondType, bool FM1, bool FM2 &gt;
+<span class="lineNum">     418 </span>            : bool operator&gt;=(const detail::relation_storage&lt;FirstType,SecondType,FM1&gt; &amp; a,
+<span class="lineNum">     419 </span>            :                 const detail::relation_storage&lt;FirstType,SecondType,FM2&gt; &amp; b)
+<span class="lineNum">     420 </span>            : {
+<span class="lineNum">     421 </span>            :     return ( ( a.left  &gt;  b.left  ) ||
+<span class="lineNum">     422 </span>            :              (( a.left == b.left ) &amp;&amp; ( a.right &gt;= b.right )));
+<span class="lineNum">     423 </span>            : }
+<span class="lineNum">     424 </span>            : 
+<span class="lineNum">     425 </span>            : namespace detail {
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span>            : template&lt; class TA, class TB, class Info, bool force_mutable&gt;
+<span class="lineNum">     428 </span>            : mutant_relation&lt;TA,TB,Info,force_mutable&gt; 
+<span class="lineNum">     429 </span>            :     copy_with_left_replaced(mutant_relation&lt;TA,TB,Info,force_mutable&gt; const&amp; rel,
+<span class="lineNum">     430 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt; BOOST_DEDUCED_TYPENAME 
+<span class="lineNum">     431 </span>            :             mutant_relation&lt;TA,TB,Info,force_mutable&gt;::left_value_type&gt;
+<span class="lineNum">     432 </span>            :                 ::param_type l)
+<span class="lineNum">     433 </span>            : {
+<span class="lineNum">     434 </span>            :     return mutant_relation&lt;TA,TB,Info,force_mutable&gt;(l,rel.right,rel.info);
+<span class="lineNum">     435 </span>            : }
+<span class="lineNum">     436 </span>            :     
+<span class="lineNum">     437 </span>            : template&lt; class TA, class TB, bool force_mutable&gt;
+<span class="lineNum">     438 </span>            : mutant_relation&lt;TA,TB,::boost::mpl::na,force_mutable&gt;
+<span class="lineNum">     439 </span>            :     copy_with_left_replaced(mutant_relation&lt;TA,TB,::boost::mpl::na,force_mutable&gt; const&amp; rel,
+<span class="lineNum">     440 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt; BOOST_DEDUCED_TYPENAME 
+<span class="lineNum">     441 </span>            :             mutant_relation&lt;TA,TB,::boost::mpl::na,force_mutable&gt;::left_value_type&gt;
+<span class="lineNum">     442 </span>            :                 ::param_type l)
+<span class="lineNum">     443 </span>            : {
+<span class="lineNum">     444 </span>            :     return mutant_relation&lt;TA,TB,::boost::mpl::na,force_mutable&gt;(l,rel.right);  
+<span class="lineNum">     445 </span>            : }
+<span class="lineNum">     446 </span>            :     
+<span class="lineNum">     447 </span>            : template&lt; class TA, class TB, class Info, bool force_mutable&gt;
+<span class="lineNum">     448 </span>            : mutant_relation&lt;TA,TB,Info,force_mutable&gt; 
+<span class="lineNum">     449 </span>            :     copy_with_right_replaced(mutant_relation&lt;TA,TB,Info,force_mutable&gt; const&amp; rel,
+<span class="lineNum">     450 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt; BOOST_DEDUCED_TYPENAME 
+<span class="lineNum">     451 </span>            :             mutant_relation&lt;TA,TB,Info,force_mutable&gt;::right_value_type&gt;
+<span class="lineNum">     452 </span>            :                 ::param_type r)
+<span class="lineNum">     453 </span>            : {
+<span class="lineNum">     454 </span>            :     return mutant_relation&lt;TA,TB,Info,force_mutable&gt;(rel.left,r,rel.info);
+<span class="lineNum">     455 </span>            : }
+<span class="lineNum">     456 </span>            :     
+<span class="lineNum">     457 </span>            : template&lt; class TA, class TB, bool force_mutable&gt;
+<span class="lineNum">     458 </span>            : mutant_relation&lt;TA,TB,::boost::mpl::na,force_mutable&gt;
+<span class="lineNum">     459 </span>            :     copy_with_right_replaced(mutant_relation&lt;TA,TB,::boost::mpl::na,force_mutable&gt; const&amp; rel,
+<span class="lineNum">     460 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::call_traits&lt; BOOST_DEDUCED_TYPENAME 
+<span class="lineNum">     461 </span>            :             mutant_relation&lt;TA,TB,::boost::mpl::na,force_mutable&gt;::right_value_type&gt;
+<span class="lineNum">     462 </span>            :                 ::param_type r)
+<span class="lineNum">     463 </span>            : {
+<span class="lineNum">     464 </span>            :     return mutant_relation&lt;TA,TB,::boost::mpl::na,force_mutable&gt;(rel.left,r);  
+<span class="lineNum">     465 </span>            : }
+<span class="lineNum">     466 </span>            : 
+<span class="lineNum">     467 </span>            : } // namespace detail
+<span class="lineNum">     468 </span>            : 
+<span class="lineNum">     469 </span>            : } // namespace relation
+<span class="lineNum">     470 </span>            : } // namespace bimaps
+<span class="lineNum">     471 </span>            : } // namespace boost
+<span class="lineNum">     472 </span>            : 
+<span class="lineNum">     473 </span>            : 
+<span class="lineNum">     474 </span>            : #endif // BOOST_BIMAP_RELATION_MUTANT_RELATION_HPP
+<span class="lineNum">     475 </span>            : 
+<span class="lineNum">     476 </span>            : 
+<span class="lineNum">     477 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

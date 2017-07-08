@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/spirit/home/support/action_dispatch.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">boost/spirit/home/support</a> - action_dispatch.hpp<span style="font-size: 80%;"> (source / <a href="action_dispatch.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :     Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            :     Copyright (c) 2001-2011 Hartmut Kaiser
+<span class="lineNum">       4 </span>            :     http://spirit.sourceforge.net/
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :     Distributed under the Boost Software License, Version 1.0. (See accompanying
+<span class="lineNum">       7 </span>            :     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : =============================================================================*/
+<span class="lineNum">       9 </span>            : #if !defined(BOOST_SPIRIT_ACTION_DISPATCH_APRIL_18_2008_0720AM)
+<span class="lineNum">      10 </span>            : #define BOOST_SPIRIT_ACTION_DISPATCH_APRIL_18_2008_0720AM
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      13 </span>            : #pragma once
+<span class="lineNum">      14 </span>            : #endif
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include&lt;boost/config.hpp&gt;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : #if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) &amp;&amp; !defined(BOOST_NO_CXX11_LAMBDAS) &amp;&amp; \
+<span class="lineNum">      19 </span>            :     !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) &amp;&amp; !defined(BOOST_NO_CXX11_DECLTYPE)
+<span class="lineNum">      20 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      21 </span>            : #include &lt;type_traits&gt;
+<span class="lineNum">      22 </span>            : #endif
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #include &lt;boost/spirit/include/phoenix_core.hpp&gt;
+<span class="lineNum">      26 </span>            : #include &lt;boost/spirit/home/support/attributes.hpp&gt;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : namespace boost { namespace spirit { namespace traits
+<span class="lineNum">      29 </span>            : {
+<span class="lineNum">      30 </span>            :     template &lt;typename Component&gt;
+<span class="lineNum">      31 </span>            :     struct action_dispatch
+<span class="lineNum">      32 </span>            :     {
+<span class="lineNum">      33 </span>            : #if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) &amp;&amp; !defined(BOOST_NO_CXX11_LAMBDAS) &amp;&amp; \
+<span class="lineNum">      34 </span>            :     !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) &amp;&amp; !defined(BOOST_NO_CXX11_DECLTYPE)
+<span class="lineNum">      35 </span>            :         // omit function parameters without specializing for each possible
+<span class="lineNum">      36 </span>            :         // type of callable entity
+<span class="lineNum">      37 </span>            :         // many thanks to Eelis/##iso-c++ for this contribution
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :     private:
+<span class="lineNum">      40 </span>            :         // this will be used to pass around POD types which are safe
+<span class="lineNum">      41 </span>            :         // to go through the ellipsis operator (if ever used)
+<span class="lineNum">      42 </span>            :         template &lt;typename&gt;
+<span class="lineNum">      43 </span>            :         struct fwd_tag {};
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :         // the first parameter is a placeholder to obtain SFINAE when
+<span class="lineNum">      46 </span>            :         // doing overload resolution, the second one is the actual
+<span class="lineNum">      47 </span>            :         // forwarder, where we can apply our implementation
+<span class="lineNum">      48 </span>            :         template &lt;typename, typename T&gt;
+<span class="lineNum">      49 </span>            :         struct fwd_storage { typedef T type; };
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            :         // gcc should accept fake&lt;T&gt;() but it prints a sorry, needs
+<span class="lineNum">      52 </span>            :         // a check once the bug is sorted out, use a FAKE_CALL macro for now
+<span class="lineNum">      53 </span>            :         template &lt;typename T&gt;
+<span class="lineNum">      54 </span>            :         T fake_call();
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : #define BOOST_SPIRIT_FAKE_CALL(T) (*(T*)0)
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :         // the forwarders, here we could tweak the implementation of
+<span class="lineNum">      59 </span>            :         // how parameters are passed to the functions, if needed
+<span class="lineNum">      60 </span>            :         struct fwd_none
+<span class="lineNum">      61 </span>            :         {
+<span class="lineNum">      62 </span>            :             template&lt;typename F, typename... Rest&gt;
+<span class="lineNum">      63 </span>            :             auto operator()(F &amp;&amp; f, Rest&amp;&amp;...) -&gt; decltype(f())
+<span class="lineNum">      64 </span>            :             {
+<span class="lineNum">      65 </span>            :                 return f();
+<span class="lineNum">      66 </span>            :             }
+<span class="lineNum">      67 </span>            :         };
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :         struct fwd_attrib
+<span class="lineNum">      70 </span>            :         {
+<span class="lineNum">      71 </span>            :             template&lt;typename F, typename A, typename... Rest&gt;
+<span class="lineNum">      72 </span>            :             auto operator()(F &amp;&amp; f, A &amp;&amp; a, Rest&amp;&amp;...) -&gt; decltype(f(a))
+<span class="lineNum">      73 </span>            :             {
+<span class="lineNum">      74 </span><span class="lineCov">     500000 :                  return f(a);</span>
+<span class="lineNum">      75 </span>            :             }
+<span class="lineNum">      76 </span>            :         };
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :         struct fwd_attrib_context
+<span class="lineNum">      79 </span>            :         {
+<span class="lineNum">      80 </span>            :              template&lt;typename F, typename A, typename B, typename... Rest&gt;
+<span class="lineNum">      81 </span>            :              auto operator()(F &amp;&amp; f, A &amp;&amp; a, B &amp;&amp; b, Rest&amp;&amp;...)
+<span class="lineNum">      82 </span>            :                 -&gt; decltype(f(a, b))
+<span class="lineNum">      83 </span>            :              {
+<span class="lineNum">      84 </span>            :                  return f(a, b);
+<span class="lineNum">      85 </span>            :              }
+<span class="lineNum">      86 </span>            :         };
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            :         struct fwd_attrib_context_pass
+<span class="lineNum">      89 </span>            :         {
+<span class="lineNum">      90 </span>            :             template&lt;typename F, typename A, typename B, typename C
+<span class="lineNum">      91 </span>            :               , typename... Rest&gt;
+<span class="lineNum">      92 </span>            :             auto operator()(F &amp;&amp; f, A &amp;&amp; a, B &amp;&amp; b, C &amp;&amp; c, Rest&amp;&amp;...)
+<span class="lineNum">      93 </span>            :                -&gt; decltype(f(a, b, c))
+<span class="lineNum">      94 </span>            :             {
+<span class="lineNum">      95 </span>            :                 return f(a, b, c);
+<span class="lineNum">      96 </span>            :             }
+<span class="lineNum">      97 </span>            :         };
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :         // SFINAE for our calling syntax, the forwarders are stored based
+<span class="lineNum">     100 </span>            :         // on what function call gives a proper result
+<span class="lineNum">     101 </span>            :         // this code can probably be more generic once implementations are
+<span class="lineNum">     102 </span>            :         // steady
+<span class="lineNum">     103 </span>            :         template &lt;typename F&gt;
+<span class="lineNum">     104 </span>            :         static auto do_call(F &amp;&amp; f, ...)
+<span class="lineNum">     105 </span>            :            -&gt; typename fwd_storage&lt;decltype(f()), fwd_none&gt;::type
+<span class="lineNum">     106 </span>            :         {
+<span class="lineNum">     107 </span>            :             return {};
+<span class="lineNum">     108 </span>            :         }
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :         template &lt;typename F, typename A&gt;
+<span class="lineNum">     111 </span>            :         static auto do_call(F &amp;&amp; f, fwd_tag&lt;A&gt;, ...)
+<span class="lineNum">     112 </span>            :            -&gt; typename fwd_storage&lt;decltype(f(BOOST_SPIRIT_FAKE_CALL(A)))
+<span class="lineNum">     113 </span>            :                  , fwd_attrib&gt;::type
+<span class="lineNum">     114 </span>            :         {
+<span class="lineNum">     115 </span>            :             return {};
+<span class="lineNum">     116 </span>            :         }
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            :         template &lt;typename F, typename A, typename B&gt;
+<span class="lineNum">     119 </span>            :         static auto do_call(F &amp;&amp; f, fwd_tag&lt;A&gt;, fwd_tag&lt;B&gt;, ...)
+<span class="lineNum">     120 </span>            :            -&gt; typename fwd_storage&lt;
+<span class="lineNum">     121 </span>            :                     decltype(f(BOOST_SPIRIT_FAKE_CALL(A), BOOST_SPIRIT_FAKE_CALL(B)))
+<span class="lineNum">     122 </span>            :                 , fwd_attrib_context&gt;::type
+<span class="lineNum">     123 </span>            :         {
+<span class="lineNum">     124 </span>            :             return {};
+<span class="lineNum">     125 </span>            :         }
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            :         template &lt;typename F, typename A, typename B, typename C&gt;
+<span class="lineNum">     128 </span>            :         static auto do_call(F &amp;&amp; f, fwd_tag&lt;A&gt;, fwd_tag&lt;B&gt;, fwd_tag&lt;C&gt;, ...)
+<span class="lineNum">     129 </span>            :            -&gt; typename fwd_storage&lt;
+<span class="lineNum">     130 </span>            :                   decltype(f(BOOST_SPIRIT_FAKE_CALL(A), BOOST_SPIRIT_FAKE_CALL(B)
+<span class="lineNum">     131 </span>            :                     , BOOST_SPIRIT_FAKE_CALL(C)))
+<span class="lineNum">     132 </span>            :                 , fwd_attrib_context_pass&gt;::type
+<span class="lineNum">     133 </span>            :         {
+<span class="lineNum">     134 </span>            :             return {};
+<span class="lineNum">     135 </span>            :         }
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :         // this function calls the forwarder and is responsible for
+<span class="lineNum">     138 </span>            :         // stripping the tail of the parameters
+<span class="lineNum">     139 </span>            :         template &lt;typename F, typename... A&gt;
+<span class="lineNum">     140 </span>            :         static void caller(F &amp;&amp; f, A &amp;&amp; ... a)
+<span class="lineNum">     141 </span>            :         {
+<span class="lineNum">     142 </span>            :             do_call(f, fwd_tag&lt;typename std::remove_reference&lt;A&gt;::type&gt;()...)
+<span class="lineNum">     143 </span>            :                 (std::forward&lt;F&gt;(f), std::forward&lt;A&gt;(a)...);
+<span class="lineNum">     144 </span>            :         }
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : #undef BOOST_SPIRIT_FAKE_CALL
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :     public:
+<span class="lineNum">     149 </span>            :         template &lt;typename F, typename Attribute, typename Context&gt;
+<span class="lineNum">     150 </span>            :         bool operator()(F const&amp; f, Attribute&amp; attr, Context&amp; context)
+<span class="lineNum">     151 </span>            :         {
+<span class="lineNum">     152 </span>            :             bool pass = true;
+<span class="lineNum">     153 </span>            :             caller(f, attr, context, pass);
+<span class="lineNum">     154 </span>            :             return pass;
+<span class="lineNum">     155 </span>            :         }
+<span class="lineNum">     156 </span>            : #else
+<span class="lineNum">     157 </span>            :         // general handler for everything not explicitly specialized below
+<span class="lineNum">     158 </span>            :         template &lt;typename F, typename Attribute, typename Context&gt;
+<span class="lineNum">     159 </span>            :         bool operator()(F const&amp; f, Attribute&amp; attr, Context&amp; context)
+<span class="lineNum">     160 </span>            :         {
+<span class="lineNum">     161 </span>            :             bool pass = true;
+<span class="lineNum">     162 </span>            :             f(attr, context, pass);
+<span class="lineNum">     163 </span>            :             return pass;
+<span class="lineNum">     164 </span>            :         }
+<span class="lineNum">     165 </span>            : #endif
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            :         // handler for phoenix actors
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :         // If the component this action has to be invoked for is a tuple, we
+<span class="lineNum">     170 </span>            :         // wrap any non-fusion tuple into a fusion tuple (done by pass_attribute)
+<span class="lineNum">     171 </span>            :         // and pass through any fusion tuple.
+<span class="lineNum">     172 </span>            :         template &lt;typename Eval, typename Attribute, typename Context&gt;
+<span class="lineNum">     173 </span>            :         bool operator()(phoenix::actor&lt;Eval&gt; const&amp; f
+<span class="lineNum">     174 </span>            :           , Attribute&amp; attr, Context&amp; context)
+<span class="lineNum">     175 </span>            :         {
+<span class="lineNum">     176 </span>            :             bool pass = true;
+<span class="lineNum">     177 </span>            :             typename pass_attribute&lt;Component, Attribute&gt;::type attr_wrap(attr);
+<span class="lineNum">     178 </span>            :             f(attr_wrap, context, pass);
+<span class="lineNum">     179 </span>            :             return pass;
+<span class="lineNum">     180 </span>            :         }
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span>            :         // specializations for plain function pointers taking different number of
+<span class="lineNum">     183 </span>            :         // arguments
+<span class="lineNum">     184 </span>            :         template &lt;typename RT, typename A0, typename A1, typename A2
+<span class="lineNum">     185 </span>            :           , typename Attribute, typename Context&gt;
+<span class="lineNum">     186 </span>            :         bool operator()(RT(*f)(A0, A1, A2), Attribute&amp; attr, Context&amp; context)
+<span class="lineNum">     187 </span>            :         {
+<span class="lineNum">     188 </span>            :             bool pass = true;
+<span class="lineNum">     189 </span>            :             f(attr, context, pass);
+<span class="lineNum">     190 </span>            :             return pass;
+<span class="lineNum">     191 </span>            :         }
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span>            :         template &lt;typename RT, typename A0, typename A1
+<span class="lineNum">     194 </span>            :           , typename Attribute, typename Context&gt;
+<span class="lineNum">     195 </span>            :         bool operator()(RT(*f)(A0, A1), Attribute&amp; attr, Context&amp; context)
+<span class="lineNum">     196 </span>            :         {
+<span class="lineNum">     197 </span>            :             f(attr, context);
+<span class="lineNum">     198 </span>            :             return true;
+<span class="lineNum">     199 </span>            :         }
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            :         template &lt;typename RT, typename A0, typename Attribute, typename Context&gt;
+<span class="lineNum">     202 </span>            :         bool operator()(RT(*f)(A0), Attribute&amp; attr, Context&amp;)
+<span class="lineNum">     203 </span>            :         {
+<span class="lineNum">     204 </span>            :             f(attr);
+<span class="lineNum">     205 </span>            :             return true;
+<span class="lineNum">     206 </span>            :         }
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span>            :         template &lt;typename RT, typename Attribute, typename Context&gt;
+<span class="lineNum">     209 </span>            :         bool operator()(RT(*f)(), Attribute&amp;, Context&amp;)
+<span class="lineNum">     210 </span>            :         {
+<span class="lineNum">     211 </span>            :             f();
+<span class="lineNum">     212 </span>            :             return true;
+<span class="lineNum">     213 </span>            :         }
+<span class="lineNum">     214 </span>            :     };
+<span class="lineNum">     215 </span>            : }}}
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

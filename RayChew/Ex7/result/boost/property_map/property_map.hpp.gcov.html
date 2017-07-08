@@ -1,0 +1,680 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/property_map/property_map.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">boost/property_map</a> - property_map.hpp<span style="font-size: 80%;"> (source / <a href="property_map.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : //  (C) Copyright Jeremy Siek 1999-2001.</a>
+<span class="lineNum">       2 </span>            : //  Copyright (C) 2006 Trustees of Indiana University
+<span class="lineNum">       3 </span>            : //  Authors: Douglas Gregor and Jeremy Siek
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : // Distributed under the Boost Software License, Version 1.0. (See
+<span class="lineNum">       6 </span>            : // accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       7 </span>            : // http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : //  See http://www.boost.org/libs/property_map for documentation.
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #ifndef BOOST_PROPERTY_MAP_HPP
+<span class="lineNum">      12 </span>            : #define BOOST_PROPERTY_MAP_HPP
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #include &lt;boost/assert.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &lt;boost/config.hpp&gt;
+<span class="lineNum">      16 </span>            : #include &lt;boost/static_assert.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/detail/iterator.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/concept/assert.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/concept_check.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/concept_archetype.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/mpl/assert.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/mpl/or.hpp&gt;
+<span class="lineNum">      24 </span>            : #include &lt;boost/mpl/and.hpp&gt;
+<span class="lineNum">      25 </span>            : #include &lt;boost/mpl/has_xxx.hpp&gt;
+<span class="lineNum">      26 </span>            : #include &lt;boost/type_traits/is_same.hpp&gt;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : namespace boost {
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            :   //=========================================================================
+<span class="lineNum">      31 </span>            :   // property_traits class
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :   BOOST_MPL_HAS_XXX_TRAIT_DEF(key_type)
+<span class="lineNum">      34 </span>            :   BOOST_MPL_HAS_XXX_TRAIT_DEF(value_type)
+<span class="lineNum">      35 </span>            :   BOOST_MPL_HAS_XXX_TRAIT_DEF(reference)
+<span class="lineNum">      36 </span>            :   BOOST_MPL_HAS_XXX_TRAIT_DEF(category)
+<span class="lineNum">      37 </span>            :  
+<span class="lineNum">      38 </span>            :   template&lt;class PA&gt;
+<span class="lineNum">      39 </span>            :   struct is_property_map :
+<span class="lineNum">      40 </span>            :     boost::mpl::and_&lt;
+<span class="lineNum">      41 </span>            :       has_key_type&lt;PA&gt;,
+<span class="lineNum">      42 </span>            :       has_value_type&lt;PA&gt;,
+<span class="lineNum">      43 </span>            :       has_reference&lt;PA&gt;,
+<span class="lineNum">      44 </span>            :       has_category&lt;PA&gt;
+<span class="lineNum">      45 </span>            :     &gt;
+<span class="lineNum">      46 </span>            :   {};
+<span class="lineNum">      47 </span>            :  
+<span class="lineNum">      48 </span>            :   template &lt;typename PA&gt;
+<span class="lineNum">      49 </span>            :   struct default_property_traits {
+<span class="lineNum">      50 </span>            :     typedef typename PA::key_type key_type;
+<span class="lineNum">      51 </span>            :     typedef typename PA::value_type value_type;
+<span class="lineNum">      52 </span>            :     typedef typename PA::reference reference;
+<span class="lineNum">      53 </span>            :     typedef typename PA::category   category;
+<span class="lineNum">      54 </span>            :   };
+<span class="lineNum">      55 </span>            :  
+<span class="lineNum">      56 </span>            :   struct null_property_traits {};
+<span class="lineNum">      57 </span>            :  
+<span class="lineNum">      58 </span>            :   template &lt;typename PA&gt;
+<span class="lineNum">      59 </span>            :   struct property_traits :
+<span class="lineNum">      60 </span>            :     boost::mpl::if_&lt;is_property_map&lt;PA&gt;,
+<span class="lineNum">      61 </span>            :       default_property_traits&lt;PA&gt;,
+<span class="lineNum">      62 </span>            :       null_property_traits&gt;::type
+<span class="lineNum">      63 </span>            :   {};
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : #if 0
+<span class="lineNum">      66 </span>            :   template &lt;typename PA&gt;
+<span class="lineNum">      67 </span>            :   struct property_traits {
+<span class="lineNum">      68 </span>            :     typedef typename PA::key_type key_type;
+<span class="lineNum">      69 </span>            :     typedef typename PA::value_type value_type; 
+<span class="lineNum">      70 </span>            :     typedef typename PA::reference reference;
+<span class="lineNum">      71 </span>            :     typedef typename PA::category   category;
+<span class="lineNum">      72 </span>            :   };
+<span class="lineNum">      73 </span>            : #endif
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            :   //=========================================================================
+<span class="lineNum">      76 </span>            :   // property_traits category tags
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :   namespace detail {
+<span class="lineNum">      79 </span>            :     enum ePropertyMapID { READABLE_PA, WRITABLE_PA, 
+<span class="lineNum">      80 </span>            :                           READ_WRITE_PA, LVALUE_PA, OP_BRACKET_PA, 
+<span class="lineNum">      81 </span>            :                           RAND_ACCESS_ITER_PA, LAST_PA };
+<span class="lineNum">      82 </span>            :   }
+<span class="lineNum">      83 </span>            :   struct readable_property_map_tag { enum { id = detail::READABLE_PA }; };
+<span class="lineNum">      84 </span>            :   struct writable_property_map_tag { enum { id = detail::WRITABLE_PA }; };
+<span class="lineNum">      85 </span>            :   struct read_write_property_map_tag :
+<span class="lineNum">      86 </span>            :     public readable_property_map_tag,
+<span class="lineNum">      87 </span>            :     public writable_property_map_tag
+<span class="lineNum">      88 </span>            :   { enum { id = detail::READ_WRITE_PA }; };
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :   struct lvalue_property_map_tag : public read_write_property_map_tag
+<span class="lineNum">      91 </span>            :   { enum { id = detail::LVALUE_PA }; };
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :   //=========================================================================
+<span class="lineNum">      94 </span>            :   // property_traits specialization for pointers
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :   template &lt;class T&gt;
+<span class="lineNum">      97 </span>            :   struct property_traits&lt;T*&gt; {
+<span class="lineNum">      98 </span>            :     // BOOST_STATIC_ASSERT(boost::is_same&lt;T, T*&gt;::value &amp;&amp; !&quot;Using pointers as property maps is deprecated&quot;);
+<span class="lineNum">      99 </span>            :     typedef T value_type;
+<span class="lineNum">     100 </span>            :     typedef value_type&amp; reference;
+<span class="lineNum">     101 </span>            :     typedef std::ptrdiff_t key_type;
+<span class="lineNum">     102 </span>            :     typedef lvalue_property_map_tag category;
+<span class="lineNum">     103 </span>            :   };
+<span class="lineNum">     104 </span>            :   template &lt;class T&gt;
+<span class="lineNum">     105 </span>            :   struct property_traits&lt;const T*&gt; {
+<span class="lineNum">     106 </span>            :     // BOOST_STATIC_ASSERT(boost::is_same&lt;T, T*&gt;::value &amp;&amp; !&quot;Using pointers as property maps is deprecated&quot;);
+<span class="lineNum">     107 </span>            :     typedef T value_type;
+<span class="lineNum">     108 </span>            :     typedef const value_type&amp; reference;
+<span class="lineNum">     109 </span>            :     typedef std::ptrdiff_t key_type;
+<span class="lineNum">     110 </span>            :     typedef lvalue_property_map_tag category;
+<span class="lineNum">     111 </span>            :   };
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            : #if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
+<span class="lineNum">     114 </span>            :   // MSVC doesn't have Koenig lookup, so the user has to
+<span class="lineNum">     115 </span>            :   // do boost::get() anyways, and the using clause
+<span class="lineNum">     116 </span>            :   // doesn't really work for MSVC.
+<span class="lineNum">     117 </span>            : } // namespace boost
+<span class="lineNum">     118 </span>            : #endif
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            :   // These need to go in global namespace because Koenig
+<span class="lineNum">     121 </span>            :   // lookup does not apply to T*.
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            :   // V must be convertible to T
+<span class="lineNum">     124 </span>            :   template &lt;class T, class V&gt;
+<span class="lineNum">     125 </span><span class="lineCov">     312478 :   inline void put(T* pa, std::ptrdiff_t k, const V&amp; val) { pa[k] = val;  }</span>
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            :   template &lt;class T&gt;
+<span class="lineNum">     128 </span><span class="lineCov">    2728229 :   inline const T&amp; get(const T* pa, std::ptrdiff_t k) { return pa[k]; }</span>
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            : #if !defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
+<span class="lineNum">     131 </span>            : namespace boost {
+<span class="lineNum">     132 </span>            :   using ::put;
+<span class="lineNum">     133 </span>            :   using ::get;
+<span class="lineNum">     134 </span>            : #endif
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :   //=========================================================================
+<span class="lineNum">     137 </span>            :   // concept checks for property maps
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span>            :   template &lt;class PMap, class Key&gt;
+<span class="lineNum">     140 </span>            :   struct ReadablePropertyMapConcept
+<span class="lineNum">     141 </span>            :   {
+<span class="lineNum">     142 </span>            :     typedef typename property_traits&lt;PMap&gt;::key_type key_type;
+<span class="lineNum">     143 </span>            :     typedef typename property_traits&lt;PMap&gt;::reference reference;
+<span class="lineNum">     144 </span>            :     typedef typename property_traits&lt;PMap&gt;::category Category;
+<span class="lineNum">     145 </span>            :     typedef boost::readable_property_map_tag ReadableTag;
+<span class="lineNum">     146 </span>            :     void constraints() {
+<span class="lineNum">     147 </span>            :       BOOST_CONCEPT_ASSERT((ConvertibleConcept&lt;Category, ReadableTag&gt;));
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            :       val = get(pmap, k);
+<span class="lineNum">     150 </span>            :     }
+<span class="lineNum">     151 </span>            :     PMap pmap;
+<span class="lineNum">     152 </span>            :     Key k;
+<span class="lineNum">     153 </span>            :     typename property_traits&lt;PMap&gt;::value_type val;
+<span class="lineNum">     154 </span>            :   };
+<span class="lineNum">     155 </span>            :   template &lt;typename KeyArchetype, typename ValueArchetype&gt;
+<span class="lineNum">     156 </span>            :   struct readable_property_map_archetype {
+<span class="lineNum">     157 </span>            :     typedef KeyArchetype key_type;
+<span class="lineNum">     158 </span>            :     typedef ValueArchetype value_type;
+<span class="lineNum">     159 </span>            :     typedef convertible_to_archetype&lt;ValueArchetype&gt; reference;
+<span class="lineNum">     160 </span>            :     typedef readable_property_map_tag category;
+<span class="lineNum">     161 </span>            :   };
+<span class="lineNum">     162 </span>            :   template &lt;typename K, typename V&gt;
+<span class="lineNum">     163 </span>            :   const typename readable_property_map_archetype&lt;K,V&gt;::reference&amp;
+<span class="lineNum">     164 </span>            :   get(const readable_property_map_archetype&lt;K,V&gt;&amp;, 
+<span class="lineNum">     165 </span>            :       const typename readable_property_map_archetype&lt;K,V&gt;::key_type&amp;)
+<span class="lineNum">     166 </span>            :   {
+<span class="lineNum">     167 </span>            :     typedef typename readable_property_map_archetype&lt;K,V&gt;::reference R;
+<span class="lineNum">     168 </span>            :     return static_object&lt;R&gt;::get();
+<span class="lineNum">     169 </span>            :   }
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :   template &lt;class PMap, class Key&gt;
+<span class="lineNum">     173 </span>            :   struct WritablePropertyMapConcept
+<span class="lineNum">     174 </span>            :   {
+<span class="lineNum">     175 </span>            :     typedef typename property_traits&lt;PMap&gt;::key_type key_type;
+<span class="lineNum">     176 </span>            :     typedef typename property_traits&lt;PMap&gt;::category Category;
+<span class="lineNum">     177 </span>            :     typedef boost::writable_property_map_tag WritableTag;
+<span class="lineNum">     178 </span>            :     void constraints() {
+<span class="lineNum">     179 </span>            :       BOOST_CONCEPT_ASSERT((ConvertibleConcept&lt;Category, WritableTag&gt;));
+<span class="lineNum">     180 </span>            :       put(pmap, k, val);
+<span class="lineNum">     181 </span>            :     }
+<span class="lineNum">     182 </span>            :     PMap pmap;
+<span class="lineNum">     183 </span>            :     Key k;
+<span class="lineNum">     184 </span>            :     typename property_traits&lt;PMap&gt;::value_type val;
+<span class="lineNum">     185 </span>            :   };
+<span class="lineNum">     186 </span>            :   template &lt;typename KeyArchetype, typename ValueArchetype&gt;
+<span class="lineNum">     187 </span>            :   struct writable_property_map_archetype {
+<span class="lineNum">     188 </span>            :     typedef KeyArchetype key_type;
+<span class="lineNum">     189 </span>            :     typedef ValueArchetype value_type;
+<span class="lineNum">     190 </span>            :     typedef void reference;
+<span class="lineNum">     191 </span>            :     typedef writable_property_map_tag category;
+<span class="lineNum">     192 </span>            :   };
+<span class="lineNum">     193 </span>            :   template &lt;typename K, typename V&gt;
+<span class="lineNum">     194 </span>            :   void put(const writable_property_map_archetype&lt;K,V&gt;&amp;, 
+<span class="lineNum">     195 </span>            :            const typename writable_property_map_archetype&lt;K,V&gt;::key_type&amp;, 
+<span class="lineNum">     196 </span>            :            const typename writable_property_map_archetype&lt;K,V&gt;::value_type&amp;) { }
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            :   template &lt;class PMap, class Key&gt;
+<span class="lineNum">     200 </span>            :   struct ReadWritePropertyMapConcept
+<span class="lineNum">     201 </span>            :   {
+<span class="lineNum">     202 </span>            :     typedef typename property_traits&lt;PMap&gt;::category Category;
+<span class="lineNum">     203 </span>            :     typedef boost::read_write_property_map_tag ReadWriteTag;
+<span class="lineNum">     204 </span>            :     void constraints() {
+<span class="lineNum">     205 </span>            :       BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept&lt;PMap, Key&gt;));
+<span class="lineNum">     206 </span>            :       BOOST_CONCEPT_ASSERT((WritablePropertyMapConcept&lt;PMap, Key&gt;));
+<span class="lineNum">     207 </span>            :       BOOST_CONCEPT_ASSERT((ConvertibleConcept&lt;Category, ReadWriteTag&gt;));
+<span class="lineNum">     208 </span>            :     }
+<span class="lineNum">     209 </span>            :   };
+<span class="lineNum">     210 </span>            :   template &lt;typename KeyArchetype, typename ValueArchetype&gt;
+<span class="lineNum">     211 </span>            :   struct read_write_property_map_archetype
+<span class="lineNum">     212 </span>            :     : public readable_property_map_archetype&lt;KeyArchetype, ValueArchetype&gt;,
+<span class="lineNum">     213 </span>            :       public writable_property_map_archetype&lt;KeyArchetype, ValueArchetype&gt;
+<span class="lineNum">     214 </span>            :   {
+<span class="lineNum">     215 </span>            :     typedef KeyArchetype key_type;
+<span class="lineNum">     216 </span>            :     typedef ValueArchetype value_type;
+<span class="lineNum">     217 </span>            :     typedef convertible_to_archetype&lt;ValueArchetype&gt; reference;
+<span class="lineNum">     218 </span>            :     typedef read_write_property_map_tag category;
+<span class="lineNum">     219 </span>            :   };
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span>            :   template &lt;class PMap, class Key&gt;
+<span class="lineNum">     223 </span>            :   struct LvaluePropertyMapConcept
+<span class="lineNum">     224 </span>            :   {
+<span class="lineNum">     225 </span>            :     typedef typename property_traits&lt;PMap&gt;::category Category;
+<span class="lineNum">     226 </span>            :     typedef boost::lvalue_property_map_tag LvalueTag;
+<span class="lineNum">     227 </span>            :     typedef typename property_traits&lt;PMap&gt;::reference reference;
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span>            :     void constraints() {
+<span class="lineNum">     230 </span>            :       BOOST_CONCEPT_ASSERT((ReadablePropertyMapConcept&lt;PMap, Key&gt;));
+<span class="lineNum">     231 </span>            :       BOOST_CONCEPT_ASSERT((ConvertibleConcept&lt;Category, LvalueTag&gt;));
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span>            :       typedef typename property_traits&lt;PMap&gt;::value_type value_type;
+<span class="lineNum">     234 </span>            :       BOOST_MPL_ASSERT((boost::mpl::or_&lt;
+<span class="lineNum">     235 </span>            :                           boost::is_same&lt;const value_type&amp;, reference&gt;,
+<span class="lineNum">     236 </span>            :                           boost::is_same&lt;value_type&amp;, reference&gt; &gt;));
+<span class="lineNum">     237 </span>            : 
+<span class="lineNum">     238 </span>            :       reference ref = pmap[k];
+<span class="lineNum">     239 </span>            :       ignore_unused_variable_warning(ref);
+<span class="lineNum">     240 </span>            :     }
+<span class="lineNum">     241 </span>            :     PMap pmap;
+<span class="lineNum">     242 </span>            :     Key k;
+<span class="lineNum">     243 </span>            :   };
+<span class="lineNum">     244 </span>            :   template &lt;typename KeyArchetype, typename ValueArchetype&gt;
+<span class="lineNum">     245 </span>            :   struct lvalue_property_map_archetype
+<span class="lineNum">     246 </span>            :     : public readable_property_map_archetype&lt;KeyArchetype, ValueArchetype&gt;
+<span class="lineNum">     247 </span>            :   {
+<span class="lineNum">     248 </span>            :     typedef KeyArchetype key_type;
+<span class="lineNum">     249 </span>            :     typedef ValueArchetype value_type;
+<span class="lineNum">     250 </span>            :     typedef const ValueArchetype&amp; reference;
+<span class="lineNum">     251 </span>            :     typedef lvalue_property_map_tag category;
+<span class="lineNum">     252 </span>            :     const value_type&amp; operator[](const key_type&amp;) const {
+<span class="lineNum">     253 </span>            :       return static_object&lt;value_type&gt;::get();
+<span class="lineNum">     254 </span>            :     }
+<span class="lineNum">     255 </span>            :   };
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span>            :   template &lt;class PMap, class Key&gt;
+<span class="lineNum">     258 </span>            :   struct Mutable_LvaluePropertyMapConcept
+<span class="lineNum">     259 </span>            :   {
+<span class="lineNum">     260 </span>            :     typedef typename property_traits&lt;PMap&gt;::category Category;
+<span class="lineNum">     261 </span>            :     typedef boost::lvalue_property_map_tag LvalueTag;
+<span class="lineNum">     262 </span>            :     typedef typename property_traits&lt;PMap&gt;::reference reference;
+<span class="lineNum">     263 </span>            :     void constraints() {
+<span class="lineNum">     264 </span>            :       BOOST_CONCEPT_ASSERT((ReadWritePropertyMapConcept&lt;PMap, Key&gt;));
+<span class="lineNum">     265 </span>            :       BOOST_CONCEPT_ASSERT((ConvertibleConcept&lt;Category, LvalueTag&gt;));
+<span class="lineNum">     266 </span>            : 
+<span class="lineNum">     267 </span>            :       typedef typename property_traits&lt;PMap&gt;::value_type value_type;
+<span class="lineNum">     268 </span>            :       BOOST_MPL_ASSERT((boost::is_same&lt;value_type&amp;, reference&gt;));
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            :       reference ref = pmap[k];
+<span class="lineNum">     271 </span>            :       ignore_unused_variable_warning(ref);
+<span class="lineNum">     272 </span>            :     }
+<span class="lineNum">     273 </span>            :     PMap pmap;
+<span class="lineNum">     274 </span>            :     Key k;
+<span class="lineNum">     275 </span>            :   };
+<span class="lineNum">     276 </span>            :   template &lt;typename KeyArchetype, typename ValueArchetype&gt;
+<span class="lineNum">     277 </span>            :   struct mutable_lvalue_property_map_archetype
+<span class="lineNum">     278 </span>            :     : public readable_property_map_archetype&lt;KeyArchetype, ValueArchetype&gt;,
+<span class="lineNum">     279 </span>            :       public writable_property_map_archetype&lt;KeyArchetype, ValueArchetype&gt;
+<span class="lineNum">     280 </span>            :   {
+<span class="lineNum">     281 </span>            :     typedef KeyArchetype key_type;
+<span class="lineNum">     282 </span>            :     typedef ValueArchetype value_type;
+<span class="lineNum">     283 </span>            :     typedef ValueArchetype&amp; reference;
+<span class="lineNum">     284 </span>            :     typedef lvalue_property_map_tag category;
+<span class="lineNum">     285 </span>            :     value_type&amp; operator[](const key_type&amp;) const { 
+<span class="lineNum">     286 </span>            :       return static_object&lt;value_type&gt;::get();
+<span class="lineNum">     287 </span>            :     }
+<span class="lineNum">     288 </span>            :   };
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">     291 </span>            :   struct typed_identity_property_map;
+<span class="lineNum">     292 </span>            : 
+<span class="lineNum">     293 </span>            :   // A helper class for constructing a property map
+<span class="lineNum">     294 </span>            :   // from a class that implements operator[]
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            :   template &lt;class Reference, class LvaluePropertyMap&gt;
+<span class="lineNum">     297 </span>            :   struct put_get_helper { };
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span>            :   template &lt;class PropertyMap, class Reference, class K&gt;
+<span class="lineNum">     300 </span>            :   inline Reference
+<span class="lineNum">     301 </span>            :   get(const put_get_helper&lt;Reference, PropertyMap&gt;&amp; pa, const K&amp; k)
+<span class="lineNum">     302 </span>            :   {
+<span class="lineNum">     303 </span>            :     Reference v = static_cast&lt;const PropertyMap&amp;&gt;(pa)[k];
+<span class="lineNum">     304 </span>            :     return v;
+<span class="lineNum">     305 </span>            :   }
+<span class="lineNum">     306 </span>            :   template &lt;class PropertyMap, class Reference, class K, class V&gt;
+<span class="lineNum">     307 </span>            :   inline void
+<span class="lineNum">     308 </span>            :   put(const put_get_helper&lt;Reference, PropertyMap&gt;&amp; pa, K k, const V&amp; v)
+<span class="lineNum">     309 </span>            :   {
+<span class="lineNum">     310 </span><span class="lineCov">    1002323 :     static_cast&lt;const PropertyMap&amp;&gt;(pa)[k] = v;</span>
+<span class="lineNum">     311 </span>            :   }
+<span class="lineNum">     312 </span>            : 
+<span class="lineNum">     313 </span>            :   //=========================================================================
+<span class="lineNum">     314 </span>            :   // Adapter to turn a RandomAccessIterator into a property map
+<span class="lineNum">     315 </span>            : 
+<span class="lineNum">     316 </span>            :   template &lt;class RandomAccessIterator, 
+<span class="lineNum">     317 </span>            :     class IndexMap
+<span class="lineNum">     318 </span>            : #ifdef BOOST_NO_STD_ITERATOR_TRAITS
+<span class="lineNum">     319 </span>            :     , class T, class R
+<span class="lineNum">     320 </span>            : #else
+<span class="lineNum">     321 </span>            :     , class T = typename std::iterator_traits&lt;RandomAccessIterator&gt;::value_type
+<span class="lineNum">     322 </span>            :     , class R = typename std::iterator_traits&lt;RandomAccessIterator&gt;::reference
+<span class="lineNum">     323 </span>            : #endif
+<span class="lineNum">     324 </span>            :      &gt;
+<span class="lineNum">     325 </span>            :   class iterator_property_map
+<span class="lineNum">     326 </span>            :     : public boost::put_get_helper&lt; R, 
+<span class="lineNum">     327 </span>            :         iterator_property_map&lt;RandomAccessIterator, IndexMap,
+<span class="lineNum">     328 </span>            :         T, R&gt; &gt;
+<span class="lineNum">     329 </span>            :   {
+<span class="lineNum">     330 </span>            :   public:
+<span class="lineNum">     331 </span>            :     typedef typename property_traits&lt;IndexMap&gt;::key_type key_type;
+<span class="lineNum">     332 </span>            :     typedef T value_type;
+<span class="lineNum">     333 </span>            :     typedef R reference;
+<span class="lineNum">     334 </span>            :     typedef boost::lvalue_property_map_tag category;
+<span class="lineNum">     335 </span>            : 
+<span class="lineNum">     336 </span>            :     inline iterator_property_map(
+<span class="lineNum">     337 </span>            :       RandomAccessIterator cc = RandomAccessIterator(), 
+<span class="lineNum">     338 </span>            :       const IndexMap&amp; _id = IndexMap() ) 
+<span class="lineNum">     339 </span>            :       : iter(cc), index(_id) { }
+<span class="lineNum">     340 </span><span class="lineCov">    1083562 :     inline R operator[](key_type v) const { return *(iter + get(index, v)) ; }</span>
+<span class="lineNum">     341 </span>            :   protected:
+<span class="lineNum">     342 </span>            :     RandomAccessIterator iter;
+<span class="lineNum">     343 </span>            :     IndexMap index;
+<span class="lineNum">     344 </span>            :   };
+<span class="lineNum">     345 </span>            : 
+<span class="lineNum">     346 </span>            : #if !defined BOOST_NO_STD_ITERATOR_TRAITS
+<span class="lineNum">     347 </span>            :   template &lt;class RAIter, class ID&gt;
+<span class="lineNum">     348 </span>            :   inline iterator_property_map&lt;
+<span class="lineNum">     349 </span>            :     RAIter, ID,
+<span class="lineNum">     350 </span>            :     typename std::iterator_traits&lt;RAIter&gt;::value_type,
+<span class="lineNum">     351 </span>            :     typename std::iterator_traits&lt;RAIter&gt;::reference&gt;
+<span class="lineNum">     352 </span>            :   make_iterator_property_map(RAIter iter, ID id) {
+<span class="lineNum">     353 </span>            :     BOOST_CONCEPT_ASSERT((RandomAccessIteratorConcept&lt;RAIter&gt;));
+<span class="lineNum">     354 </span>            :     typedef iterator_property_map&lt;
+<span class="lineNum">     355 </span>            :       RAIter, ID,
+<span class="lineNum">     356 </span>            :       typename std::iterator_traits&lt;RAIter&gt;::value_type,
+<span class="lineNum">     357 </span>            :       typename std::iterator_traits&lt;RAIter&gt;::reference&gt; PA;
+<span class="lineNum">     358 </span>            :     return PA(iter, id);
+<span class="lineNum">     359 </span>            :   }
+<span class="lineNum">     360 </span>            : #endif
+<span class="lineNum">     361 </span>            :   template &lt;class RAIter, class Value, class ID&gt;
+<span class="lineNum">     362 </span>            :   inline iterator_property_map&lt;RAIter, ID, Value, Value&amp;&gt;
+<span class="lineNum">     363 </span>            :   make_iterator_property_map(RAIter iter, ID id, Value) {
+<span class="lineNum">     364 </span>            :     BOOST_CONCEPT_ASSERT((RandomAccessIteratorConcept&lt;RAIter&gt;));
+<span class="lineNum">     365 </span>            :     typedef iterator_property_map&lt;RAIter, ID, Value, Value&amp;&gt; PMap;
+<span class="lineNum">     366 </span>            :     return PMap(iter, id);
+<span class="lineNum">     367 </span>            :   }
+<span class="lineNum">     368 </span>            : 
+<span class="lineNum">     369 </span>            :   template &lt;class RandomAccessIterator, 
+<span class="lineNum">     370 </span>            :     class IndexMap
+<span class="lineNum">     371 </span>            : #ifdef BOOST_NO_STD_ITERATOR_TRAITS
+<span class="lineNum">     372 </span>            :     , class T, class R
+<span class="lineNum">     373 </span>            : #else
+<span class="lineNum">     374 </span>            :     , class T = typename std::iterator_traits&lt;RandomAccessIterator&gt;::value_type
+<span class="lineNum">     375 </span>            :     , class R = typename std::iterator_traits&lt;RandomAccessIterator&gt;::reference
+<span class="lineNum">     376 </span>            : #endif
+<span class="lineNum">     377 </span>            :      &gt;
+<span class="lineNum">     378 </span>            :   class safe_iterator_property_map
+<span class="lineNum">     379 </span>            :     : public boost::put_get_helper&lt; R, 
+<span class="lineNum">     380 </span>            :         safe_iterator_property_map&lt;RandomAccessIterator, IndexMap,
+<span class="lineNum">     381 </span>            :         T, R&gt; &gt;
+<span class="lineNum">     382 </span>            :   {
+<span class="lineNum">     383 </span>            :   public:
+<span class="lineNum">     384 </span>            :     typedef typename property_traits&lt;IndexMap&gt;::key_type key_type; 
+<span class="lineNum">     385 </span>            :     typedef T value_type;
+<span class="lineNum">     386 </span>            :     typedef R reference;
+<span class="lineNum">     387 </span>            :     typedef boost::lvalue_property_map_tag category;
+<span class="lineNum">     388 </span>            : 
+<span class="lineNum">     389 </span>            :     inline safe_iterator_property_map(
+<span class="lineNum">     390 </span>            :       RandomAccessIterator first, 
+<span class="lineNum">     391 </span>            :       std::size_t n_ = 0, 
+<span class="lineNum">     392 </span>            :       const IndexMap&amp; _id = IndexMap() ) 
+<span class="lineNum">     393 </span>            :       : iter(first), n(n_), index(_id) { }
+<span class="lineNum">     394 </span>            :     inline safe_iterator_property_map() { }
+<span class="lineNum">     395 </span>            :     inline R operator[](key_type v) const {
+<span class="lineNum">     396 </span>            :       BOOST_ASSERT(get(index, v) &lt; n);
+<span class="lineNum">     397 </span>            :       return *(iter + get(index, v)) ;
+<span class="lineNum">     398 </span>            :     }
+<span class="lineNum">     399 </span>            :     typename property_traits&lt;IndexMap&gt;::value_type size() const { return n; }
+<span class="lineNum">     400 </span>            :   protected:
+<span class="lineNum">     401 </span>            :     RandomAccessIterator iter;
+<span class="lineNum">     402 </span>            :     typename property_traits&lt;IndexMap&gt;::value_type n;
+<span class="lineNum">     403 </span>            :     IndexMap index;
+<span class="lineNum">     404 </span>            :   };
+<span class="lineNum">     405 </span>            : 
+<span class="lineNum">     406 </span>            :   template &lt;class RAIter, class ID&gt;
+<span class="lineNum">     407 </span>            :   inline safe_iterator_property_map&lt;
+<span class="lineNum">     408 </span>            :     RAIter, ID,
+<span class="lineNum">     409 </span>            :     typename boost::detail::iterator_traits&lt;RAIter&gt;::value_type,
+<span class="lineNum">     410 </span>            :     typename boost::detail::iterator_traits&lt;RAIter&gt;::reference&gt;
+<span class="lineNum">     411 </span>            :   make_safe_iterator_property_map(RAIter iter, std::size_t n, ID id) {
+<span class="lineNum">     412 </span>            :     BOOST_CONCEPT_ASSERT((RandomAccessIteratorConcept&lt;RAIter&gt;));
+<span class="lineNum">     413 </span>            :     typedef safe_iterator_property_map&lt;
+<span class="lineNum">     414 </span>            :       RAIter, ID,
+<span class="lineNum">     415 </span>            :       typename boost::detail::iterator_traits&lt;RAIter&gt;::value_type,
+<span class="lineNum">     416 </span>            :       typename boost::detail::iterator_traits&lt;RAIter&gt;::reference&gt; PA;
+<span class="lineNum">     417 </span>            :     return PA(iter, n, id);
+<span class="lineNum">     418 </span>            :   }
+<span class="lineNum">     419 </span>            :   template &lt;class RAIter, class Value, class ID&gt;
+<span class="lineNum">     420 </span>            :   inline safe_iterator_property_map&lt;RAIter, ID, Value, Value&amp;&gt;
+<span class="lineNum">     421 </span>            :   make_safe_iterator_property_map(RAIter iter, std::size_t n, ID id, Value) {
+<span class="lineNum">     422 </span>            :     BOOST_CONCEPT_ASSERT((RandomAccessIteratorConcept&lt;RAIter&gt;));
+<span class="lineNum">     423 </span>            :     typedef safe_iterator_property_map&lt;RAIter, ID, Value, Value&amp;&gt; PMap;
+<span class="lineNum">     424 </span>            :     return PMap(iter, n, id);
+<span class="lineNum">     425 </span>            :   }
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span>            :   //=========================================================================
+<span class="lineNum">     428 </span>            :   // An adaptor to turn a Unique Pair Associative Container like std::map or
+<span class="lineNum">     429 </span>            :   // std::hash_map into an Lvalue Property Map.
+<span class="lineNum">     430 </span>            : 
+<span class="lineNum">     431 </span>            :   template &lt;typename UniquePairAssociativeContainer&gt;
+<span class="lineNum">     432 </span>            :   class associative_property_map
+<span class="lineNum">     433 </span>            :     : public boost::put_get_helper&lt;
+<span class="lineNum">     434 </span>            :        typename UniquePairAssociativeContainer::value_type::second_type&amp;,
+<span class="lineNum">     435 </span>            :        associative_property_map&lt;UniquePairAssociativeContainer&gt; &gt;
+<span class="lineNum">     436 </span>            :   {
+<span class="lineNum">     437 </span>            :     typedef UniquePairAssociativeContainer C;
+<span class="lineNum">     438 </span>            :   public:
+<span class="lineNum">     439 </span>            :     typedef typename C::key_type key_type;
+<span class="lineNum">     440 </span>            :     typedef typename C::value_type::second_type value_type;
+<span class="lineNum">     441 </span>            :     typedef value_type&amp; reference;
+<span class="lineNum">     442 </span>            :     typedef lvalue_property_map_tag category;
+<span class="lineNum">     443 </span>            :     associative_property_map() : m_c(0) { }
+<span class="lineNum">     444 </span>            :     associative_property_map(C&amp; c) : m_c(&amp;c) { }
+<span class="lineNum">     445 </span>            :     reference operator[](const key_type&amp; k) const {
+<span class="lineNum">     446 </span>            :       return (*m_c)[k];
+<span class="lineNum">     447 </span>            :     }
+<span class="lineNum">     448 </span>            :   private:
+<span class="lineNum">     449 </span>            :     C* m_c;
+<span class="lineNum">     450 </span>            :   };
+<span class="lineNum">     451 </span>            : 
+<span class="lineNum">     452 </span>            :   template &lt;class UniquePairAssociativeContainer&gt;
+<span class="lineNum">     453 </span>            :   associative_property_map&lt;UniquePairAssociativeContainer&gt;
+<span class="lineNum">     454 </span>            :   make_assoc_property_map(UniquePairAssociativeContainer&amp; c)
+<span class="lineNum">     455 </span>            :   {
+<span class="lineNum">     456 </span>            :     return associative_property_map&lt;UniquePairAssociativeContainer&gt;(c);
+<span class="lineNum">     457 </span>            :   }
+<span class="lineNum">     458 </span>            : 
+<span class="lineNum">     459 </span>            :   template &lt;typename UniquePairAssociativeContainer&gt;
+<span class="lineNum">     460 </span>            :   class const_associative_property_map
+<span class="lineNum">     461 </span>            :     : public boost::put_get_helper&lt;
+<span class="lineNum">     462 </span>            :        const typename UniquePairAssociativeContainer::value_type::second_type&amp;,
+<span class="lineNum">     463 </span>            :        const_associative_property_map&lt;UniquePairAssociativeContainer&gt; &gt;
+<span class="lineNum">     464 </span>            :   {
+<span class="lineNum">     465 </span>            :     typedef UniquePairAssociativeContainer C;
+<span class="lineNum">     466 </span>            :   public:
+<span class="lineNum">     467 </span>            :     typedef typename C::key_type key_type;
+<span class="lineNum">     468 </span>            :     typedef typename C::value_type::second_type value_type;
+<span class="lineNum">     469 </span>            :     typedef const value_type&amp; reference;
+<span class="lineNum">     470 </span>            :     typedef lvalue_property_map_tag category;
+<span class="lineNum">     471 </span>            :     const_associative_property_map() : m_c(0) { }
+<span class="lineNum">     472 </span>            :     const_associative_property_map(const C&amp; c) : m_c(&amp;c) { }
+<span class="lineNum">     473 </span>            :     reference operator[](const key_type&amp; k) const {
+<span class="lineNum">     474 </span>            :       return m_c-&gt;find(k)-&gt;second;
+<span class="lineNum">     475 </span>            :     }
+<span class="lineNum">     476 </span>            :   private:
+<span class="lineNum">     477 </span>            :     C const* m_c;
+<span class="lineNum">     478 </span>            :   };
+<span class="lineNum">     479 </span>            :   
+<span class="lineNum">     480 </span>            :   template &lt;class UniquePairAssociativeContainer&gt;
+<span class="lineNum">     481 </span>            :   const_associative_property_map&lt;UniquePairAssociativeContainer&gt;
+<span class="lineNum">     482 </span>            :   make_assoc_property_map(const UniquePairAssociativeContainer&amp; c)
+<span class="lineNum">     483 </span>            :   {
+<span class="lineNum">     484 </span>            :     return const_associative_property_map&lt;UniquePairAssociativeContainer&gt;(c);
+<span class="lineNum">     485 </span>            :   }
+<span class="lineNum">     486 </span>            : 
+<span class="lineNum">     487 </span>            :   //=========================================================================
+<span class="lineNum">     488 </span>            :   // A property map that always returns the same object by value.
+<span class="lineNum">     489 </span>            :   //
+<span class="lineNum">     490 </span>            :   template &lt;typename ValueType, typename KeyType = void&gt;
+<span class="lineNum">     491 </span>            :   class static_property_map :
+<span class="lineNum">     492 </span>            :       public
+<span class="lineNum">     493 </span>            :   boost::put_get_helper&lt;ValueType,static_property_map&lt;ValueType&gt; &gt;
+<span class="lineNum">     494 </span>            :   { 
+<span class="lineNum">     495 </span>            :     ValueType value;
+<span class="lineNum">     496 </span>            :   public:
+<span class="lineNum">     497 </span>            :     typedef KeyType key_type;
+<span class="lineNum">     498 </span>            :     typedef ValueType value_type;
+<span class="lineNum">     499 </span>            :     typedef ValueType reference;
+<span class="lineNum">     500 </span>            :     typedef readable_property_map_tag category;
+<span class="lineNum">     501 </span>            :     static_property_map(ValueType v) : value(v) {}
+<span class="lineNum">     502 </span>            :     
+<span class="lineNum">     503 </span>            :     template&lt;typename T&gt;
+<span class="lineNum">     504 </span>            :     inline reference operator[](T) const { return value; }
+<span class="lineNum">     505 </span>            :   };
+<span class="lineNum">     506 </span>            : 
+<span class="lineNum">     507 </span>            :   template &lt;typename KeyType, typename ValueType&gt;
+<span class="lineNum">     508 </span>            :   static_property_map&lt;ValueType, KeyType&gt;
+<span class="lineNum">     509 </span>            :   make_static_property_map(const ValueType&amp; v) {
+<span class="lineNum">     510 </span>            :     return static_property_map&lt;ValueType, KeyType&gt;(v);
+<span class="lineNum">     511 </span>            :   }
+<span class="lineNum">     512 </span>            : 
+<span class="lineNum">     513 </span>            :   //=========================================================================
+<span class="lineNum">     514 </span>            :   // A property map that always returns a reference to the same object.
+<span class="lineNum">     515 </span>            :   //
+<span class="lineNum">     516 </span>            :   template &lt;typename KeyType, typename ValueType&gt;
+<span class="lineNum">     517 </span>            :   class ref_property_map :
+<span class="lineNum">     518 </span>            :     public
+<span class="lineNum">     519 </span>            :       boost::put_get_helper&lt;ValueType&amp;,ref_property_map&lt;KeyType,ValueType&gt; &gt;
+<span class="lineNum">     520 </span>            :   { 
+<span class="lineNum">     521 </span>            :     ValueType* value;
+<span class="lineNum">     522 </span>            :   public:
+<span class="lineNum">     523 </span>            :     typedef KeyType key_type;
+<span class="lineNum">     524 </span>            :     typedef ValueType value_type;
+<span class="lineNum">     525 </span>            :     typedef ValueType&amp; reference;
+<span class="lineNum">     526 </span>            :     typedef lvalue_property_map_tag category;
+<span class="lineNum">     527 </span>            :     ref_property_map(ValueType&amp; v) : value(&amp;v) {}
+<span class="lineNum">     528 </span>            :     ValueType&amp; operator[](key_type const&amp;) const { return *value; }
+<span class="lineNum">     529 </span>            :   };
+<span class="lineNum">     530 </span>            : 
+<span class="lineNum">     531 </span>            :   //=========================================================================
+<span class="lineNum">     532 </span>            :   // A generalized identity property map
+<span class="lineNum">     533 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">     534 </span>            :   struct typed_identity_property_map
+<span class="lineNum">     535 </span>            :     : public boost::put_get_helper&lt;T, typed_identity_property_map&lt;T&gt; &gt;
+<span class="lineNum">     536 </span>            :   {
+<span class="lineNum">     537 </span>            :     typedef T key_type;
+<span class="lineNum">     538 </span>            :     typedef T value_type;
+<span class="lineNum">     539 </span>            :     typedef T reference;
+<span class="lineNum">     540 </span>            :     typedef boost::readable_property_map_tag category;
+<span class="lineNum">     541 </span>            : 
+<span class="lineNum">     542 </span>            :     inline value_type operator[](const key_type&amp; v) const { return v; }
+<span class="lineNum">     543 </span>            :   };
+<span class="lineNum">     544 </span>            : 
+<span class="lineNum">     545 </span>            : //=========================================================================
+<span class="lineNum">     546 </span>            :   // A property map that applies the identity function to integers
+<span class="lineNum">     547 </span>            :   typedef typed_identity_property_map&lt;std::size_t&gt; identity_property_map;
+<span class="lineNum">     548 </span>            : 
+<span class="lineNum">     549 </span>            :   //=========================================================================
+<span class="lineNum">     550 </span>            :   // A property map that does not do anything, for
+<span class="lineNum">     551 </span>            :   // when you have to supply a property map, but don't need it.
+<span class="lineNum">     552 </span>            :   namespace detail {
+<span class="lineNum">     553 </span>            :     struct dummy_pmap_reference {
+<span class="lineNum">     554 </span>            :       template &lt;class T&gt;
+<span class="lineNum">     555 </span>            :       dummy_pmap_reference&amp; operator=(const T&amp;) { return *this; }
+<span class="lineNum">     556 </span>            :       operator int() { return 0; }
+<span class="lineNum">     557 </span>            :     };
+<span class="lineNum">     558 </span>            :   }
+<span class="lineNum">     559 </span>            :   class dummy_property_map 
+<span class="lineNum">     560 </span>            :     : public boost::put_get_helper&lt;detail::dummy_pmap_reference,
+<span class="lineNum">     561 </span>            :         dummy_property_map  &gt; 
+<span class="lineNum">     562 </span>            :   {
+<span class="lineNum">     563 </span>            :   public:
+<span class="lineNum">     564 </span>            :     typedef void key_type; 
+<span class="lineNum">     565 </span>            :     typedef int value_type;
+<span class="lineNum">     566 </span>            :     typedef detail::dummy_pmap_reference reference;
+<span class="lineNum">     567 </span>            :     typedef boost::read_write_property_map_tag category;
+<span class="lineNum">     568 </span>            :     inline dummy_property_map() : c(0) { }
+<span class="lineNum">     569 </span>            :     inline dummy_property_map(value_type cc) : c(cc) { }
+<span class="lineNum">     570 </span>            :     inline dummy_property_map(const dummy_property_map&amp; x)
+<span class="lineNum">     571 </span>            :       : c(x.c) { }
+<span class="lineNum">     572 </span>            :     template &lt;class Vertex&gt;
+<span class="lineNum">     573 </span>            :     inline reference operator[](Vertex) const { return reference(); }
+<span class="lineNum">     574 </span>            :    protected:
+<span class="lineNum">     575 </span>            :     value_type c;
+<span class="lineNum">     576 </span>            :   };
+<span class="lineNum">     577 </span>            : 
+<span class="lineNum">     578 </span>            :   // Convert a Readable property map into a function object
+<span class="lineNum">     579 </span>            :   template &lt;typename PropMap&gt;
+<span class="lineNum">     580 </span>            :   class property_map_function {
+<span class="lineNum">     581 </span>            :     PropMap pm;
+<span class="lineNum">     582 </span>            :     typedef typename property_traits&lt;PropMap&gt;::key_type param_type;
+<span class="lineNum">     583 </span>            :     public:
+<span class="lineNum">     584 </span>            :     explicit property_map_function(const PropMap&amp; pm): pm(pm) {}
+<span class="lineNum">     585 </span>            :     typedef typename property_traits&lt;PropMap&gt;::value_type result_type;
+<span class="lineNum">     586 </span>            :     result_type operator()(const param_type&amp; k) const {return get(pm, k);}
+<span class="lineNum">     587 </span>            :   };
+<span class="lineNum">     588 </span>            : 
+<span class="lineNum">     589 </span>            :   template &lt;typename PropMap&gt;
+<span class="lineNum">     590 </span>            :   property_map_function&lt;PropMap&gt;
+<span class="lineNum">     591 </span>            :   make_property_map_function(const PropMap&amp; pm) {
+<span class="lineNum">     592 </span>            :     return property_map_function&lt;PropMap&gt;(pm);
+<span class="lineNum">     593 </span>            :   }
+<span class="lineNum">     594 </span>            : 
+<span class="lineNum">     595 </span>            : } // namespace boost
+<span class="lineNum">     596 </span>            : 
+<span class="lineNum">     597 </span>            : #ifdef BOOST_GRAPH_USE_MPI
+<span class="lineNum">     598 </span>            : #include &lt;boost/property_map/parallel/parallel_property_maps.hpp&gt;
+<span class="lineNum">     599 </span>            : #endif
+<span class="lineNum">     600 </span>            : 
+<span class="lineNum">     601 </span>            : #include &lt;boost/property_map/vector_property_map.hpp&gt;
+<span class="lineNum">     602 </span>            : 
+<span class="lineNum">     603 </span>            : #endif /* BOOST_PROPERTY_MAP_HPP */
+<span class="lineNum">     604 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

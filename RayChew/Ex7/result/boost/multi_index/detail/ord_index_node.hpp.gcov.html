@@ -1,0 +1,734 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/multi_index/detail/ord_index_node.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">boost/multi_index/detail</a> - ord_index_node.hpp<span style="font-size: 80%;"> (source / <a href="ord_index_node.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">139</td>
+            <td class="headerCovTableEntry">147</td>
+            <td class="headerCovTableEntryHi">94.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryMed">87.5 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /* Copyright 2003-2015 Joaquin M Lopez Munoz.</a>
+<span class="lineNum">       2 </span>            :  * Distributed under the Boost Software License, Version 1.0.
+<span class="lineNum">       3 </span>            :  * (See accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       4 </span>            :  * http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       5 </span>            :  *
+<span class="lineNum">       6 </span>            :  * See http://www.boost.org/libs/multi_index for library home page.
+<span class="lineNum">       7 </span>            :  *
+<span class="lineNum">       8 </span>            :  * The internal implementation of red-black trees is based on that of SGI STL
+<span class="lineNum">       9 </span>            :  * stl_tree.h file: 
+<span class="lineNum">      10 </span>            :  *
+<span class="lineNum">      11 </span>            :  * Copyright (c) 1996,1997
+<span class="lineNum">      12 </span>            :  * Silicon Graphics Computer Systems, Inc.
+<span class="lineNum">      13 </span>            :  *
+<span class="lineNum">      14 </span>            :  * Permission to use, copy, modify, distribute and sell this software
+<span class="lineNum">      15 </span>            :  * and its documentation for any purpose is hereby granted without fee,
+<span class="lineNum">      16 </span>            :  * provided that the above copyright notice appear in all copies and
+<span class="lineNum">      17 </span>            :  * that both that copyright notice and this permission notice appear
+<span class="lineNum">      18 </span>            :  * in supporting documentation.  Silicon Graphics makes no
+<span class="lineNum">      19 </span>            :  * representations about the suitability of this software for any
+<span class="lineNum">      20 </span>            :  * purpose.  It is provided &quot;as is&quot; without express or implied warranty.
+<span class="lineNum">      21 </span>            :  *
+<span class="lineNum">      22 </span>            :  *
+<span class="lineNum">      23 </span>            :  * Copyright (c) 1994
+<span class="lineNum">      24 </span>            :  * Hewlett-Packard Company
+<span class="lineNum">      25 </span>            :  *
+<span class="lineNum">      26 </span>            :  * Permission to use, copy, modify, distribute and sell this software
+<span class="lineNum">      27 </span>            :  * and its documentation for any purpose is hereby granted without fee,
+<span class="lineNum">      28 </span>            :  * provided that the above copyright notice appear in all copies and
+<span class="lineNum">      29 </span>            :  * that both that copyright notice and this permission notice appear
+<span class="lineNum">      30 </span>            :  * in supporting documentation.  Hewlett-Packard Company makes no
+<span class="lineNum">      31 </span>            :  * representations about the suitability of this software for any
+<span class="lineNum">      32 </span>            :  * purpose.  It is provided &quot;as is&quot; without express or implied warranty.
+<span class="lineNum">      33 </span>            :  *
+<span class="lineNum">      34 </span>            :  */
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : #ifndef BOOST_MULTI_INDEX_DETAIL_ORD_INDEX_NODE_HPP
+<span class="lineNum">      37 </span>            : #define BOOST_MULTI_INDEX_DETAIL_ORD_INDEX_NODE_HPP
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      40 </span>            : #pragma once
+<span class="lineNum">      41 </span>            : #endif
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : #include &lt;boost/config.hpp&gt; /* keep it first to prevent nasty warns in MSVC */
+<span class="lineNum">      44 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">      45 </span>            : #include &lt;boost/detail/allocator_utilities.hpp&gt;
+<span class="lineNum">      46 </span>            : #include &lt;boost/multi_index/detail/raw_ptr.hpp&gt;
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : #if !defined(BOOST_MULTI_INDEX_DISABLE_COMPRESSED_ORDERED_INDEX_NODES)
+<span class="lineNum">      49 </span>            : #include &lt;boost/mpl/and.hpp&gt;
+<span class="lineNum">      50 </span>            : #include &lt;boost/mpl/if.hpp&gt;
+<span class="lineNum">      51 </span>            : #include &lt;boost/multi_index/detail/uintptr_type.hpp&gt;
+<span class="lineNum">      52 </span>            : #include &lt;boost/type_traits/alignment_of.hpp&gt;
+<span class="lineNum">      53 </span>            : #include &lt;boost/type_traits/is_same.hpp&gt;
+<span class="lineNum">      54 </span>            : #endif
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : namespace boost{
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : namespace multi_index{
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : namespace detail{
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            : /* definition of red-black nodes for ordered_index */
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : enum ordered_index_color{red=false,black=true};
+<span class="lineNum">      65 </span>            : enum ordered_index_side{to_left=false,to_right=true};
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : template&lt;typename AugmentPolicy,typename Allocator&gt;
+<span class="lineNum">      68 </span>            : struct ordered_index_node_impl; /* fwd decl. */
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : template&lt;typename AugmentPolicy,typename Allocator&gt;
+<span class="lineNum">      71 </span>            : struct ordered_index_node_std_base
+<span class="lineNum">      72 </span>            : {
+<span class="lineNum">      73 </span>            :   typedef typename
+<span class="lineNum">      74 </span>            :   boost::detail::allocator::rebind_to&lt;
+<span class="lineNum">      75 </span>            :     Allocator,
+<span class="lineNum">      76 </span>            :     ordered_index_node_impl&lt;AugmentPolicy,Allocator&gt;
+<span class="lineNum">      77 </span>            :   &gt;::type::pointer                                   pointer;
+<span class="lineNum">      78 </span>            :   typedef typename
+<span class="lineNum">      79 </span>            :   boost::detail::allocator::rebind_to&lt;
+<span class="lineNum">      80 </span>            :     Allocator,
+<span class="lineNum">      81 </span>            :     ordered_index_node_impl&lt;AugmentPolicy,Allocator&gt;
+<span class="lineNum">      82 </span>            :   &gt;::type::const_pointer                             const_pointer;
+<span class="lineNum">      83 </span>            :   typedef ordered_index_color&amp;                       color_ref;
+<span class="lineNum">      84 </span>            :   typedef pointer&amp;                                   parent_ref;
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :   ordered_index_color&amp; color(){return color_;}
+<span class="lineNum">      87 </span>            :   ordered_index_color  color()const{return color_;}
+<span class="lineNum">      88 </span>            :   pointer&amp;             parent(){return parent_;}
+<span class="lineNum">      89 </span>            :   pointer              parent()const{return parent_;}
+<span class="lineNum">      90 </span>            :   pointer&amp;             left(){return left_;}
+<span class="lineNum">      91 </span>            :   pointer              left()const{return left_;}
+<span class="lineNum">      92 </span>            :   pointer&amp;             right(){return right_;}
+<span class="lineNum">      93 </span>            :   pointer              right()const{return right_;}
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : private:
+<span class="lineNum">      96 </span>            :   ordered_index_color color_; 
+<span class="lineNum">      97 </span>            :   pointer             parent_;
+<span class="lineNum">      98 </span>            :   pointer             left_;
+<span class="lineNum">      99 </span>            :   pointer             right_;
+<span class="lineNum">     100 </span>            : };
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            : #if !defined(BOOST_MULTI_INDEX_DISABLE_COMPRESSED_ORDERED_INDEX_NODES)
+<span class="lineNum">     103 </span>            : /* If ordered_index_node_impl has even alignment, we can use the least
+<span class="lineNum">     104 </span>            :  * significant bit of one of the ordered_index_node_impl pointers to
+<span class="lineNum">     105 </span>            :  * store color information. This typically reduces the size of
+<span class="lineNum">     106 </span>            :  * ordered_index_node_impl by 25%.
+<span class="lineNum">     107 </span>            :  */
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            : #if defined(BOOST_MSVC)
+<span class="lineNum">     110 </span>            : /* This code casts pointers to an integer type that has been computed
+<span class="lineNum">     111 </span>            :  * to be large enough to hold the pointer, however the metaprogramming
+<span class="lineNum">     112 </span>            :  * logic is not always spotted by the VC++ code analyser that issues a
+<span class="lineNum">     113 </span>            :  * long list of warnings.
+<span class="lineNum">     114 </span>            :  */
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : #pragma warning(push)
+<span class="lineNum">     117 </span>            : #pragma warning(disable:4312 4311)
+<span class="lineNum">     118 </span>            : #endif
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            : template&lt;typename AugmentPolicy,typename Allocator&gt;
+<span class="lineNum">     121 </span>            : struct ordered_index_node_compressed_base
+<span class="lineNum">     122 </span>            : {
+<span class="lineNum">     123 </span>            :   typedef ordered_index_node_impl&lt;
+<span class="lineNum">     124 </span>            :     AugmentPolicy,Allocator&gt;*            pointer;
+<span class="lineNum">     125 </span>            :   typedef const ordered_index_node_impl&lt;
+<span class="lineNum">     126 </span>            :     AugmentPolicy,Allocator&gt;*            const_pointer;
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            :   struct color_ref
+<span class="lineNum">     129 </span>            :   {
+<span class="lineNum">     130 </span>            :     color_ref(uintptr_type* r_):r(r_){}
+<span class="lineNum">     131 </span>            :     
+<span class="lineNum">     132 </span>            :     operator ordered_index_color()const
+<span class="lineNum">     133 </span>            :     {
+<span class="lineNum">     134 </span><span class="lineCov">    2284496 :       return ordered_index_color(*r&amp;uintptr_type(1));</span>
+<span class="lineNum">     135 </span>            :     }
+<span class="lineNum">     136 </span>            :     
+<span class="lineNum">     137 </span>            :     color_ref&amp; operator=(ordered_index_color c)
+<span class="lineNum">     138 </span>            :     {
+<span class="lineNum">     139 </span><span class="lineCov">    2008773 :       *r&amp;=~uintptr_type(1);</span>
+<span class="lineNum">     140 </span><span class="lineCov">    2202584 :       *r|=uintptr_type(c);</span>
+<span class="lineNum">     141 </span>            :       return *this;
+<span class="lineNum">     142 </span>            :     }
+<span class="lineNum">     143 </span>            :     
+<span class="lineNum">     144 </span>            :     color_ref&amp; operator=(const color_ref&amp; x)
+<span class="lineNum">     145 </span>            :     {
+<span class="lineNum">     146 </span>            :       return operator=(x.operator ordered_index_color());
+<span class="lineNum">     147 </span>            :     }
+<span class="lineNum">     148 </span>            :     
+<span class="lineNum">     149 </span>            :   private:
+<span class="lineNum">     150 </span>            :     uintptr_type* r;
+<span class="lineNum">     151 </span>            :   };
+<span class="lineNum">     152 </span>            :   
+<span class="lineNum">     153 </span>            :   struct parent_ref
+<span class="lineNum">     154 </span>            :   {
+<span class="lineNum">     155 </span>            :     parent_ref(uintptr_type* r_):r(r_){}
+<span class="lineNum">     156 </span>            :     
+<span class="lineNum">     157 </span>            :     operator pointer()const
+<span class="lineNum">     158 </span>            :     {
+<span class="lineNum">     159 </span><span class="lineCov">    6760897 :       return (pointer)(void*)(*r&amp;~uintptr_type(1));</span>
+<span class="lineNum">     160 </span>            :     }
+<span class="lineNum">     161 </span>            :     
+<span class="lineNum">     162 </span>            :     parent_ref&amp; operator=(pointer p)
+<span class="lineNum">     163 </span>            :     {
+<span class="lineNum">     164 </span><span class="lineCov">    1274459 :       *r=((uintptr_type)(void*)p)|(*r&amp;uintptr_type(1));</span>
+<span class="lineNum">     165 </span>            :       return *this;
+<span class="lineNum">     166 </span>            :     }
+<span class="lineNum">     167 </span>            :     
+<span class="lineNum">     168 </span>            :     parent_ref&amp; operator=(const parent_ref&amp; x)
+<span class="lineNum">     169 </span>            :     {
+<span class="lineNum">     170 </span>            :       return operator=(x.operator pointer());
+<span class="lineNum">     171 </span>            :     }
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            :     pointer operator-&gt;()const
+<span class="lineNum">     174 </span>            :     {
+<span class="lineNum">     175 </span>            :       return operator pointer();
+<span class="lineNum">     176 </span>            :     }
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :   private:
+<span class="lineNum">     179 </span>            :     uintptr_type* r;
+<span class="lineNum">     180 </span>            :   };
+<span class="lineNum">     181 </span>            :   
+<span class="lineNum">     182 </span><span class="lineCov">    3741924 :   color_ref           color(){return color_ref(&amp;parentcolor_);}</span>
+<span class="lineNum">     183 </span>            :   ordered_index_color color()const
+<span class="lineNum">     184 </span>            :   {
+<span class="lineNum">     185 </span>            :     return ordered_index_color(parentcolor_&amp;uintptr_type(1));
+<span class="lineNum">     186 </span>            :   }
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span><span class="lineCov">    4067475 :   parent_ref parent(){return parent_ref(&amp;parentcolor_);}</span>
+<span class="lineNum">     189 </span>            :   pointer    parent()const
+<span class="lineNum">     190 </span>            :   {
+<span class="lineNum">     191 </span>            :     return (pointer)(void*)(parentcolor_&amp;~uintptr_type(1));
+<span class="lineNum">     192 </span>            :   }
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span><span class="lineCov">     231239 :   pointer&amp; left(){return left_;}</span>
+<span class="lineNum">     195 </span>            :   pointer  left()const{return left_;}
+<span class="lineNum">     196 </span><span class="lineCov">     231239 :   pointer&amp; right(){return right_;}</span>
+<span class="lineNum">     197 </span>            :   pointer  right()const{return right_;}
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            : private:
+<span class="lineNum">     200 </span>            :   uintptr_type parentcolor_;
+<span class="lineNum">     201 </span>            :   pointer      left_;
+<span class="lineNum">     202 </span>            :   pointer      right_;
+<span class="lineNum">     203 </span>            : };
+<span class="lineNum">     204 </span>            : #if defined(BOOST_MSVC)
+<span class="lineNum">     205 </span>            : #pragma warning(pop)
+<span class="lineNum">     206 </span>            : #endif
+<span class="lineNum">     207 </span>            : #endif
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            : template&lt;typename AugmentPolicy,typename Allocator&gt;
+<span class="lineNum">     210 </span>            : struct ordered_index_node_impl_base:
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            : #if !defined(BOOST_MULTI_INDEX_DISABLE_COMPRESSED_ORDERED_INDEX_NODES)
+<span class="lineNum">     213 </span>            :   AugmentPolicy::template augmented_node&lt;
+<span class="lineNum">     214 </span>            :     typename mpl::if_c&lt;
+<span class="lineNum">     215 </span>            :       !(has_uintptr_type::value)||
+<span class="lineNum">     216 </span>            :       (alignment_of&lt;
+<span class="lineNum">     217 </span>            :         ordered_index_node_compressed_base&lt;AugmentPolicy,Allocator&gt;
+<span class="lineNum">     218 </span>            :        &gt;::value%2)||
+<span class="lineNum">     219 </span>            :       !(is_same&lt;
+<span class="lineNum">     220 </span>            :         typename boost::detail::allocator::rebind_to&lt;
+<span class="lineNum">     221 </span>            :           Allocator,
+<span class="lineNum">     222 </span>            :           ordered_index_node_impl&lt;AugmentPolicy,Allocator&gt;
+<span class="lineNum">     223 </span>            :         &gt;::type::pointer,
+<span class="lineNum">     224 </span>            :         ordered_index_node_impl&lt;AugmentPolicy,Allocator&gt;*&gt;::value),
+<span class="lineNum">     225 </span>            :       ordered_index_node_std_base&lt;AugmentPolicy,Allocator&gt;,
+<span class="lineNum">     226 </span>            :       ordered_index_node_compressed_base&lt;AugmentPolicy,Allocator&gt;
+<span class="lineNum">     227 </span>            :     &gt;::type
+<span class="lineNum">     228 </span>            :   &gt;::type
+<span class="lineNum">     229 </span>            : #else
+<span class="lineNum">     230 </span>            :   AugmentPolicy::template augmented_node&lt;
+<span class="lineNum">     231 </span>            :     ordered_index_node_std_base&lt;AugmentPolicy,Allocator&gt;
+<span class="lineNum">     232 </span>            :   &gt;::type
+<span class="lineNum">     233 </span>            : #endif
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span>            : {};
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span>            : template&lt;typename AugmentPolicy,typename Allocator&gt;
+<span class="lineNum">     238 </span>            : struct ordered_index_node_impl:
+<span class="lineNum">     239 </span>            :   ordered_index_node_impl_base&lt;AugmentPolicy,Allocator&gt;
+<span class="lineNum">     240 </span>            : {
+<span class="lineNum">     241 </span>            : private:
+<span class="lineNum">     242 </span>            :   typedef ordered_index_node_impl_base&lt;AugmentPolicy,Allocator&gt; super;
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            : public:
+<span class="lineNum">     245 </span>            :   typedef typename super::color_ref                             color_ref;
+<span class="lineNum">     246 </span>            :   typedef typename super::parent_ref                            parent_ref;
+<span class="lineNum">     247 </span>            :   typedef typename super::pointer                               pointer;
+<span class="lineNum">     248 </span>            :   typedef typename super::const_pointer                         const_pointer;
+<span class="lineNum">     249 </span>            : 
+<a name="250"><span class="lineNum">     250 </span>            :   /* interoperability with bidir_node_iterator */</a>
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span><span class="lineCov">     181277 :   static void increment(pointer&amp; x)</span>
+<span class="lineNum">     253 </span>            :   {
+<span class="lineNum">     254 </span><span class="lineCov">     181277 :     if(x-&gt;right()!=pointer(0)){</span>
+<span class="lineNum">     255 </span><span class="lineCov">      90477 :       x=x-&gt;right();</span>
+<span class="lineNum">     256 </span><span class="lineCov">     180951 :       while(x-&gt;left()!=pointer(0))x=x-&gt;left();</span>
+<span class="lineNum">     257 </span>            :     }
+<span class="lineNum">     258 </span>            :     else{
+<span class="lineNum">     259 </span>            :       pointer y=x-&gt;parent();
+<span class="lineNum">     260 </span><span class="lineCov">     271114 :       while(x==y-&gt;right()){</span>
+<span class="lineNum">     261 </span><span class="lineCov">      90157 :         x=y;</span>
+<span class="lineNum">     262 </span>            :         y=y-&gt;parent();
+<span class="lineNum">     263 </span>            :       }
+<span class="lineNum">     264 </span><span class="lineCov">      90800 :       if(x-&gt;right()!=y)x=y;</span>
+<span class="lineNum">     265 </span>            :     }
+<a name="266"><span class="lineNum">     266 </span><span class="lineCov">     181277 :   }</span></a>
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span><span class="lineCov">     262511 :   static void decrement(pointer&amp; x)</span>
+<span class="lineNum">     269 </span>            :   {
+<span class="lineNum">     270 </span><span class="lineCov">     581937 :     if(x-&gt;color()==red&amp;&amp;x-&gt;parent()-&gt;parent()==x){</span>
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :       x=x-&gt;right();</span>
+<span class="lineNum">     272 </span>            :     }
+<span class="lineNum">     273 </span><span class="lineCov">     262511 :     else if(x-&gt;left()!=pointer(0)){</span>
+<span class="lineNum">     274 </span>            :       pointer y=x-&gt;left();
+<span class="lineNum">     275 </span><span class="lineCov">     262224 :       while(y-&gt;right()!=pointer(0))y=y-&gt;right();</span>
+<span class="lineNum">     276 </span><span class="lineCov">     130686 :       x=y;</span>
+<span class="lineNum">     277 </span>            :     }else{
+<span class="lineNum">     278 </span>            :       pointer y=x-&gt;parent();
+<span class="lineNum">     279 </span><span class="lineCov">     392457 :       while(x==y-&gt;left()){</span>
+<span class="lineNum">     280 </span><span class="lineCov">     130316 :         x=y;</span>
+<span class="lineNum">     281 </span>            :         y=y-&gt;parent();
+<span class="lineNum">     282 </span>            :       }
+<span class="lineNum">     283 </span><span class="lineCov">     131825 :       x=y;</span>
+<span class="lineNum">     284 </span>            :     }
+<span class="lineNum">     285 </span><span class="lineCov">     262511 :   }</span>
+<span class="lineNum">     286 </span>            : 
+<a name="287"><span class="lineNum">     287 </span>            :   /* algorithmic stuff */</a>
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span><span class="lineCov">     268662 :   static void rotate_left(pointer x,parent_ref root)</span>
+<span class="lineNum">     290 </span>            :   {
+<span class="lineNum">     291 </span><span class="lineCov">     268662 :     pointer y=x-&gt;right();</span>
+<span class="lineNum">     292 </span><span class="lineCov">     268662 :     x-&gt;right()=y-&gt;left();</span>
+<span class="lineNum">     293 </span><span class="lineCov">     268662 :     if(y-&gt;left()!=pointer(0))y-&gt;left()-&gt;parent()=x;</span>
+<span class="lineNum">     294 </span>            :     y-&gt;parent()=x-&gt;parent();
+<span class="lineNum">     295 </span>            :     
+<span class="lineNum">     296 </span><span class="lineCov">     268662 :     if(x==root)                    root=y;</span>
+<span class="lineNum">     297 </span><span class="lineCov">     268619 :     else if(x==x-&gt;parent()-&gt;left())x-&gt;parent()-&gt;left()=y;</span>
+<span class="lineNum">     298 </span><span class="lineCov">     198384 :     else                           x-&gt;parent()-&gt;right()=y;</span>
+<span class="lineNum">     299 </span><span class="lineCov">     268662 :     y-&gt;left()=x;</span>
+<span class="lineNum">     300 </span>            :     x-&gt;parent()=y;
+<span class="lineNum">     301 </span>            :     AugmentPolicy::rotate_left(x,y);
+<span class="lineNum">     302 </span><span class="lineCov">     268662 :   }</span>
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span>            :   static pointer minimum(pointer x)
+<span class="lineNum">     305 </span>            :   {
+<span class="lineNum">     306 </span><span class="lineCov">      23031 :     while(x-&gt;left()!=pointer(0))x=x-&gt;left();</span>
+<span class="lineNum">     307 </span>            :     return x;
+<span class="lineNum">     308 </span>            :   }
+<span class="lineNum">     309 </span>            : 
+<span class="lineNum">     310 </span>            :   static pointer maximum(pointer x)
+<span class="lineNum">     311 </span>            :   {
+<span class="lineNum">     312 </span><span class="lineCov">          2 :     while(x-&gt;right()!=pointer(0))x=x-&gt;right();</span>
+<span class="lineNum">     313 </span>            :     return x;
+<a name="314"><span class="lineNum">     314 </span>            :   }</a>
+<span class="lineNum">     315 </span>            : 
+<span class="lineNum">     316 </span><span class="lineCov">      47453 :   static void rotate_right(pointer x,parent_ref root)</span>
+<span class="lineNum">     317 </span>            :   {
+<span class="lineNum">     318 </span><span class="lineCov">      47453 :     pointer y=x-&gt;left();</span>
+<span class="lineNum">     319 </span><span class="lineCov">      47453 :     x-&gt;left()=y-&gt;right();</span>
+<span class="lineNum">     320 </span><span class="lineCov">      47453 :     if(y-&gt;right()!=pointer(0))y-&gt;right()-&gt;parent()=x;</span>
+<span class="lineNum">     321 </span>            :     y-&gt;parent()=x-&gt;parent();
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span><span class="lineCov">      47453 :     if(x==root)                     root=y;</span>
+<span class="lineNum">     324 </span><span class="lineCov">      47447 :     else if(x==x-&gt;parent()-&gt;right())x-&gt;parent()-&gt;right()=y;</span>
+<span class="lineNum">     325 </span><span class="lineCov">      12463 :     else                            x-&gt;parent()-&gt;left()=y;</span>
+<span class="lineNum">     326 </span><span class="lineCov">      47453 :     y-&gt;right()=x;</span>
+<span class="lineNum">     327 </span>            :     x-&gt;parent()=y;
+<span class="lineNum">     328 </span>            :     AugmentPolicy::rotate_right(x,y);
+<a name="329"><span class="lineNum">     329 </span><span class="lineCov">      47453 :   }</span></a>
+<span class="lineNum">     330 </span>            : 
+<span class="lineNum">     331 </span><span class="lineCov">     231239 :   static void rebalance(pointer x,parent_ref root)</span>
+<span class="lineNum">     332 </span>            :   {
+<span class="lineNum">     333 </span>            :     x-&gt;color()=red;
+<span class="lineNum">     334 </span><span class="lineCov">    1257886 :     while(x!=root&amp;&amp;x-&gt;parent()-&gt;color()==red){</span>
+<span class="lineNum">     335 </span><span class="lineCov">     397719 :       if(x-&gt;parent()==x-&gt;parent()-&gt;parent()-&gt;left()){</span>
+<span class="lineNum">     336 </span><span class="lineCov">      20048 :         pointer y=x-&gt;parent()-&gt;parent()-&gt;right();</span>
+<span class="lineNum">     337 </span><span class="lineCov">      27693 :         if(y!=pointer(0)&amp;&amp;y-&gt;color()==red){</span>
+<span class="lineNum">     338 </span>            :           x-&gt;parent()-&gt;color()=black;
+<span class="lineNum">     339 </span>            :           y-&gt;color()=black;
+<span class="lineNum">     340 </span>            :           x-&gt;parent()-&gt;parent()-&gt;color()=red;
+<span class="lineNum">     341 </span>            :           x=x-&gt;parent()-&gt;parent();
+<span class="lineNum">     342 </span>            :         }
+<span class="lineNum">     343 </span>            :         else{
+<span class="lineNum">     344 </span><span class="lineCov">      17553 :           if(x==x-&gt;parent()-&gt;right()){</span>
+<span class="lineNum">     345 </span>            :             x=x-&gt;parent();
+<span class="lineNum">     346 </span><span class="lineCov">      17191 :             rotate_left(x,root);</span>
+<span class="lineNum">     347 </span>            :           }
+<span class="lineNum">     348 </span>            :           x-&gt;parent()-&gt;color()=black;
+<span class="lineNum">     349 </span>            :           x-&gt;parent()-&gt;parent()-&gt;color()=red;
+<span class="lineNum">     350 </span><span class="lineCov">      17553 :           rotate_right(x-&gt;parent()-&gt;parent(),root);</span>
+<span class="lineNum">     351 </span>            :         }
+<span class="lineNum">     352 </span>            :       }
+<span class="lineNum">     353 </span>            :       else{
+<span class="lineNum">     354 </span>            :         pointer y=x-&gt;parent()-&gt;parent()-&gt;left();
+<span class="lineNum">     355 </span><span class="lineCov">     655635 :         if(y!=pointer(0)&amp;&amp;y-&gt;color()==red){</span>
+<span class="lineNum">     356 </span>            :           x-&gt;parent()-&gt;color()=black;
+<span class="lineNum">     357 </span>            :           y-&gt;color()=black;
+<span class="lineNum">     358 </span>            :           x-&gt;parent()-&gt;parent()-&gt;color()=red;
+<span class="lineNum">     359 </span>            :           x=x-&gt;parent()-&gt;parent();
+<span class="lineNum">     360 </span>            :         }
+<span class="lineNum">     361 </span>            :         else{
+<span class="lineNum">     362 </span><span class="lineCov">     186355 :           if(x==x-&gt;parent()-&gt;left()){</span>
+<span class="lineNum">     363 </span>            :             x=x-&gt;parent();
+<span class="lineNum">     364 </span><span class="lineCov">       1338 :             rotate_right(x,root);</span>
+<span class="lineNum">     365 </span>            :           }
+<span class="lineNum">     366 </span>            :           x-&gt;parent()-&gt;color()=black;
+<span class="lineNum">     367 </span>            :           x-&gt;parent()-&gt;parent()-&gt;color()=red;
+<span class="lineNum">     368 </span><span class="lineCov">     186355 :           rotate_left(x-&gt;parent()-&gt;parent(),root);</span>
+<span class="lineNum">     369 </span>            :         }
+<span class="lineNum">     370 </span>            :       }
+<span class="lineNum">     371 </span>            :     }
+<span class="lineNum">     372 </span>            :     root-&gt;color()=black;
+<a name="373"><span class="lineNum">     373 </span><span class="lineCov">     231239 :   }</span></a>
+<span class="lineNum">     374 </span>            : 
+<span class="lineNum">     375 </span><span class="lineCov">     231239 :   static void link(</span>
+<span class="lineNum">     376 </span>            :     pointer x,ordered_index_side side,pointer position,pointer header)
+<span class="lineNum">     377 </span>            :   {
+<span class="lineNum">     378 </span><span class="lineCov">     231239 :     if(side==to_left){</span>
+<span class="lineNum">     379 </span><span class="lineCov">      14464 :       position-&gt;left()=x;  /* also makes leftmost=x when parent==header */</span>
+<span class="lineNum">     380 </span><span class="lineCov">      14464 :       if(position==header){</span>
+<span class="lineNum">     381 </span>            :         header-&gt;parent()=x;
+<span class="lineNum">     382 </span><span class="lineCov">          2 :         header-&gt;right()=x;</span>
+<span class="lineNum">     383 </span>            :       }
+<span class="lineNum">     384 </span><span class="lineCov">      14462 :       else if(position==header-&gt;left()){</span>
+<span class="lineNum">     385 </span><span class="lineNoCov">          0 :         header-&gt;left()=x;  /* maintain leftmost pointing to min node */</span>
+<span class="lineNum">     386 </span>            :       }
+<span class="lineNum">     387 </span>            :     }
+<span class="lineNum">     388 </span>            :     else{
+<span class="lineNum">     389 </span><span class="lineCov">     216775 :       position-&gt;right()=x;</span>
+<span class="lineNum">     390 </span><span class="lineCov">     216775 :       if(position==header-&gt;right()){</span>
+<span class="lineNum">     391 </span><span class="lineCov">      99998 :         header-&gt;right()=x; /* maintain rightmost pointing to max node */</span>
+<span class="lineNum">     392 </span>            :       }
+<span class="lineNum">     393 </span>            :     }
+<span class="lineNum">     394 </span>            :     x-&gt;parent()=position;
+<span class="lineNum">     395 </span><span class="lineCov">     231239 :     x-&gt;left()=pointer(0);</span>
+<span class="lineNum">     396 </span><span class="lineCov">     231239 :     x-&gt;right()=pointer(0);</span>
+<span class="lineNum">     397 </span>            :     AugmentPolicy::add(x,pointer(header-&gt;parent()));
+<span class="lineNum">     398 </span><span class="lineCov">     231239 :     ordered_index_node_impl::rebalance(x,header-&gt;parent());</span>
+<a name="399"><span class="lineNum">     399 </span><span class="lineCov">     231239 :   }</span></a>
+<span class="lineNum">     400 </span>            : 
+<span class="lineNum">     401 </span><span class="lineCov">     231239 :   static pointer rebalance_for_erase(</span>
+<span class="lineNum">     402 </span>            :     pointer z,parent_ref root,pointer&amp; leftmost,pointer&amp; rightmost)
+<span class="lineNum">     403 </span>            :   {
+<span class="lineNum">     404 </span>            :     pointer y=z;
+<span class="lineNum">     405 </span>            :     pointer x=pointer(0);
+<span class="lineNum">     406 </span>            :     pointer x_parent=pointer(0);
+<span class="lineNum">     407 </span><span class="lineCov">     231239 :     if(y-&gt;left()==pointer(0)){    /* z has at most one non-null child. y==z. */</span>
+<span class="lineNum">     408 </span><span class="lineCov">     141599 :       x=y-&gt;right();               /* x might be null */</span>
+<span class="lineNum">     409 </span>            :     }
+<span class="lineNum">     410 </span>            :     else{
+<span class="lineNum">     411 </span><span class="lineCov">      89640 :       if(y-&gt;right()==pointer(0)){ /* z has exactly one non-null child. y==z. */</span>
+<span class="lineNum">     412 </span>            :         x=y-&gt;left();              /* x is not null */
+<span class="lineNum">     413 </span>            :       }
+<span class="lineNum">     414 </span>            :       else{                       /* z has two non-null children.  Set y to */
+<span class="lineNum">     415 </span>            :         y=y-&gt;right();             /* z's successor. x might be null.        */
+<span class="lineNum">     416 </span><span class="lineCov">     168294 :         while(y-&gt;left()!=pointer(0))y=y-&gt;left();</span>
+<span class="lineNum">     417 </span><span class="lineCov">      78919 :         x=y-&gt;right();</span>
+<span class="lineNum">     418 </span>            :       }
+<span class="lineNum">     419 </span>            :     }
+<span class="lineNum">     420 </span>            :     AugmentPolicy::remove(y,pointer(root));
+<span class="lineNum">     421 </span><span class="lineCov">     231239 :     if(y!=z){</span>
+<span class="lineNum">     422 </span>            :       AugmentPolicy::copy(z,y);
+<span class="lineNum">     423 </span>            :       z-&gt;left()-&gt;parent()=y;   /* relink y in place of z. y is z's successor */
+<span class="lineNum">     424 </span><span class="lineCov">      78919 :       y-&gt;left()=z-&gt;left();</span>
+<span class="lineNum">     425 </span><span class="lineCov">      78919 :       if(y!=z-&gt;right()){</span>
+<span class="lineNum">     426 </span>            :         x_parent=y-&gt;parent();
+<span class="lineNum">     427 </span><span class="lineCov">      45918 :         if(x!=pointer(0))x-&gt;parent()=y-&gt;parent();</span>
+<span class="lineNum">     428 </span><span class="lineCov">      45918 :         y-&gt;parent()-&gt;left()=x; /* y must be a child of left */</span>
+<span class="lineNum">     429 </span><span class="lineCov">      45918 :         y-&gt;right()=z-&gt;right();</span>
+<span class="lineNum">     430 </span><span class="lineCov">      45918 :         z-&gt;right()-&gt;parent()=y;</span>
+<span class="lineNum">     431 </span>            :       }
+<span class="lineNum">     432 </span>            :       else{
+<span class="lineNum">     433 </span>            :         x_parent=y;
+<span class="lineNum">     434 </span>            :       }
+<span class="lineNum">     435 </span>            : 
+<span class="lineNum">     436 </span><span class="lineCov">      78919 :       if(root==z)                    root=y;</span>
+<span class="lineNum">     437 </span><span class="lineCov">      78901 :       else if(z-&gt;parent()-&gt;left()==z)z-&gt;parent()-&gt;left()=y;</span>
+<span class="lineNum">     438 </span><span class="lineCov">      40819 :       else                           z-&gt;parent()-&gt;right()=y;</span>
+<span class="lineNum">     439 </span>            :       y-&gt;parent()=z-&gt;parent();
+<span class="lineNum">     440 </span>            :       ordered_index_color c=y-&gt;color();
+<span class="lineNum">     441 </span>            :       y-&gt;color()=z-&gt;color();
+<span class="lineNum">     442 </span>            :       z-&gt;color()=c;
+<span class="lineNum">     443 </span>            :       y=z;                    /* y now points to node to be actually deleted */
+<span class="lineNum">     444 </span>            :     }
+<span class="lineNum">     445 </span>            :     else{                     /* y==z */
+<span class="lineNum">     446 </span>            :       x_parent=y-&gt;parent();
+<span class="lineNum">     447 </span><span class="lineCov">     152320 :       if(x!=pointer(0))x-&gt;parent()=y-&gt;parent();   </span>
+<span class="lineNum">     448 </span><span class="lineCov">     152320 :       if(root==z){</span>
+<span class="lineNum">     449 </span>            :         root=x;
+<span class="lineNum">     450 </span>            :       }
+<span class="lineNum">     451 </span>            :       else{
+<span class="lineNum">     452 </span><span class="lineCov">     152316 :         if(z-&gt;parent()-&gt;left()==z)z-&gt;parent()-&gt;left()=x;</span>
+<span class="lineNum">     453 </span><span class="lineCov">      50629 :         else                      z-&gt;parent()-&gt;right()=x;</span>
+<span class="lineNum">     454 </span>            :       }
+<span class="lineNum">     455 </span><span class="lineCov">     152320 :       if(leftmost==z){</span>
+<span class="lineNum">     456 </span><span class="lineCov">      50011 :         if(z-&gt;right()==pointer(0)){ /* z-&gt;left() must be null also */</span>
+<span class="lineNum">     457 </span><span class="lineCov">      26980 :           leftmost=z-&gt;parent();</span>
+<span class="lineNum">     458 </span>            :         }
+<span class="lineNum">     459 </span>            :         else{              
+<span class="lineNum">     460 </span><span class="lineCov">      23031 :           leftmost=minimum(x);      /* makes leftmost==header if z==root */</span>
+<span class="lineNum">     461 </span>            :         }
+<span class="lineNum">     462 </span>            :       }
+<span class="lineNum">     463 </span><span class="lineCov">     152320 :       if(rightmost==z){</span>
+<span class="lineNum">     464 </span><span class="lineCov">         20 :         if(z-&gt;left()==pointer(0)){  /* z-&gt;right() must be null also */</span>
+<span class="lineNum">     465 </span><span class="lineCov">         18 :           rightmost=z-&gt;parent();</span>
+<span class="lineNum">     466 </span>            :         }
+<span class="lineNum">     467 </span>            :         else{                   /* x==z-&gt;left() */
+<span class="lineNum">     468 </span><span class="lineCov">          2 :           rightmost=maximum(x); /* makes rightmost==header if z==root */</span>
+<span class="lineNum">     469 </span>            :         }
+<span class="lineNum">     470 </span>            :       }
+<span class="lineNum">     471 </span>            :     }
+<span class="lineNum">     472 </span><span class="lineCov">     231239 :     if(y-&gt;color()!=red){</span>
+<span class="lineNum">     473 </span><span class="lineCov">     638601 :       while(x!=root&amp;&amp;(x==pointer(0)|| x-&gt;color()==black)){</span>
+<span class="lineNum">     474 </span><span class="lineCov">     239386 :         if(x==x_parent-&gt;left()){</span>
+<span class="lineNum">     475 </span><span class="lineCov">     149595 :           pointer w=x_parent-&gt;right();</span>
+<span class="lineNum">     476 </span><span class="lineCov">     149595 :           if(w-&gt;color()==red){</span>
+<span class="lineNum">     477 </span>            :             w-&gt;color()=black;
+<span class="lineNum">     478 </span>            :             x_parent-&gt;color()=red;
+<span class="lineNum">     479 </span><span class="lineCov">      25913 :             rotate_left(x_parent,root);</span>
+<span class="lineNum">     480 </span><span class="lineCov">      25913 :             w=x_parent-&gt;right();</span>
+<span class="lineNum">     481 </span>            :           }
+<span class="lineNum">     482 </span><span class="lineCov">     359662 :           if((w-&gt;left()==pointer(0)||w-&gt;left()-&gt;color()==black) &amp;&amp;</span>
+<span class="lineNum">     483 </span><span class="lineCov">     202318 :              (w-&gt;right()==pointer(0)||w-&gt;right()-&gt;color()==black)){</span>
+<span class="lineNum">     484 </span>            :             w-&gt;color()=red;
+<span class="lineNum">     485 </span>            :             x=x_parent;
+<span class="lineNum">     486 </span>            :             x_parent=x_parent-&gt;parent();
+<span class="lineNum">     487 </span>            :           } 
+<span class="lineNum">     488 </span>            :           else{
+<span class="lineNum">     489 </span><span class="lineCov">      30762 :             if(w-&gt;right()==pointer(0 )</span>
+<span class="lineNum">     490 </span><span class="lineCov">      54810 :                 || w-&gt;right()-&gt;color()==black){</span>
+<span class="lineNum">     491 </span><span class="lineCov">      10035 :               if(w-&gt;left()!=pointer(0)) w-&gt;left()-&gt;color()=black;</span>
+<span class="lineNum">     492 </span>            :               w-&gt;color()=red;
+<span class="lineNum">     493 </span><span class="lineCov">      10035 :               rotate_right(w,root);</span>
+<span class="lineNum">     494 </span><span class="lineCov">      10035 :               w=x_parent-&gt;right();</span>
+<span class="lineNum">     495 </span>            :             }
+<span class="lineNum">     496 </span>            :             w-&gt;color()=x_parent-&gt;color();
+<span class="lineNum">     497 </span>            :             x_parent-&gt;color()=black;
+<span class="lineNum">     498 </span><span class="lineCov">      30762 :             if(w-&gt;right()!=pointer(0))w-&gt;right()-&gt;color()=black;</span>
+<span class="lineNum">     499 </span><span class="lineCov">      30762 :             rotate_left(x_parent,root);</span>
+<span class="lineNum">     500 </span><span class="lineCov">      30762 :             break;</span>
+<span class="lineNum">     501 </span>            :           }
+<span class="lineNum">     502 </span>            :         } 
+<span class="lineNum">     503 </span>            :         else{                   /* same as above,with right &lt;-&gt; left */
+<span class="lineNum">     504 </span>            :           pointer w=x_parent-&gt;left();
+<span class="lineNum">     505 </span><span class="lineCov">      89791 :           if(w-&gt;color()==red){</span>
+<span class="lineNum">     506 </span>            :             w-&gt;color()=black;
+<span class="lineNum">     507 </span>            :             x_parent-&gt;color()=red;
+<span class="lineNum">     508 </span><span class="lineCov">       3714 :             rotate_right(x_parent,root);</span>
+<span class="lineNum">     509 </span><span class="lineCov">       3714 :             w=x_parent-&gt;left();</span>
+<span class="lineNum">     510 </span>            :           }
+<span class="lineNum">     511 </span><span class="lineCov">     214668 :           if((w-&gt;right()==pointer(0)||w-&gt;right()-&gt;color()==black) &amp;&amp;</span>
+<span class="lineNum">     512 </span><span class="lineCov">     120136 :              (w-&gt;left()==pointer(0)||w-&gt;left()-&gt;color()==black)){</span>
+<span class="lineNum">     513 </span>            :             w-&gt;color()=red;
+<span class="lineNum">     514 </span>            :             x=x_parent;
+<span class="lineNum">     515 </span>            :             x_parent=x_parent-&gt;parent();
+<span class="lineNum">     516 </span>            :           }
+<span class="lineNum">     517 </span>            :           else{
+<span class="lineNum">     518 </span><span class="lineCov">      23900 :             if(w-&gt;left()==pointer(0)||w-&gt;left()-&gt;color()==black){</span>
+<span class="lineNum">     519 </span><span class="lineCov">       8441 :               if(w-&gt;right()!=pointer(0))w-&gt;right()-&gt;color()=black;</span>
+<span class="lineNum">     520 </span>            :               w-&gt;color()=red;
+<span class="lineNum">     521 </span><span class="lineCov">       8441 :               rotate_left(w,root);</span>
+<span class="lineNum">     522 </span><span class="lineCov">       8441 :               w=x_parent-&gt;left();</span>
+<span class="lineNum">     523 </span>            :             }
+<span class="lineNum">     524 </span>            :             w-&gt;color()=x_parent-&gt;color();
+<span class="lineNum">     525 </span>            :             x_parent-&gt;color()=black;
+<span class="lineNum">     526 </span><span class="lineCov">      14813 :             if(w-&gt;left()!=pointer(0))w-&gt;left()-&gt;color()=black;</span>
+<span class="lineNum">     527 </span><span class="lineCov">      14813 :             rotate_right(x_parent,root);</span>
+<span class="lineNum">     528 </span><span class="lineCov">      14813 :             break;</span>
+<span class="lineNum">     529 </span>            :           }
+<span class="lineNum">     530 </span>            :         }
+<span class="lineNum">     531 </span>            :       }
+<span class="lineNum">     532 </span><span class="lineCov">     192636 :       if(x!=pointer(0))x-&gt;color()=black;</span>
+<span class="lineNum">     533 </span>            :     }
+<span class="lineNum">     534 </span><span class="lineCov">     231239 :     return y;</span>
+<a name="535"><span class="lineNum">     535 </span>            :   }</a>
+<span class="lineNum">     536 </span>            : 
+<span class="lineNum">     537 </span><span class="lineNoCov">          0 :   static void restore(pointer x,pointer position,pointer header)</span>
+<span class="lineNum">     538 </span>            :   {
+<span class="lineNum">     539 </span><span class="lineNoCov">          0 :     if(position-&gt;left()==pointer(0)||position-&gt;left()==header){</span>
+<span class="lineNum">     540 </span><span class="lineNoCov">          0 :       link(x,to_left,position,header);</span>
+<span class="lineNum">     541 </span>            :     }
+<span class="lineNum">     542 </span>            :     else{
+<span class="lineNum">     543 </span><span class="lineNoCov">          0 :       decrement(position);</span>
+<span class="lineNum">     544 </span><span class="lineNoCov">          0 :       link(x,to_right,position,header);</span>
+<span class="lineNum">     545 </span>            :     }
+<span class="lineNum">     546 </span><span class="lineNoCov">          0 :   }</span>
+<span class="lineNum">     547 </span>            : 
+<span class="lineNum">     548 </span>            : #if defined(BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING)
+<span class="lineNum">     549 </span>            :   /* invariant stuff */
+<span class="lineNum">     550 </span>            : 
+<span class="lineNum">     551 </span>            :   static std::size_t black_count(pointer node,pointer root)
+<span class="lineNum">     552 </span>            :   {
+<span class="lineNum">     553 </span>            :     if(node==pointer(0))return 0;
+<span class="lineNum">     554 </span>            :     std::size_t sum=0;
+<span class="lineNum">     555 </span>            :     for(;;){
+<span class="lineNum">     556 </span>            :       if(node-&gt;color()==black)++sum;
+<span class="lineNum">     557 </span>            :       if(node==root)break;
+<span class="lineNum">     558 </span>            :       node=node-&gt;parent();
+<span class="lineNum">     559 </span>            :     } 
+<span class="lineNum">     560 </span>            :     return sum;
+<span class="lineNum">     561 </span>            :   }
+<span class="lineNum">     562 </span>            : #endif
+<span class="lineNum">     563 </span>            : };
+<span class="lineNum">     564 </span>            : 
+<span class="lineNum">     565 </span>            : template&lt;typename AugmentPolicy,typename Super&gt;
+<span class="lineNum">     566 </span>            : struct ordered_index_node_trampoline:
+<span class="lineNum">     567 </span>            :   ordered_index_node_impl&lt;
+<span class="lineNum">     568 </span>            :     AugmentPolicy,
+<span class="lineNum">     569 </span>            :     typename boost::detail::allocator::rebind_to&lt;
+<span class="lineNum">     570 </span>            :       typename Super::allocator_type,
+<span class="lineNum">     571 </span>            :       char
+<span class="lineNum">     572 </span>            :     &gt;::type
+<span class="lineNum">     573 </span>            :   &gt;
+<span class="lineNum">     574 </span>            : {
+<span class="lineNum">     575 </span>            :   typedef ordered_index_node_impl&lt;
+<span class="lineNum">     576 </span>            :     AugmentPolicy,
+<span class="lineNum">     577 </span>            :     typename boost::detail::allocator::rebind_to&lt;
+<span class="lineNum">     578 </span>            :       typename Super::allocator_type,
+<span class="lineNum">     579 </span>            :       char
+<span class="lineNum">     580 </span>            :     &gt;::type
+<span class="lineNum">     581 </span>            :   &gt; impl_type;
+<span class="lineNum">     582 </span>            : };
+<span class="lineNum">     583 </span>            : 
+<span class="lineNum">     584 </span>            : template&lt;typename AugmentPolicy,typename Super&gt;
+<span class="lineNum">     585 </span>            : struct ordered_index_node:
+<span class="lineNum">     586 </span>            :   Super,ordered_index_node_trampoline&lt;AugmentPolicy,Super&gt;
+<span class="lineNum">     587 </span>            : {
+<span class="lineNum">     588 </span>            : private:
+<span class="lineNum">     589 </span>            :   typedef ordered_index_node_trampoline&lt;AugmentPolicy,Super&gt; trampoline;
+<span class="lineNum">     590 </span>            : 
+<span class="lineNum">     591 </span>            : public:
+<span class="lineNum">     592 </span>            :   typedef typename trampoline::impl_type     impl_type;
+<span class="lineNum">     593 </span>            :   typedef typename trampoline::color_ref     impl_color_ref;
+<span class="lineNum">     594 </span>            :   typedef typename trampoline::parent_ref    impl_parent_ref;
+<span class="lineNum">     595 </span>            :   typedef typename trampoline::pointer       impl_pointer;
+<span class="lineNum">     596 </span>            :   typedef typename trampoline::const_pointer const_impl_pointer;
+<span class="lineNum">     597 </span>            : 
+<span class="lineNum">     598 </span>            :   impl_color_ref      color(){return trampoline::color();}
+<span class="lineNum">     599 </span>            :   ordered_index_color color()const{return trampoline::color();}
+<span class="lineNum">     600 </span>            :   impl_parent_ref     parent(){return trampoline::parent();}
+<span class="lineNum">     601 </span>            :   impl_pointer        parent()const{return trampoline::parent();}
+<span class="lineNum">     602 </span>            :   impl_pointer&amp;       left(){return trampoline::left();}
+<span class="lineNum">     603 </span>            :   impl_pointer        left()const{return trampoline::left();}
+<span class="lineNum">     604 </span>            :   impl_pointer&amp;       right(){return trampoline::right();}
+<span class="lineNum">     605 </span>            :   impl_pointer        right()const{return trampoline::right();}
+<span class="lineNum">     606 </span>            : 
+<span class="lineNum">     607 </span>            :   impl_pointer impl()
+<span class="lineNum">     608 </span>            :   {
+<span class="lineNum">     609 </span>            :     return static_cast&lt;impl_pointer&gt;(
+<span class="lineNum">     610 </span><span class="lineCov">    1237507 :       static_cast&lt;impl_type*&gt;(static_cast&lt;trampoline*&gt;(this)));</span>
+<span class="lineNum">     611 </span>            :   }
+<span class="lineNum">     612 </span>            : 
+<span class="lineNum">     613 </span>            :   const_impl_pointer impl()const
+<span class="lineNum">     614 </span>            :   {
+<span class="lineNum">     615 </span>            :     return static_cast&lt;const_impl_pointer&gt;(
+<span class="lineNum">     616 </span>            :       static_cast&lt;const impl_type*&gt;(static_cast&lt;const trampoline*&gt;(this)));
+<span class="lineNum">     617 </span>            :   }
+<span class="lineNum">     618 </span>            : 
+<span class="lineNum">     619 </span>            :   static ordered_index_node* from_impl(impl_pointer x)
+<span class="lineNum">     620 </span>            :   {
+<span class="lineNum">     621 </span>            :     return
+<span class="lineNum">     622 </span><span class="lineCov">    9123227 :       static_cast&lt;ordered_index_node*&gt;(</span>
+<span class="lineNum">     623 </span>            :         static_cast&lt;trampoline*&gt;(
+<span class="lineNum">     624 </span>            :           raw_ptr&lt;impl_type*&gt;(x)));
+<span class="lineNum">     625 </span>            :   }
+<span class="lineNum">     626 </span>            : 
+<span class="lineNum">     627 </span>            :   static const ordered_index_node* from_impl(const_impl_pointer x)
+<span class="lineNum">     628 </span>            :   {
+<span class="lineNum">     629 </span>            :     return
+<span class="lineNum">     630 </span>            :       static_cast&lt;const ordered_index_node*&gt;(
+<span class="lineNum">     631 </span>            :         static_cast&lt;const trampoline*&gt;(
+<span class="lineNum">     632 </span>            :           raw_ptr&lt;const impl_type*&gt;(x)));
+<span class="lineNum">     633 </span>            :   }
+<span class="lineNum">     634 </span>            : 
+<span class="lineNum">     635 </span>            :   /* interoperability with bidir_node_iterator */
+<span class="lineNum">     636 </span>            : 
+<span class="lineNum">     637 </span>            :   static void increment(ordered_index_node*&amp; x)
+<span class="lineNum">     638 </span>            :   {
+<span class="lineNum">     639 </span><span class="lineCov">     181277 :     impl_pointer xi=x-&gt;impl();</span>
+<span class="lineNum">     640 </span><span class="lineCov">     181277 :     trampoline::increment(xi);</span>
+<span class="lineNum">     641 </span><span class="lineCov">     181277 :     x=from_impl(xi);</span>
+<span class="lineNum">     642 </span>            :   }
+<span class="lineNum">     643 </span>            : 
+<span class="lineNum">     644 </span>            :   static void decrement(ordered_index_node*&amp; x)
+<span class="lineNum">     645 </span>            :   {
+<span class="lineNum">     646 </span><span class="lineCov">     262511 :     impl_pointer xi=x-&gt;impl();</span>
+<span class="lineNum">     647 </span><span class="lineCov">     262511 :     trampoline::decrement(xi);</span>
+<span class="lineNum">     648 </span><span class="lineCov">     262511 :     x=from_impl(xi);</span>
+<span class="lineNum">     649 </span>            :   }
+<span class="lineNum">     650 </span>            : };
+<span class="lineNum">     651 </span>            : 
+<span class="lineNum">     652 </span>            : } /* namespace multi_index::detail */
+<span class="lineNum">     653 </span>            : 
+<span class="lineNum">     654 </span>            : } /* namespace multi_index */
+<span class="lineNum">     655 </span>            : 
+<span class="lineNum">     656 </span>            : } /* namespace boost */
+<span class="lineNum">     657 </span>            : 
+<span class="lineNum">     658 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

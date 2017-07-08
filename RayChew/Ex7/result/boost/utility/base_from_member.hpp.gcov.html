@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/utility/base_from_member.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">boost/utility</a> - base_from_member.hpp<span style="font-size: 80%;"> (source / <a href="base_from_member.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : //  boost utility/base_from_member.hpp header file  --------------------------//</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : //  Copyright 2001, 2003, 2004, 2012 Daryle Walker.  Use, modification, and
+<span class="lineNum">       4 </span>            : //  distribution are subject to the Boost Software License, Version 1.0.  (See
+<span class="lineNum">       5 </span>            : //  accompanying file LICENSE_1_0.txt or a copy at
+<span class="lineNum">       6 </span>            : //  &lt;http://www.boost.org/LICENSE_1_0.txt&gt;.)
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : //  See &lt;http://www.boost.org/libs/utility/&gt; for the library's home page.
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #ifndef BOOST_UTILITY_BASE_FROM_MEMBER_HPP
+<span class="lineNum">      11 </span>            : #define BOOST_UTILITY_BASE_FROM_MEMBER_HPP
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #include &lt;boost/config.hpp&gt;
+<span class="lineNum">      14 </span>            : #include &lt;boost/preprocessor/arithmetic/inc.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &lt;boost/preprocessor/repetition/enum_binary_params.hpp&gt;
+<span class="lineNum">      16 </span>            : #include &lt;boost/preprocessor/repetition/enum_params.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/preprocessor/repetition/repeat_from_to.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/type_traits/is_same.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/type_traits/remove_cv.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/type_traits/remove_reference.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/utility/enable_if.hpp&gt;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : //  Base-from-member arity configuration macro  ------------------------------//
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : // The following macro determines how many arguments will be in the largest
+<span class="lineNum">      27 </span>            : // constructor template of base_from_member.  Constructor templates will be
+<span class="lineNum">      28 </span>            : // generated from one argument to this maximum.  Code from other files can read
+<span class="lineNum">      29 </span>            : // this number if they need to always match the exact maximum base_from_member
+<span class="lineNum">      30 </span>            : // uses.  The maximum constructor length can be changed by overriding the
+<span class="lineNum">      31 </span>            : // #defined constant.  Make sure to apply the override, if any, for all source
+<span class="lineNum">      32 </span>            : // files during project compiling for consistency.
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : // Contributed by Jonathan Turkanis
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : #ifndef BOOST_BASE_FROM_MEMBER_MAX_ARITY
+<span class="lineNum">      37 </span>            : #define BOOST_BASE_FROM_MEMBER_MAX_ARITY  10
+<span class="lineNum">      38 </span>            : #endif
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : //  An iteration of a constructor template for base_from_member  -------------//
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : // A macro that should expand to:
+<span class="lineNum">      44 </span>            : //     template &lt; typename T1, ..., typename Tn &gt;
+<span class="lineNum">      45 </span>            : //     base_from_member( T1 x1, ..., Tn xn )
+<span class="lineNum">      46 </span>            : //         : member( x1, ..., xn )
+<span class="lineNum">      47 </span>            : //         {}
+<span class="lineNum">      48 </span>            : // This macro should only persist within this file.
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : #define BOOST_PRIVATE_CTR_DEF( z, n, data )                   \
+<span class="lineNum">      51 </span>            :     template &lt; BOOST_PP_ENUM_PARAMS(n, typename T) &gt;          \
+<span class="lineNum">      52 </span>            :     base_from_member( BOOST_PP_ENUM_BINARY_PARAMS(n, T, x) )  \
+<span class="lineNum">      53 </span>            :         : member( BOOST_PP_ENUM_PARAMS(n, x) )                \
+<span class="lineNum">      54 </span>            :         {}                                                    \
+<span class="lineNum">      55 </span>            :     /**/
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : namespace boost
+<span class="lineNum">      59 </span>            : {
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            : namespace detail
+<span class="lineNum">      62 </span>            : {
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : //  Type-unmarking class template  -------------------------------------------//
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : // Type-trait to get the raw type, i.e. the type without top-level reference nor
+<span class="lineNum">      67 </span>            : // cv-qualification, from a type expression.  Mainly for function arguments, any
+<span class="lineNum">      68 </span>            : // reference part is stripped first.
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : // Contributed by Daryle Walker
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : template &lt; typename T &gt;
+<span class="lineNum">      73 </span>            : struct remove_cv_ref
+<span class="lineNum">      74 </span>            : {
+<span class="lineNum">      75 </span>            :     typedef typename ::boost::remove_cv&lt;typename
+<span class="lineNum">      76 </span>            :      ::boost::remove_reference&lt;T&gt;::type&gt;::type  type;
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : };  // boost::detail::remove_cv_ref
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : //  Unmarked-type comparison class template  ---------------------------------//
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            : // Type-trait to check if two type expressions have the same raw type.
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : // Contributed by Daryle Walker, based on a work-around by Luc Danton
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : template &lt; typename T, typename U &gt;
+<span class="lineNum">      87 </span>            : struct is_related
+<span class="lineNum">      88 </span>            :     : public ::boost::is_same&lt;
+<span class="lineNum">      89 </span>            :      typename ::boost::detail::remove_cv_ref&lt;T&gt;::type,
+<span class="lineNum">      90 </span>            :      typename ::boost::detail::remove_cv_ref&lt;U&gt;::type &gt;
+<span class="lineNum">      91 </span>            : {};
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : //  Enable-if-on-unidentical-unmarked-type class template  -------------------//
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : // Enable-if on the first two type expressions NOT having the same raw type.
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : // Contributed by Daryle Walker, based on a work-around by Luc Danton
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : #ifndef BOOST_NO_CXX11_VARIADIC_TEMPLATES
+<span class="lineNum">     100 </span>            : template&lt;typename ...T&gt;
+<span class="lineNum">     101 </span>            : struct enable_if_unrelated
+<span class="lineNum">     102 </span>            :     : public ::boost::enable_if_c&lt;true&gt;
+<span class="lineNum">     103 </span>            : {};
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            : template&lt;typename T, typename U, typename ...U2&gt;
+<span class="lineNum">     106 </span>            : struct enable_if_unrelated&lt;T, U, U2...&gt;
+<span class="lineNum">     107 </span>            :     : public ::boost::disable_if&lt; ::boost::detail::is_related&lt;T, U&gt; &gt;
+<span class="lineNum">     108 </span>            : {};
+<span class="lineNum">     109 </span>            : #endif
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            : }  // namespace boost::detail
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : //  Base-from-member class template  -----------------------------------------//
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : // Helper to initialize a base object so a derived class can use this
+<span class="lineNum">     117 </span>            : // object in the initialization of another base class.  Used by
+<span class="lineNum">     118 </span>            : // Dietmar Kuehl from ideas by Ron Klatcho to solve the problem of a
+<span class="lineNum">     119 </span>            : // base class needing to be initialized by a member.
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            : // Contributed by Daryle Walker
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            : template &lt; typename MemberType, int UniqueID = 0 &gt;
+<span class="lineNum">     124 </span>            : class base_from_member
+<span class="lineNum">     125 </span>            : {
+<span class="lineNum">     126 </span>            : protected:
+<span class="lineNum">     127 </span>            :     MemberType  member;
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : #if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) &amp;&amp; \
+<span class="lineNum">     130 </span>            :     !defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) &amp;&amp; \
+<span class="lineNum">     131 </span>            :     !defined(BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS) &amp;&amp; \
+<span class="lineNum">     132 </span>            :     !(defined(__GNUC__) &amp;&amp; (__GNUC__ == 4) &amp;&amp; (__GNUC_MINOR__ &lt; 4))
+<span class="lineNum">     133 </span>            :     template &lt;typename ...T, typename EnableIf = typename
+<span class="lineNum">     134 </span>            :      ::boost::detail::enable_if_unrelated&lt;base_from_member, T...&gt;::type&gt;
+<span class="lineNum">     135 </span><span class="lineCov">          1 :     explicit BOOST_CONSTEXPR base_from_member( T&amp;&amp; ...x )</span>
+<span class="lineNum">     136 </span>            :         BOOST_NOEXCEPT_IF( BOOST_NOEXCEPT_EXPR(::new ((void*) 0) MemberType(
+<span class="lineNum">     137 </span>            :          static_cast&lt;T&amp;&amp;&gt;(x)... )) )  // no std::is_nothrow_constructible...
+<span class="lineNum">     138 </span>            :         : member( static_cast&lt;T&amp;&amp;&gt;(x)... )     // ...nor std::forward needed
+<span class="lineNum">     139 </span>            :         {}
+<span class="lineNum">     140 </span>            : #else
+<span class="lineNum">     141 </span>            :     base_from_member()
+<span class="lineNum">     142 </span>            :         : member()
+<span class="lineNum">     143 </span>            :         {}
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            :     template &lt; typename T0 &gt; explicit base_from_member( T0 x0 ) : member( x0 ) {}
+<span class="lineNum">     146 </span>            :     BOOST_PP_REPEAT_FROM_TO( 2, BOOST_PP_INC(BOOST_BASE_FROM_MEMBER_MAX_ARITY),
+<span class="lineNum">     147 </span>            :      BOOST_PRIVATE_CTR_DEF, _ )
+<span class="lineNum">     148 </span>            : #endif
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span>            : };  // boost::base_from_member
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            : template &lt; typename MemberType, int UniqueID &gt;
+<span class="lineNum">     153 </span>            : class base_from_member&lt;MemberType&amp;, UniqueID&gt;
+<span class="lineNum">     154 </span>            : {
+<span class="lineNum">     155 </span>            : protected:
+<span class="lineNum">     156 </span>            :     MemberType&amp; member;
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            :     explicit BOOST_CONSTEXPR base_from_member( MemberType&amp; x )
+<span class="lineNum">     159 </span>            :         BOOST_NOEXCEPT
+<span class="lineNum">     160 </span>            :         : member( x )
+<span class="lineNum">     161 </span>            :         {}
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span>            : };  // boost::base_from_member
+<span class="lineNum">     164 </span>            : 
+<span class="lineNum">     165 </span>            : }  // namespace boost
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            : // Undo any private macros
+<span class="lineNum">     169 </span>            : #undef BOOST_PRIVATE_CTR_DEF
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            : #endif  // BOOST_UTILITY_BASE_FROM_MEMBER_HPP
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

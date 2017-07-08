@@ -1,0 +1,479 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/spirit/home/qi/detail/assign_to.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">boost/spirit/home/qi/detail</a> - assign_to.hpp<span style="font-size: 80%;"> (source / <a href="assign_to.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :     Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            :     Copyright (c) 2001-2011 Hartmut Kaiser
+<span class="lineNum">       4 </span>            :     http://spirit.sourceforge.net/
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :     Distributed under the Boost Software License, Version 1.0. (See accompanying
+<span class="lineNum">       7 </span>            :     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : =============================================================================*/
+<span class="lineNum">       9 </span>            : #if !defined(BOOST_SPIRIT_ASSIGN_TO_APR_16_2006_0812PM)
+<span class="lineNum">      10 </span>            : #define BOOST_SPIRIT_ASSIGN_TO_APR_16_2006_0812PM
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      13 </span>            : #pragma once
+<span class="lineNum">      14 </span>            : #endif
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;boost/spirit/home/qi/detail/construct.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/spirit/home/support/unused.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/spirit/home/qi/detail/attributes.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/spirit/home/support/container.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/fusion/include/copy.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/fusion/adapted/struct/detail/extension.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/ref.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/range/iterator_range.hpp&gt;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : namespace boost { namespace spirit { namespace traits
+<span class="lineNum">      26 </span>            : {
+<span class="lineNum">      27 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      28 </span>            :     //  This file contains assignment utilities. The utilities provided also
+<span class="lineNum">      29 </span>            :     //  accept spirit's unused_type; all no-ops. Compiler optimization will
+<span class="lineNum">      30 </span>            :     //  easily strip these away.
+<span class="lineNum">      31 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      32 </span>            :     namespace detail
+<span class="lineNum">      33 </span>            :     {
+<span class="lineNum">      34 </span>            :         template &lt;typename T&gt;
+<span class="lineNum">      35 </span>            :         struct is_iter_range : mpl::false_ {};
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            :         template &lt;typename I&gt;
+<span class="lineNum">      38 </span>            :         struct is_iter_range&lt;boost::iterator_range&lt;I&gt; &gt; : mpl::true_ {};
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            :         template &lt;typename C&gt;
+<span class="lineNum">      41 </span>            :         struct is_container_of_ranges
+<span class="lineNum">      42 </span>            :           : is_iter_range&lt;typename C::value_type&gt; {};
+<span class="lineNum">      43 </span>            :     }
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :     template &lt;typename Attribute, typename Iterator, typename Enable&gt;
+<span class="lineNum">      46 </span>            :     struct assign_to_attribute_from_iterators
+<span class="lineNum">      47 </span>            :     {
+<span class="lineNum">      48 </span>            :         // Common case
+<span class="lineNum">      49 </span>            :         static void
+<span class="lineNum">      50 </span>            :         call(Iterator const&amp; first, Iterator const&amp; last, Attribute&amp; attr, mpl::false_)
+<span class="lineNum">      51 </span>            :         {
+<span class="lineNum">      52 </span>            :             if (traits::is_empty(attr))
+<span class="lineNum">      53 </span>            :                 attr = Attribute(first, last);
+<span class="lineNum">      54 </span>            :             else {
+<span class="lineNum">      55 </span>            :                 for (Iterator i = first; i != last; ++i)
+<span class="lineNum">      56 </span>            :                     push_back(attr, *i);
+<span class="lineNum">      57 </span>            :             }
+<span class="lineNum">      58 </span>            :         }
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :         // If Attribute is a container with value_type==iterator_range&lt;T&gt; just push the
+<span class="lineNum">      61 </span>            :         // iterator_range into it
+<span class="lineNum">      62 </span>            :         static void
+<span class="lineNum">      63 </span>            :         call(Iterator const&amp; first, Iterator const&amp; last, Attribute&amp; attr, mpl::true_)
+<span class="lineNum">      64 </span>            :         {
+<span class="lineNum">      65 </span>            :             typename Attribute::value_type rng(first, last);
+<span class="lineNum">      66 </span>            :             push_back(attr, rng);
+<span class="lineNum">      67 </span>            :         }
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :         static void
+<span class="lineNum">      70 </span>            :         call(Iterator const&amp; first, Iterator const&amp; last, Attribute&amp; attr)
+<span class="lineNum">      71 </span>            :         {
+<span class="lineNum">      72 </span>            :             call(first, last, attr, detail::is_container_of_ranges&lt;Attribute&gt;());
+<span class="lineNum">      73 </span>            :         }
+<span class="lineNum">      74 </span>            :     };
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            :     template &lt;typename Attribute, typename Iterator&gt;
+<span class="lineNum">      77 </span>            :     struct assign_to_attribute_from_iterators&lt;
+<span class="lineNum">      78 </span>            :         reference_wrapper&lt;Attribute&gt;, Iterator&gt;
+<span class="lineNum">      79 </span>            :     {
+<span class="lineNum">      80 </span>            :         static void
+<span class="lineNum">      81 </span>            :         call(Iterator const&amp; first, Iterator const&amp; last
+<span class="lineNum">      82 </span>            :           , reference_wrapper&lt;Attribute&gt; attr)
+<span class="lineNum">      83 </span>            :         {
+<span class="lineNum">      84 </span>            :             if (traits::is_empty(attr))
+<span class="lineNum">      85 </span>            :                 attr = Attribute(first, last);
+<span class="lineNum">      86 </span>            :             else {
+<span class="lineNum">      87 </span>            :                 for (Iterator i = first; i != last; ++i)
+<span class="lineNum">      88 </span>            :                     push_back(attr, *i);
+<span class="lineNum">      89 </span>            :             }
+<span class="lineNum">      90 </span>            :         }
+<span class="lineNum">      91 </span>            :     };
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :     template &lt;typename Attribute, typename Iterator&gt;
+<span class="lineNum">      94 </span>            :     struct assign_to_attribute_from_iterators&lt;
+<span class="lineNum">      95 </span>            :         boost::optional&lt;Attribute&gt;, Iterator&gt;
+<span class="lineNum">      96 </span>            :     {
+<span class="lineNum">      97 </span>            :         static void
+<span class="lineNum">      98 </span>            :         call(Iterator const&amp; first, Iterator const&amp; last
+<span class="lineNum">      99 </span>            :           , boost::optional&lt;Attribute&gt;&amp; attr)
+<span class="lineNum">     100 </span>            :         {
+<span class="lineNum">     101 </span>            :             Attribute val;
+<span class="lineNum">     102 </span>            :             assign_to(first, last, val);
+<span class="lineNum">     103 </span>            :             attr = val;
+<span class="lineNum">     104 </span>            :         }
+<span class="lineNum">     105 </span>            :     };
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :     template &lt;typename Iterator&gt;
+<span class="lineNum">     108 </span>            :     struct assign_to_attribute_from_iterators&lt;
+<span class="lineNum">     109 </span>            :         iterator_range&lt;Iterator&gt;, Iterator&gt;
+<span class="lineNum">     110 </span>            :     {
+<span class="lineNum">     111 </span>            :         static void
+<span class="lineNum">     112 </span>            :         call(Iterator const&amp; first, Iterator const&amp; last
+<span class="lineNum">     113 </span>            :           , iterator_range&lt;Iterator&gt;&amp; attr)
+<span class="lineNum">     114 </span>            :         {
+<span class="lineNum">     115 </span>            :             attr = iterator_range&lt;Iterator&gt;(first, last);
+<span class="lineNum">     116 </span>            :         }
+<span class="lineNum">     117 </span>            :     };
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            :     template &lt;typename Iterator, typename Attribute&gt;
+<span class="lineNum">     120 </span>            :     inline void
+<span class="lineNum">     121 </span>            :     assign_to(Iterator const&amp; first, Iterator const&amp; last, Attribute&amp; attr)
+<span class="lineNum">     122 </span>            :     {
+<span class="lineNum">     123 </span>            :         assign_to_attribute_from_iterators&lt;Attribute, Iterator&gt;::
+<span class="lineNum">     124 </span>            :             call(first, last, attr);
+<span class="lineNum">     125 </span>            :     }
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            :     template &lt;typename Iterator&gt;
+<span class="lineNum">     128 </span>            :     inline void
+<span class="lineNum">     129 </span>            :     assign_to(Iterator const&amp;, Iterator const&amp;, unused_type)
+<span class="lineNum">     130 </span>            :     {
+<span class="lineNum">     131 </span>            :     }
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     134 </span>            :     template &lt;typename T, typename Attribute&gt;
+<span class="lineNum">     135 </span>            :     void assign_to(T const&amp; val, Attribute&amp; attr);
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :     template &lt;typename Attribute, typename T, typename Enable&gt;
+<span class="lineNum">     138 </span>            :     struct assign_to_attribute_from_value
+<span class="lineNum">     139 </span>            :     {
+<span class="lineNum">     140 </span>            :         typedef typename traits::one_element_sequence&lt;Attribute&gt;::type
+<span class="lineNum">     141 </span>            :             is_one_element_sequence;
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            :         typedef typename mpl::eval_if&lt;
+<span class="lineNum">     144 </span>            :             is_one_element_sequence
+<span class="lineNum">     145 </span>            :           , fusion::result_of::at_c&lt;Attribute, 0&gt;
+<span class="lineNum">     146 </span>            :           , mpl::identity&lt;Attribute&amp;&gt;
+<span class="lineNum">     147 </span>            :         &gt;::type type;
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            :         template &lt;typename T_&gt;
+<span class="lineNum">     150 </span>            :         static void
+<span class="lineNum">     151 </span>            :         call(T_ const&amp; val, Attribute&amp; attr, mpl::false_)
+<span class="lineNum">     152 </span>            :         {
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :             attr = static_cast&lt;Attribute&gt;(val);</span>
+<span class="lineNum">     154 </span>            :         }
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span>            :         // This handles the case where the attribute is a single element fusion
+<span class="lineNum">     157 </span>            :         // sequence. We silently assign to the only element and treat it as the
+<span class="lineNum">     158 </span>            :         // attribute to parse the results into.
+<span class="lineNum">     159 </span>            :         template &lt;typename T_&gt;
+<span class="lineNum">     160 </span>            :         static void
+<span class="lineNum">     161 </span>            :         call(T_ const&amp; val, Attribute&amp; attr, mpl::true_)
+<span class="lineNum">     162 </span>            :         {
+<span class="lineNum">     163 </span>            :             typedef typename fusion::result_of::value_at_c&lt;Attribute, 0&gt;::type
+<span class="lineNum">     164 </span>            :                 element_type;
+<span class="lineNum">     165 </span>            :             fusion::at_c&lt;0&gt;(attr) = static_cast&lt;element_type&gt;(val);
+<span class="lineNum">     166 </span>            :         }
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            :         static void
+<span class="lineNum">     169 </span>            :         call(T const&amp; val, Attribute&amp; attr)
+<span class="lineNum">     170 </span>            :         {
+<span class="lineNum">     171 </span>            :             call(val, attr, is_one_element_sequence());
+<span class="lineNum">     172 </span>            :         }
+<span class="lineNum">     173 </span>            :     };
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            :     template &lt;typename Attribute&gt;
+<span class="lineNum">     176 </span>            :     struct assign_to_attribute_from_value&lt;Attribute, Attribute&gt;
+<span class="lineNum">     177 </span>            :     {
+<span class="lineNum">     178 </span>            :         static void
+<span class="lineNum">     179 </span>            :         call(Attribute const&amp; val, Attribute&amp; attr)
+<span class="lineNum">     180 </span>            :         {
+<span class="lineNum">     181 </span><span class="lineCov">    4000002 :             attr = val;</span>
+<span class="lineNum">     182 </span>            :         }
+<span class="lineNum">     183 </span>            :     };
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            :     template &lt;typename Attribute, typename T&gt;
+<span class="lineNum">     186 </span>            :     struct assign_to_attribute_from_value&lt;Attribute, reference_wrapper&lt;T&gt;
+<span class="lineNum">     187 </span>            :       , typename disable_if&lt;is_same&lt;Attribute, reference_wrapper&lt;T&gt; &gt; &gt;::type&gt;
+<span class="lineNum">     188 </span>            :     {
+<span class="lineNum">     189 </span>            :         static void
+<span class="lineNum">     190 </span>            :         call(reference_wrapper&lt;T&gt; const&amp; val, Attribute&amp; attr)
+<span class="lineNum">     191 </span>            :         {
+<span class="lineNum">     192 </span>            :             assign_to(val.get(), attr);
+<span class="lineNum">     193 </span>            :         }
+<span class="lineNum">     194 </span>            :     };
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :     template &lt;typename Attribute, typename T&gt;
+<span class="lineNum">     197 </span>            :     struct assign_to_attribute_from_value&lt;Attribute, boost::optional&lt;T&gt;
+<span class="lineNum">     198 </span>            :       , typename disable_if&lt;is_same&lt;Attribute, boost::optional&lt;T&gt; &gt; &gt;::type&gt;
+<span class="lineNum">     199 </span>            :     {
+<span class="lineNum">     200 </span>            :         static void
+<span class="lineNum">     201 </span>            :         call(boost::optional&lt;T&gt; const&amp; val, Attribute&amp; attr)
+<span class="lineNum">     202 </span>            :         {
+<span class="lineNum">     203 </span>            :             assign_to(val.get(), attr);
+<span class="lineNum">     204 </span>            :         }
+<span class="lineNum">     205 </span>            :     };
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span>            :     template &lt;typename Attribute, int N, bool Const, typename T&gt;
+<span class="lineNum">     208 </span>            :     struct assign_to_attribute_from_value&lt;fusion::extension::adt_attribute_proxy&lt;Attribute, N, Const&gt;, T&gt;
+<span class="lineNum">     209 </span>            :     {
+<span class="lineNum">     210 </span>            :         static void
+<span class="lineNum">     211 </span>            :         call(T const&amp; val, typename fusion::extension::adt_attribute_proxy&lt;Attribute, N, Const&gt;&amp; attr)
+<span class="lineNum">     212 </span>            :         {
+<span class="lineNum">     213 </span>            :             attr = val;
+<span class="lineNum">     214 </span>            :         }
+<span class="lineNum">     215 </span>            :     };
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span>            :     namespace detail
+<span class="lineNum">     218 </span>            :     {
+<span class="lineNum">     219 </span>            :         template &lt;typename A, typename B&gt;
+<span class="lineNum">     220 </span>            :         struct is_same_size_sequence
+<span class="lineNum">     221 </span>            :           : mpl::bool_&lt;fusion::result_of::size&lt;A&gt;::value
+<span class="lineNum">     222 </span>            :                 == fusion::result_of::size&lt;B&gt;::value&gt;
+<span class="lineNum">     223 </span>            :         {};
+<span class="lineNum">     224 </span>            :     }
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span>            :     template &lt;typename Attribute, typename T&gt;
+<span class="lineNum">     227 </span>            :     struct assign_to_attribute_from_value&lt;Attribute, T,
+<span class="lineNum">     228 </span>            :             mpl::and_&lt;
+<span class="lineNum">     229 </span>            :                 fusion::traits::is_sequence&lt;Attribute&gt;,
+<span class="lineNum">     230 </span>            :                 fusion::traits::is_sequence&lt;T&gt;,
+<span class="lineNum">     231 </span>            :                 detail::is_same_size_sequence&lt;Attribute, T&gt;
+<span class="lineNum">     232 </span>            :             &gt;
+<span class="lineNum">     233 </span>            :         &gt;
+<span class="lineNum">     234 </span>            :     {
+<span class="lineNum">     235 </span>            :         static void
+<span class="lineNum">     236 </span>            :         call(T const&amp; val, Attribute&amp; attr)
+<span class="lineNum">     237 </span>            :         {
+<span class="lineNum">     238 </span>            :             fusion::copy(val, attr);
+<span class="lineNum">     239 </span>            :         }
+<span class="lineNum">     240 </span>            :     };
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     243 </span>            :     template &lt;typename Attribute, typename T, typename Enable&gt;
+<span class="lineNum">     244 </span>            :     struct assign_to_container_from_value
+<span class="lineNum">     245 </span>            :     {
+<span class="lineNum">     246 </span>            :         // T is not a container and not a string
+<span class="lineNum">     247 </span>            :         template &lt;typename T_&gt;
+<span class="lineNum">     248 </span>            :         static void call(T_ const&amp; val, Attribute&amp; attr, mpl::false_, mpl::false_)
+<span class="lineNum">     249 </span>            :         {
+<span class="lineNum">     250 </span>            :             traits::push_back(attr, val);
+<span class="lineNum">     251 </span>            :         }
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            :         // T is a container (but not a string), and T is convertible to the 
+<span class="lineNum">     254 </span>            :         // value_type of the Attribute container
+<span class="lineNum">     255 </span>            :         template &lt;typename T_&gt;
+<span class="lineNum">     256 </span>            :         static void 
+<span class="lineNum">     257 </span>            :         append_to_container_not_string(T_ const&amp; val, Attribute&amp; attr, mpl::true_)
+<span class="lineNum">     258 </span>            :         {
+<span class="lineNum">     259 </span>            :             traits::push_back(attr, val);
+<span class="lineNum">     260 </span>            :         }
+<span class="lineNum">     261 </span>            : 
+<span class="lineNum">     262 </span>            :         // T is a container (but not a string), generic overload
+<span class="lineNum">     263 </span>            :         template &lt;typename T_&gt;
+<span class="lineNum">     264 </span>            :         static void 
+<span class="lineNum">     265 </span>            :         append_to_container_not_string(T_ const&amp; val, Attribute&amp; attr, mpl::false_)
+<span class="lineNum">     266 </span>            :         {
+<span class="lineNum">     267 </span>            :             typedef typename traits::container_iterator&lt;T_ const&gt;::type
+<span class="lineNum">     268 </span>            :                 iterator_type;
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            :             iterator_type end = traits::end(val);
+<span class="lineNum">     271 </span>            :             for (iterator_type i = traits::begin(val); i != end; traits::next(i))
+<span class="lineNum">     272 </span>            :                 traits::push_back(attr, traits::deref(i));
+<span class="lineNum">     273 </span>            :         }
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span>            :         // T is a container (but not a string)
+<span class="lineNum">     276 </span>            :         template &lt;typename T_&gt;
+<span class="lineNum">     277 </span>            :         static void call(T_ const&amp; val, Attribute&amp; attr,  mpl::true_, mpl::false_)
+<span class="lineNum">     278 </span>            :         {
+<span class="lineNum">     279 </span>            :             typedef typename container_value&lt;Attribute&gt;::type value_type;
+<span class="lineNum">     280 </span>            :             typedef typename is_convertible&lt;T, value_type&gt;::type is_value_type;
+<span class="lineNum">     281 </span>            : 
+<span class="lineNum">     282 </span>            :             append_to_container_not_string(val, attr, is_value_type());
+<span class="lineNum">     283 </span>            :         }
+<span class="lineNum">     284 </span>            : 
+<span class="lineNum">     285 </span>            :         ///////////////////////////////////////////////////////////////////////
+<span class="lineNum">     286 </span>            :         // T is a string
+<span class="lineNum">     287 </span>            :         template &lt;typename Iterator&gt;
+<span class="lineNum">     288 </span>            :         static void append_to_string(Attribute&amp; attr, Iterator begin, Iterator end)
+<span class="lineNum">     289 </span>            :         {
+<span class="lineNum">     290 </span>            :             for (Iterator i = begin; i != end; ++i)
+<span class="lineNum">     291 </span>            :                 traits::push_back(attr, *i);
+<span class="lineNum">     292 </span>            :         }
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span>            :         // T is string, but not convertible to value_type of container
+<span class="lineNum">     295 </span>            :         template &lt;typename T_&gt;
+<span class="lineNum">     296 </span>            :         static void append_to_container(T_ const&amp; val, Attribute&amp; attr, mpl::false_)
+<span class="lineNum">     297 </span>            :         {
+<span class="lineNum">     298 </span>            :             typedef typename char_type_of&lt;T_&gt;::type char_type;
+<span class="lineNum">     299 </span>            : 
+<span class="lineNum">     300 </span>            :             append_to_string(attr, traits::get_begin&lt;char_type&gt;(val)
+<span class="lineNum">     301 </span>            :               , traits::get_end&lt;char_type&gt;(val));
+<span class="lineNum">     302 </span>            :         }
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span>            :         // T is string, and convertible to value_type of container
+<span class="lineNum">     305 </span>            :         template &lt;typename T_&gt;
+<span class="lineNum">     306 </span>            :         static void append_to_container(T_ const&amp; val, Attribute&amp; attr, mpl::true_)
+<span class="lineNum">     307 </span>            :         {
+<span class="lineNum">     308 </span>            :             traits::push_back(attr, val);
+<span class="lineNum">     309 </span>            :         }
+<span class="lineNum">     310 </span>            : 
+<span class="lineNum">     311 </span>            :         template &lt;typename T_, typename Pred&gt;
+<span class="lineNum">     312 </span>            :         static void call(T_ const&amp; val, Attribute&amp; attr, Pred, mpl::true_)
+<span class="lineNum">     313 </span>            :         {
+<span class="lineNum">     314 </span>            :             typedef typename container_value&lt;Attribute&gt;::type value_type;
+<span class="lineNum">     315 </span>            :             typedef typename is_convertible&lt;T, value_type&gt;::type is_value_type;
+<span class="lineNum">     316 </span>            : 
+<span class="lineNum">     317 </span>            :             append_to_container(val, attr, is_value_type());
+<span class="lineNum">     318 </span>            :         }
+<span class="lineNum">     319 </span>            : 
+<span class="lineNum">     320 </span>            :         ///////////////////////////////////////////////////////////////////////
+<span class="lineNum">     321 </span>            :         static void call(T const&amp; val, Attribute&amp; attr)
+<span class="lineNum">     322 </span>            :         {
+<span class="lineNum">     323 </span>            :             typedef typename traits::is_container&lt;T&gt;::type is_container;
+<span class="lineNum">     324 </span>            :             typedef typename traits::is_string&lt;T&gt;::type is_string;
+<span class="lineNum">     325 </span>            : 
+<span class="lineNum">     326 </span>            :             call(val, attr, is_container(), is_string());
+<span class="lineNum">     327 </span>            :         }
+<span class="lineNum">     328 </span>            :     };
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span>            :     template &lt;typename Attribute&gt;
+<span class="lineNum">     331 </span>            :     struct assign_to_container_from_value&lt;Attribute, Attribute&gt;
+<span class="lineNum">     332 </span>            :     {
+<span class="lineNum">     333 </span>            :         static void
+<span class="lineNum">     334 </span>            :         call(Attribute const&amp; val, Attribute&amp; attr)
+<span class="lineNum">     335 </span>            :         {
+<span class="lineNum">     336 </span>            :             attr = val;
+<span class="lineNum">     337 </span>            :         }
+<span class="lineNum">     338 </span>            :     };
+<span class="lineNum">     339 </span>            : 
+<span class="lineNum">     340 </span>            :     template &lt;typename Attribute, typename T&gt;
+<span class="lineNum">     341 </span>            :     struct assign_to_container_from_value&lt;Attribute, boost::optional&lt;T&gt;
+<span class="lineNum">     342 </span>            :       , typename disable_if&lt;is_same&lt;Attribute, boost::optional&lt;T&gt; &gt; &gt;::type&gt;
+<span class="lineNum">     343 </span>            :     {
+<span class="lineNum">     344 </span>            :         static void
+<span class="lineNum">     345 </span>            :         call(boost::optional&lt;T&gt; const&amp; val, Attribute&amp; attr)
+<span class="lineNum">     346 </span>            :         {
+<span class="lineNum">     347 </span>            :             assign_to(val.get(), attr);
+<span class="lineNum">     348 </span>            :         }
+<span class="lineNum">     349 </span>            :     };
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span>            :     template &lt;typename Attribute, typename T&gt;
+<span class="lineNum">     352 </span>            :     struct assign_to_container_from_value&lt;Attribute, reference_wrapper&lt;T&gt;
+<span class="lineNum">     353 </span>            :       , typename disable_if&lt;is_same&lt;Attribute, reference_wrapper&lt;T&gt; &gt; &gt;::type&gt;
+<span class="lineNum">     354 </span>            :     {
+<span class="lineNum">     355 </span>            :         static void
+<span class="lineNum">     356 </span>            :         call(reference_wrapper&lt;T&gt; const&amp; val, Attribute&amp; attr)
+<span class="lineNum">     357 </span>            :         {
+<span class="lineNum">     358 </span>            :             assign_to(val.get(), attr);
+<span class="lineNum">     359 </span>            :         }
+<span class="lineNum">     360 </span>            :     };
+<span class="lineNum">     361 </span>            : 
+<span class="lineNum">     362 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     363 </span>            :     namespace detail
+<span class="lineNum">     364 </span>            :     {
+<span class="lineNum">     365 </span>            :         // overload for non-container attributes
+<span class="lineNum">     366 </span>            :         template &lt;typename T, typename Attribute&gt;
+<span class="lineNum">     367 </span>            :         inline void
+<span class="lineNum">     368 </span>            :         assign_to(T const&amp; val, Attribute&amp; attr, mpl::false_)
+<span class="lineNum">     369 </span>            :         {
+<span class="lineNum">     370 </span>            :             assign_to_attribute_from_value&lt;Attribute, T&gt;::call(val, attr);
+<span class="lineNum">     371 </span>            :         }
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span>            :         // overload for containers (but not for variants or optionals
+<span class="lineNum">     374 </span>            :         // holding containers)
+<span class="lineNum">     375 </span>            :         template &lt;typename T, typename Attribute&gt;
+<span class="lineNum">     376 </span>            :         inline void
+<span class="lineNum">     377 </span>            :         assign_to(T const&amp; val, Attribute&amp; attr, mpl::true_)
+<span class="lineNum">     378 </span>            :         {
+<span class="lineNum">     379 </span>            :             assign_to_container_from_value&lt;Attribute, T&gt;::call(val, attr);
+<span class="lineNum">     380 </span>            :         }
+<span class="lineNum">     381 </span>            :     }
+<span class="lineNum">     382 </span>            : 
+<span class="lineNum">     383 </span>            :     template &lt;typename T, typename Attribute&gt;
+<span class="lineNum">     384 </span>            :     inline void
+<span class="lineNum">     385 </span>            :     assign_to(T const&amp; val, Attribute&amp; attr)
+<span class="lineNum">     386 </span>            :     {
+<span class="lineNum">     387 </span>            :         typedef typename mpl::and_&lt;
+<span class="lineNum">     388 </span>            :             traits::is_container&lt;Attribute&gt;
+<span class="lineNum">     389 </span>            :           , traits::not_is_variant&lt;Attribute&gt;
+<span class="lineNum">     390 </span>            :           , traits::not_is_optional&lt;Attribute&gt;
+<span class="lineNum">     391 </span>            :         &gt;::type is_not_wrapped_container;
+<span class="lineNum">     392 </span>            : 
+<span class="lineNum">     393 </span>            :         detail::assign_to(val, attr, is_not_wrapped_container());
+<span class="lineNum">     394 </span>            :     }
+<span class="lineNum">     395 </span>            : 
+<span class="lineNum">     396 </span>            :     template &lt;typename T&gt;
+<span class="lineNum">     397 </span>            :     inline void
+<span class="lineNum">     398 </span>            :     assign_to(T const&amp;, unused_type)
+<span class="lineNum">     399 </span>            :     {
+<span class="lineNum">     400 </span>            :     }
+<span class="lineNum">     401 </span>            : }}}
+<span class="lineNum">     402 </span>            : 
+<span class="lineNum">     403 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
