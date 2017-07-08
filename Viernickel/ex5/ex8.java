@@ -1,11 +1,14 @@
-import datastructure.*;
-import algorithm.*;
-import io.*;
-import java.lang.management.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 
-/** Main class that reads in a file of the specified format and calculates the
- * furthest vertex from vertex 1 and its distance.
- * 
+import datastructure.Node;
+import algorithm.Dijkstra;
+import io.Reader;
+import io.Writer;
+
+
+/** Main class that reads in a file of the specified format and calculates a
+ *  Steiner tree using all prime IDs as terminals.
  * Reads a file of the format:
  * nVertices nEdges
  * headId tailId weight
@@ -14,11 +17,12 @@ import java.lang.management.*;
  *          .
  *          .
  * 
- * Prints the result vertex and restult distance
+ * Prints the objective value of the resulting Steiner tree.
+ * 
  * @author Merlin Viernickel
- * @date June 08 2017
+ * @date July 06 2017
  */
-public class ex5 {
+public class ex8 {
     
     private static final String MYALGORITHM = "-m1";
     private static final String LIBALGORITHM = "-m2";
@@ -31,22 +35,31 @@ public class ex5 {
         long startWallClockTimeNano = System.nanoTime();
         long startUserTimeNano   = getUserTime();
         
-        Node[] nodes = Reader.readFile(args[1]);
-        Node furthestNode = null;
+        Node[] nodes;
+        boolean[] isTerminal;
+        long objectiveValue;
         
+        /** Read and save nodes and terminals */
+        nodes = Reader.readFile(args[1]);
+        isTerminal = new boolean[nodes.length];
+        for(int i=0; i<nodes.length; i++){
+            if(isPrime(i+1)){
+                isTerminal[i] = true;
+            }
+        }
+
+        
+        /** Calculate Steiner tree and objective value */
         /** Mode 0: Use custom Dijkstra implementation */
-        if(args[0].equals(MYALGORITHM))
-        {
+        if(args[0].equals(MYALGORITHM)){
             Dijkstra dijkstra = new Dijkstra(nodes);
-            dijkstra.calculateDistances(nodes[0]);
-            furthestNode = dijkstra.getHighestDistNode();
+            objectiveValue = dijkstra.calcSteinerTree(isTerminal, nodes[1]);
         /** Mode 1: Use library Dijkstra implementation */
         }else if(args[0].equals(LIBALGORITHM)){
-        	JGraphTDijkstra dijkstra = new JGraphTDijkstra(nodes);
-        	furthestNode = dijkstra.findFurthestNode(nodes[0]);
+            objectiveValue = 0;
         }else{
             System.out.println("Invalid Algorithm Mode.");
-            System.out.println("Proper usage: ex5 -m1 path/to/file/file.txt");
+            System.out.println("Proper usage: ex8 -m1 path/to/file/file.txt");
             return;
         }
         
@@ -56,12 +69,11 @@ public class ex5 {
         
         /** Get results */
         String fileName = args[1].split("/")[args[1].split("/").length-1];
-        String resultVertex = "RESULT VERTEX " + (furthestNode.id+1);
-        String resultDist = "RESULT DIST " + furthestNode.distance;
+        String resultValue = "RESULT OBJECTIVE VALUE " + (objectiveValue);
         String wallClockTime = "RESULT WALL-CLOCK TIME " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds";
         String userTime = "RESULT USER TIME " + (round(taskUserTimeNano/1000000000.0)) + " seconds";
         
-        String[] results = {fileName, resultVertex, resultDist, wallClockTime, userTime};
+        String[] results = {fileName, resultValue, wallClockTime, userTime};
         
         /** Print results */
         for(int i=0; i<results.length; i++){
@@ -74,7 +86,7 @@ public class ex5 {
         for(int i=0; i<pathSplit.length-1; i++){
             path = path + pathSplit[i] + "/";
         }
-        path = path + "ex5_results/";
+        path = path + "ex8_results/";
         Writer.write(results, path, fileName);
     }
     
@@ -89,4 +101,28 @@ public class ex5 {
         return bean.isCurrentThreadCpuTimeSupported() ?
             bean.getCurrentThreadUserTime() : 0L;
     }
+    
+    
+    /**
+     * Checks whether a certain number is prime.
+     * @param n The number to check
+     * @return True if number is prime. False if not.
+     */
+    public static boolean isPrime(int n){
+        assert(n>0);
+        
+        if(n<2){
+            return false;
+        }
+        if(n%2 == 0){
+            return false;
+        }
+        for(int i=3; i*i<=n; i=i+2){
+            if(n%i == 0){
+                return false;
+            }
+        }
+        return true;
+    }
 }
+

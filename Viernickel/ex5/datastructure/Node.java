@@ -11,6 +11,7 @@ public class Node implements Comparable<Node>{
     
     public int id;
     public int distance;
+    public Node predecessor;
     public ArrayList<Edge> edges;
     
     /**
@@ -20,6 +21,7 @@ public class Node implements Comparable<Node>{
     public Node(int id){
         this.id = id;
         this.distance = Integer.MAX_VALUE;
+        this.predecessor = null;
         this.edges = new ArrayList<Edge>();
     }
 
