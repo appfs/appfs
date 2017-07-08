@@ -128,7 +128,7 @@ int main(int argn, char *argv[]) {
 	s->steiner(vertexCount, *edges, *weights, startnode);
 	cout << "done" << endl;
 	Edges steinerEdges = s->getEdges();
-	GraphChecker* checker = new GraphChecker(steinerEdges, s->getNodeCount());
+	GraphChecker* checker = new GraphChecker(steinerEdges, s->getNodes());
 	cout << "Checking for cycle..." << flush;
 	if(checker->hasCycle()){
 		cout << "failed" << endl;
@@ -142,7 +142,6 @@ int main(int argn, char *argv[]) {
 		return 1;
 	}
 	cout << "passed" << endl;
-
 
 	cout << "Objective value: " << s->getWeight() << endl;
 

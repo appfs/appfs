@@ -28,9 +28,8 @@ public:
 	virtual ~Steiner();
 	void steiner(int vertexCount, Edges& edges, Weights& weights, int startnode);
 	int getWeight();
-	int getNodeCount();
 	Edges getEdges();
-	//Nodes getNodes();
+	Nodes getNodes();
 };
 
 #endif /* C_STEINER_H_ */

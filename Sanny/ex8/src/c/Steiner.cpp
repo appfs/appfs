@@ -19,11 +19,6 @@ Steiner::~Steiner() {
 	delete steinerEdges;
 }
 
-/** Getter for number of nodes */
-int Steiner::getNodeCount() {
-	return nodesInTree->size();
-}
-
 /** Getter for Edges in Steiner-tree */
 Edges Steiner::getEdges() {
 	return *steinerEdges;
@@ -32,6 +27,11 @@ Edges Steiner::getEdges() {
 /** Getter for Edges in Steiner-tree */
 int Steiner::getWeight() {
 	return steinerWeight;
+}
+
+/** Getter for Nodes in Steiner-tree */
+Nodes Steiner::getNodes() {
+	return *nodesInTree;
 }
 
 /** Computes all primes less than vertexCount */
