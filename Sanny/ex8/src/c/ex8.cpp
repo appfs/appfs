@@ -154,6 +154,7 @@ int main(int argn, char *argv[]) {
 	delete edges;
 	delete weights;
 	delete s;
+	delete checker;
 
 	return 0;
 }

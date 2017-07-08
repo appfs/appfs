@@ -71,7 +71,6 @@ void Steiner::steiner(int vertexCount, Edges& edges, Weights& weights, int start
 	if(std::find(primes.begin(), primes.end(), startnode) != primes.end()){
 		primes.erase(std::find(primes.begin(), primes.end(), startnode));
 	}
-	Nodes* nodesInTree = new Nodes();
 	nodesInTree->push_back(startnode);
 
 	// while there aren't all primes in the steiner-tree
