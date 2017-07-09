@@ -204,4 +204,18 @@ unsigned long edgeweight(
         unsigned int v1, 
         unsigned int v2,
         bool directed);
+
+/** @brief check if the subset is a steiner tree
+ * 
+ * @param g a graph
+ * @param terminal_mask masks terminals by 1, 0 elsewise
+ * @param tree_mask masks tree terminals by values > 1, terminals by values %2 = 1
+ * @param prev remembers predecessors of vertices
+ * @return if input describes a connected tree which attains all terminals. 
+ */
+bool check_steiner(
+		Graph *g,
+		unsigned int *terminal_mask,
+		unsigned int *tree_mask,
+		unsigned int *prev);
 #endif

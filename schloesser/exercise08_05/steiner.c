@@ -39,13 +39,23 @@ int main(int argc, char **argv) {
 // ##### find lengths of shortest paths to destination
     // measure time
     clock_t start = clock();
-    unsigned int *vertex_mask = get_primes(g->n_verts);
+
     // steiner tree connecting prime nodes
+    unsigned int *vertex_mask = get_primes(g->n_verts);
     unsigned int *prev = steiner(g, vertex_mask);
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
-
-    signed long objective = weight_of_tree(g, vertex_mask, prev);
+    
+	// check result
+	unsigned int *terminal_mask = get_primes(g->n_verts);
+	if (check_steiner(g, terminal_mask, vertex_mask, prev)) {
+		printf("Check succeeded.\n");
+	} else {
+		printf("Check failed.\n");
+	}
+   
+    // calculate objective
+	signed long objective = weight_of_tree(g, vertex_mask, prev);
 
 // ##### free memory of graph
     free_graph(g);
@@ -53,6 +63,7 @@ int main(int argc, char **argv) {
     free(prev);
 
     free(vertex_mask);
+    free(terminal_mask);
     printf("\n");
     printf("RESULT OBJECTIVE %li\n", objective);
     printf("RESULT TIME %f\n", seconds);

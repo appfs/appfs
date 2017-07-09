@@ -26,8 +26,8 @@ void update_neighbor_info(
             if (newdist < olddist) {
                 gs->distances[n] = newdist;
                 gs->prev[n] = curr;
+				decrease_value(gs->to_visit, n, gs->distances[n]);
             }
-			push_or_decrease_value(gs->to_visit, n, gs->distances[n]);
         }
     }
 }
@@ -51,6 +51,8 @@ void add_closest_terminal(
     // at i vertex_mask is 0 or 1 on vertices not contained in subgraph, 2 or 3 on vertices that are contained
 
     bool *visited = malloc(sizeof(*visited) * g->n_verts);
+    Heap *to_visit = malloc(sizeof(*to_visit));
+    construct_heap(to_visit, g->n_verts);
     // copy vertex_mask to mask (all visited and dist 0)
     for (int i = 0; i < g->n_verts; i++) {
         if (vertex_mask[i] > 1) {
@@ -59,6 +61,7 @@ void add_closest_terminal(
         } else {
             // on complement of subgraph everything is unvisited
             visited[i] = false;
+			push(to_visit, i, distances[i]);
         }
     }
 
@@ -66,9 +69,7 @@ void add_closest_terminal(
     gs->g = g;
     gs->distances = distances;
     gs->visited = visited;
-    Heap *to_visit = malloc(sizeof(*to_visit));
     gs->to_visit = to_visit; 
-    construct_heap(gs->to_visit, g->n_verts);
     gs->prev = prev;
 
     for (int i = 0; i < g->n_verts; i++) {
@@ -320,12 +321,12 @@ void join_closest_terminal(
     unsigned int walker = minv;
     // minv holds closest neighboring terminal
     while (vertex_mask[walker] < 2) {
-  //      printf("%d ", walker+1);
+//        printf("%d ", walker+1);
         vertex_mask[walker] = vertex_mask[walker]+2;
 		distances[walker] = 0;
         walker = prev[walker];
     }
-    //printf("\n");
+//    printf("\n");
 }
 
 unsigned long weight_of_tree(
@@ -363,3 +364,35 @@ unsigned long edgeweight(
         return weight;
     }
 }
+
+bool check_steiner(
+	Graph *g,
+	unsigned int *terminal_mask,
+	unsigned int *tree_mask,
+	unsigned int *prev
+	) {
+	
+	for (int i = 0; i < g->n_verts; i++) {
+		// attains all terminals
+		if (terminal_mask[i] == 1) {
+			if( tree_mask[i] != 3 ) {
+				return false;
+			}
+		}
+		if (tree_mask[i] > 1) {
+			// is connected and tree
+			unsigned int walker = i;
+			unsigned int count = 0;
+			while (prev[walker] != UINT_MAX && count < g->n_verts) {
+				assert( edgeweight(g, walker, prev[walker], false) < ULONG_MAX );
+				walker = prev[walker];
+				count++;
+			}
+			if (count > g->n_verts) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
