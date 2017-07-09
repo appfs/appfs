@@ -1,5 +1,5 @@
 compile:
-	g++ -std=c++0x -O3 -Wall ex8.cpp Dijkstra.cpp Steiner.cpp GraphChecker.cpp -o Ex6 -lboost_system -lboost_timer -lboost_program_options
+	g++ -std=c++0x -O3 -Wall ex8.cpp Dijkstra.cpp Steiner.cpp GraphChecker.cpp -o Ex6 -lboost_system -lboost_timer -lboost_program_options -fopenmp
 
 doc:
 	doxygen doxy

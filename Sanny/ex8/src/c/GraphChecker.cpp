@@ -16,6 +16,17 @@ GraphChecker::~GraphChecker() {
 	//nop
 }
 
+AdjacentsMap GraphChecker::makeAdjacentsMap() {
+	AdjacentsMap adjacentsMap = AdjacentsMap();
+	for (unsigned int i = 0; i < nodes.size(); i++) {
+		Adjacents* adjs = new Adjacents();
+		getAdjacents(nodes[i], adjs);
+		adjacentsMap.push_back(*adjs);
+		delete adjs;
+	}
+	return adjacentsMap;
+}
+
 void GraphChecker::getAdjacents(int node, Adjacents* adjs) {
 	// collect adjacents
 	for (unsigned int i = 0; i < edges.size(); i++) {
@@ -40,6 +51,7 @@ char GraphChecker::isConnected(){
 	AdjacentsMap adjacentsMap = makeAdjacentsMap();
 
 	char *visited = new char[nodes.size()];
+	#pragma omp parallel for
 	for (unsigned int i = 0; i < nodes.size(); i++){
 		visited[i] = 0;
 	}
@@ -71,22 +83,11 @@ char GraphChecker::isConnected(){
 	return 1;
 }
 
-AdjacentsMap GraphChecker::makeAdjacentsMap() {
-	AdjacentsMap adjacentsMap = AdjacentsMap();
-	for (unsigned int i = 0; i < nodes.size(); i++) {
-		Adjacents* adjs = new Adjacents();
-		getAdjacents(nodes[i], adjs);
-		adjacentsMap.push_back(*adjs);
-		delete adjs;
-	}
-	return adjacentsMap;
-}
-
 char GraphChecker::hasCycle(){
     char* visited = new char[nodes.size()];
 
 	AdjacentsMap adjacentsMap = makeAdjacentsMap();
-
+	#pragma omp parallel for
     for (unsigned int i = 0; i < nodes.size(); i++){
         visited[i] = 0;
     }
