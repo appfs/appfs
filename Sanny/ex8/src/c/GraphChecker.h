@@ -15,6 +15,7 @@ using Edge = std::pair<int, int >;
 using Edges = std::vector<Edge >;
 using Adjacent = std::pair<int, int >;
 using Adjacents = std::vector<Adjacent >;
+using AdjacentsMap = std::vector<Adjacents >;
 using Nodes = std::vector<int >;
 using NodesToVisit = std::queue<int >;
 
@@ -24,8 +25,9 @@ private:
 	Edges edges;
 	Nodes nodes;
 
-	char hasCycle(int node, char* visited, int parent);
+	char hasCycle(int node, char* visited, int parent, AdjacentsMap adjacentsMap);
 	void getAdjacents(int node, Adjacents* adjs);
+	AdjacentsMap makeAdjacentsMap();
 
 public:
 	char isConnected();
