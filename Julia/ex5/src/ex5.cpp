@@ -120,7 +120,7 @@ int main(int argc, char* argv[]){
 	}
 	else {
 		dijkstra myDijkstra(weights, edges, numberVertices);
-		weightMap = myDijkstra.computeShortestPath();
+		weightMap = myDijkstra.computeShortestPath(1);
 	}
 
 	//Compute the longest shortest path
