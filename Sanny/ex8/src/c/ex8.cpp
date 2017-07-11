@@ -81,7 +81,9 @@ int main(int argn, char *argv[]) {
 
 
 	string filename = vm["input-file"].as<string >();
-	filename += FILEEND;
+	if(filename.find(FILEEND) != std::string::npos){
+		filename += FILEEND;
+	}
 	cout << "Going to parse the file " << filename << endl;
 	fileStream.open(filename.c_str(), std::ios::in);
 
