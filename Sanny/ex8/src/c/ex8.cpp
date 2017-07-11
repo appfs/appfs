@@ -81,7 +81,7 @@ int main(int argn, char *argv[]) {
 
 
 	string filename = vm["input-file"].as<string >();
-	if(filename.find(FILEEND) != std::string::npos){
+	if(filename.find(FILEEND) == std::string::npos){
 		filename += FILEEND;
 	}
 	cout << "Going to parse the file " << filename << endl;
@@ -130,13 +130,22 @@ int main(int argn, char *argv[]) {
 	cout << "done" << endl << endl;
 
 	Steiner** steiners = new Steiner*[startnodes.size()];
+	cout << "Solves Steiner problem for startnodes ";
 	for(unsigned int i = 0; i < startnodes.size(); i++){
-		cout << "Solves Steiner problem for startnode " << startnodes[i] << "..." << flush;
+		cout << startnodes[i];
+		if(i != startnodes.size() - 1){
+			cout << ", ";
+		} else {
+			cout << endl;
+		}
+	}
+	#pragma omp parallel for
+	for(unsigned int i = 0; i < startnodes.size(); i++){
 		steiners[i] = new Steiner();
 		steiners[i]->steiner(vertexCount, edges, *weights, startnodes[i]);
-		cout << "done" << endl;
-		cout << "Objective value for startnode " << startnodes[i] << ": " << steiners[i]->getWeight() << endl << endl;
+		cout << "Objective value of Steiner-tree for startnode " << startnodes[i] << ": " << steiners[i]->getWeight() << endl;
 	}
+
 	Steiner* s = steiners[0];
 	int node = startnodes[0];
 	int weight = s->getWeight();
