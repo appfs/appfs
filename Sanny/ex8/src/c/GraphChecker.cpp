@@ -13,59 +13,18 @@ GraphChecker::GraphChecker(Edges edges, Nodes nodes) {
 }
 
 GraphChecker::~GraphChecker() {
-	// nop
+	//nop
 }
 
-char GraphChecker::isConnected(){
-	char *visited = new char[nodes.size()];
-	for (unsigned int i = 0; i < nodes.size(); i++){
-		visited[i] = 0;
-	}
-	NodesToVisit* nodesToVisit = new NodesToVisit();
-	nodesToVisit->push(0);
-	visited[0] = 1;
-
-	while(!nodesToVisit->empty()){
-		int nodeIndex = nodesToVisit->front();
-		nodesToVisit->pop();
+AdjacentsMap GraphChecker::makeAdjacentsMap() {
+	AdjacentsMap adjacentsMap = AdjacentsMap();
+	for (unsigned int i = 0; i < nodes.size(); i++) {
 		Adjacents* adjs = new Adjacents();
-		getAdjacents(nodes[nodeIndex], adjs);
-		for(unsigned int i = 0; i < adjs->size(); i++){
-			Adjacent adj = adjs->at(i);
-			if(visited[adj.first] == 0){
-				nodesToVisit->push(adj.first);
-				visited[adj.first] = 1;
-			}
-		}
+		getAdjacents(nodes[i], adjs);
+		adjacentsMap.push_back(*adjs);
 		delete adjs;
-
 	}
-	for (unsigned int i = 0; i < nodes.size(); i++){
-		if(visited[i] == 0){
-			delete [] visited;
-			return 0;
-		}
-	}
-	delete [] visited;
-	delete nodesToVisit;
-	return 1;
-}
-
-char GraphChecker::hasCycle(){
-    char* visited = new char[nodes.size()];
-    for (unsigned int i = 0; i < nodes.size(); i++){
-        visited[i] = 0;
-    }
-    for(unsigned int i = 0; i < nodes.size(); i++){
-    	if(visited[i] == 0){
-    		if (hasCycle(i, visited, -1) == 1){
-    			delete [] visited;
-    			return 1;
-    		}
-    	}
-    }
-    delete [] visited;
-	return 0;
+	return adjacentsMap;
 }
 
 void GraphChecker::getAdjacents(int node, Adjacents* adjs) {
@@ -88,27 +47,78 @@ void GraphChecker::getAdjacents(int node, Adjacents* adjs) {
 	}
 }
 
-char GraphChecker::hasCycle(int nodeIndex, char* visited, int parentIndex){
-	visited[nodeIndex] = 1;
-	int node = nodes[nodeIndex];
-	Adjacents* adjs = new Adjacents();
-	getAdjacents(node, adjs);
+char GraphChecker::isConnected(){
+	AdjacentsMap adjacentsMap = makeAdjacentsMap();
 
-    for (unsigned int i = 0; i < adjs->size(); i++){
-    	Adjacent adj = adjs->at(i);
+	char *visited = new char[nodes.size()];
+	#pragma omp parallel for
+	for (unsigned int i = 0; i < nodes.size(); i++){
+		visited[i] = 0;
+	}
+	NodesToVisit* nodesToVisit = new NodesToVisit();
+	nodesToVisit->push(0);
+	visited[0] = 1;
+
+	while(!nodesToVisit->empty()){
+		int nodeIndex = nodesToVisit->front();
+		nodesToVisit->pop();
+		Adjacents adjs = adjacentsMap[nodeIndex];
+		for(unsigned int i = 0; i < adjs.size(); i++){
+			Adjacent adj = adjs[i];
+			if(visited[adj.first] == 0){
+				nodesToVisit->push(adj.first);
+				visited[adj.first] = 1;
+			}
+		}
+
+	}
+	for (unsigned int i = 0; i < nodes.size(); i++){
+		if(visited[i] == 0){
+			delete [] visited;
+			return 0;
+		}
+	}
+	delete [] visited;
+	delete nodesToVisit;
+	return 1;
+}
+
+char GraphChecker::hasCycle(){
+    char* visited = new char[nodes.size()];
+
+	AdjacentsMap adjacentsMap = makeAdjacentsMap();
+	#pragma omp parallel for
+    for (unsigned int i = 0; i < nodes.size(); i++){
+        visited[i] = 0;
+    }
+    for(unsigned int i = 0; i < nodes.size(); i++){
+    	if(visited[i] == 0){
+    		if (hasCycle(i, visited, -1, adjacentsMap) == 1){
+    			delete [] visited;
+    			return 1;
+    		}
+    	}
+    }
+    delete [] visited;
+	return 0;
+}
+
+char GraphChecker::hasCycle(int nodeIndex, char* visited, int parentIndex, AdjacentsMap adjacentsMap){
+	visited[nodeIndex] = 1;
+	Adjacents adjs = adjacentsMap[nodeIndex];
+
+    for (unsigned int i = 0; i < adjs.size(); i++){
+    	Adjacent adj = adjs[i];
         if (!visited[adj.first]){
-           if (hasCycle(adj.first, visited, nodeIndex) == 1){
-        	   delete adjs;
+           if (hasCycle(adj.first, visited, nodeIndex, adjacentsMap) == 1){
         	   return 1;
            }
         }
 
         else if (adj.first != parentIndex){
-        	delete adjs;
         	return 1;
         }
     }
-    delete adjs;
 	return 0;
 }
 

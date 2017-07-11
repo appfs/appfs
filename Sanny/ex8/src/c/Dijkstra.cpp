@@ -19,6 +19,8 @@ Dijkstra::~Dijkstra() {
 WeightsAndPrenodeMap Dijkstra::dijkstra(int vertexCount, Edges& edges, Weights& weights, int source){
 	WeightsAndPrenodeMap weightAndNodeMap(vertexCount);
 	weightAndNodeMap[source].first = 0.;
+
+	#pragma omp parallel for
 	for(int i = 0; i<vertexCount; i++){
 		if(source == i){
 			continue;
@@ -28,6 +30,7 @@ WeightsAndPrenodeMap Dijkstra::dijkstra(int vertexCount, Edges& edges, Weights& 
 	}
 
 	NodeToEdgeMap vertexToEdges(vertexCount);
+	
 	for(unsigned int i = 0; i < edges.size(); i++){
 		Edge edge = edges[i];
 		vertexToEdges[edge.first].push_back(std::make_pair(edge.second, weights[i]));
@@ -46,7 +49,9 @@ WeightsAndPrenodeMap Dijkstra::dijkstra(int vertexCount, Edges& edges, Weights& 
 			continue;
 		}
 		vertexToEdges[vertex];
-		for(EdgeWithWeight edgeWithWeight : vertexToEdges[vertex]){
+		
+		for(unsigned int i = 0; i < vertexToEdges[vertex].size(); i++){
+			EdgeWithWeight edgeWithWeight = vertexToEdges[vertex][i];
 			if(weightAndNodeMap[edgeWithWeight.first].first <= weightAndNodeMap[vertex].first + edgeWithWeight.second){
 				continue;
 			}
