@@ -8,13 +8,11 @@
 #include "Steiner.h"
 
 Steiner::Steiner() {
-	dijsktra = new Dijkstra();
 	nodesInTree = new Nodes();
 	steinerEdges = new Edges();
 }
 
 Steiner::~Steiner() {
-	delete dijsktra;
 	delete nodesInTree;
 	delete steinerEdges;
 }
@@ -52,14 +50,23 @@ Primes Steiner::getPrimes(unsigned int vertexCount) {
 	return primes;
 }
 
-void Steiner::addToSteiner(Edge edge, unsigned int i, Weights& weights) {
+void Steiner::addToSteiner(Edge edge, unsigned int i, Weights* localWeights) {
 	steinerEdges->push_back(edge);
-	steinerWeight += weights[i];
-	weights[i] = 0;
+	steinerWeight += localWeights->at(i);
+	localWeights->at(i) = 0;
 }
 
 /** Uses prime numbers for terminals and solves the Steiner-tree problem */
-void Steiner::steiner(int vertexCount, Edges& edges, Weights& weights, int startnode) {
+void Steiner::steiner(int vertexCount, Edges* edges, Weights& weights, int startnode) {
+	NodeToEdgeMap* vertexToEdges = new NodeToEdgeMap(vertexCount);
+	for(unsigned int i = 0; i < edges->size(); i++){
+		Edge edge = edges->at(i);
+		vertexToEdges->at(edge.first).push_back(std::make_pair(edge.second, i));
+		vertexToEdges->at(edge.second).push_back(std::make_pair(edge.first, i));
+	}
+	Weights* localWeights = new Weights(weights);
+
+	Dijkstra* dijsktra = new Dijkstra(vertexCount, vertexToEdges, localWeights);
 	steinerEdges->clear();
 	nodesInTree->clear();
 
@@ -76,12 +83,13 @@ void Steiner::steiner(int vertexCount, Edges& edges, Weights& weights, int start
 	// while there aren't all primes in the steiner-tree
 	while(!primes.empty()){
 		//compute distances
-		WeightsAndPrenodeMap map = dijsktra->dijkstra(vertexCount, edges, weights, startnode);
+		Weights w = *localWeights;
+		WeightsAndPrenodeMap map = dijsktra->dijkstra(startnode);
 		int primeToAdd = 0;
 		int distToPrime = INT_MAX;
 		//go through all missing primes and find the nearest
 		for (unsigned int i = 0; i<primes.size(); i++){
-			int prime = primes.at(i);
+			int prime = primes[i];
 			if(map[prime].first < distToPrime){
 				primeToAdd = prime;
 				distToPrime = map[prime].first;
@@ -97,14 +105,10 @@ void Steiner::steiner(int vertexCount, Edges& edges, Weights& weights, int start
 			}
 			// add node and edge to steiner-tree and set edgeweight to 0 for included steinerEdges
 			nodesInTree->push_back(node);
-			for (unsigned int i = 0; i < edges.size(); i++) {
-				Edge edge = edges.at(i);
-				if(edge.first == node && edge.second == preNode){
-					addToSteiner(edge, i, weights);
-					break;
-				}
-				if(edge.second == node && edge.first == preNode){
-					addToSteiner(edge, i, weights);
+			EdgeWithIndexList edgesFromNode = vertexToEdges->at(node);
+			for (unsigned int i = 0; i < edgesFromNode.size(); i++) {
+				if(preNode == edgesFromNode[i].first){
+					addToSteiner(std::make_pair(preNode, node), edgesFromNode[i].second, localWeights);
 					break;
 				}
 			}
@@ -115,5 +119,8 @@ void Steiner::steiner(int vertexCount, Edges& edges, Weights& weights, int start
 		primes.erase(std::find(primes.begin(), primes.end(), primeToAdd));
 	}
 
+	delete dijsktra;
+	delete localWeights;
+	delete vertexToEdges;
 }
 

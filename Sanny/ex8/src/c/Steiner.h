@@ -19,14 +19,13 @@ private:
 	int steinerWeight = 0;
 	Nodes* nodesInTree;
 	Edges* steinerEdges;
-	Dijkstra* dijsktra;
 	Primes getPrimes(unsigned int vertexCount);
-	void addToSteiner(Edge edge, unsigned int i, Weights& weights);
+	void addToSteiner(Edge edge, unsigned int i, Weights* weights);
 
 public:
 	Steiner();
 	virtual ~Steiner();
-	void steiner(int vertexCount, Edges& edges, Weights& weights, int startnode);
+	void steiner(int vertexCount, Edges* edges, Weights& weights, int startnode);
 	int getWeight();
 	Edges getEdges();
 	Nodes getNodes();
