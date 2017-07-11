@@ -36,8 +36,8 @@ class dijkstra {
 public:
 	dijkstra(WeightMap, Edges, unsigned int);
 
-	void computeShortestPath(int, WeightMap&, std::vector<int>&);
-	void updateEdgeWeight(int, int);
+	void computeShortestPath(unsigned int, WeightMap&, std::vector<int>&);
+	int setEdgeWeightToZero(int, int);
 
 private:
 	SortedEdges sortedEdges;

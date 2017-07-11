@@ -10,50 +10,64 @@
 #include "Steiner.h"
 #include <iostream>
 #include <climits>
+#include <algorithm>
 
+/**
+ * \fn Constructor
+ * \brief Construct a Steiner instance by initializing numberOfVertices, edges and weights. Computes also the terminals of the graph.
+ */
 Steiner::Steiner(int numberOfVertices, Edges edges, WeightMap weights):
 	numberOfVertices(numberOfVertices), edges(edges), weights(weights){
 	terminals = computePrimes();
-	for(int prime : terminals){
-		std::cout << "terminal " << prime << std::endl;
-	}
+	objectiveValue = 0;
 }
 
-Edges Steiner::solve(int startNode){
+/**
+ * \fn Edges solve(int startNode)
+ * \brief Solves the Steiner problem for a given start node
+ * \return Edges of the minimal spanning tree
+ */
+Edges Steiner::solve(unsigned int startNode){
 	Edges result;
-	VisitedMap alreadyAdded(numberOfVertices);
-	for(int i = 0; i <=numberOfVertices; i++){
-		alreadyAdded[i] = false;
-	}
-	dijkstra myDijkstra(weights, edges, numberOfVertices);
-	int counter = 0;
-	WeightMap weightMap(numberOfVertices);
-	std::vector<int> predecessorMap(numberOfVertices);
+	VisitedMap alreadyAdded(numberOfVertices, false);
 
-	while(counter <= terminals.size()){
+	dijkstra myDijkstra(weights, edges, numberOfVertices);
+	WeightMap weightMap(numberOfVertices, INT_MAX);
+	std::vector<int> predecessorMap(numberOfVertices, -1);
+
+	while(!terminals.empty()){
 		myDijkstra.computeShortestPath(startNode, weightMap, predecessorMap);
-		for(int weight : weightMap){
-			std::cout << "weight for round" << counter << " " << weight << std::endl;
-		}
+
 		int vertexToAdd = findNearestTerminal(weightMap);
-		std::cout << "nearest terminal " << vertexToAdd << std::endl;
+		//Remove nearest terminal from terminal list
+		terminals.erase(std::find(terminals.begin(), terminals.end(), vertexToAdd));
 		while(vertexToAdd != startNode){
+			//break if vertexToAdd is already in the edgeList. Means, that also all predecessors are in the list.
 			if(alreadyAdded[vertexToAdd]){
 				break;
 			}
+
 			result.push_back(std::make_pair(vertexToAdd, predecessorMap[vertexToAdd]));
-			myDijkstra.updateEdgeWeight(vertexToAdd, predecessorMap[vertexToAdd]);
-			myDijkstra.updateEdgeWeight(predecessorMap[vertexToAdd], vertexToAdd);
+			//Update both edge-weights, for edge vertexToAdd-Predecessor and vice-versa
+			objectiveValue += myDijkstra.setEdgeWeightToZero(vertexToAdd, predecessorMap[vertexToAdd]);
+			myDijkstra.setEdgeWeightToZero(predecessorMap[vertexToAdd], vertexToAdd);
+
 			alreadyAdded[vertexToAdd] = true;
 			vertexToAdd = predecessorMap[vertexToAdd];
 		}
-		counter++;
 	}
-
-
 	return result;
 }
 
+int Steiner::getObjectiveValue(){
+	return objectiveValue;
+}
+
+/*
+ * \fn int findNearestTerminal(WeightMap)
+ * \brief finds the lowest weight of a terminal in a weight-map
+ * \return index of the nearest terminal
+ */
 int Steiner::findNearestTerminal(WeightMap weightMap){
 	int nearestWeight = INT_MAX;
 	int nearestVertex = 0;
@@ -66,8 +80,12 @@ int Steiner::findNearestTerminal(WeightMap weightMap){
 	return nearestVertex;
 }
 
-
-bool Steiner::hasDivider(const std::vector<int>& result, int i) {
+/*
+ * \fn bool hasDivisor(std::vector<int>, int)
+ * \brief computes if an int has a divisor in a list of ints
+ * \return true, if it has a divisor, otherwise false
+ */
+bool Steiner::hasDivisor(const std::vector<int>& result, int i) {
 	for (int prime : result) {
 		if ((i % prime) == 0 || prime/2 >= i) {
 			return true;
@@ -75,11 +93,16 @@ bool Steiner::hasDivider(const std::vector<int>& result, int i) {
 	}return false;
 }
 
+/*
+ * \fn std::vector<int> computePrimes()
+ * \brief computes all primes in range from 2 to numberOfVertices
+ * \return vector of all primes
+ */
 std::vector<int> Steiner::computePrimes(){
 	std::vector<int> result;
 	result.push_back(2);
 	for(int i = 3; i<numberOfVertices; i++){
-		if(!hasDivider(result, i)){
+		if(!hasDivisor(result, i)){
 			result.push_back(i);
 		}
 	}
