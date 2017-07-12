@@ -4,9 +4,12 @@
  * @brief Main programm fulfilling ex8
  */
 
+#include <limits.h>
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <omp.h>
 #include "graph.h"
 #include "misc.h"
 
@@ -37,36 +40,53 @@ int main(int argc, char **argv) {
     free(edges);
 
 // ##### find lengths of shortest paths to destination
-    // measure time
-    clock_t start = clock();
-
     // steiner tree connecting prime nodes
-    unsigned int *vertex_mask = get_primes(g->n_verts);
-    unsigned int *prev = steiner_modified(g, 2, vertex_mask);
-    clock_t end = clock();
-    float seconds = (float)(end - start) / CLOCKS_PER_SEC;
+    unsigned int *mask = get_primes(g->n_verts);
+	unsigned long *erg = malloc(sizeof(*erg) * g->n_verts);
+
+	# pragma omp parallel for 
+	for(int i = 0; i < g->n_verts; i++) { // find the best result
+		erg[i] = ULONG_MAX;
+		if (mask[i]==0) {
+			continue;
+		}
+	    unsigned int *vertex_mask = malloc(sizeof(*vertex_mask) * g->n_verts);
+		memcpy(vertex_mask, mask, sizeof(*vertex_mask) * g->n_verts);
+	    unsigned int *terminal_mask = malloc(sizeof(*vertex_mask) * g->n_verts);
+		memcpy(terminal_mask, mask, sizeof(*vertex_mask) * g->n_verts);
+
+		unsigned int *prev = steiner_modified(g, i+1, vertex_mask);
     
-	// check result
-	unsigned int *terminal_mask = get_primes(g->n_verts);
-	if (check_steiner(g, terminal_mask, vertex_mask, prev)) {
-		printf("Check succeeded.\n");
-	} else {
-		printf("Check failed.\n");
+		// check result
+		/*if (check_steiner(g, terminal_mask, vertex_mask, prev)) {
+			printf("Check succeeded. (start node %d)\n", i+1);
+		} else {
+			printf("Check failed.\n");
+		}*/
+	   
+		// calculate objective
+		signed long objective = weight_of_tree(g, vertex_mask, prev);
+		erg[i] = objective;
+		//printf("OBJECTIVE %li (start node %d)\n", objective, i+1);
+
+		free(prev);
+	    free(vertex_mask);
+	    free(terminal_mask);
 	}
-   
-    // calculate objective
-	signed long objective = weight_of_tree(g, vertex_mask, prev);
+
+	unsigned long min = ULONG_MAX;
+	for(int i = 0; i < g->n_verts; i++) {
+		if(erg[i] < min) {
+			min = erg[i];	
+		}
+	}
+	printf("MINIMAL OBJECTIVE VALUE %li\n", min);
 
 // ##### free memory of graph
     free_graph(g);
     free(g);
-    free(prev);
+	free(mask);
 
-    free(vertex_mask);
-    free(terminal_mask);
-    printf("\n");
-    printf("RESULT OBJECTIVE %li\n", objective);
-    printf("RESULT TIME %f\n", seconds);
     return 0; // everything went fine (hopefully)
 }
 

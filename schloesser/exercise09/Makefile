@@ -1,4 +1,4 @@
-CFLAGS= -std=c11 -Wall -g -lm -fprofile-arcs -ftest-coverage -lgcov
+CFLAGS= -std=c11 -Wall -g -lm -fprofile-arcs -ftest-coverage -lgcov -fopenmp
 CC=gcc
 LIBSDIR=../library/
 
