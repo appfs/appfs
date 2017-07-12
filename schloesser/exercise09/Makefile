@@ -1,50 +1,24 @@
 CFLAGS= -std=c11 -Wall -g -lm -fprofile-arcs -ftest-coverage -lgcov
 CC=gcc
-OBJ=graph.o misc.o heap.o
-HEADERS=graph.h misc.h heap.h
+LIBSDIR=../library/
 
-default: ex8
-all: ex5 ex8
+default: main
+all: main 
 
-.PHONY: clean all default run5 run8 valgrind5 valgrind8 doc ex5 ex8 check5 check8 coverage5 coverage8
+.PHONY: clean all deps default run valgrind main check 
 
-%.o: %.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $< -o $@
+main: deps
+	$(CC) -o main steiner_modified.c $(CFLAGS) $(LIBSDIR)*.c -I$(LIBSDIR)
 
-ex5: $(OBJ)
-	$(CC) -o ex5 longest_shortest.c $^ $(CFLAGS)
+deps: 
+	$(MAKE) -C $(LIBSDIR) clean
+	$(MAKE) -C $(LIBSDIR)
 
-ex8: $(OBJ)
-	$(CC) -o ex8 steiner.c $^ $(CFLAGS)
+run: main
+	./main ../data/small.gph
 
-run5: ex5
-	./ex5 ../data/small.gph
-
-valgrind5: ex5
-	valgrind ./ex5 ../data/small.gph
-
-check5: 
-	cppcheck graph.c graph.h longest_shortest.c 2> cppcheck5.txt
-
-coverage5: run5
-	gcov longest_shortest.c graph.c misc.c heap.c
-
-run8: ex8
-	./ex8 ../data/small.gph
-
-valgrind8: ex8
-	valgrind ./ex8 ../data/small.gph
-
-coverage8: run8
-	gcov steiner.gph graph.c misc.c heap.c
-
-check8:
-	cppcheck graph.c graph.h steiner.c 2> cppcheck8.txt
+valgrind: main
+	valgrind ./main ../data/small.gph
 
 clean:
-	rm -f *.o ex5 ex8 *.c.gcov *.gcno *.gcda
-	rm -rf html
-	rm -rf latex
-
-doc:
-	doxygen dox-conf
+	rm -f *.o main *.gcno *.gcda

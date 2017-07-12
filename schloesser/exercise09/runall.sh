@@ -9,5 +9,5 @@ for f in $FILES
 do
     echo "Processing file $f..."
     echo $f >> $OUTFILE 
-    (time ./ex5 $f) &>> $OUTFILE
+    (time ./main $f) &>> $OUTFILE
 done
