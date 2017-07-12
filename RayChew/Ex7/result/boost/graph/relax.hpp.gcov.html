@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/graph/relax.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">boost/graph</a> - relax.hpp<span style="font-size: 80%;"> (source / <a href="relax.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntryMed">78.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : //=======================================================================</a>
+<span class="lineNum">       2 </span>            : // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
+<span class="lineNum">       3 </span>            : // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek,
+<span class="lineNum">       4 </span>            : //
+<span class="lineNum">       5 </span>            : // Distributed under the Boost Software License, Version 1.0. (See
+<span class="lineNum">       6 </span>            : // accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       7 </span>            : // http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : //=======================================================================
+<span class="lineNum">       9 </span>            : #ifndef BOOST_GRAPH_RELAX_HPP
+<span class="lineNum">      10 </span>            : #define BOOST_GRAPH_RELAX_HPP
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &lt;functional&gt;
+<span class="lineNum">      13 </span>            : #include &lt;boost/limits.hpp&gt; // for numeric limits
+<span class="lineNum">      14 </span>            : #include &lt;boost/graph/graph_traits.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &lt;boost/property_map/property_map.hpp&gt;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : namespace boost {
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            :     // The following version of the plus functor prevents
+<span class="lineNum">      20 </span>            :     // problems due to overflow at positive infinity.
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            :     template &lt;class T&gt;
+<span class="lineNum">      23 </span>            :     struct closed_plus
+<span class="lineNum">      24 </span>            :     {
+<span class="lineNum">      25 </span>            :       const T inf;
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            :       closed_plus() : inf((std::numeric_limits&lt;T&gt;::max)()) { }
+<span class="lineNum">      28 </span>            :       closed_plus(T inf) : inf(inf) { }
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            :       T operator()(const T&amp; a, const T&amp; b) const {
+<span class="lineNum">      31 </span>            :         using namespace std;
+<span class="lineNum">      32 </span><span class="lineCov">    2000000 :        if (a == inf) return inf;</span>
+<span class="lineNum">      33 </span><span class="lineCov">    2000000 :        if (b == inf) return inf;</span>
+<span class="lineNum">      34 </span><span class="lineCov">    2000000 :        return a + b;</span>
+<span class="lineNum">      35 </span>            :       }
+<span class="lineNum">      36 </span>            :     };
+<span class="lineNum">      37 </span>            :     
+<span class="lineNum">      38 </span>            :     template &lt;class Graph, class WeightMap, 
+<a name="39"><span class="lineNum">      39 </span>            :             class PredecessorMap, class DistanceMap, </a>
+<span class="lineNum">      40 </span>            :             class BinaryFunction, class BinaryPredicate&gt;
+<span class="lineNum">      41 </span><span class="lineCov">     500000 :     bool relax(typename graph_traits&lt;Graph&gt;::edge_descriptor e, </span>
+<span class="lineNum">      42 </span>            :                const Graph&amp; g, const WeightMap&amp; w, 
+<span class="lineNum">      43 </span>            :                PredecessorMap&amp; p, DistanceMap&amp; d, 
+<span class="lineNum">      44 </span>            :                const BinaryFunction&amp; combine, const BinaryPredicate&amp; compare)
+<span class="lineNum">      45 </span>            :     {
+<span class="lineNum">      46 </span>            :       typedef typename graph_traits&lt;Graph&gt;::directed_category DirCat;
+<span class="lineNum">      47 </span>            :       bool is_undirected = is_same&lt;DirCat, undirected_tag&gt;::value;
+<span class="lineNum">      48 </span>            :       typedef typename graph_traits&lt;Graph&gt;::vertex_descriptor Vertex;
+<span class="lineNum">      49 </span>            :       Vertex u = source(e, g), v = target(e, g);
+<span class="lineNum">      50 </span>            :       typedef typename property_traits&lt;DistanceMap&gt;::value_type D;
+<span class="lineNum">      51 </span>            :       typedef typename property_traits&lt;WeightMap&gt;::value_type W;
+<span class="lineNum">      52 </span><span class="lineCov">    1000000 :       const D d_u = get(d, u);</span>
+<span class="lineNum">      53 </span><span class="lineCov">     500000 :       const D d_v = get(d, v);</span>
+<span class="lineNum">      54 </span>            :       const W&amp; w_e = get(w, e);
+<span class="lineNum">      55 </span>            :       
+<span class="lineNum">      56 </span>            :       // The seemingly redundant comparisons after the distance puts are to
+<span class="lineNum">      57 </span>            :       // ensure that extra floating-point precision in x87 registers does not
+<span class="lineNum">      58 </span>            :       // lead to relax() returning true when the distance did not actually
+<span class="lineNum">      59 </span>            :       // change.
+<span class="lineNum">      60 </span><span class="lineCov">     500000 :       if ( compare(combine(d_u, w_e), d_v) ) {</span>
+<span class="lineNum">      61 </span>            :         put(d, v, combine(d_u, w_e));
+<span class="lineNum">      62 </span><span class="lineCov">     131238 :         if (compare(get(d, v), d_v)) {</span>
+<span class="lineNum">      63 </span><span class="lineCov">     131238 :           put(p, v, u);</span>
+<span class="lineNum">      64 </span><span class="lineCov">     131238 :           return true;</span>
+<span class="lineNum">      65 </span>            :         } else {
+<span class="lineNum">      66 </span>            :           return false;
+<span class="lineNum">      67 </span>            :         }
+<span class="lineNum">      68 </span><span class="lineCov">     368762 :       } else if (is_undirected &amp;&amp; compare(combine(d_v, w_e), d_u)) {</span>
+<span class="lineNum">      69 </span>            :         put(d, u, combine(d_v, w_e));
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :         if (compare(get(d, u), d_u)) {</span>
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :           put(p, u, v);</span>
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :           return true;</span>
+<span class="lineNum">      73 </span>            :         } else {
+<span class="lineNum">      74 </span>            :           return false;
+<span class="lineNum">      75 </span>            :         }
+<span class="lineNum">      76 </span>            :       } else
+<span class="lineNum">      77 </span>            :         return false;
+<span class="lineNum">      78 </span>            :     }
+<span class="lineNum">      79 </span>            :     
+<span class="lineNum">      80 </span>            :     template &lt;class Graph, class WeightMap, 
+<span class="lineNum">      81 </span>            :       class PredecessorMap, class DistanceMap&gt;
+<span class="lineNum">      82 </span>            :     bool relax(typename graph_traits&lt;Graph&gt;::edge_descriptor e,
+<span class="lineNum">      83 </span>            :                const Graph&amp; g, WeightMap w, PredecessorMap p, DistanceMap d)
+<span class="lineNum">      84 </span>            :     {
+<span class="lineNum">      85 </span>            :       typedef typename property_traits&lt;DistanceMap&gt;::value_type D;
+<span class="lineNum">      86 </span>            :       typedef closed_plus&lt;D&gt; Combine;
+<span class="lineNum">      87 </span>            :       typedef std::less&lt;D&gt; Compare;
+<span class="lineNum">      88 </span>            :       return relax(e, g, w, p, d, Combine(), Compare());
+<span class="lineNum">      89 </span>            :     }
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : } // namespace boost
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : #endif /* BOOST_GRAPH_RELAX_HPP */
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/lambda/detail/operator_lambda_func_base.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">boost/lambda/detail</a> - operator_lambda_func_base.hpp<span style="font-size: 80%;"> (source / <a href="operator_lambda_func_base.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // Boost Lambda Library  - operator_lambda_func_base.hpp -----------------</a>
+<span class="lineNum">       2 </span>            : //
+<span class="lineNum">       3 </span>            : // Copyright (C) 1999, 2000 Jaakko Jarvi (jaakko.jarvi@cs.utu.fi)
+<span class="lineNum">       4 </span>            : //
+<span class="lineNum">       5 </span>            : // Distributed under the Boost Software License, Version 1.0. (See
+<span class="lineNum">       6 </span>            : // accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       7 </span>            : // http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : //
+<span class="lineNum">       9 </span>            : // For more information, see www.boost.org
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : // ------------------------------------------------------------
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #ifndef BOOST_LAMBDA_OPERATOR_LAMBDA_FUNC_BASE_HPP
+<span class="lineNum">      14 </span>            : #define BOOST_LAMBDA_OPERATOR_LAMBDA_FUNC_BASE_HPP
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : namespace boost { 
+<span class="lineNum">      17 </span>            : namespace lambda {
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : // These operators cannot be implemented as apply functions of action 
+<span class="lineNum">      21 </span>            : // templates
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : // Specialization for comma.
+<span class="lineNum">      25 </span>            : template&lt;class Args&gt;
+<span class="lineNum">      26 </span>            : class lambda_functor_base&lt;other_action&lt;comma_action&gt;, Args&gt; {
+<span class="lineNum">      27 </span>            : public:
+<span class="lineNum">      28 </span>            :   Args args;
+<span class="lineNum">      29 </span>            : public:
+<span class="lineNum">      30 </span>            :   explicit lambda_functor_base(const Args&amp; a) : args(a) {}
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            :   template&lt;class RET, CALL_TEMPLATE_ARGS&gt;
+<span class="lineNum">      33 </span>            :   RET call(CALL_FORMAL_ARGS) const {
+<span class="lineNum">      34 </span>            :     return detail::select(boost::tuples::get&lt;0&gt;(args), CALL_ACTUAL_ARGS), 
+<span class="lineNum">      35 </span>            :            detail::select(boost::tuples::get&lt;1&gt;(args), CALL_ACTUAL_ARGS); 
+<span class="lineNum">      36 </span>            :   }
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :   template&lt;class SigArgs&gt; struct sig { 
+<span class="lineNum">      40 </span>            :   private:
+<span class="lineNum">      41 </span>            :     typedef typename
+<span class="lineNum">      42 </span>            :       detail::deduce_argument_types&lt;Args, SigArgs&gt;::type rets_t;      
+<span class="lineNum">      43 </span>            :   public:
+<span class="lineNum">      44 </span>            :     typedef typename return_type_2_comma&lt; // comma needs special handling
+<span class="lineNum">      45 </span>            :       typename detail::element_or_null&lt;0, rets_t&gt;::type,
+<span class="lineNum">      46 </span>            :       typename detail::element_or_null&lt;1, rets_t&gt;::type
+<span class="lineNum">      47 </span>            :     &gt;::type type;
+<span class="lineNum">      48 </span>            :   };
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : };  
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : namespace detail {
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : // helper traits to make the expression shorter, takes binary action
+<span class="lineNum">      55 </span>            : // bound argument tuple, open argument tuple and gives the return type
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : template&lt;class Action, class Bound, class Open&gt; class binary_rt {
+<span class="lineNum">      58 </span>            :   private:
+<span class="lineNum">      59 </span>            :     typedef typename
+<span class="lineNum">      60 </span>            :       detail::deduce_argument_types&lt;Bound, Open&gt;::type rets_t;      
+<span class="lineNum">      61 </span>            :   public:
+<span class="lineNum">      62 </span>            :     typedef typename return_type_2_prot&lt;
+<span class="lineNum">      63 </span>            :       Action,  
+<span class="lineNum">      64 </span>            :       typename detail::element_or_null&lt;0, rets_t&gt;::type,
+<span class="lineNum">      65 </span>            :       typename detail::element_or_null&lt;1, rets_t&gt;::type
+<span class="lineNum">      66 </span>            :     &gt;::type type;
+<span class="lineNum">      67 </span>            : };
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            :   // same for unary actions
+<span class="lineNum">      71 </span>            : template&lt;class Action, class Bound, class Open&gt; class unary_rt {
+<span class="lineNum">      72 </span>            :   private:
+<span class="lineNum">      73 </span>            :     typedef typename
+<span class="lineNum">      74 </span>            :       detail::deduce_argument_types&lt;Bound, Open&gt;::type rets_t;      
+<span class="lineNum">      75 </span>            :   public:
+<span class="lineNum">      76 </span>            :     typedef typename return_type_1_prot&lt;
+<span class="lineNum">      77 </span>            :       Action,  
+<span class="lineNum">      78 </span>            :       typename detail::element_or_null&lt;0, rets_t&gt;::type
+<span class="lineNum">      79 </span>            :     &gt;::type type;
+<span class="lineNum">      80 </span>            : };
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : } // end detail
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : // Specialization for logical and (to preserve shortcircuiting)
+<span class="lineNum">      86 </span>            : // this could be done with a macro as the others, code used to be different
+<span class="lineNum">      87 </span>            : template&lt;class Args&gt;
+<span class="lineNum">      88 </span>            : class lambda_functor_base&lt;logical_action&lt;and_action&gt;, Args&gt; {
+<span class="lineNum">      89 </span>            : public:
+<span class="lineNum">      90 </span>            :   Args args;
+<span class="lineNum">      91 </span>            : public:
+<span class="lineNum">      92 </span>            :   explicit lambda_functor_base(const Args&amp; a) : args(a) {}
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            :   template&lt;class RET, CALL_TEMPLATE_ARGS&gt;
+<span class="lineNum">      95 </span>            :   RET call(CALL_FORMAL_ARGS) const {
+<span class="lineNum">      96 </span>            :     return detail::select(boost::tuples::get&lt;0&gt;(args), CALL_ACTUAL_ARGS) &amp;&amp; 
+<span class="lineNum">      97 </span>            :            detail::select(boost::tuples::get&lt;1&gt;(args), CALL_ACTUAL_ARGS); 
+<span class="lineNum">      98 </span>            :   }
+<span class="lineNum">      99 </span>            :   template&lt;class SigArgs&gt; struct sig { 
+<span class="lineNum">     100 </span>            :     typedef typename
+<span class="lineNum">     101 </span>            :       detail::binary_rt&lt;logical_action&lt;and_action&gt;, Args, SigArgs&gt;::type type;
+<span class="lineNum">     102 </span>            :   };      
+<span class="lineNum">     103 </span>            : };  
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            : // Specialization for logical or (to preserve shortcircuiting)
+<span class="lineNum">     106 </span>            : // this could be done with a macro as the others, code used to be different
+<span class="lineNum">     107 </span>            : template&lt;class Args&gt;
+<span class="lineNum">     108 </span>            : class lambda_functor_base&lt;logical_action&lt; or_action&gt;, Args&gt; {
+<span class="lineNum">     109 </span>            : public:
+<span class="lineNum">     110 </span>            :   Args args;
+<span class="lineNum">     111 </span>            : public:
+<span class="lineNum">     112 </span>            :   explicit lambda_functor_base(const Args&amp; a) : args(a) {}
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :   template&lt;class RET, CALL_TEMPLATE_ARGS&gt;
+<span class="lineNum">     115 </span>            :   RET call(CALL_FORMAL_ARGS) const {
+<span class="lineNum">     116 </span>            :     return detail::select(boost::tuples::get&lt;0&gt;(args), CALL_ACTUAL_ARGS) || 
+<span class="lineNum">     117 </span>            :            detail::select(boost::tuples::get&lt;1&gt;(args), CALL_ACTUAL_ARGS); 
+<span class="lineNum">     118 </span>            :   }
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            :   template&lt;class SigArgs&gt; struct sig { 
+<span class="lineNum">     121 </span>            :     typedef typename
+<span class="lineNum">     122 </span>            :       detail::binary_rt&lt;logical_action&lt;or_action&gt;, Args, SigArgs&gt;::type type;
+<span class="lineNum">     123 </span>            :   };      
+<span class="lineNum">     124 </span>            : };  
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            : // Specialization for subscript
+<span class="lineNum">     127 </span>            : template&lt;class Args&gt;
+<span class="lineNum">     128 </span>            : class lambda_functor_base&lt;other_action&lt;subscript_action&gt;, Args&gt; {
+<span class="lineNum">     129 </span>            : public:
+<span class="lineNum">     130 </span>            :   Args args;
+<span class="lineNum">     131 </span>            : public:
+<span class="lineNum">     132 </span>            :   explicit lambda_functor_base(const Args&amp; a) : args(a) {}
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            :   template&lt;class RET, CALL_TEMPLATE_ARGS&gt;
+<span class="lineNum">     135 </span>            :   RET call(CALL_FORMAL_ARGS) const {
+<span class="lineNum">     136 </span>            :     return detail::select(boost::tuples::get&lt;0&gt;(args), CALL_ACTUAL_ARGS) 
+<span class="lineNum">     137 </span>            :            [detail::select(boost::tuples::get&lt;1&gt;(args), CALL_ACTUAL_ARGS)]; 
+<span class="lineNum">     138 </span>            :   }
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            :   template&lt;class SigArgs&gt; struct sig { 
+<span class="lineNum">     141 </span>            :     typedef typename
+<span class="lineNum">     142 </span>            :       detail::binary_rt&lt;other_action&lt;subscript_action&gt;, Args, SigArgs&gt;::type 
+<span class="lineNum">     143 </span>            :         type;
+<span class="lineNum">     144 </span>            :   };      
+<span class="lineNum">     145 </span>            : };  
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            : #define BOOST_LAMBDA_BINARY_ACTION(SYMBOL, ACTION_CLASS)  \
+<span class="lineNum">     149 </span>            : template&lt;class Args&gt;                                                      \
+<span class="lineNum">     150 </span>            : class lambda_functor_base&lt;ACTION_CLASS, Args&gt; {                           \
+<span class="lineNum">     151 </span>            : public:                                                                   \
+<span class="lineNum">     152 </span>            :   Args args;                                                              \
+<span class="lineNum">     153 </span>            : public:                                                                   \
+<span class="lineNum">     154 </span>            :   explicit lambda_functor_base(const Args&amp; a) : args(a) {}                \
+<span class="lineNum">     155 </span>            :                                                                           \
+<span class="lineNum">     156 </span>            :   template&lt;class RET, CALL_TEMPLATE_ARGS&gt;                                 \
+<span class="lineNum">     157 </span>            :   RET call(CALL_FORMAL_ARGS) const {                                      \
+<span class="lineNum">     158 </span>            :     return detail::select(boost::tuples::get&lt;0&gt;(args), CALL_ACTUAL_ARGS)  \
+<span class="lineNum">     159 </span>            :            SYMBOL                                                         \
+<span class="lineNum">     160 </span>            :            detail::select(boost::tuples::get&lt;1&gt;(args), CALL_ACTUAL_ARGS); \
+<span class="lineNum">     161 </span>            :   }                                                                       \
+<span class="lineNum">     162 </span>            :   template&lt;class SigArgs&gt; struct sig {                                    \
+<span class="lineNum">     163 </span>            :     typedef typename                                                      \
+<span class="lineNum">     164 </span>            :       detail::binary_rt&lt;ACTION_CLASS, Args, SigArgs&gt;::type type;          \
+<span class="lineNum">     165 </span>            :   };                                                                      \
+<span class="lineNum">     166 </span>            : };  
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            : #define BOOST_LAMBDA_PREFIX_UNARY_ACTION(SYMBOL, ACTION_CLASS)            \
+<span class="lineNum">     169 </span>            : template&lt;class Args&gt;                                                      \
+<span class="lineNum">     170 </span>            : class lambda_functor_base&lt;ACTION_CLASS, Args&gt; {                           \
+<span class="lineNum">     171 </span>            : public:                                                                   \
+<span class="lineNum">     172 </span>            :   Args args;                                                              \
+<span class="lineNum">     173 </span>            : public:                                                                   \
+<span class="lineNum">     174 </span>            :   explicit lambda_functor_base(const Args&amp; a) : args(a) {}                \
+<span class="lineNum">     175 </span>            :                                                                           \
+<span class="lineNum">     176 </span>            :   template&lt;class RET, CALL_TEMPLATE_ARGS&gt;                                 \
+<span class="lineNum">     177 </span>            :   RET call(CALL_FORMAL_ARGS) const {                                      \
+<span class="lineNum">     178 </span>            :     return SYMBOL                                                         \
+<span class="lineNum">     179 </span>            :            detail::select(boost::tuples::get&lt;0&gt;(args), CALL_ACTUAL_ARGS); \
+<span class="lineNum">     180 </span>            :   }                                                                       \
+<span class="lineNum">     181 </span>            :   template&lt;class SigArgs&gt; struct sig {                                    \
+<span class="lineNum">     182 </span>            :     typedef typename                                                      \
+<span class="lineNum">     183 </span>            :       detail::unary_rt&lt;ACTION_CLASS, Args, SigArgs&gt;::type type;           \
+<span class="lineNum">     184 </span>            :   };                                                                      \
+<span class="lineNum">     185 </span>            : };  
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span>            : #define BOOST_LAMBDA_POSTFIX_UNARY_ACTION(SYMBOL, ACTION_CLASS)           \
+<span class="lineNum">     188 </span>            : template&lt;class Args&gt;                                                      \
+<span class="lineNum">     189 </span>            : class lambda_functor_base&lt;ACTION_CLASS, Args&gt; {                           \
+<span class="lineNum">     190 </span>            : public:                                                                   \
+<span class="lineNum">     191 </span>            :   Args args;                                                              \
+<span class="lineNum">     192 </span>            : public:                                                                   \
+<span class="lineNum">     193 </span>            :   explicit lambda_functor_base(const Args&amp; a) : args(a) {}                \
+<span class="lineNum">     194 </span>            :                                                                           \
+<span class="lineNum">     195 </span>            :   template&lt;class RET, CALL_TEMPLATE_ARGS&gt;                                 \
+<span class="lineNum">     196 </span>            :   RET call(CALL_FORMAL_ARGS) const {                                      \
+<span class="lineNum">     197 </span>            :     return                                                                \
+<span class="lineNum">     198 </span>            :     detail::select(boost::tuples::get&lt;0&gt;(args), CALL_ACTUAL_ARGS) SYMBOL; \
+<span class="lineNum">     199 </span>            :   }                                                                       \
+<span class="lineNum">     200 </span>            :   template&lt;class SigArgs&gt; struct sig {                                    \
+<span class="lineNum">     201 </span>            :     typedef typename                                                      \
+<span class="lineNum">     202 </span>            :       detail::unary_rt&lt;ACTION_CLASS, Args, SigArgs&gt;::type type;           \
+<span class="lineNum">     203 </span>            :   };                                                                      \
+<span class="lineNum">     204 </span>            : };  
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span>            : BOOST_LAMBDA_BINARY_ACTION(+,arithmetic_action&lt;plus_action&gt;)
+<span class="lineNum">     207 </span>            : BOOST_LAMBDA_BINARY_ACTION(-,arithmetic_action&lt;minus_action&gt;)
+<span class="lineNum">     208 </span>            : BOOST_LAMBDA_BINARY_ACTION(*,arithmetic_action&lt;multiply_action&gt;)
+<span class="lineNum">     209 </span>            : BOOST_LAMBDA_BINARY_ACTION(/,arithmetic_action&lt;divide_action&gt;)
+<span class="lineNum">     210 </span>            : BOOST_LAMBDA_BINARY_ACTION(%,arithmetic_action&lt;remainder_action&gt;)
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            : BOOST_LAMBDA_BINARY_ACTION(&lt;&lt;,bitwise_action&lt;leftshift_action&gt;)
+<span class="lineNum">     213 </span>            : BOOST_LAMBDA_BINARY_ACTION(&gt;&gt;,bitwise_action&lt;rightshift_action&gt;)
+<span class="lineNum">     214 </span>            : BOOST_LAMBDA_BINARY_ACTION(&amp;,bitwise_action&lt;and_action&gt;)
+<span class="lineNum">     215 </span>            : BOOST_LAMBDA_BINARY_ACTION(|,bitwise_action&lt;or_action&gt;)
+<span class="lineNum">     216 </span>            : BOOST_LAMBDA_BINARY_ACTION(^,bitwise_action&lt;xor_action&gt;)
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span>            : BOOST_LAMBDA_BINARY_ACTION(&lt;,relational_action&lt;less_action&gt;)
+<span class="lineNum">     219 </span>            : BOOST_LAMBDA_BINARY_ACTION(&gt;,relational_action&lt;greater_action&gt;)
+<span class="lineNum">     220 </span>            : BOOST_LAMBDA_BINARY_ACTION(&lt;=,relational_action&lt;lessorequal_action&gt;)
+<span class="lineNum">     221 </span>            : BOOST_LAMBDA_BINARY_ACTION(&gt;=,relational_action&lt;greaterorequal_action&gt;)
+<span class="lineNum">     222 </span>            : BOOST_LAMBDA_BINARY_ACTION(==,relational_action&lt;equal_action&gt;)
+<span class="lineNum">     223 </span>            : BOOST_LAMBDA_BINARY_ACTION(!=,relational_action&lt;notequal_action&gt;)
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            : BOOST_LAMBDA_BINARY_ACTION(+=,arithmetic_assignment_action&lt;plus_action&gt;)
+<span class="lineNum">     226 </span>            : BOOST_LAMBDA_BINARY_ACTION(-=,arithmetic_assignment_action&lt;minus_action&gt;)
+<span class="lineNum">     227 </span>            : BOOST_LAMBDA_BINARY_ACTION(*=,arithmetic_assignment_action&lt;multiply_action&gt;)
+<span class="lineNum">     228 </span>            : BOOST_LAMBDA_BINARY_ACTION(/=,arithmetic_assignment_action&lt;divide_action&gt;)
+<span class="lineNum">     229 </span>            : BOOST_LAMBDA_BINARY_ACTION(%=,arithmetic_assignment_action&lt;remainder_action&gt;)
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span>            : BOOST_LAMBDA_BINARY_ACTION(&lt;&lt;=,bitwise_assignment_action&lt;leftshift_action&gt;)
+<span class="lineNum">     232 </span>            : BOOST_LAMBDA_BINARY_ACTION(&gt;&gt;=,bitwise_assignment_action&lt;rightshift_action&gt;)
+<span class="lineNum">     233 </span>            : BOOST_LAMBDA_BINARY_ACTION(&amp;=,bitwise_assignment_action&lt;and_action&gt;)
+<span class="lineNum">     234 </span>            : BOOST_LAMBDA_BINARY_ACTION(|=,bitwise_assignment_action&lt;or_action&gt;)
+<span class="lineNum">     235 </span>            : BOOST_LAMBDA_BINARY_ACTION(^=,bitwise_assignment_action&lt;xor_action&gt;)
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span><span class="lineCov">     131257 : BOOST_LAMBDA_BINARY_ACTION(=,other_action&lt; assignment_action&gt;)</span>
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span>            : BOOST_LAMBDA_PREFIX_UNARY_ACTION(+, unary_arithmetic_action&lt;plus_action&gt;)
+<span class="lineNum">     241 </span>            : BOOST_LAMBDA_PREFIX_UNARY_ACTION(-, unary_arithmetic_action&lt;minus_action&gt;)
+<span class="lineNum">     242 </span>            : BOOST_LAMBDA_PREFIX_UNARY_ACTION(~, bitwise_action&lt;not_action&gt;)
+<span class="lineNum">     243 </span>            : BOOST_LAMBDA_PREFIX_UNARY_ACTION(!, logical_action&lt;not_action&gt;)
+<span class="lineNum">     244 </span>            : BOOST_LAMBDA_PREFIX_UNARY_ACTION(++, pre_increment_decrement_action&lt;increment_action&gt;)
+<span class="lineNum">     245 </span>            : BOOST_LAMBDA_PREFIX_UNARY_ACTION(--, pre_increment_decrement_action&lt;decrement_action&gt;)
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span>            : BOOST_LAMBDA_PREFIX_UNARY_ACTION(&amp;,other_action&lt;addressof_action&gt;)
+<span class="lineNum">     248 </span>            : BOOST_LAMBDA_PREFIX_UNARY_ACTION(*,other_action&lt;contentsof_action&gt;)
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span>            : BOOST_LAMBDA_POSTFIX_UNARY_ACTION(++, post_increment_decrement_action&lt;increment_action&gt;)
+<span class="lineNum">     251 </span>            : BOOST_LAMBDA_POSTFIX_UNARY_ACTION(--, post_increment_decrement_action&lt;decrement_action&gt;)
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span>            : #undef BOOST_LAMBDA_POSTFIX_UNARY_ACTION
+<span class="lineNum">     255 </span>            : #undef BOOST_LAMBDA_PREFIX_UNARY_ACTION
+<span class="lineNum">     256 </span>            : #undef BOOST_LAMBDA_BINARY_ACTION
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            : } // namespace lambda
+<span class="lineNum">     259 </span>            : } // namespace boost
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span>            : #endif
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span>            : 
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span>            : 
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            : 
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
