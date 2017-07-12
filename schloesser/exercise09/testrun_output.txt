@@ -1,0 +1,73 @@
+##### New testrun: #####
+../data/b15.gph
+Check succeeded.
+
+RESULT OBJECTIVE 217
+RESULT TIME 0.000132
+
+real	0m0.002s
+user	0m0.000s
+sys	0m0.000s
+../data/big8.gph
+Check succeeded.
+
+RESULT OBJECTIVE 719599
+RESULT TIME 0.090740
+
+real	0m0.409s
+user	0m0.380s
+sys	0m0.028s
+../data/es10kaz.gph
+Check succeeded.
+
+RESULT OBJECTIVE 522060541
+RESULT TIME 0.056662
+
+real	0m0.782s
+user	0m0.772s
+sys	0m0.008s
+../data/example1.gph
+Check succeeded.
+
+RESULT OBJECTIVE 12
+RESULT TIME 0.000010
+
+real	0m0.020s
+user	0m0.000s
+sys	0m0.000s
+../data/example2.gph
+Check succeeded.
+
+RESULT OBJECTIVE 150
+RESULT TIME 0.000019
+
+real	0m0.004s
+user	0m0.000s
+sys	0m0.000s
+../data/i640-345.gph
+Check succeeded.
+
+RESULT OBJECTIVE 14156
+RESULT TIME 0.002030
+
+real	0m0.020s
+user	0m0.016s
+sys	0m0.000s
+../data/small.gph
+Check succeeded.
+
+RESULT OBJECTIVE 3
+RESULT TIME 0.000006
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/world666.gph
+Check succeeded.
+
+RESULT OBJECTIVE 117613
+RESULT TIME 0.006927
+
+real	0m0.087s
+user	0m0.080s
+sys	0m0.004s

@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
 
     // steiner tree connecting prime nodes
     unsigned int *vertex_mask = get_primes(g->n_verts);
-    unsigned int *prev = steiner(g, vertex_mask);
+    unsigned int *prev = steiner(g, 2, vertex_mask);
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
     
