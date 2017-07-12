@@ -157,9 +157,7 @@ int main(int argc, char *argv[])
 	}
 
 	file.close();
-
-	dijkstra(numberOfNodes, edges);
-
+	
 	std::pair<int, int> solution = dijkstra(numberOfNodes, edges);
 	int vertex = solution.first, distance = solution.second;
 
