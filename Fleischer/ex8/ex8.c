@@ -6,7 +6,7 @@
  *
  * @section DESCRIPTION
  *
- * This program findes a steiner tree with the given terminal vertices.
+ * This program parses a graph and builds a steiner tree with every prime indexed node as terminal. In this programm are components, which gives the oppurtunity to give out every edge of the tree. And every, through the heuristic computed tree is compared, which means, that we let the heuristic work starting with a different start terminal in the beginning.
  */
 
 #define _GNU_SOURCE
@@ -25,8 +25,10 @@
 size_t graphSize;
 size_t* vertexNo;
 size_t*** graph;
-size_t temp2;
+//size_t temp2;
 size_t vertexInd;
+size_t lastFirst;
+double* value;
 
 
 
@@ -87,40 +89,118 @@ void buildGraph(FILE *fp){
 	}
 	printf("Graph fitted\n");
 }
+/**
+*Findes every prime indexed node
+*@return An array which workes as an boolen, and says that node x is a prime indexed node.
+*/
+char* findPrimes(){
+	char* numbers = malloc(sizeof(char)*(graphSize+1));
+	numbers[0] = 0;
+	numbers[1] = 0;
+	for (size_t i = 2; i <= graphSize; ++i){
+		numbers[i] = 1;
+	}
+	double pows = pow((double) graphSize, 0.5);
+	for (size_t i = 2; (double) i < pows; ++i){
+   		if(numbers[i]){
+   			size_t num = 0;
+   			size_t j = 0;
+   			while((j = i*i+num*i) <= graphSize){
+   				numbers[j] = 0;
+   				++num;
+   			}
+   		}
+	} 
+	return numbers;
+}
 
 /**
-* Checks of two nodes are connected.
+* Makes shure everything is still a heap.
 *
-* @param The two nodes, which the method has to check if they are connected
-* @return If two certain nodes are connected. 1 if yes, 0 if not
+*@param The heap array and the array with the values, on which the heap based should be build.
+*@return The heap array, where the first line is are index in heap order and in the second one we can read out where to find which node in the heap.
+*
 */
-char extPath(size_t a, size_t b){
-	for (size_t i= 0; i < vertexNo[a]; ++i){
-		if (graph[a][i][0] == b+1){
-			vertexInd = i;
-			return 1;
-		}
-	}
-	return 0;
+
+size_t** minHeapify(size_t i, size_t** index66, double* heapVal){
+    size_t left;
+    size_t right;
+    size_t smallest;
+    
+    if(i != 0){
+    	left = 2*i;
+    	right = 2*i + 1;
+    	smallest = i;
+    }
+    else{
+    	left = 1;
+    	right = 2;
+    	smallest = 0;    	
+    }
+    if (left < graphSize && heapVal[index66[left][0]] < heapVal[index66[smallest][0]]){
+        smallest = left;
+    }  
+    if (right < graphSize && heapVal[index66[right][0]] < heapVal[index66[smallest][0]]){
+        smallest = right;
+    }    
+    
+    if (smallest != i){
+    	size_t temp6 = index66[i][0];
+    	index66[i][0] = index66[smallest][0];
+    	index66[smallest][0] = temp6;
+    	index66[index66[i][0]][1] = i;
+    	index66[index66[smallest][0]][1] = smallest;
+        index66 = minHeapify(smallest, index66, heapVal);
+    }  
+    return index66;   
+}        
+
+/**
+* Check if still heap for updated element.
+
+*@param The heap array and the array with the values, on which the heap based should be build.
+*@return The heap array, where the first line is are index in heap order and in the second one we can read out where to find which node in the heap.
+*/
+size_t** update(size_t i, size_t** index66, double* heapVal){
+	size_t child;
+    	size_t father;
+    	if(i ==0){
+    		return index66;
+    	}
+    	else{
+    		child = i;
+    		father = i/2;
+    	}
+    	
+    	if(heapVal[index66[child][0]] < heapVal[index66[father][0]]){
+    		size_t temp6 = index66[father][0];
+    		if (father == lastFirst){
+    			lastFirst == child;
+    		}
+    		index66[father][0] = index66[child][0];
+    		index66[child][0] = temp6;
+    		index66[index66[child][0]][1] = child;
+    		index66[index66[father][0]][1] = father;
+        	index66 = update(father, index66, heapVal);
+    	}
+    	return index66;
 }
 
 /**
-* Findes the minimal enty of an array. Solution is going to be saved into one of the input parameters.
-* @param ditances already discovered by dijkstra and a marker if alredy used
-* @return index of minDist vertex not alredy worked with
+* Builds the heap.
+*@param The heap array and the array with the values, on which the heap based should be build.
+*@return The heap array, where the first line is are index in heap order and in the second one we can read out where to find which node in the heap.
 */
 
-size_t minDist(double** dist, char* temp){
-	double min= INFINITY;
-	size_t temp2 = 0;
-	for(size_t i = 0; i < graphSize; ++i){
-		if(temp[i] == 0 && dist[i][0] <= min){
-			min = dist[i][0];
-			temp2 = i;
-		}	
-	}
-	return temp2;
-}
+size_t** buildMinHeap(size_t** index66, double* heapVal){
+    
+    for(size_t i = graphSize/2; i>0; --i){
+        index66 = minHeapify(i, index66, heapVal);
+    } 
+    index66 = minHeapify(0, index66, heapVal);
+    return index66;	        
+}        
+
 
 
 /**
@@ -130,39 +210,59 @@ size_t minDist(double** dist, char* temp){
 *
 */
 
-double** dijkstra(char* s){
+double** dijkstra(char* inTree, double** dist, double* heapVal, size_t** index66){
+	char* visited =(char*) malloc(sizeof(char)*graphSize);
+	size_t minVal;
 
-	double** dist = malloc(sizeof(double*)*graphSize);
-	char* temp =(char*) malloc(sizeof(char)*graphSize);
-	
 	for (size_t i = 0; i < graphSize; ++i){
-		dist[i] = malloc(sizeof(double)*2);
-		if(s[i] == 0){
+		index66[i] =  malloc(sizeof(size_t)*2);
+		visited[i] = 0;
+		index66[i][0] = i;
+		index66[i][1] = i;
+
+		if(inTree[i] == 0){
 			dist[i][0] = INFINITY;
+			heapVal[i] = INFINITY;
+			dist[i][1] = -2;
 		}
 		else{
-			//printf("kl %ld\n", i);
+			heapVal[i] = 0;
 			dist[i][0] = 0;
 			dist[i][1] = -1;
-		}	
-		
-		temp[i] = 0;
+		}
 	}
-	//dist[s] = 0;
+	
 
-	for(size_t j = 0; j < graphSize; ++j){
-		temp2 = minDist(dist, temp);
-		temp[temp2] = 1;
-		for (size_t n= 0; n < graphSize; n++){
-			if(!temp[n] && extPath(temp2, n) && dist[temp2][0] != INFINITY && dist[n][1] != -1){
-				if(dist[temp2][0] + (double)graph[temp2][vertexInd][1] < dist[n][0]){
-					dist[n][0] = dist[temp2][0] + (double)graph[temp2][vertexInd][1];
-					dist[n][1] = temp2;
+	index66 = buildMinHeap(index66, heapVal);
+	
+	for(size_t j = 0; j < graphSize; ++j)
+	{
+		minVal = index66[0][0];
+		if (minVal == INFINITY){
+			free(visited);
+			return dist;
+		}
+		lastFirst = 0;
+		visited[minVal] = 1;
+		for (size_t n= 0; n < vertexNo[minVal]; n++){
+			if(!visited[graph[minVal][n][0]-1] && dist[minVal][0] != INFINITY){
+				if(dist[minVal][0] + (double)graph[minVal][n][1] < dist[graph[minVal][n][0]-1][0]){
+					dist[graph[minVal][n][0]-1][0] = dist[minVal][0] + (double)graph[minVal][n][1];
+					dist[graph[minVal][n][0]-1][1] = minVal;
+					heapVal[graph[minVal][n][0]-1] = dist[graph[minVal][n][0]-1][0];
+					//update heap
+					index66 = update(index66[graph[minVal][n][0]-1][1], index66, heapVal);
 					assert(!fetestexcept(FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW));
 				}
 			}
 		}
+		heapVal[index66[lastFirst][0]] = INFINITY;
+		index66 = minHeapify(lastFirst, index66, heapVal);
+		
 	}
+
+	free(visited);
+
 	return dist;
 }
 
@@ -174,11 +274,8 @@ double** dijkstra(char* s){
 */
 
 char terminalsLeft(char* marker, size_t numberOfTerminal){
+	
 	for(size_t j= 0; j < numberOfTerminal; ++j){
-		printf("markel: %d\n", marker[j]);
-	}	
-	for(size_t j= 0; j < numberOfTerminal; ++j){
-		//printf("marker: %d\n", marker[j]);
 		if(!marker[j]){
 			return 1;
 		}
@@ -193,100 +290,110 @@ char terminalsLeft(char* marker, size_t numberOfTerminal){
 * @param All the terminal edges
 * @return The objective value
 */
-double steinerTree(size_t* terminal, size_t numberOfTerminal){
+double** steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTerminal){
 	char* marker = malloc(numberOfTerminal*sizeof(char));
 	char* inTree = malloc(graphSize*sizeof(char));
+	
+	double* heapVal = (double*) malloc(sizeof(double)*graphSize);
+	size_t** index66 = (size_t**) malloc(sizeof(size_t*)*graphSize);
 	size_t nodesInTree = 1;
+	size_t noOfEdges = 1;
 	double min = INFINITY;
-	double value = 0;
+	
+	value[startTerminal] = 0;
+	
+	double** tree = malloc(sizeof(double*)*1);
 	size_t temp = 0;	
 	double** vector = malloc(sizeof(double*)*graphSize);
+
 	for(size_t i = 0; i < graphSize; ++i){
 		vector[i] = malloc(sizeof(double)*2);
 		inTree[i] = 0;
 	}
+	
 	for(size_t i = 0; i<numberOfTerminal; ++i){
 		marker[i] = 0;
 	}
-	printf("val %f\n", value);
-	inTree[terminal[0]] = 1;
-	vector = dijkstra(inTree);
-	marker[0] = 1;
+	inTree[terminal[startTerminal]] = 1;
+	vector = dijkstra(inTree, vector, heapVal, index66);
+	marker[startTerminal] = 1;
 	//search for cheapest next terminal
 	for(size_t i = 1; i < numberOfTerminal; ++i){
 		if(vector[terminal[i]][0] < min && vector[terminal[i]][1] != -1){
-		printf("%f + %ld + %ld\n",vector[terminal[i]][0], i, temp);
 		min = vector[terminal[i]][0];
 		temp = i;
 		}
 	}
 	marker[temp] = 1;
-	value = min;
-	printf("val+min %f+ %f\n", value, min);
+	value[startTerminal] = min;
 	size_t iter = terminal[temp];
-	//find path to next cheaperst
+	tree[0] = malloc(sizeof(double));
 	while(vector[iter][1] != -1){
 		inTree[iter] = 1;
+		tree = realloc(tree, sizeof(double)* noOfEdges);
+		tree[noOfEdges-1] = malloc(sizeof(double)* 2);
+		tree[noOfEdges-1][0] = (double) iter;
 		iter = (size_t) vector[iter][1]; 
+		tree[noOfEdges-1][1] = (double) iter;
+		++noOfEdges;
 		++nodesInTree;
 	}
-	for(size_t i = 0; i < nodesInTree; ++i){
-		free(vector[i]);
-	}
-	//printf("First Terminal\n");
+	
 	//repeat the hole procedure
 	while (terminalsLeft(marker, numberOfTerminal)){
-		double** vector2 = malloc(sizeof(double*)*graphSize);
-		for(size_t i = 0; i < graphSize; ++i){
-			vector2[i] = malloc(sizeof(double)*2);
-		}
-		vector2 = dijkstra(inTree);
-		
-		
-		
+		vector = dijkstra(inTree, vector, heapVal, index66);
+
 		min = INFINITY;
-		
+
 		temp = 0;
-		for(size_t i = 1; i < numberOfTerminal; ++i){
+		for(size_t i = 0; i < numberOfTerminal; ++i){
 			if(!marker[i]){
-			//printf("hi + %f + %f\n",vector2[terminal[i]][0], vector[terminal[i]][1]);
-				if(vector2[terminal[i]][0] < min && vector2[terminal[i]][1] != -1){
-					//printf("ho\n");
-					min = vector2[terminal[i]][0];
+
+				if(vector[terminal[i]][0] < min && vector[terminal[i]][1] != -1){//printf("i: %ld\n",i);
+
+					min = vector[terminal[i]][0];
 					temp = i;
 				}	
 			}
 		}
-		printf("min: %f\n", min);	
+
 		marker[temp] = 1;
-		//marker[temp] = 1;
-		printf("temp %ld\n", temp);
+
 		iter = terminal[temp];
-		//printf("asd %ld\n", terminal[temp]);
-		//printf("we %f\n", vector2[iter][1]);
-		//printf("we2 %f\n", vector2[0][1]);
-		while(vector2[iter][1] != -1){
+
+		while(vector[iter][1] != -1){
+
 			inTree[iter] = 1;
-			//printf("gg %ld\n", iter);
+
 			for(size_t h = 0; h < numberOfTerminal; ++h){
 				if(iter == terminal[h]){
 					marker[h] = 1;
-					break;
 				}
 			}
-			iter = (size_t) vector2[iter][1]; 
-			//printf("we %f\n", vector[iter][1]);
+			tree = realloc(tree, sizeof(double)* noOfEdges);
+			tree[noOfEdges-1] = malloc(sizeof(double)* 2);
+			tree[noOfEdges-1][0] = (double) iter;
+			iter = (size_t) vector[iter][1]; 
+			tree[noOfEdges-1][1] = (double) iter;
+			//printf("sko\n");
+			++noOfEdges;
 			++nodesInTree;
 		}		
-		printf("min + val: %f+%f\n", min, value);			
-		value = value + min;
-		for(size_t i = 0; i < graphSize; ++i){
-			free(vector2[i]);
-		}
-		free(vector2);	
-		//printf("one more connected\n");	
+
+		value[startTerminal] = value[startTerminal] + min;
+
 	}
-	return value;
+	
+	for(size_t i = 0; i < graphSize; ++i){
+		free(vector[i]);
+		free(index66[i]);
+	}
+	free(inTree);
+	free(marker);
+	free(heapVal);
+	free(index66);
+	free(vector);
+	return tree;
 }
 
 /**
@@ -307,34 +414,53 @@ int main(int argc, char *argv[]){
   	
   	cpu = clock();
 	FILE *fp;
-	if (argc<=2){ 
+	if (argc<=1){ 
 		exit(EXIT_FAILURE);
 	}
 	fp = fopen(argv[1], "r");
     	if (fp == NULL)	exit(EXIT_FAILURE);
         
-        size_t* terminal = malloc(sizeof(size_t)*(argc-1));
-        size_t noOfTerminal = argc -2;
-        //printf("tt %ld\n", noOfTerminal);
-	for(int i = 2;i < argc; ++i){
-		terminal[i-2] = strtoul(argv[i], NULL, 10)-1;
-	}
+        size_t* terminal = malloc(sizeof(size_t)*(1));
+        size_t noOfTerminal = 0;
+        terminal[0] = 1;
 
 
+	
 	buildGraph(fp);
-	double value = steinerTree(terminal, noOfTerminal);
-	
-	
-	
-
-	for (size_t i = 0; i<graphSize; ++i){
-		for(size_t j = 0; j < vertexNo[i]; ++j){
-			free(graph[i][j]);
+	assert(graphSize > 1);
+	char* primes = findPrimes();
+	printf("primes found\n");
+	for(size_t i = 3; i <= graphSize; ++i){
+		if(primes[i]){
+			++noOfTerminal;		
+			terminal = realloc(terminal, sizeof(size_t)*(noOfTerminal+1));
+			terminal[noOfTerminal] = i -1;
 		}
-		free(graph[i]);
+	}
+	++noOfTerminal;		
+	printf("Terminal vector fitted\n");
+	value = malloc(sizeof(double)*noOfTerminal);
+	value[0] = 0;
+	double*** tree = malloc(sizeof(double**)*noOfTerminal);
+	for(size_t i = 0; i < noOfTerminal; ++i){
+		tree[i] = steinerTree(terminal, noOfTerminal, i);
 	}
 	
-	printf("Objective value:%f\n", value);
+	double minValue = value[0];
+	size_t j = 0;
+	size_t howFar = 100;
+	if(noOfTerminal < 100){
+		howFar = noOfTerminal;
+	}
+	for(size_t i = 1; i < howFar; ++i){
+		if(minValue > value[i]){
+			j = i;
+			minValue = value[i];
+		}
+	}
+
+	
+	printf("Objective value: %f\n", minValue);
 	        cpu = clock() - cpu;
         assert(!gettimeofday(&time,NULL));
 	wall=(double)time.tv_sec + (double)time.tv_usec * .000001 -wall;
