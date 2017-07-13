@@ -8,7 +8,7 @@ all: main
 .PHONY: clean all deps default run valgrind main check coverage
 
 main: deps
-	$(CC) -o main longest_shortest.c $(CFLAGS) $(LIBSDIR)*.c -I$(LIBSDIR)
+	$(CC) -o main longest_shortest.c $(LIBSDIR)*.c $(CFLAGS) -I$(LIBSDIR)
 
 deps: 
 	$(MAKE) -C $(LIBSDIR) clean

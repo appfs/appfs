@@ -8,7 +8,7 @@ all: main
 .PHONY: clean all deps default run valgrind main check
 
 main: deps
-	$(CC) -o main steiner.c $(CFLAGS) $(LIBSDIR)*.c -I$(LIBSDIR)
+	$(CC) -o main steiner.c $(LIBSDIR)*.c $(CFLAGS) -I$(LIBSDIR)
 
 deps: 
 	$(MAKE) -C $(LIBSDIR) clean
