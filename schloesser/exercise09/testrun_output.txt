@@ -1,73 +1,49 @@
-##### New testrun: #####
+##### New testrun: 8 cores, 32 gb ram #####
 ../data/b15.gph
-Check succeeded.
+MINIMAL OBJECTIVE VALUE 217
 
-RESULT OBJECTIVE 217
-RESULT TIME 0.000132
-
-real	0m0.002s
-user	0m0.000s
+real	0m0.005s
+user	0m0.008s
 sys	0m0.000s
 ../data/big8.gph
-Check succeeded.
+MINIMAL OBJECTIVE VALUE 715797
 
-RESULT OBJECTIVE 719599
-RESULT TIME 0.090740
+real	4m19.170s
+user	31m47.628s
+sys	0m0.040s
+../data/clock.gph
+MINIMAL OBJECTIVE VALUE 25
 
-real	0m0.409s
-user	0m0.380s
-sys	0m0.028s
+real	0m0.006s
+user	0m0.020s
+sys	0m0.000s
 ../data/es10kaz.gph
-Check succeeded.
+MINIMAL OBJECTIVE VALUE 520126975
 
-RESULT OBJECTIVE 522060541
-RESULT TIME 0.056662
-
-real	0m0.782s
-user	0m0.772s
-sys	0m0.008s
-../data/example1.gph
-Check succeeded.
-
-RESULT OBJECTIVE 12
-RESULT TIME 0.000010
-
-real	0m0.020s
-user	0m0.000s
-sys	0m0.000s
-../data/example2.gph
-Check succeeded.
-
-RESULT OBJECTIVE 150
-RESULT TIME 0.000019
-
-real	0m0.004s
-user	0m0.000s
-sys	0m0.000s
+real	3m49.326s
+user	28m23.464s
+sys	0m1.880s
 ../data/i640-345.gph
-Check succeeded.
+MINIMAL OBJECTIVE VALUE 14156
 
-RESULT OBJECTIVE 14156
-RESULT TIME 0.002030
-
-real	0m0.020s
-user	0m0.016s
-sys	0m0.000s
+real	0m0.150s
+user	0m0.996s
+sys	0m0.004s
 ../data/small.gph
-Check succeeded.
-
-RESULT OBJECTIVE 3
-RESULT TIME 0.000006
+MINIMAL OBJECTIVE VALUE 3
 
 real	0m0.001s
 user	0m0.000s
 sys	0m0.000s
+../data/steiner.gph
+MINIMAL OBJECTIVE VALUE 10
+
+real	0m0.004s
+user	0m0.016s
+sys	0m0.000s
 ../data/world666.gph
-Check succeeded.
+MINIMAL OBJECTIVE VALUE 117613
 
-RESULT OBJECTIVE 117613
-RESULT TIME 0.006927
-
-real	0m0.087s
-user	0m0.080s
+real	0m0.695s
+user	0m4.748s
 sys	0m0.004s
