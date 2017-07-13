@@ -11,21 +11,54 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <boost/program_options.hpp>
 
 using namespace std;
+using namespace boost::program_options;
+
 
 int main(int argc, char* argv[]){
-	if(argc != 3){
-			cerr << "Invalid method call. Please call with ./ex5 -m1/-m2 FILENAME" << endl;
-			return EXIT_FAILURE;
+	options_description desc("");
+
+	desc.add_options()
+		("help,h", "Help screen")
+	    ("startnodes,s", value<vector<int> >()->multitoken(), "Indizes of the start nodes")
+		("filename,f", value<string>(), "Filename for the graph");
+
+	command_line_parser parser{argc, argv};
+	parser.options(desc).allow_unregistered().style(
+	      command_line_style::default_style |
+	      command_line_style::allow_slash_for_short);
+	parsed_options parsed_options = parser.run();
+
+	variables_map vm;
+	store(parsed_options, vm);
+	notify(vm);
+
+	if (vm.count("help")){
+		cout << desc << endl;
+	}
+	if(vm.count("filename") == 0){
+		cerr << "Please enter a file name!" << endl;
+		return EXIT_FAILURE;
+	}
+
+	vector<int> startNodes;
+	if(vm.count("startnode") == 0){
+		cout << "Set default start node 2" << endl;
+		startNodes.push_back(2);
+	}else{
+		startNodes = vm["startnode"].as<vector<int> >();
 	}
 
 	ifstream infile;
-	infile.open(argv[1], ios::in);
+	infile.open(vm["filename"].as<string>(), ios::in);
 	if (!infile){
 		cout << "File could not be opened." << endl;
 		return 1;
 	}
+
+
 	string line;
 	stringstream s;
 	unsigned int numberVertices;
@@ -40,13 +73,6 @@ int main(int argc, char* argv[]){
 	} else {
 		cerr << "Empty file. Exit program" << endl;
 		return 1;
-	}
-	stringstream ss(argv[2]);
-	unsigned int startNode;
-	ss >> startNode;
-	if(startNode > numberVertices || startNode < 1){
-		cerr << "Start node must be an int between 1 and " << numberVertices << endl;
-		return EXIT_FAILURE;
 	}
 
 	//Reading the edge data
@@ -68,14 +94,27 @@ int main(int argc, char* argv[]){
 	infile.close();
 
 	Steiner mySteiner(numberVertices, edges, weights);
-	Edges result = mySteiner.solve(startNode);
 
-	cout << "Edges of the minimal spanning tree are: " << endl;
+	Edges result;
+	int minObjValue = INT_MAX;
+	int minStartNode;
+
+	for(int startNode : startNodes){
+		Edges temp_result = mySteiner.solve(startNode);
+		if (mySteiner.getObjectiveValue() < minObjValue){
+			minObjValue = mySteiner.getObjectiveValue();
+			result = temp_result;
+			minStartNode = startNode;
+		}
+	}
+	cout << "Minimal spanning tree is computed for starting node " << minStartNode << endl;
+
+	cout << "Its edges of the minimal spanning tree are: " << endl;
 	for(pair<int, int> result_pair : result){
 		cout << result_pair.first << " " << result_pair.second << endl;
 	}
 
-	cout << "Objective value of the minimal spanning tree is " << mySteiner.getObjectiveValue() << endl;
+	cout << "The objective value of the minimal spanning tree is " << minObjValue << endl;
 
 	return EXIT_SUCCESS;
 }
