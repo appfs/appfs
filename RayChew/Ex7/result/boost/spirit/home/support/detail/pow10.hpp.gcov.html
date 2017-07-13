@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/spirit/home/support/detail/pow10.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">boost/spirit/home/support/detail</a> - pow10.hpp<span style="font-size: 80%;"> (source / <a href="pow10.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :     Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            :     Copyright (c) 2001-2011 Hartmut Kaiser
+<span class="lineNum">       4 </span>            :     http://spirit.sourceforge.net/
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :     Distributed under the Boost Software License, Version 1.0. (See accompanying
+<span class="lineNum">       7 </span>            :     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : =============================================================================*/
+<span class="lineNum">       9 </span>            : #if !defined(SPIRIT_POW10_DECEMBER_26_2008_1118AM)
+<span class="lineNum">      10 </span>            : #define SPIRIT_POW10_DECEMBER_26_2008_1118AM
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      13 </span>            : #pragma once
+<span class="lineNum">      14 </span>            : #endif
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;boost/config/no_tr1/cmath.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/limits.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/spirit/home/support/unused.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/spirit/home/support/numeric_traits.hpp&gt;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #if BOOST_WORKAROUND(BOOST_MSVC, &gt;= 1400)
+<span class="lineNum">      22 </span>            : # pragma warning(push)
+<span class="lineNum">      23 </span>            : # pragma warning(disable: 4244)   // conversion from 'double' to 'float', possible loss of data
+<span class="lineNum">      24 </span>            : #endif
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : namespace boost { namespace spirit { namespace traits
+<span class="lineNum">      27 </span>            : {
+<span class="lineNum">      28 </span>            :     template &lt;typename T, typename Enable/* = void*/&gt;
+<span class="lineNum">      29 </span>            :     struct pow10_helper
+<span class="lineNum">      30 </span>            :     {
+<span class="lineNum">      31 </span>            :         static T call(unsigned dim)
+<span class="lineNum">      32 </span>            :         {
+<span class="lineNum">      33 </span>            :             using namespace std;    // allow for ADL to find the correct overload
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :             return pow(T(10), T(dim));</span>
+<span class="lineNum">      35 </span>            :         }
+<span class="lineNum">      36 </span>            :     };
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            :     template &lt;&gt;
+<span class="lineNum">      39 </span>            :     struct pow10_helper&lt;unused_type&gt;
+<span class="lineNum">      40 </span>            :     {
+<span class="lineNum">      41 </span>            :         static unused_type call(unused_type)
+<span class="lineNum">      42 </span>            :         {
+<span class="lineNum">      43 </span>            :             return unused;
+<span class="lineNum">      44 </span>            :         }
+<span class="lineNum">      45 </span>            :     };
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : #if (DBL_MAX_10_EXP == 308) // for IEEE-754
+<span class="lineNum">      48 </span>            :     template &lt;&gt;
+<span class="lineNum">      49 </span>            :     struct pow10_helper&lt;double&gt;
+<span class="lineNum">      50 </span>            :     {
+<span class="lineNum">      51 </span>            :         static double call(unsigned dim)
+<span class="lineNum">      52 </span>            :         {
+<span class="lineNum">      53 </span>            :             static double const exponents[] =
+<span class="lineNum">      54 </span>            :             {
+<span class="lineNum">      55 </span>            :                 1e0,   1e1,   1e2,   1e3,   1e4,   1e5,   1e6,   1e7,   1e8,    1e9,
+<span class="lineNum">      56 </span>            :                 1e10,  1e11,  1e12,  1e13,  1e14,  1e15,  1e16,  1e17,  1e18,  1e19,
+<span class="lineNum">      57 </span>            :                 1e20,  1e21,  1e22,  1e23,  1e24,  1e25,  1e26,  1e27,  1e28,  1e29,
+<span class="lineNum">      58 </span>            :                 1e30,  1e31,  1e32,  1e33,  1e34,  1e35,  1e36,  1e37,  1e38,  1e39,
+<span class="lineNum">      59 </span>            :                 1e40,  1e41,  1e42,  1e43,  1e44,  1e45,  1e46,  1e47,  1e48,  1e49,
+<span class="lineNum">      60 </span>            :                 1e50,  1e51,  1e52,  1e53,  1e54,  1e55,  1e56,  1e57,  1e58,  1e59,
+<span class="lineNum">      61 </span>            :                 1e60,  1e61,  1e62,  1e63,  1e64,  1e65,  1e66,  1e67,  1e68,  1e69,
+<span class="lineNum">      62 </span>            :                 1e70,  1e71,  1e72,  1e73,  1e74,  1e75,  1e76,  1e77,  1e78,  1e79,
+<span class="lineNum">      63 </span>            :                 1e80,  1e81,  1e82,  1e83,  1e84,  1e85,  1e86,  1e87,  1e88,  1e89,
+<span class="lineNum">      64 </span>            :                 1e90,  1e91,  1e92,  1e93,  1e94,  1e95,  1e96,  1e97,  1e98,  1e99,
+<span class="lineNum">      65 </span>            :                 1e100, 1e101, 1e102, 1e103, 1e104, 1e105, 1e106, 1e107, 1e108, 1e109,
+<span class="lineNum">      66 </span>            :                 1e110, 1e111, 1e112, 1e113, 1e114, 1e115, 1e116, 1e117, 1e118, 1e119,
+<span class="lineNum">      67 </span>            :                 1e120, 1e121, 1e122, 1e123, 1e124, 1e125, 1e126, 1e127, 1e128, 1e129,
+<span class="lineNum">      68 </span>            :                 1e130, 1e131, 1e132, 1e133, 1e134, 1e135, 1e136, 1e137, 1e138, 1e139,
+<span class="lineNum">      69 </span>            :                 1e140, 1e141, 1e142, 1e143, 1e144, 1e145, 1e146, 1e147, 1e148, 1e149,
+<span class="lineNum">      70 </span>            :                 1e150, 1e151, 1e152, 1e153, 1e154, 1e155, 1e156, 1e157, 1e158, 1e159,
+<span class="lineNum">      71 </span>            :                 1e160, 1e161, 1e162, 1e163, 1e164, 1e165, 1e166, 1e167, 1e168, 1e169,
+<span class="lineNum">      72 </span>            :                 1e170, 1e171, 1e172, 1e173, 1e174, 1e175, 1e176, 1e177, 1e178, 1e179,
+<span class="lineNum">      73 </span>            :                 1e180, 1e181, 1e182, 1e183, 1e184, 1e185, 1e186, 1e187, 1e188, 1e189,
+<span class="lineNum">      74 </span>            :                 1e190, 1e191, 1e192, 1e193, 1e194, 1e195, 1e196, 1e197, 1e198, 1e199,
+<span class="lineNum">      75 </span>            :                 1e200, 1e201, 1e202, 1e203, 1e204, 1e205, 1e206, 1e207, 1e208, 1e209,
+<span class="lineNum">      76 </span>            :                 1e210, 1e211, 1e212, 1e213, 1e214, 1e215, 1e216, 1e217, 1e218, 1e219,
+<span class="lineNum">      77 </span>            :                 1e220, 1e221, 1e222, 1e223, 1e224, 1e225, 1e226, 1e227, 1e228, 1e229,
+<span class="lineNum">      78 </span>            :                 1e230, 1e231, 1e232, 1e233, 1e234, 1e235, 1e236, 1e237, 1e238, 1e239,
+<span class="lineNum">      79 </span>            :                 1e240, 1e241, 1e242, 1e243, 1e244, 1e245, 1e246, 1e247, 1e248, 1e249,
+<span class="lineNum">      80 </span>            :                 1e250, 1e251, 1e252, 1e253, 1e254, 1e255, 1e256, 1e257, 1e258, 1e259,
+<span class="lineNum">      81 </span>            :                 1e260, 1e261, 1e262, 1e263, 1e264, 1e265, 1e266, 1e267, 1e268, 1e269,
+<span class="lineNum">      82 </span>            :                 1e270, 1e271, 1e272, 1e273, 1e274, 1e275, 1e276, 1e277, 1e278, 1e279,
+<span class="lineNum">      83 </span>            :                 1e280, 1e281, 1e282, 1e283, 1e284, 1e285, 1e286, 1e287, 1e288, 1e289,
+<span class="lineNum">      84 </span>            :                 1e290, 1e291, 1e292, 1e293, 1e294, 1e295, 1e296, 1e297, 1e298, 1e299,
+<span class="lineNum">      85 </span>            :                 1e300, 1e301, 1e302, 1e303, 1e304, 1e305, 1e306, 1e307, 1e308,
+<span class="lineNum">      86 </span>            :             };
+<span class="lineNum">      87 </span>            :             BOOST_ASSERT(dim &lt; sizeof(exponents)/sizeof(double));
+<span class="lineNum">      88 </span>            :             return exponents[dim];
+<span class="lineNum">      89 </span>            :         }
+<span class="lineNum">      90 </span>            :     };
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            :     template &lt;&gt;
+<span class="lineNum">      93 </span>            :     struct pow10_helper&lt;float&gt;
+<span class="lineNum">      94 </span>            :     {
+<span class="lineNum">      95 </span>            :         static float call(unsigned dim)
+<span class="lineNum">      96 </span>            :         {
+<span class="lineNum">      97 </span>            :             return pow10_helper&lt;double&gt;::call(dim);
+<span class="lineNum">      98 </span>            :         }
+<span class="lineNum">      99 </span>            :     };
+<span class="lineNum">     100 </span>            : #endif // for IEEE-754
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            :     template &lt;typename T&gt;
+<span class="lineNum">     103 </span>            :     inline T pow10(unsigned dim)
+<span class="lineNum">     104 </span>            :     {
+<span class="lineNum">     105 </span>            :         return pow10_helper&lt;T&gt;::call(dim);
+<span class="lineNum">     106 </span>            :     }
+<span class="lineNum">     107 </span>            : }}}
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            : #if BOOST_WORKAROUND(BOOST_MSVC, &gt;= 1400)
+<span class="lineNum">     110 </span>            : # pragma warning(pop)
+<span class="lineNum">     111 </span>            : #endif
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

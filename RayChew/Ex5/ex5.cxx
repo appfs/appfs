@@ -1,6 +1,6 @@
 //////////////////////////////////
 //
-// Compile: g++ -std=c++14 -O3 ex5.cxx -o ex5
+// Compile: g++ -std=c++14 -O3 ex5.cxx -o ex5 -lboost_timer
 //
 //////////////////////////////////
 
@@ -12,6 +12,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp> 
 #include <boost/spirit/include/qi.hpp>
+#include <boost/timer/timer.hpp>
 
 int main(int argc, char*argv[]){
   
@@ -24,8 +25,9 @@ int main(int argc, char*argv[]){
   std::ifstream file(argv[1]); // std::ifstream::in ??
   std::string str;
   
-  
-  /* start get number of vertices */
+  boost::timer::cpu_timer timer;
+
+  /* start get number of edges */
   getline(file, str);
 
   using namespace boost::spirit;
@@ -38,7 +40,7 @@ int main(int argc, char*argv[]){
   auto it = str.begin();
   bool r = parse(it, str.end(),
 		 int_[([&n](int i){n = i;})] >> int_);  
-  /* end get number of vertices */
+  /* end get number of edges */
   
   
   /* start get list of edges and weights */
@@ -98,15 +100,22 @@ int main(int argc, char*argv[]){
     }
     // if distance == maxDistance, check if vertex index is smaller.
     if ((distances[*vertexPair.first] == maxDistance) && (*vertexPair.first < maxVertex)){
-      maxDistance = distances[*vertexPair.first];
       maxVertex = *vertexPair.first;
     }
   }
+  
+  boost::timer::cpu_times times = timer.elapsed();
   
   // output vertex and distance of the longest-shortest path.
   std::cout << "RESULT VERTEX " << maxVertex << std::endl;
   std::cout << "RESULT DIST " << maxDistance <<  std::endl;
   /* end find longest-shortest path */
+
+  // print CPU- and Wall-Time. 
+  // boost::timer::cpu_times returns tuple of wall, system and user times in nanoseconds.
+  std::cout << std::endl;
+  std::cout << "WALL-CLOCK " << times.wall / 1e9 << "s" << std::endl;
+  std::cout << "USER TIME " << times.user / 1e9 << "s" << std::endl;
   
   file.close();  
   return 0;

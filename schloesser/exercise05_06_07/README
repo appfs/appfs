@@ -1,0 +1,11 @@
+The "official" solution to ex5 is run via the Makefile. 
+
+Type 'make' or 'make run' to run it.
+Type 'make coverage' or 'make coverage2' to run it with coverage (depending on what your coverage-command is).
+Type 'make check' or 'make check2' to run to run a codecheck with pylint (depending on what your pylint-command is).
+Type 'make doc' generate a documentation with doxygen.
+Make sure you have a directory '../data' which contains .gph files, at least 'b15.gph'.
+
+
+There is also the bonus c solution contained in the directory 'bonus_c'.
+You'll also find a makefile there but beware that this is still _under construction_.

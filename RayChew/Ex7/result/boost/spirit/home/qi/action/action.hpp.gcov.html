@@ -1,0 +1,278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/spirit/home/qi/action/action.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">boost/spirit/home/qi/action</a> - action.hpp<span style="font-size: 80%;"> (source / <a href="action.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :     Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :     Distributed under the Boost Software License, Version 1.0. (See accompanying
+<span class="lineNum">       5 </span>            :     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       6 </span>            : =============================================================================*/
+<span class="lineNum">       7 </span>            : #if !defined(SPIRIT_ACTION_JANUARY_07_2007_1128AM)
+<span class="lineNum">       8 </span>            : #define SPIRIT_ACTION_JANUARY_07_2007_1128AM
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      11 </span>            : #pragma once
+<span class="lineNum">      12 </span>            : #endif
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #include &lt;boost/spirit/home/qi/meta_compiler.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &lt;boost/spirit/home/qi/parser.hpp&gt;
+<span class="lineNum">      16 </span>            : #include &lt;boost/spirit/home/qi/detail/attributes.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/spirit/home/support/argument.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/spirit/home/support/context.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/spirit/home/support/unused.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/spirit/home/support/info.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/spirit/home/support/action_dispatch.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/spirit/home/support/handles_container.hpp&gt;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #include &lt;boost/mpl/bool.hpp&gt;
+<span class="lineNum">      25 </span>            : #include &lt;boost/mpl/if.hpp&gt;
+<span class="lineNum">      26 </span>            : #include &lt;boost/type_traits/remove_const.hpp&gt;
+<span class="lineNum">      27 </span>            : #include &lt;boost/type_traits/is_same.hpp&gt;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : namespace boost { namespace spirit { namespace qi
+<span class="lineNum">      30 </span>            : {
+<span class="lineNum">      31 </span>            :     BOOST_PP_REPEAT(SPIRIT_ARGUMENTS_LIMIT, SPIRIT_USING_ARGUMENT, _)
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :     template &lt;typename Subject, typename Action&gt;
+<span class="lineNum">      34 </span>            :     struct action : unary_parser&lt;action&lt;Subject, Action&gt; &gt;
+<span class="lineNum">      35 </span>            :     {
+<span class="lineNum">      36 </span>            :         typedef Subject subject_type;
+<span class="lineNum">      37 </span>            :         typedef Action action_type;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :         template &lt;typename Context, typename Iterator&gt;
+<span class="lineNum">      40 </span>            :         struct attribute
+<span class="lineNum">      41 </span>            :           : traits::attribute_of&lt;Subject, Context, Iterator&gt;
+<span class="lineNum">      42 </span>            :         {};
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :         action(Subject const&amp; subject_, Action f_)
+<span class="lineNum">      45 </span>            :           : subject(subject_), f(f_) {}
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : #ifndef BOOST_SPIRIT_ACTIONS_ALLOW_ATTR_COMPAT
+<a name="48"><span class="lineNum">      48 </span>            :         template &lt;typename Iterator, typename Context</a>
+<span class="lineNum">      49 </span>            :           , typename Skipper, typename Attribute&gt;
+<span class="lineNum">      50 </span><span class="lineCov">    1000000 :         bool parse(Iterator&amp; first, Iterator const&amp; last</span>
+<span class="lineNum">      51 </span>            :           , Context&amp; context, Skipper const&amp; skipper
+<span class="lineNum">      52 </span>            :           , Attribute&amp; attr_) const
+<span class="lineNum">      53 </span>            :         {
+<span class="lineNum">      54 </span>            :             typedef typename attribute&lt;Context, Iterator&gt;::type attr_type;
+<span class="lineNum">      55 </span>            :             typedef traits::make_attribute&lt;attr_type, Attribute&gt; make_attribute;
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            :             // create an attribute if one is not supplied
+<span class="lineNum">      58 </span>            :             typedef traits::transform_attribute&lt;
+<span class="lineNum">      59 </span>            :                 typename make_attribute::type, attr_type, domain&gt; transform;
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span><span class="lineCov">    3000002 :             typename make_attribute::type made_attr = make_attribute::call(attr_);</span>
+<span class="lineNum">      62 </span>            :             typename transform::type attr = transform::pre(made_attr);
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :             Iterator save = first;
+<span class="lineNum">      65 </span><span class="lineCov">    3000002 :             if (subject.parse(first, last, context, skipper, attr))</span>
+<span class="lineNum">      66 </span>            :             {
+<span class="lineNum">      67 </span>            :                 // call the function, passing the attribute, the context.
+<span class="lineNum">      68 </span>            :                 // The client can return false to fail parsing.
+<span class="lineNum">      69 </span>            :                 if (traits::action_dispatch&lt;Subject&gt;()(f, attr, context)) 
+<span class="lineNum">      70 </span>            :                 {
+<span class="lineNum">      71 </span>            :                     // Do up-stream transformation, this integrates the results
+<span class="lineNum">      72 </span>            :                     // back into the original attribute value, if appropriate.
+<span class="lineNum">      73 </span>            :                     traits::post_transform(attr_, attr);
+<span class="lineNum">      74 </span>            :                     return true;
+<span class="lineNum">      75 </span>            :                 }
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :                 // reset iterators if semantic action failed the match
+<span class="lineNum">      78 </span>            :                 // retrospectively
+<span class="lineNum">      79 </span>            :                 first = save;
+<span class="lineNum">      80 </span>            :             }
+<span class="lineNum">      81 </span>            :             return false;
+<span class="lineNum">      82 </span>            :         }
+<span class="lineNum">      83 </span>            : #else
+<span class="lineNum">      84 </span>            :         template &lt;typename Iterator, typename Context
+<span class="lineNum">      85 </span>            :           , typename Skipper, typename Attribute&gt;
+<span class="lineNum">      86 </span>            :         bool parse(Iterator&amp; first, Iterator const&amp; last
+<span class="lineNum">      87 </span>            :           , Context&amp; context, Skipper const&amp; skipper
+<span class="lineNum">      88 </span>            :           , Attribute&amp; attr) const
+<span class="lineNum">      89 </span>            :         {
+<span class="lineNum">      90 </span>            :             Iterator save = first;
+<span class="lineNum">      91 </span>            :             if (subject.parse(first, last, context, skipper, attr)) // Use the attribute as-is
+<span class="lineNum">      92 </span>            :             {
+<span class="lineNum">      93 </span>            :                 // call the function, passing the attribute, the context.
+<span class="lineNum">      94 </span>            :                 // The client can return false to fail parsing.
+<span class="lineNum">      95 </span>            :                 if (traits::action_dispatch&lt;Subject&gt;()(f, attr, context))
+<span class="lineNum">      96 </span>            :                     return true;
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            :                 // reset iterators if semantic action failed the match
+<span class="lineNum">      99 </span>            :                 // retrospectively
+<span class="lineNum">     100 </span>            :                 first = save;
+<span class="lineNum">     101 </span>            :             }
+<span class="lineNum">     102 </span>            :             return false;
+<span class="lineNum">     103 </span>            :         }
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            :         template &lt;typename Iterator, typename Context
+<span class="lineNum">     106 </span>            :           , typename Skipper&gt;
+<span class="lineNum">     107 </span>            :         bool parse(Iterator&amp; first, Iterator const&amp; last
+<span class="lineNum">     108 </span>            :           , Context&amp; context, Skipper const&amp; skipper
+<span class="lineNum">     109 </span>            :           , unused_type) const
+<span class="lineNum">     110 </span>            :         {
+<span class="lineNum">     111 </span>            :             typedef typename attribute&lt;Context, Iterator&gt;::type attr_type;
+<span class="lineNum">     112 </span>            :             typedef traits::make_attribute&lt;attr_type, unused_type&gt; make_attribute;
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :             // synthesize the attribute since one is not supplied
+<span class="lineNum">     115 </span>            :             typedef traits::transform_attribute&lt;
+<span class="lineNum">     116 </span>            :                 typename make_attribute::type, attr_type, domain&gt; transform;
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            :             typename make_attribute::type made_attr = make_attribute::call(unused_type());
+<span class="lineNum">     119 </span>            :             typename transform::type attr = transform::pre(made_attr);
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            :             Iterator save = first;
+<span class="lineNum">     122 </span>            :             if (subject.parse(first, last, context, skipper, attr))
+<span class="lineNum">     123 </span>            :             {
+<span class="lineNum">     124 </span>            :                 // call the function, passing the attribute, the context.
+<span class="lineNum">     125 </span>            :                 // The client can return false to fail parsing.
+<span class="lineNum">     126 </span>            :                 if (traits::action_dispatch&lt;Subject&gt;()(f, attr, context))
+<span class="lineNum">     127 </span>            :                     return true;
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            :                 // reset iterators if semantic action failed the match
+<span class="lineNum">     130 </span>            :                 // retrospectively
+<span class="lineNum">     131 </span>            :                 first = save;
+<span class="lineNum">     132 </span>            :             }
+<span class="lineNum">     133 </span>            :             return false;
+<span class="lineNum">     134 </span>            :         }
+<span class="lineNum">     135 </span>            : #endif
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :         template &lt;typename Context&gt;
+<span class="lineNum">     138 </span>            :         info what(Context&amp; context) const
+<span class="lineNum">     139 </span>            :         {
+<span class="lineNum">     140 </span>            :             // the action is transparent (does not add any info)
+<span class="lineNum">     141 </span>            :             return subject.what(context);
+<span class="lineNum">     142 </span>            :         }
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :         Subject subject;
+<span class="lineNum">     145 </span>            :         Action f;
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            :     private:
+<span class="lineNum">     148 </span>            :         // silence MSVC warning C4512: assignment operator could not be generated
+<span class="lineNum">     149 </span>            :         action&amp; operator= (action const&amp;);
+<span class="lineNum">     150 </span>            :     };
+<span class="lineNum">     151 </span>            : }}}
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            : namespace boost { namespace spirit
+<span class="lineNum">     154 </span>            : {
+<span class="lineNum">     155 </span>            :     // Qi action meta-compiler
+<span class="lineNum">     156 </span>            :     template &lt;&gt;
+<span class="lineNum">     157 </span>            :     struct make_component&lt;qi::domain, tag::action&gt;
+<span class="lineNum">     158 </span>            :     {
+<span class="lineNum">     159 </span>            :         template &lt;typename Sig&gt;
+<span class="lineNum">     160 </span>            :         struct result;
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            :         template &lt;typename This, typename Elements, typename Modifiers&gt;
+<span class="lineNum">     163 </span>            :         struct result&lt;This(Elements, Modifiers)&gt;
+<span class="lineNum">     164 </span>            :         {
+<span class="lineNum">     165 </span>            :             typedef typename
+<span class="lineNum">     166 </span>            :                 remove_const&lt;typename Elements::car_type&gt;::type
+<span class="lineNum">     167 </span>            :             subject_type;
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :             typedef typename
+<span class="lineNum">     170 </span>            :                 remove_const&lt;typename Elements::cdr_type::car_type&gt;::type
+<span class="lineNum">     171 </span>            :             action_type;
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            :             typedef qi::action&lt;subject_type, action_type&gt; type;
+<span class="lineNum">     174 </span>            :         };
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span>            :         template &lt;typename Elements&gt;
+<span class="lineNum">     177 </span>            :         typename result&lt;make_component(Elements, unused_type)&gt;::type
+<span class="lineNum">     178 </span>            :         operator()(Elements const&amp; elements, unused_type) const
+<span class="lineNum">     179 </span>            :         {
+<span class="lineNum">     180 </span>            :             typename result&lt;make_component(Elements, unused_type)&gt;::type
+<span class="lineNum">     181 </span>            :                 result(elements.car, elements.cdr.car);
+<span class="lineNum">     182 </span>            :             return result;
+<span class="lineNum">     183 </span>            :         }
+<span class="lineNum">     184 </span>            :     };
+<span class="lineNum">     185 </span>            : }}
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span>            : namespace boost { namespace spirit { namespace traits
+<span class="lineNum">     188 </span>            : {
+<span class="lineNum">     189 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     190 </span>            :     template &lt;typename Subject, typename Action&gt;
+<span class="lineNum">     191 </span>            :     struct has_semantic_action&lt;qi::action&lt;Subject, Action&gt; &gt;
+<span class="lineNum">     192 </span>            :       : mpl::true_ {};
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     195 </span>            :     template &lt;typename Subject, typename Action, typename Attribute
+<span class="lineNum">     196 </span>            :         , typename Context, typename Iterator&gt;
+<span class="lineNum">     197 </span>            :     struct handles_container&lt;qi::action&lt;Subject, Action&gt;, Attribute
+<span class="lineNum">     198 </span>            :         , Context, Iterator&gt;
+<span class="lineNum">     199 </span>            :       : unary_handles_container&lt;Subject, Attribute, Context, Iterator&gt; {};
+<span class="lineNum">     200 </span>            : }}}
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

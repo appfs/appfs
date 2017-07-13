@@ -1,0 +1,406 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/spirit/home/qi/numeric/detail/real_impl.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">boost/spirit/home/qi/numeric/detail</a> - real_impl.hpp<span style="font-size: 80%;"> (source / <a href="real_impl.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">45</td>
+            <td class="headerCovTableEntryLo">31.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :     Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            :     Copyright (c) 2001-2011 Hartmut Kaiser
+<span class="lineNum">       4 </span>            :     http://spirit.sourceforge.net/
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :     Distributed under the Boost Software License, Version 1.0. (See accompanying
+<span class="lineNum">       7 </span>            :     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : =============================================================================*/
+<span class="lineNum">       9 </span>            : #if !defined(SPIRIT_REAL_IMPL_APRIL_18_2006_0901AM)
+<span class="lineNum">      10 </span>            : #define SPIRIT_REAL_IMPL_APRIL_18_2006_0901AM
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      13 </span>            : #pragma once
+<span class="lineNum">      14 </span>            : #endif
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/limits.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/type_traits/is_same.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/spirit/home/support/unused.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/spirit/home/qi/detail/attributes.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/spirit/home/support/detail/pow10.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/spirit/home/support/detail/sign.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/integer.hpp&gt;
+<span class="lineNum">      24 </span>            : #include &lt;boost/assert.hpp&gt;
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : #if BOOST_WORKAROUND(BOOST_MSVC, &gt;= 1400)
+<span class="lineNum">      27 </span>            : # pragma warning(push)
+<span class="lineNum">      28 </span>            : # pragma warning(disable: 4100)   // 'p': unreferenced formal parameter
+<span class="lineNum">      29 </span>            : # pragma warning(disable: 4127)   // conditional expression is constant
+<span class="lineNum">      30 </span>            : #endif
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : namespace boost { namespace spirit { namespace traits
+<span class="lineNum">      33 </span>            : {
+<span class="lineNum">      34 </span>            :     using spirit::traits::pow10;
+<span class="lineNum">      35 </span>            :     
+<span class="lineNum">      36 </span>            :     namespace detail
+<span class="lineNum">      37 </span>            :     {
+<span class="lineNum">      38 </span>            :         template &lt;typename T, typename AccT&gt;
+<span class="lineNum">      39 </span>            :         void compensate_roundoff(T&amp; n, AccT acc_n, mpl::true_)
+<span class="lineNum">      40 </span>            :         {
+<span class="lineNum">      41 </span>            :             // at the lowest extremes, we compensate for floating point
+<span class="lineNum">      42 </span>            :             // roundoff errors by doing imprecise computation using T
+<span class="lineNum">      43 </span>            :             int const comp = 10;
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :             n = T((acc_n / comp) * comp);</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :             n += T(acc_n % comp);</span>
+<span class="lineNum">      46 </span>            :         }
+<span class="lineNum">      47 </span>            :         
+<span class="lineNum">      48 </span>            :         template &lt;typename T, typename AccT&gt;
+<span class="lineNum">      49 </span>            :         void compensate_roundoff(T&amp; n, AccT acc_n, mpl::false_)
+<span class="lineNum">      50 </span>            :         {
+<span class="lineNum">      51 </span>            :             // no need to compensate
+<span class="lineNum">      52 </span>            :             n = acc_n;
+<span class="lineNum">      53 </span>            :         }
+<span class="lineNum">      54 </span>            :         
+<span class="lineNum">      55 </span>            :         template &lt;typename T, typename AccT&gt;
+<span class="lineNum">      56 </span>            :         void compensate_roundoff(T&amp; n, AccT acc_n)
+<span class="lineNum">      57 </span>            :         {
+<span class="lineNum">      58 </span>            :             compensate_roundoff(n, acc_n, is_integral&lt;AccT&gt;());
+<span class="lineNum">      59 </span>            :         }
+<span class="lineNum">      60 </span>            :     }
+<span class="lineNum">      61 </span>            : 
+<a name="62"><span class="lineNum">      62 </span>            :     template &lt;typename T, typename AccT&gt;</a>
+<span class="lineNum">      63 </span>            :     inline bool
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :     scale(int exp, T&amp; n, AccT acc_n)</span>
+<span class="lineNum">      65 </span>            :     {
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         if (exp &gt;= 0)</span>
+<span class="lineNum">      67 </span>            :         {
+<span class="lineNum">      68 </span>            :             int max_exp = std::numeric_limits&lt;T&gt;::max_exponent10;
+<span class="lineNum">      69 </span>            :             
+<span class="lineNum">      70 </span>            :             // return false if exp exceeds the max_exp
+<span class="lineNum">      71 </span>            :             // do this check only for primitive types!
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :             if (is_floating_point&lt;T&gt;() &amp;&amp; exp &gt; max_exp)</span>
+<span class="lineNum">      73 </span>            :                 return false;
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :             n = acc_n * pow10&lt;T&gt;(exp);</span>
+<span class="lineNum">      75 </span>            :         }
+<span class="lineNum">      76 </span>            :         else
+<span class="lineNum">      77 </span>            :         {
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :             if (exp &lt; std::numeric_limits&lt;T&gt;::min_exponent10)</span>
+<span class="lineNum">      79 </span>            :             {
+<span class="lineNum">      80 </span>            :                 int min_exp = std::numeric_limits&lt;T&gt;::min_exponent10;
+<span class="lineNum">      81 </span>            :                 detail::compensate_roundoff(n, acc_n);
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                 n /= pow10&lt;T&gt;(-min_exp);</span>
+<span class="lineNum">      83 </span>            :                 
+<span class="lineNum">      84 </span>            :                 // return false if (-exp + min_exp) exceeds the -min_exp
+<span class="lineNum">      85 </span>            :                 // do this check only for primitive types!
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :                 if (is_floating_point&lt;T&gt;() &amp;&amp; (-exp + min_exp) &gt; -min_exp)</span>
+<span class="lineNum">      87 </span>            :                     return false;
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :                 n /= pow10&lt;T&gt;(-exp + min_exp);</span>
+<span class="lineNum">      90 </span>            :             }
+<span class="lineNum">      91 </span>            :             else
+<span class="lineNum">      92 </span>            :             {
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :                 n = T(acc_n) / pow10&lt;T&gt;(-exp);</span>
+<span class="lineNum">      94 </span>            :             }
+<span class="lineNum">      95 </span>            :         }
+<span class="lineNum">      96 </span>            :         return true;
+<span class="lineNum">      97 </span>            :     }
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :     inline bool
+<span class="lineNum">     100 </span>            :     scale(int /*exp*/, unused_type /*n*/, unused_type /*acc_n*/)
+<span class="lineNum">     101 </span>            :     {
+<span class="lineNum">     102 </span>            :         // no-op for unused_type
+<span class="lineNum">     103 </span>            :         return true;
+<span class="lineNum">     104 </span>            :     }
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :     template &lt;typename T, typename AccT&gt;
+<span class="lineNum">     107 </span>            :     inline bool
+<span class="lineNum">     108 </span>            :     scale(int exp, int frac, T&amp; n, AccT acc_n)
+<span class="lineNum">     109 </span>            :     {
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :         return scale(exp - frac, n, acc_n);</span>
+<span class="lineNum">     111 </span>            :     }
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            :     inline bool
+<span class="lineNum">     114 </span>            :     scale(int /*exp*/, int /*frac*/, unused_type /*n*/)
+<span class="lineNum">     115 </span>            :     {
+<span class="lineNum">     116 </span>            :         // no-op for unused_type
+<span class="lineNum">     117 </span>            :         return true;
+<span class="lineNum">     118 </span>            :     }
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            :     inline float
+<span class="lineNum">     121 </span>            :     negate(bool neg, float n)
+<span class="lineNum">     122 </span>            :     {
+<span class="lineNum">     123 </span>            :         return neg ? spirit::detail::changesign(n) : n;
+<span class="lineNum">     124 </span>            :     }
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :     inline double
+<span class="lineNum">     127 </span>            :     negate(bool neg, double n)
+<span class="lineNum">     128 </span>            :     {
+<span class="lineNum">     129 </span><span class="lineCov">    1000000 :         return neg ? spirit::detail::changesign(n) : n;</span>
+<span class="lineNum">     130 </span>            :     }
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            :     inline long double
+<span class="lineNum">     133 </span>            :     negate(bool neg, long double n)
+<span class="lineNum">     134 </span>            :     {
+<span class="lineNum">     135 </span>            :         return neg ? spirit::detail::changesign(n) : n;
+<span class="lineNum">     136 </span>            :     }
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            :     template &lt;typename T&gt;
+<span class="lineNum">     139 </span>            :     inline T
+<span class="lineNum">     140 </span>            :     negate(bool neg, T const&amp; n)
+<span class="lineNum">     141 </span>            :     {
+<span class="lineNum">     142 </span>            :         return neg ? -n : n;
+<span class="lineNum">     143 </span>            :     }
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            :     inline unused_type
+<span class="lineNum">     146 </span>            :     negate(bool /*neg*/, unused_type n)
+<span class="lineNum">     147 </span>            :     {
+<span class="lineNum">     148 </span>            :         // no-op for unused_type
+<span class="lineNum">     149 </span>            :         return n;
+<span class="lineNum">     150 </span>            :     }
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            :     template &lt;typename T&gt;
+<span class="lineNum">     153 </span>            :     inline bool
+<span class="lineNum">     154 </span>            :     is_equal_to_one(T const&amp; value)
+<span class="lineNum">     155 </span>            :     {
+<span class="lineNum">     156 </span><span class="lineCov">    1000000 :         return value == 1.0;</span>
+<span class="lineNum">     157 </span>            :     }
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            :     inline bool
+<span class="lineNum">     160 </span>            :     is_equal_to_one(unused_type)
+<span class="lineNum">     161 </span>            :     {
+<span class="lineNum">     162 </span>            :         // no-op for unused_type
+<span class="lineNum">     163 </span>            :         return false;
+<span class="lineNum">     164 </span>            :     }
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :     template &lt;typename T&gt;
+<span class="lineNum">     167 </span>            :     struct real_accumulator : mpl::identity&lt;T&gt; {};
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :     template &lt;&gt;
+<span class="lineNum">     170 </span>            :     struct real_accumulator&lt;float&gt;
+<span class="lineNum">     171 </span>            :         : mpl::identity&lt;uint_t&lt;(sizeof(float)*CHAR_BIT)&gt;::least&gt; {};
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            :     template &lt;&gt;
+<span class="lineNum">     174 </span>            :     struct real_accumulator&lt;double&gt;
+<span class="lineNum">     175 </span>            :         : mpl::identity&lt;uint_t&lt;(sizeof(double)*CHAR_BIT)&gt;::least&gt; {};
+<span class="lineNum">     176 </span>            : }}}
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            : namespace boost { namespace spirit { namespace qi  { namespace detail
+<span class="lineNum">     179 </span>            : {
+<span class="lineNum">     180 </span>            :     template &lt;typename T, typename RealPolicies&gt;
+<span class="lineNum">     181 </span>            :     struct real_impl
+<span class="lineNum">     182 </span>            :     {
+<a name="183"><span class="lineNum">     183 </span>            :         template &lt;typename Iterator, typename Attribute&gt;</a>
+<span class="lineNum">     184 </span>            :         static bool
+<span class="lineNum">     185 </span><span class="lineCov">    1000000 :         parse(Iterator&amp; first, Iterator const&amp; last, Attribute&amp; attr,</span>
+<span class="lineNum">     186 </span>            :             RealPolicies const&amp; p)
+<span class="lineNum">     187 </span>            :         {
+<span class="lineNum">     188 </span><span class="lineCov">    1000000 :             if (first == last)</span>
+<span class="lineNum">     189 </span>            :                 return false;
+<span class="lineNum">     190 </span>            :             Iterator save = first;
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            :             // Start by parsing the sign. neg will be true if
+<span class="lineNum">     193 </span>            :             // we got a &quot;-&quot; sign, false otherwise.
+<span class="lineNum">     194 </span>            :             bool neg = p.parse_sign(first, last);
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :             // Now attempt to parse an integer
+<span class="lineNum">     197 </span>            :             T n;
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span><span class="lineCov">    1000000 :             typename traits::real_accumulator&lt;T&gt;::type acc_n = 0;</span>
+<span class="lineNum">     200 </span>            :             bool got_a_number = p.parse_n(first, last, acc_n);
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            :             // If we did not get a number it might be a NaN, Inf or a leading
+<span class="lineNum">     203 </span>            :             // dot.
+<span class="lineNum">     204 </span>            :             if (!got_a_number)
+<span class="lineNum">     205 </span>            :             {
+<span class="lineNum">     206 </span>            :                 // Check whether the number to parse is a NaN or Inf
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                 if (p.parse_nan(first, last, n) ||</span>
+<span class="lineNum">     208 </span>            :                     p.parse_inf(first, last, n))
+<span class="lineNum">     209 </span>            :                 {
+<span class="lineNum">     210 </span>            :                     // If we got a negative sign, negate the number
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :                     traits::assign_to(traits::negate(neg, n), attr);</span>
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :                     return true;    // got a NaN or Inf, return early</span>
+<span class="lineNum">     213 </span>            :                 }
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span>            :                 // If we did not get a number and our policies do not
+<span class="lineNum">     216 </span>            :                 // allow a leading dot, fail and return early (no-match)
+<span class="lineNum">     217 </span>            :                 if (!p.allow_leading_dot)
+<span class="lineNum">     218 </span>            :                 {
+<span class="lineNum">     219 </span>            :                     first = save;
+<span class="lineNum">     220 </span>            :                     return false;
+<span class="lineNum">     221 </span>            :                 }
+<span class="lineNum">     222 </span>            :             }
+<span class="lineNum">     223 </span>            : 
+<span class="lineNum">     224 </span>            :             bool e_hit = false;
+<span class="lineNum">     225 </span>            :             Iterator e_pos;
+<span class="lineNum">     226 </span><span class="lineCov">    1000000 :             int frac_digits = 0;</span>
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span>            :             // Try to parse the dot ('.' decimal point)
+<span class="lineNum">     229 </span>            :             if (p.parse_dot(first, last))
+<span class="lineNum">     230 </span>            :             {
+<span class="lineNum">     231 </span>            :                 // We got the decimal point. Now we will try to parse
+<span class="lineNum">     232 </span>            :                 // the fraction if it is there. If not, it defaults
+<span class="lineNum">     233 </span>            :                 // to zero (0) only if we already got a number.
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 :                 if (p.parse_frac_n(first, last, acc_n, frac_digits))</span>
+<span class="lineNum">     235 </span>            :                 {
+<span class="lineNum">     236 </span>            :                 }
+<span class="lineNum">     237 </span><span class="lineNoCov">          0 :                 else if (!got_a_number || !p.allow_trailing_dot)</span>
+<span class="lineNum">     238 </span>            :                 {
+<span class="lineNum">     239 </span>            :                     // We did not get a fraction. If we still haven't got a
+<span class="lineNum">     240 </span>            :                     // number and our policies do not allow a trailing dot,
+<span class="lineNum">     241 </span>            :                     // return no-match.
+<span class="lineNum">     242 </span><span class="lineNoCov">          0 :                     first = save;</span>
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :                     return false;</span>
+<span class="lineNum">     244 </span>            :                 }
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            :                 // Now, let's see if we can parse the exponent prefix
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :                 e_pos = first;</span>
+<span class="lineNum">     248 </span>            :                 e_hit = p.parse_exp(first, last);
+<span class="lineNum">     249 </span>            :             }
+<span class="lineNum">     250 </span>            :             else
+<span class="lineNum">     251 </span>            :             {
+<span class="lineNum">     252 </span>            :                 // No dot and no number! Return no-match.
+<span class="lineNum">     253 </span><span class="lineCov">    1000000 :                 if (!got_a_number)</span>
+<span class="lineNum">     254 </span>            :                 {
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :                     first = save;</span>
+<span class="lineNum">     256 </span><span class="lineNoCov">          0 :                     return false;</span>
+<span class="lineNum">     257 </span>            :                 }
+<span class="lineNum">     258 </span>            : 
+<span class="lineNum">     259 </span>            :                 // If we must expect a dot and we didn't see an exponent
+<span class="lineNum">     260 </span>            :                 // prefix, return no-match.
+<span class="lineNum">     261 </span>            :                 e_pos = first;
+<span class="lineNum">     262 </span>            :                 e_hit = p.parse_exp(first, last);
+<span class="lineNum">     263 </span>            :                 if (p.expect_dot &amp;&amp; !e_hit)
+<span class="lineNum">     264 </span>            :                 {
+<span class="lineNum">     265 </span>            :                     first = save;
+<span class="lineNum">     266 </span>            :                     return false;
+<span class="lineNum">     267 </span>            :                 }
+<span class="lineNum">     268 </span>            :             }
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            :             if (e_hit)
+<span class="lineNum">     271 </span>            :             {
+<span class="lineNum">     272 </span>            :                 // We got the exponent prefix. Now we will try to parse the
+<span class="lineNum">     273 </span>            :                 // actual exponent.
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :                 int exp = 0;</span>
+<span class="lineNum">     275 </span><span class="lineNoCov">          0 :                 if (p.parse_exp_n(first, last, exp))</span>
+<span class="lineNum">     276 </span>            :                 {
+<span class="lineNum">     277 </span>            :                     // Got the exponent value. Scale the number by
+<span class="lineNum">     278 </span>            :                     // exp-frac_digits.
+<span class="lineNum">     279 </span><span class="lineNoCov">          0 :                     if (!traits::scale(exp, frac_digits, n, acc_n))</span>
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :                         return false;</span>
+<span class="lineNum">     281 </span>            :                 }
+<span class="lineNum">     282 </span>            :                 else
+<span class="lineNum">     283 </span>            :                 {
+<span class="lineNum">     284 </span>            :                     // If there is no number, disregard the exponent altogether.
+<span class="lineNum">     285 </span>            :                     // by resetting 'first' prior to the exponent prefix (e|E)
+<span class="lineNum">     286 </span><span class="lineNoCov">          0 :                     first = e_pos;</span>
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :                     n = static_cast&lt;T&gt;(acc_n);</span>
+<span class="lineNum">     288 </span>            :                 }
+<span class="lineNum">     289 </span>            :             }
+<span class="lineNum">     290 </span><span class="lineCov">    1000000 :             else if (frac_digits)</span>
+<span class="lineNum">     291 </span>            :             {
+<span class="lineNum">     292 </span>            :                 // No exponent found. Scale the number by -frac_digits.
+<span class="lineNum">     293 </span><span class="lineNoCov">          0 :                 traits::scale(-frac_digits, n, acc_n);</span>
+<span class="lineNum">     294 </span>            :             }
+<span class="lineNum">     295 </span><span class="lineCov">    1000000 :             else if (traits::is_equal_to_one(acc_n))</span>
+<span class="lineNum">     296 </span>            :             {
+<span class="lineNum">     297 </span>            :                 // There is a chance of having to parse one of the 1.0#...
+<span class="lineNum">     298 </span>            :                 // styles some implementations use for representing NaN or Inf.
+<span class="lineNum">     299 </span>            : 
+<span class="lineNum">     300 </span>            :                 // Check whether the number to parse is a NaN or Inf
+<span class="lineNum">     301 </span><span class="lineCov">        922 :                 if (p.parse_nan(first, last, n) ||</span>
+<span class="lineNum">     302 </span>            :                     p.parse_inf(first, last, n))
+<span class="lineNum">     303 </span>            :                 {
+<span class="lineNum">     304 </span>            :                     // If we got a negative sign, negate the number
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :                     traits::assign_to(traits::negate(neg, n), attr);</span>
+<span class="lineNum">     306 </span><span class="lineNoCov">          0 :                     return true;    // got a NaN or Inf, return immediately</span>
+<span class="lineNum">     307 </span>            :                 }
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span><span class="lineCov">        922 :                 n = static_cast&lt;T&gt;(acc_n);</span>
+<span class="lineNum">     310 </span>            :             }
+<span class="lineNum">     311 </span>            :             else
+<span class="lineNum">     312 </span>            :             {
+<span class="lineNum">     313 </span><span class="lineCov">     999078 :                 n = static_cast&lt;T&gt;(acc_n);</span>
+<span class="lineNum">     314 </span>            :             }
+<span class="lineNum">     315 </span>            : 
+<span class="lineNum">     316 </span>            :             // If we got a negative sign, negate the number
+<span class="lineNum">     317 </span><span class="lineCov">    1000000 :             traits::assign_to(traits::negate(neg, n), attr);</span>
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span>            :             // Success!!!
+<span class="lineNum">     320 </span><span class="lineCov">    1000000 :             return true;</span>
+<span class="lineNum">     321 </span>            :         }
+<span class="lineNum">     322 </span>            :     };
+<span class="lineNum">     323 </span>            : 
+<span class="lineNum">     324 </span>            : #if BOOST_WORKAROUND(BOOST_MSVC, &gt;= 1400)
+<span class="lineNum">     325 </span>            : # pragma warning(pop)
+<span class="lineNum">     326 </span>            : #endif
+<span class="lineNum">     327 </span>            : 
+<span class="lineNum">     328 </span>            : }}}}
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
