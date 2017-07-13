@@ -35,10 +35,11 @@ po::variables_map parseCommandLine(po::options_description desc, int argn,
 		char* argv[]) {
 	desc.add_options()//
 			("help,h", "produce help message")//
-			("start_node,sn", "node, where to start")//
+			("start_node,sn", po::value<std::vector<int >>(),"node, where to start")//
 			("input-file", po::value<string>(), "input file");
 	po::positional_options_description p;
-	p.add("input-file", -1);
+	p.add("input-file", 1);
+	p.add("start_node", -1);
 	po::variables_map vm;
 	po::store(
 			po::command_line_parser(argn, argv).options(desc).positional(p).run(),
@@ -69,17 +70,20 @@ int main(int argn, char *argv[]) {
 		return 1;
 	}
 
-	int startnode;
+	std::vector<int > startnodes;
 	if(vm.count("start_node") == 0){
 		cout << "using default startnode 2" << endl;
-		startnode = 2;
+		startnodes = std::vector<int >();
+		startnodes.push_back(2);
 	} else {
-		startnode = vm["start_node"].as<int >();
+		startnodes = vm["start_node"].as<std::vector<int >>();
 	}
 
 
 	string filename = vm["input-file"].as<string >();
-	filename += FILEEND;
+	if(filename.find(FILEEND) == std::string::npos){
+		filename += FILEEND;
+	}
 	cout << "Going to parse the file " << filename << endl;
 	fileStream.open(filename.c_str(), std::ios::in);
 
@@ -108,6 +112,7 @@ int main(int argn, char *argv[]) {
 	Weights* weights = new Weights(edgeCount);
 
 	cout << "Reading edges..." << flush;
+	int i = 0;
 	while (getline(fileStream, line)) {
 		int start;
 		int end;
@@ -117,19 +122,48 @@ int main(int argn, char *argv[]) {
 			line.clear();
 			continue;
 		}
-		edges->push_back(std::make_pair(start, end));
-		weights->push_back(weight);
+		edges->at(i) = std::make_pair(start, end);
+		weights->at(i) = weight;
+		i++;
 		line.clear();
 	}
-	cout << "done" << endl;
+	cout << "done" << endl << endl;
 
-	cout << "Solves Steiner problem..." << flush;
-	Steiner* s = new Steiner();
-	s->steiner(vertexCount, *edges, *weights, startnode);
+	Steiner** steiners = new Steiner*[startnodes.size()];
+	cout << "Solves Steiner problem for startnodes ";
+	for(unsigned int i = 0; i < startnodes.size(); i++){
+		cout << startnodes[i];
+		if(i != startnodes.size() - 1){
+			cout << ", ";
+		} else {
+			cout << endl;
+		}
+	}
+	#pragma omp parallel for
+	for(unsigned int i = 0; i < startnodes.size(); i++){
+		steiners[i] = new Steiner();
+		steiners[i]->steiner(vertexCount, edges, *weights, startnodes[i]);
+		cout << "Objective value of Steiner-tree for startnode " << startnodes[i] << ": " << steiners[i]->getWeight() << endl;
+	}
+
+	Steiner* s = steiners[0];
+	int node = startnodes[0];
+	int weight = s->getWeight();
+	cout << "Searching the one with least weight..." << flush;
+	for(unsigned int i = 0; i < startnodes.size(); i++){
+		if(weight > steiners[i]->getWeight()){
+			s = steiners[i];
+			node = startnodes[i];
+			weight = steiners[i]->getWeight();
+		}
+	}
 	cout << "done" << endl;
+	cout << "It's the one with startnode " << node << endl << endl;
+
+
+	cout << "Checking for cycle..." << flush;
 	Edges steinerEdges = s->getEdges();
 	GraphChecker* checker = new GraphChecker(steinerEdges, s->getNodes());
-	cout << "Checking for cycle..." << flush;
 	if(checker->hasCycle()){
 		cout << "failed" << endl;
 		return 1;
@@ -141,9 +175,7 @@ int main(int argn, char *argv[]) {
 		cout << "failed" << endl;
 		return 1;
 	}
-	cout << "passed" << endl;
-
-	cout << "Objective value: " << s->getWeight() << endl;
+	cout << "passed" << endl << endl;
 
 	cout << "Edges:" << endl;
 	for(unsigned int i = 0; i < steinerEdges.size(); i++){
@@ -153,8 +185,11 @@ int main(int argn, char *argv[]) {
 
 	delete edges;
 	delete weights;
-	delete s;
 	delete checker;
+	for(unsigned int i = 0; i < startnodes.size(); i++){
+		delete steiners[i];
+	}
+	delete [] steiners;
 
 	return 0;
 }

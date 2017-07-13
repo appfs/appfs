@@ -27,12 +27,17 @@ using DijkstraPair = std::pair<int, int>;
  * \typedef SortedEdges which safes the all edges with weights belonging to one vertex in a (index, weight) pair
  */
 using SortedEdges = std::vector<std::vector<DijkstraPair> >;
+/*
+ * \typedef VisitedMap which stores at i-th position if vertex i is already visited
+ */
+using VisitedMap = std::vector<bool>;
 
 class dijkstra {
 public:
 	dijkstra(WeightMap, Edges, unsigned int);
 
-	WeightMap computeShortestPath(int);
+	void computeShortestPath(unsigned int, WeightMap&, std::vector<int>&);
+	int setEdgeWeightToZero(int, int);
 
 private:
 	SortedEdges sortedEdges;

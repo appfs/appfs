@@ -13,8 +13,6 @@
 #include <boost/heap/fibonacci_heap.hpp>
 #include <exception>
 
-using VisitedMap = std::vector<bool>;
-
 /**
  * \struct compare_function
  * \brief defines how 2 dijkstra pairs should be compared at fibonacci-heap
@@ -51,19 +49,13 @@ dijkstra::dijkstra(WeightMap weights, Edges edges, unsigned int numberOfVertices
  * \param unsigned int numberOfVertices Number of Vertices for the graph
  * \return vector of the weights for all shortest paths
  */
-WeightMap dijkstra::computeShortestPath(int startNode){
+void dijkstra::computeShortestPath(unsigned int startNode, WeightMap& weightsToVertices, std::vector<int>& predecessorMap){
 	if(startNode > numberOfVertices){
 		std::cerr << "Index of StartVertex must be less or equal to number of vertices" << std::endl;
 		throw std::exception();
 	}
-	WeightMap weightsToVertices(numberOfVertices); //should be returned
-	std::vector<int> predecessorMap(numberOfVertices);
-	VisitedMap alreadyVisited(numberOfVertices);
+	VisitedMap alreadyVisited(numberOfVertices, false);
 
-	for (unsigned int i = 0; i < numberOfVertices; i++) {
-		weightsToVertices[i] = INT_MAX;
-		predecessorMap[i] = -1;
-	}
 	//Start in point startNode
 	weightsToVertices[startNode] = 0;
 	predecessorMap[startNode] = startNode;
@@ -106,5 +98,19 @@ WeightMap dijkstra::computeShortestPath(int startNode){
 			heap.pop();
 		}
 	}
-	return weightsToVertices;
+}
+
+/*
+ * \fn void updateEdgeWeight(int edgeStart, int edgeEnd)
+ * \brief sets EdgeWeight of edge (edgestart, edgeEnd) to 0
+ */
+int dijkstra::setEdgeWeightToZero(int edgeStart, int edgeEnd){
+	std::vector<DijkstraPair> edges = sortedEdges[edgeStart];
+	for(DijkstraPair pair : edges){
+		if(pair.first == edgeEnd){
+			int oldWeight = pair.second;
+			pair.second = 0;
+			return oldWeight;
+		}
+	}return 0;
 }
