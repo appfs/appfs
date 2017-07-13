@@ -16,9 +16,9 @@ using Edge = std::pair<int, int >;
 using Edges = std::vector<Edge >;
 using Weights = std::vector<double >;
 using WeightsAndPrenodeMap = std::vector<std::pair<double, int >>;
-using EdgeWithWeight = std::pair<int, double >;
-using EdgeWithWeightList = std::vector<EdgeWithWeight >;
-using NodeToEdgeMap = std::vector<EdgeWithWeightList >;
+using EdgeWithIndex = std::pair<int, double >;
+using EdgeWithIndexList = std::vector<EdgeWithIndex >;
+using NodeToEdgeMap = std::vector<EdgeWithIndexList >;
 
 class prioritize{
 	public: bool operator ()(Edge&p1 ,Edge&p2){
@@ -28,10 +28,15 @@ class prioritize{
 using Queue = std::priority_queue<Edge, Edges, prioritize >;
 
 class Dijkstra {
+private:
+	int vertexCount;
+	NodeToEdgeMap* vertexToEdges;
+	Weights* weights;
+
 public:
-	Dijkstra();
+	Dijkstra(int vertexCount, NodeToEdgeMap* vertexToEdges, Weights* weights);
 	virtual ~Dijkstra();
-	WeightsAndPrenodeMap dijkstra(int vertexCount, Edges& edges, Weights& weights, int source);
+	WeightsAndPrenodeMap dijkstra(int source);
 };
 
 #endif /* C_DIJKSTRA_H_ */
