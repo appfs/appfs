@@ -5,6 +5,8 @@ CXX = g++
 CXXFLAGS = -std=c++14 -O3 -Wall
 LIBS = -lboost_timer
 
+OBJ = utils.o checker.o boost_dijkstra.o m2alg.o
+
 # target executable to build:
 TARGET = ex8
 
@@ -64,4 +66,4 @@ check:
 	cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
 
 clean:
-	rm -f $(TARGET) *.o
+	rm -f $(OBJS) *.o

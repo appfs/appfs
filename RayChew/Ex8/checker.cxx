@@ -4,7 +4,7 @@ bool checker::isConnected(std::vector<Edge>& edges, int& startTerminal) { // cit
   std::cout << "starting BFS..." << std::endl;
   int n = utils::get_Nodes(edges).back();
   n++;
-  std::vector<std::vector<int>> graph = utils::build_adjListNoWeights(n, edges);
+  std::vector<std::vector<int>> graph = utils::build_adjList(n, edges);
   bool visited[n] = {false};
   int startNode = startTerminal;
   visited[startNode] = true;

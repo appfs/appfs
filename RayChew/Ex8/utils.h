@@ -35,7 +35,7 @@ namespace utils {
   
   std::vector<std::vector<vertex>> build_adjList(int& n, std::vector<Edge>& edges, std::vector<int>& weights);
 
-  std::vector<std::vector<int>> build_adjListNoWeights(int& n,std::vector<Edge>& edges);
+  std::vector<std::vector<int>> build_adjList(int& n,std::vector<Edge>& edges);
 };
 
 #endif

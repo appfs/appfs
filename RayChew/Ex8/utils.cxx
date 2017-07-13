@@ -95,7 +95,7 @@ std::vector<std::vector<vertex>> utils::build_adjList(int& n, std::vector<Edge>&
   return adjList;
 }
 
-std::vector<std::vector<int>> utils::build_adjListNoWeights(int& n,std::vector<Edge>& edges) {
+std::vector<std::vector<int>> utils::build_adjList(int& n,std::vector<Edge>& edges) {
   std::vector<std::vector<int>> adjList(n);
   for (auto i=edges.begin(), end=edges.end(); i!=end; i++) {
     int vert1 = i->first;
