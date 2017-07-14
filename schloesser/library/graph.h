@@ -59,17 +59,33 @@ void update_neighbor_info(
 void run_dijkstra( 
         GraphSearch *gs);
 
+/** @brief Run the dijkstra algorithm.
+ *
+ * While still having vertices to visit, perform dijkstra steps.
+ * @param vertex_mask mask indicating which vertices are terminals and in subgraph 
+ * @param prev store predecessors in minimal tree
+ * @param gs the graphsearch
+ * @return the graphstructure is being updated
+ */
+void run_steiner_dijkstra( 
+		unsigned int *vertex_mask,
+		unsigned int *prev,
+        GraphSearch *gs);
+
 /** @brief Add the closest terminal to a subgraph to that subgraph
  *
  * @param g a graph
  * @param vertex_mask a mask indicating which terminals are vertices (%2 = 1) 
  *     and which vertices are contained in the subgraph (> 1)
+ * @param distances the (previously calculated) distances (helper)
  * @param prev for each vertex the predecessor in a tree
  * @return the vertex_mask and the predecessors in prev are being updated
+ *     modifies distances
  */
 void add_closest_terminal( 
         Graph *g, 
         unsigned int *vertex_mask, 
+		unsigned long *distances,
         unsigned int *prev); 
 
 /** @brief Decide if there are unconnected terminals.
@@ -83,15 +99,30 @@ bool unconnected_terminals(
         Graph *g,
         unsigned int *vertex_mask);
 
-/** @brief Calculate a steiner tree
+/** @brief Calculate a steiner tree by connecting the nearest terminal iterative
  *
  * @param g Graph in question
+ * @param start startvertex
  * @param vertex_mask info about which vertices are terminals 
  * @return the list of predecessors in a (hopefully good) approximation to a steiner tree.
  *     the values in vertex_mask are being updated to indicate the subgraph with values > 1.
  */
 unsigned int* steiner(
         Graph *g, 
+		unsigned int start,
+        unsigned int *vertex_mask);
+
+/** @brief Calculate a steiner tree modified version
+ *
+ * @param g Graph in question
+ * @param start startvertex
+ * @param vertex_mask info about which vertices are terminals 
+ * @return the list of predecessors in a (hopefully good) approximation to a steiner tree.
+ *     the values in vertex_mask are being updated to indicate the subgraph with values > 1.
+ */
+unsigned int* steiner_modified(
+        Graph *g, 
+		unsigned int start,
         unsigned int *vertex_mask);
 
 /** @brief Free the memory allocated in graph.
@@ -168,6 +199,7 @@ unsigned long* find_longest(
  *     and which vertices are terminals (%2 = 1).
  * @param prev an array containing the predecessors of vertices on a tree
  * @return the vertex_mask is being updated
+ *     modifies distances
  */
 void join_closest_terminal(
         unsigned long *distances, 
@@ -200,4 +232,18 @@ unsigned long edgeweight(
         unsigned int v1, 
         unsigned int v2,
         bool directed);
+
+/** @brief check if the subset is a steiner tree
+ * 
+ * @param g a graph
+ * @param terminal_mask masks terminals by 1, 0 elsewise
+ * @param tree_mask masks tree terminals by values > 1, terminals by values %2 = 1
+ * @param prev remembers predecessors of vertices
+ * @return if input describes a connected tree which attains all terminals. 
+ */
+bool check_steiner(
+		Graph *g,
+		unsigned int *terminal_mask,
+		unsigned int *tree_mask,
+		unsigned int *prev);
 #endif

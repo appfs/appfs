@@ -69,7 +69,7 @@ void decrease_value(
         Heap *h,
         unsigned int vert,
         unsigned long value) {
-
+	
     assert(h->pos[vert] < h->n);
     assert(h->val[vert] > value);
     h->val[vert] = value;
