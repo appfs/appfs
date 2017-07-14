@@ -177,7 +177,7 @@ int main(int argn, char *argv[]) {
 	cout << "Solves Steiner-tree for " << startnodes.size() << " startnodes..." << flush;
 	bTime::cpu_timer timerSteiner;
 	Steiner** steiners = new Steiner*[startnodes.size()];
-	#pragma omp parallel for
+	#pragma omp parallel for num_threads(threadNumber)
 	for(unsigned int i = 0; i < startnodes.size(); i++){
 		steiners[i] = new Steiner();
 		steiners[i]->computeSteinerTree(vertexCount, edges, *weights, terminals, startnodes[i]);
