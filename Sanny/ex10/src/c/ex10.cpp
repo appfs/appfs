@@ -64,13 +64,11 @@ po::variables_map parseCommandLine(po::options_description desc, int argn,
 		char* argv[]) {
 	desc.add_options()//
 			("help,h", "produce help message")//
-			("start_nodes,sn", po::value<std::vector<int >>(),"nodes, where to start")//
-			("input_file", po::value<string>(), "input file");
-			("thread_number", po::value<int>(), "number of threads for parallelization");
+			("start_nodes,s", po::value<std::vector<int >>(),"nodes, where to start")//
+			("thread_number,t", po::value<int>(), "number of threads for parallelization")//
+			("input_file,i", po::value<string>(), "input file");
 	po::positional_options_description p;
-	p.add("input_file", 1);
-	p.add("thread_number", 1);
-	p.add("start_nodes", -1);
+	p.add("input_file", -1);
 	po::variables_map vm;
 	po::store(
 			po::command_line_parser(argn, argv).options(desc).positional(p).run(),
@@ -97,12 +95,12 @@ int main(int argn, char *argv[]) {
 	}
 
 	std::ifstream fileStream;
-	if(vm.count("input-file") == 0){
+	if(vm.count("input_file") == 0){
 		cerr << "No input-file was given!" << endl;
 		return 1;
 	}
 
-	string filename = vm["input-file"].as<string >();
+	string filename = vm["input_file"].as<string >();
 	if(filename.find(FILEEND) == std::string::npos){
 		filename += FILEEND;
 	}
@@ -126,7 +124,7 @@ int main(int argn, char *argv[]) {
 		cout << "Using default number of threads (8)" << endl;
 		threadNumber = DEFAULT_THREAD_NUMBER;
 	} else {
-		threadNumber = vm["start_node"].as<int >();
+		threadNumber = vm["thread_number"].as<int >();
 	}
 
 	cout << endl;
