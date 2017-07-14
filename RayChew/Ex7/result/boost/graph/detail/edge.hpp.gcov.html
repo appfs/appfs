@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/graph/detail/edge.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">boost/graph/detail</a> - edge.hpp<span style="font-size: 80%;"> (source / <a href="edge.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : //</a>
+<span class="lineNum">       2 </span>            : //=======================================================================
+<span class="lineNum">       3 </span>            : // Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
+<span class="lineNum">       4 </span>            : // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
+<span class="lineNum">       5 </span>            : //
+<span class="lineNum">       6 </span>            : // Distributed under the Boost Software License, Version 1.0. (See
+<span class="lineNum">       7 </span>            : // accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       8 </span>            : // http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       9 </span>            : //=======================================================================
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #ifndef BOOST_GRAPH_DETAIL_EDGE_HPP
+<span class="lineNum">      12 </span>            : #define BOOST_GRAPH_DETAIL_EDGE_HPP
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #include &lt;iosfwd&gt;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;boost/functional/hash.hpp&gt;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : namespace boost {
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            :   namespace  detail {
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            :     template &lt;typename Directed, typename Vertex&gt;
+<span class="lineNum">      23 </span>            :     struct edge_base
+<span class="lineNum">      24 </span>            :     {
+<span class="lineNum">      25 </span>            :       inline edge_base() {} 
+<span class="lineNum">      26 </span><span class="lineCov">     950001 :       inline edge_base(Vertex s, Vertex d)</span>
+<span class="lineNum">      27 </span><span class="lineCov">     950001 :         : m_source(s), m_target(d) { }</span>
+<span class="lineNum">      28 </span>            :       Vertex m_source;
+<span class="lineNum">      29 </span>            :       Vertex m_target;
+<span class="lineNum">      30 </span>            :     };
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            :     template &lt;typename Directed, typename Vertex&gt;
+<span class="lineNum">      33 </span>            :     class edge_desc_impl  : public edge_base&lt;Directed,Vertex&gt; {
+<span class="lineNum">      34 </span>            :       typedef edge_desc_impl                              self;
+<span class="lineNum">      35 </span>            :       typedef edge_base&lt;Directed,Vertex&gt; Base;
+<span class="lineNum">      36 </span>            :     public: 
+<span class="lineNum">      37 </span>            :       typedef void                              property_type;
+<span class="lineNum">      38 </span>            :       
+<span class="lineNum">      39 </span>            :       inline edge_desc_impl() : m_eproperty(0) {} 
+<span class="lineNum">      40 </span>            :       
+<span class="lineNum">      41 </span><span class="lineCov">     450001 :       inline edge_desc_impl(Vertex s, Vertex d, const property_type* eplug)</span>
+<span class="lineNum">      42 </span><span class="lineCov">     450001 :         : Base(s,d), m_eproperty(const_cast&lt;property_type*&gt;(eplug)) { }</span>
+<span class="lineNum">      43 </span>            :       
+<span class="lineNum">      44 </span>            :       property_type* get_property() { return m_eproperty; }
+<span class="lineNum">      45 </span>            :       const property_type* get_property() const { return m_eproperty; }
+<span class="lineNum">      46 </span>            :       
+<span class="lineNum">      47 </span>            :       //  protected:
+<span class="lineNum">      48 </span>            :       property_type* m_eproperty;
+<span class="lineNum">      49 </span>            :     };
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            :     template &lt;class D, class V&gt;
+<span class="lineNum">      52 </span>            :     inline bool
+<span class="lineNum">      53 </span>            :     operator==(const detail::edge_desc_impl&lt;D,V&gt;&amp; a, 
+<span class="lineNum">      54 </span>            :                const detail::edge_desc_impl&lt;D,V&gt;&amp; b)
+<span class="lineNum">      55 </span>            :     {
+<span class="lineNum">      56 </span>            :       return a.get_property() == b.get_property();
+<span class="lineNum">      57 </span>            :     }
+<span class="lineNum">      58 </span>            :     template &lt;class D, class V&gt;
+<span class="lineNum">      59 </span>            :     inline bool
+<span class="lineNum">      60 </span>            :     operator!=(const detail::edge_desc_impl&lt;D,V&gt;&amp; a, 
+<span class="lineNum">      61 </span>            :                const detail::edge_desc_impl&lt;D,V&gt;&amp; b)
+<span class="lineNum">      62 </span>            :     {
+<span class="lineNum">      63 </span>            :       return ! (a.get_property() == b.get_property());
+<span class="lineNum">      64 </span>            :     }
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :     // Order edges according to the address of their property object
+<span class="lineNum">      67 </span>            :     template &lt;class D, class V&gt;
+<span class="lineNum">      68 </span>            :     inline bool
+<span class="lineNum">      69 </span>            :     operator&lt;(const detail::edge_desc_impl&lt;D,V&gt;&amp; a, 
+<span class="lineNum">      70 </span>            :                const detail::edge_desc_impl&lt;D,V&gt;&amp; b)
+<span class="lineNum">      71 </span>            :     {
+<span class="lineNum">      72 </span>            :       return a.get_property() &lt; b.get_property();
+<span class="lineNum">      73 </span>            :     }
+<span class="lineNum">      74 </span>            :     template &lt;class D, class V&gt;
+<span class="lineNum">      75 </span>            :     inline bool
+<span class="lineNum">      76 </span>            :     operator&lt;=(const detail::edge_desc_impl&lt;D,V&gt;&amp; a, 
+<span class="lineNum">      77 </span>            :                const detail::edge_desc_impl&lt;D,V&gt;&amp; b)
+<span class="lineNum">      78 </span>            :     {
+<span class="lineNum">      79 </span>            :       return a.get_property() &lt;= b.get_property();
+<span class="lineNum">      80 </span>            :     }
+<span class="lineNum">      81 </span>            :     template &lt;class D, class V&gt;
+<span class="lineNum">      82 </span>            :     inline bool
+<span class="lineNum">      83 </span>            :     operator&gt;(const detail::edge_desc_impl&lt;D,V&gt;&amp; a, 
+<span class="lineNum">      84 </span>            :                const detail::edge_desc_impl&lt;D,V&gt;&amp; b)
+<span class="lineNum">      85 </span>            :     {
+<span class="lineNum">      86 </span>            :       return a.get_property() &gt; b.get_property();
+<span class="lineNum">      87 </span>            :     }
+<span class="lineNum">      88 </span>            :     template &lt;class D, class V&gt;
+<span class="lineNum">      89 </span>            :     inline bool
+<span class="lineNum">      90 </span>            :     operator&gt;=(const detail::edge_desc_impl&lt;D,V&gt;&amp; a, 
+<span class="lineNum">      91 </span>            :                const detail::edge_desc_impl&lt;D,V&gt;&amp; b)
+<span class="lineNum">      92 </span>            :     {
+<span class="lineNum">      93 </span>            :       return a.get_property() &gt;= b.get_property();
+<span class="lineNum">      94 </span>            :     }
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :   } //namespace detail
+<span class="lineNum">      97 </span>            :   
+<span class="lineNum">      98 </span>            : } // namespace boost
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : namespace std {
+<span class="lineNum">     101 </span>            :   template &lt;class Char, class Traits, class D, class V&gt;
+<span class="lineNum">     102 </span>            :   std::basic_ostream&lt;Char, Traits&gt;&amp; 
+<span class="lineNum">     103 </span>            :   operator&lt;&lt;(std::basic_ostream&lt;Char, Traits&gt;&amp; os,
+<span class="lineNum">     104 </span>            :              const boost::detail::edge_desc_impl&lt;D,V&gt;&amp; e)
+<span class="lineNum">     105 </span>            :   {
+<span class="lineNum">     106 </span>            :     return os &lt;&lt; &quot;(&quot; &lt;&lt; e.m_source &lt;&lt; &quot;,&quot; &lt;&lt; e.m_target &lt;&lt; &quot;)&quot;;
+<span class="lineNum">     107 </span>            :   }
+<span class="lineNum">     108 </span>            : }
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            : // Boost's functional/hash
+<span class="lineNum">     111 </span>            : namespace boost {
+<span class="lineNum">     112 </span>            :   template&lt;typename D, typename V&gt;
+<span class="lineNum">     113 </span>            :   struct hash&lt;boost::detail::edge_desc_impl&lt;D, V&gt; &gt;
+<span class="lineNum">     114 </span>            :   {
+<span class="lineNum">     115 </span>            :     std::size_t operator()(const boost::detail::edge_desc_impl&lt;D, V&gt; &amp; x) const
+<span class="lineNum">     116 </span>            :     { return hash_value(x.get_property()); }
+<span class="lineNum">     117 </span>            :   };
+<span class="lineNum">     118 </span>            : }
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            : #endif // BOOST_GRAPH_DETAIL_DETAIL_EDGE_HPP
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

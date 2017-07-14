@@ -1,0 +1,514 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/bimap/bimap.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">boost/bimap</a> - bimap.hpp<span style="font-size: 80%;"> (source / <a href="bimap.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // Boost.Bimap</a>
+<span class="lineNum">       2 </span>            : //
+<span class="lineNum">       3 </span>            : // Copyright (c) 2006-2007 Matias Capeletto
+<span class="lineNum">       4 </span>            : //
+<span class="lineNum">       5 </span>            : // Distributed under the Boost Software License, Version 1.0.
+<span class="lineNum">       6 </span>            : // (See accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       7 </span>            : // http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : /// \file bimap.hpp
+<span class="lineNum">      10 </span>            : /// \brief Includes the basic bimap container
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : /** \mainpage notitle
+<span class="lineNum">      13 </span>            : \n
+<span class="lineNum">      14 </span>            : \image html http://matias.capeletto.googlepages.com/boost.bimap.reference.logo.png
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : \section Introduction
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : This is the complete reference of Boost.Bimap.
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : After getting a good understanding of the library from a user perspective
+<span class="lineNum">      21 </span>            : the next step will be:
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            :     - Understand the tagged idiom. (boost::bimaps::tags)
+<span class="lineNum">      24 </span>            :     - Understand the internals of the relation class (boost::bimaps::relation)
+<span class="lineNum">      25 </span>            :     - Read the container_adaptor toolbox docs (boost::bimaps::container_adaptor)
+<span class="lineNum">      26 </span>            :     - Understand the internals of the bimap class. (boost::bimaps, boost::bimaps::views
+<span class="lineNum">      27 </span>            :       and boost::bimaps::detail)
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            :                                                                         **/
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : /** \defgroup mutant_group mutant idiom
+<span class="lineNum">      33 </span>            : \brief A safe wrapper around reinterpret_cast
+<span class="lineNum">      34 </span>            :                                                                         **/
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : /** \defgroup relation_group relation
+<span class="lineNum">      37 </span>            : \brief The relation
+<span class="lineNum">      38 </span>            :                                                                         **/
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : /** \defgroup tags_group tagged idiom
+<span class="lineNum">      41 </span>            : \brief The tagged idiom
+<span class="lineNum">      42 </span>            :                                                                         **/
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : #ifndef BOOST_BIMAP_BIMAP_HPP
+<span class="lineNum">      46 </span>            : #define BOOST_BIMAP_BIMAP_HPP
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      49 </span>            : #pragma once
+<span class="lineNum">      50 </span>            : #endif
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : #include &lt;boost/config.hpp&gt;
+<span class="lineNum">      53 </span>            : #include &lt;boost/bimap/detail/user_interface_config.hpp&gt;
+<span class="lineNum">      54 </span>            : #include &lt;boost/mpl/aux_/na.hpp&gt;
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : #ifndef BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">      57 </span>            :     #include &lt;boost/serialization/nvp.hpp&gt;
+<span class="lineNum">      58 </span>            : #endif // BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : // Boost.Bimap
+<span class="lineNum">      61 </span>            : #include &lt;boost/bimap/detail/bimap_core.hpp&gt;
+<span class="lineNum">      62 </span>            : #include &lt;boost/bimap/detail/map_view_base.hpp&gt;
+<span class="lineNum">      63 </span>            : #include &lt;boost/bimap/detail/modifier_adaptor.hpp&gt;
+<span class="lineNum">      64 </span>            : #include &lt;boost/bimap/relation/support/data_extractor.hpp&gt;
+<span class="lineNum">      65 </span>            : #include &lt;boost/bimap/relation/support/member_with_tag.hpp&gt;
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : #include &lt;boost/bimap/support/map_type_by.hpp&gt;
+<span class="lineNum">      68 </span>            : #include &lt;boost/bimap/support/map_by.hpp&gt;
+<span class="lineNum">      69 </span>            : #include &lt;boost/bimap/support/iterator_type_by.hpp&gt;
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            : /// \brief The namespace where all the boost libraries lives.
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : namespace boost {
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : /// \brief Boost.Bimap library namespace
+<span class="lineNum">      76 </span>            : /**
+<span class="lineNum">      77 </span>            : All the entities in the library are defined in this namespace.
+<span class="lineNum">      78 </span>            :                                                                     **/
+<span class="lineNum">      79 </span>            : namespace bimaps {
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : /// \brief The bimap class is the entry point to the library.
+<span class="lineNum">      82 </span>            : /**
+<span class="lineNum">      83 </span>            : This class manages the instantiation of the desired bimap type.
+<span class="lineNum">      84 </span>            : As there are several types of bidirectional maps that can be
+<span class="lineNum">      85 </span>            : created using it. the main job of it is to find the desired
+<span class="lineNum">      86 </span>            : type. This is done using metaprogramming to obtain the relation
+<span class="lineNum">      87 </span>            : type that will be stored, the map_view type of each side and
+<span class="lineNum">      88 </span>            : the set_view type of the general relationship. The instantiation
+<span class="lineNum">      89 </span>            : is kept simple using an extended standard set theory, where a
+<span class="lineNum">      90 </span>            : bidirectional map type is defined by the set types it relates.
+<span class="lineNum">      91 </span>            : For example, a bidirectional map that has multimap semantics
+<span class="lineNum">      92 </span>            : viewed from both sides is defined by specifying that the two
+<span class="lineNum">      93 </span>            : keys sets are of \c multiset_of&lt;Key&gt; type.
+<span class="lineNum">      94 </span>            : This allows the bimap class to support seamingless N-N, 1-N,
+<span class="lineNum">      95 </span>            : ordered/unordered and even vector-list types of mapping.
+<span class="lineNum">      96 </span>            : The three last parameters are used to specify the set type of
+<span class="lineNum">      97 </span>            : the relation, an inplace hooked data class and the allocator
+<span class="lineNum">      98 </span>            : type. As a help to the bimap user, these parameters support
+<span class="lineNum">      99 </span>            : default types but use a special idiom that allow them to be
+<span class="lineNum">     100 </span>            : specified without interleaving the usual use_default keyword.
+<span class="lineNum">     101 </span>            : The possible bimap instantiation are enumerated here:
+<span class="lineNum">     102 </span>            : \c {Side}KeyType can be directly a type, this is default to
+<span class="lineNum">     103 </span>            : \c set_of&lt;{Side}KeyType&gt;, or can be a \c {SetType}_of&lt;Type&gt;
+<span class="lineNum">     104 </span>            : specification. Additionally this two parameters can be tagged
+<span class="lineNum">     105 </span>            : to specify others tags instead of the usual \c member_at::{Side}
+<span class="lineNum">     106 </span>            : ones.
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            : \code
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :     typedef bimap
+<span class="lineNum">     112 </span>            :     &lt;
+<span class="lineNum">     113 </span>            :         LeftCollectionType, RightCollectionType
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            :         [ , SetTypeOfRelation  ]  // Default to left_based
+<span class="lineNum">     116 </span>            :         [ , info_hook&lt; Info &gt;  ]  // Default to no info
+<span class="lineNum">     117 </span>            :         [ , Allocator          ]  // Default to std::allocator&lt;&gt;
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            :     &gt; bm;
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            : \endcode
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            :                                                                        **/
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            : template
+<span class="lineNum">     127 </span>            : &lt;
+<span class="lineNum">     128 </span>            :     class KeyTypeA, class KeyTypeB,
+<span class="lineNum">     129 </span>            :     class AP1 = ::boost::mpl::na,
+<span class="lineNum">     130 </span>            :     class AP2 = ::boost::mpl::na,
+<span class="lineNum">     131 </span>            :     class AP3 = ::boost::mpl::na
+<span class="lineNum">     132 </span>            : &gt;
+<span class="lineNum">     133 </span><span class="lineCov">          1 : class bimap</span>
+<span class="lineNum">     134 </span>            : :
+<span class="lineNum">     135 </span>            :     // Bimap Core, use mpl magic to find the desired bimap type
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :     public ::boost::bimaps::detail::bimap_core&lt;KeyTypeA,KeyTypeB,AP1,AP2,AP3&gt;,
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span>            :     // You can use bimap as a collection of relations
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            :     public ::boost::bimaps::detail::bimap_core&lt;KeyTypeA,KeyTypeB,AP1,AP2,AP3&gt;
+<span class="lineNum">     142 </span>            :                 ::relation_set,
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :     // Include extra typedefs (i.e. left_local_iterator for unordered_map)
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            :     public ::boost::bimaps::detail:: left_map_view_extra_typedefs&lt;
+<span class="lineNum">     147 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::bimaps::detail::left_map_view_type&lt;
+<span class="lineNum">     148 </span>            :             ::boost::bimaps::detail::bimap_core&lt;KeyTypeA,KeyTypeB,AP1,AP2,AP3&gt;
+<span class="lineNum">     149 </span>            :         &gt;::type
+<span class="lineNum">     150 </span>            :     &gt;,
+<span class="lineNum">     151 </span>            :     public ::boost::bimaps::detail::right_map_view_extra_typedefs&lt; 
+<span class="lineNum">     152 </span>            :         BOOST_DEDUCED_TYPENAME ::boost::bimaps::detail::right_map_view_type&lt;
+<span class="lineNum">     153 </span>            :             ::boost::bimaps::detail::bimap_core&lt;KeyTypeA,KeyTypeB,AP1,AP2,AP3&gt;
+<span class="lineNum">     154 </span>            :         &gt;::type
+<span class="lineNum">     155 </span>            :     &gt;
+<span class="lineNum">     156 </span>            : {
+<span class="lineNum">     157 </span>            :     typedef BOOST_DEDUCED_TYPENAME ::boost::bimaps::detail::
+<span class="lineNum">     158 </span>            :         bimap_core&lt;KeyTypeA,KeyTypeB,AP1,AP2,AP3&gt; base_;
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            :     BOOST_DEDUCED_TYPENAME base_::core_type core;
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            :     public:
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span>            :     // metadata --------------------------------------------------------
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :     /*
+<span class="lineNum">     167 </span>            :     // The rest is computed in the core, because it is quite difficult to
+<span class="lineNum">     168 </span>            :     // expose a nice interface with so many metaprogramming stuff.
+<span class="lineNum">     169 </span>            :     
+<span class="lineNum">     170 </span>            :     // Map by {side} metadata
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :     typedef -unspecified- {side}_tag;
+<span class="lineNum">     173 </span>            :     typedef -unspecified- {side}_data_type;
+<span class="lineNum">     174 </span>            :     typedef -unspecified- {side}_value_type;
+<span class="lineNum">     175 </span>            :     typedef -unspecified- {side}_key_type;
+<span class="lineNum">     176 </span>            :     
+<span class="lineNum">     177 </span>            :     // There are other typedefs for definitions of different map views
+<span class="lineNum">     178 </span>            :     
+<span class="lineNum">     179 </span>            :     ------------------------------------------------------------------*/
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            :     typedef BOOST_DEDUCED_TYPENAME ::boost::bimaps::detail::
+<span class="lineNum">     182 </span>            :           left_map_view_type&lt;base_&gt;::type  left_map;
+<span class="lineNum">     183 </span>            :     typedef BOOST_DEDUCED_TYPENAME ::boost::bimaps::detail::
+<span class="lineNum">     184 </span>            :          right_map_view_type&lt;base_&gt;::type right_map;
+<span class="lineNum">     185 </span>            :         
+<span class="lineNum">     186 </span>            :     typedef BOOST_DEDUCED_TYPENAME
+<span class="lineNum">     187 </span>            :          left_map::iterator        left_iterator;
+<span class="lineNum">     188 </span>            :     typedef BOOST_DEDUCED_TYPENAME
+<span class="lineNum">     189 </span>            :          left_map::const_iterator  left_const_iterator;
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span>            :     typedef BOOST_DEDUCED_TYPENAME
+<span class="lineNum">     192 </span>            :          right_map::iterator       right_iterator;
+<span class="lineNum">     193 </span>            :     typedef BOOST_DEDUCED_TYPENAME
+<span class="lineNum">     194 </span>            :          right_map::const_iterator right_const_iterator;
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :     typedef BOOST_DEDUCED_TYPENAME
+<span class="lineNum">     197 </span>            :          left_map::reference       left_reference;
+<span class="lineNum">     198 </span>            :     typedef BOOST_DEDUCED_TYPENAME
+<span class="lineNum">     199 </span>            :          left_map::const_reference left_const_reference;
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            :     typedef BOOST_DEDUCED_TYPENAME
+<span class="lineNum">     202 </span>            :         right_map::reference       right_reference;
+<span class="lineNum">     203 </span>            :     typedef BOOST_DEDUCED_TYPENAME
+<span class="lineNum">     204 </span>            :         right_map::const_reference right_const_reference;
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span>            :     typedef BOOST_DEDUCED_TYPENAME base_::relation::info_type info_type;
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span>            :     typedef BOOST_DEDUCED_TYPENAME base_::core_type::allocator_type allocator_type; 
+<span class="lineNum">     209 </span>            :     
+<span class="lineNum">     210 </span>            :     /// Left map view
+<span class="lineNum">     211 </span>            :     left_map  left;
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span>            :     /// Right map view
+<span class="lineNum">     214 </span>            :     right_map right;
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span>            :     typedef BOOST_DEDUCED_TYPENAME base_::logic_relation_set_tag 
+<span class="lineNum">     217 </span>            :                                           logic_relation_set_tag;
+<span class="lineNum">     218 </span>            :     typedef BOOST_DEDUCED_TYPENAME base_::logic_left_tag logic_left_tag;
+<span class="lineNum">     219 </span>            :     typedef BOOST_DEDUCED_TYPENAME base_::logic_right_tag logic_right_tag;
+<span class="lineNum">     220 </span>            :     typedef BOOST_DEDUCED_TYPENAME base_::core_type::ctor_args_list 
+<a name="221"><span class="lineNum">     221 </span>            :                                                      ctor_args_list;</a>
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span><span class="lineCov">          1 :    bimap(const allocator_type&amp; al = allocator_type()) :</span>
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            :        base_::relation_set(
+<span class="lineNum">     226 </span>            :            ::boost::multi_index::get&lt;
+<span class="lineNum">     227 </span>            :                logic_relation_set_tag
+<span class="lineNum">     228 </span>            :            &gt;(core)
+<span class="lineNum">     229 </span>            :        ),
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span>            :        core(al),
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span>            :        left (
+<span class="lineNum">     234 </span>            :            ::boost::multi_index::get&lt;
+<span class="lineNum">     235 </span>            :                logic_left_tag
+<span class="lineNum">     236 </span>            :            &gt;(core)
+<span class="lineNum">     237 </span>            :        ),
+<span class="lineNum">     238 </span>            :        right (
+<span class="lineNum">     239 </span>            :            ::boost::multi_index::get&lt;
+<span class="lineNum">     240 </span>            :                logic_right_tag
+<span class="lineNum">     241 </span>            :            &gt;(core)
+<span class="lineNum">     242 </span>            :        )
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span><span class="lineCov">          1 :    {}</span>
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            :    template&lt; class InputIterator &gt;
+<span class="lineNum">     247 </span>            :    bimap(InputIterator first,InputIterator last,
+<span class="lineNum">     248 </span>            :          const allocator_type&amp; al = allocator_type()) :
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span>            :        base_::relation_set(
+<span class="lineNum">     251 </span>            :            ::boost::multi_index::get&lt;
+<span class="lineNum">     252 </span>            :                BOOST_DEDUCED_TYPENAME base_::logic_relation_set_tag&gt;(core)
+<span class="lineNum">     253 </span>            :        ),
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span>            :        core(first,last,ctor_args_list(),al),
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span>            :        left (
+<span class="lineNum">     258 </span>            :            ::boost::multi_index::get&lt;
+<span class="lineNum">     259 </span>            :                BOOST_DEDUCED_TYPENAME base_::logic_left_tag&gt;(core)
+<span class="lineNum">     260 </span>            :        ),
+<span class="lineNum">     261 </span>            :        right (
+<span class="lineNum">     262 </span>            :            ::boost::multi_index::get&lt;
+<span class="lineNum">     263 </span>            :                BOOST_DEDUCED_TYPENAME base_::logic_right_tag&gt;(core)
+<span class="lineNum">     264 </span>            :        )
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span>            :    {}
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            :    bimap(const bimap&amp; x) :
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            :        base_::relation_set(
+<span class="lineNum">     271 </span>            :            ::boost::multi_index::get&lt;
+<span class="lineNum">     272 </span>            :                BOOST_DEDUCED_TYPENAME base_::logic_relation_set_tag&gt;(core)
+<span class="lineNum">     273 </span>            :        ),
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span>            :        core(x.core),
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span>            :        left (
+<span class="lineNum">     278 </span>            :            ::boost::multi_index::get&lt;
+<span class="lineNum">     279 </span>            :                BOOST_DEDUCED_TYPENAME base_::logic_left_tag&gt;(core)
+<span class="lineNum">     280 </span>            :        ),
+<span class="lineNum">     281 </span>            :        right (
+<span class="lineNum">     282 </span>            :            ::boost::multi_index::get&lt;
+<span class="lineNum">     283 </span>            :                BOOST_DEDUCED_TYPENAME base_::logic_right_tag&gt;(core)
+<span class="lineNum">     284 </span>            :        )
+<span class="lineNum">     285 </span>            : 
+<span class="lineNum">     286 </span>            :    {}
+<span class="lineNum">     287 </span>            : 
+<span class="lineNum">     288 </span>            :     bimap&amp; operator=(const bimap&amp; x)
+<span class="lineNum">     289 </span>            :     {
+<span class="lineNum">     290 </span>            :         core = x.core;
+<span class="lineNum">     291 </span>            :         return *this;
+<span class="lineNum">     292 </span>            :     }
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span>            :     // Projection of iterators
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            :     template&lt; class IteratorType &gt;
+<span class="lineNum">     297 </span>            :     left_iterator project_left(IteratorType iter)
+<span class="lineNum">     298 </span>            :     {
+<span class="lineNum">     299 </span>            :         return core.template project&lt;
+<span class="lineNum">     300 </span>            :             BOOST_DEDUCED_TYPENAME base_::logic_left_tag&gt;(iter.base());
+<span class="lineNum">     301 </span>            :     }
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span>            :     template&lt; class IteratorType &gt;
+<span class="lineNum">     304 </span>            :     left_const_iterator project_left(IteratorType iter) const
+<span class="lineNum">     305 </span>            :     {
+<span class="lineNum">     306 </span>            :         return core.template project&lt;
+<span class="lineNum">     307 </span>            :             BOOST_DEDUCED_TYPENAME base_::logic_left_tag&gt;(iter.base());
+<span class="lineNum">     308 </span>            :     }
+<span class="lineNum">     309 </span>            : 
+<span class="lineNum">     310 </span>            :     template&lt; class IteratorType &gt;
+<span class="lineNum">     311 </span>            :     right_iterator project_right(IteratorType iter)
+<span class="lineNum">     312 </span>            :     {
+<span class="lineNum">     313 </span>            :         return core.template project&lt;
+<span class="lineNum">     314 </span>            :             BOOST_DEDUCED_TYPENAME base_::logic_right_tag&gt;(iter.base());
+<span class="lineNum">     315 </span>            :     }
+<span class="lineNum">     316 </span>            : 
+<span class="lineNum">     317 </span>            :     template&lt; class IteratorType &gt;
+<span class="lineNum">     318 </span>            :     right_const_iterator project_right(IteratorType iter) const
+<span class="lineNum">     319 </span>            :     {
+<span class="lineNum">     320 </span>            :         return core.template project&lt;
+<span class="lineNum">     321 </span>            :             BOOST_DEDUCED_TYPENAME base_::logic_right_tag&gt;(iter.base());
+<span class="lineNum">     322 </span>            :     }
+<span class="lineNum">     323 </span>            : 
+<span class="lineNum">     324 </span>            :     template&lt; class IteratorType &gt;
+<span class="lineNum">     325 </span>            :     BOOST_DEDUCED_TYPENAME base_::relation_set::iterator
+<span class="lineNum">     326 </span>            :         project_up(IteratorType iter)
+<span class="lineNum">     327 </span>            :     {
+<span class="lineNum">     328 </span>            :         return core.template project&lt;
+<span class="lineNum">     329 </span>            :             BOOST_DEDUCED_TYPENAME base_::logic_relation_set_tag&gt;(iter.base());
+<span class="lineNum">     330 </span>            :     }
+<span class="lineNum">     331 </span>            : 
+<span class="lineNum">     332 </span>            :     template&lt; class IteratorType &gt;
+<span class="lineNum">     333 </span>            :     BOOST_DEDUCED_TYPENAME base_::relation_set::const_iterator
+<span class="lineNum">     334 </span>            :         project_up(IteratorType iter) const
+<span class="lineNum">     335 </span>            :     {
+<span class="lineNum">     336 </span>            :         return core.template project&lt;
+<span class="lineNum">     337 </span>            :             BOOST_DEDUCED_TYPENAME base_::logic_relation_set_tag&gt;(iter.base());
+<span class="lineNum">     338 </span>            :     }
+<span class="lineNum">     339 </span>            : 
+<span class="lineNum">     340 </span>            :     // Support for tags
+<span class="lineNum">     341 </span>            : 
+<span class="lineNum">     342 </span>            :     template&lt; class Tag, class IteratorType &gt;
+<span class="lineNum">     343 </span>            :     BOOST_DEDUCED_TYPENAME ::boost::bimaps::support::
+<span class="lineNum">     344 </span>            :     iterator_type_by&lt;Tag,bimap&gt;::type
+<span class="lineNum">     345 </span>            :         project(IteratorType iter)
+<span class="lineNum">     346 </span>            :     {
+<span class="lineNum">     347 </span>            :         return core.template project&lt;Tag&gt;(iter.base());
+<span class="lineNum">     348 </span>            :     }
+<span class="lineNum">     349 </span>            : 
+<span class="lineNum">     350 </span>            :     template&lt; class Tag, class IteratorType &gt;
+<span class="lineNum">     351 </span>            :     BOOST_DEDUCED_TYPENAME ::boost::bimaps::support::
+<span class="lineNum">     352 </span>            :     const_iterator_type_by&lt;Tag,bimap&gt;::type
+<span class="lineNum">     353 </span>            :         project(IteratorType iter) const
+<span class="lineNum">     354 </span>            :     {
+<span class="lineNum">     355 </span>            :         return core.template project&lt;Tag&gt;(iter.base());
+<span class="lineNum">     356 </span>            :     }
+<span class="lineNum">     357 </span>            : 
+<span class="lineNum">     358 </span>            :     template&lt; class Tag &gt;
+<span class="lineNum">     359 </span>            :     struct map_by :
+<span class="lineNum">     360 </span>            :         public ::boost::bimaps::support::map_type_by&lt;Tag,bimap&gt;::type
+<span class="lineNum">     361 </span>            :     {
+<span class="lineNum">     362 </span>            :         typedef BOOST_DEDUCED_TYPENAME ::boost::bimaps::support::
+<span class="lineNum">     363 </span>            :             map_type_by&lt;Tag,bimap&gt;::type type;
+<span class="lineNum">     364 </span>            : 
+<span class="lineNum">     365 </span>            :         private: map_by() {}
+<span class="lineNum">     366 </span>            :     };
+<span class="lineNum">     367 </span>            : 
+<span class="lineNum">     368 </span>            :     template&lt; class Tag &gt;
+<span class="lineNum">     369 </span>            :     BOOST_DEDUCED_TYPENAME ::boost::bimaps::support::
+<span class="lineNum">     370 </span>            :     map_type_by&lt;Tag,bimap&gt;::type &amp;by()
+<span class="lineNum">     371 </span>            :     {
+<span class="lineNum">     372 </span>            :         return ::boost::bimaps::support::map_by&lt;Tag&gt;(*this);
+<span class="lineNum">     373 </span>            :     }
+<span class="lineNum">     374 </span>            : 
+<span class="lineNum">     375 </span>            :     template&lt; class Tag &gt;
+<span class="lineNum">     376 </span>            :     const BOOST_DEDUCED_TYPENAME ::boost::bimaps::support::
+<span class="lineNum">     377 </span>            :     map_type_by&lt;Tag,bimap&gt;::type &amp;by() const
+<span class="lineNum">     378 </span>            :     {
+<span class="lineNum">     379 </span>            :         return ::boost::bimaps::support::map_by&lt;Tag&gt;(*this);
+<span class="lineNum">     380 </span>            :     }
+<span class="lineNum">     381 </span>            : 
+<span class="lineNum">     382 </span>            : 
+<span class="lineNum">     383 </span>            :     #ifndef BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">     384 </span>            : 
+<span class="lineNum">     385 </span>            :     // Serialization support
+<span class="lineNum">     386 </span>            : 
+<span class="lineNum">     387 </span>            :     private:
+<span class="lineNum">     388 </span>            : 
+<span class="lineNum">     389 </span>            :     friend class boost::serialization::access;
+<span class="lineNum">     390 </span>            : 
+<span class="lineNum">     391 </span>            :     template&lt;class Archive&gt;
+<span class="lineNum">     392 </span>            :     void serialize(Archive &amp; ar, const unsigned int)
+<span class="lineNum">     393 </span>            :     {
+<span class="lineNum">     394 </span>            :         ar &amp; serialization::make_nvp(&quot;mi_core&quot;,core);
+<span class="lineNum">     395 </span>            :     }
+<span class="lineNum">     396 </span>            : 
+<span class="lineNum">     397 </span>            :     #endif // BOOST_BIMAP_DISABLE_SERIALIZATION
+<span class="lineNum">     398 </span>            : };
+<span class="lineNum">     399 </span>            : 
+<span class="lineNum">     400 </span>            : } // namespace bimaps
+<span class="lineNum">     401 </span>            : } // namespace boost
+<span class="lineNum">     402 </span>            : 
+<span class="lineNum">     403 </span>            : 
+<span class="lineNum">     404 </span>            : /** \namespace boost::bimaps::support
+<span class="lineNum">     405 </span>            : \brief Metafunctions to help working with bimaps.
+<span class="lineNum">     406 </span>            :                                                             **/
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span>            : /** \namespace boost::bimaps::views
+<span class="lineNum">     409 </span>            : \brief Bimap views.
+<span class="lineNum">     410 </span>            :                                                             **/
+<span class="lineNum">     411 </span>            : 
+<span class="lineNum">     412 </span>            : /** \namespace boost::bimaps::views::detail
+<span class="lineNum">     413 </span>            : \brief Bimap views details.
+<span class="lineNum">     414 </span>            :                                                             **/
+<span class="lineNum">     415 </span>            : 
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span>            : 
+<span class="lineNum">     418 </span>            : // Include basic tools for user commodity
+<span class="lineNum">     419 </span>            : 
+<span class="lineNum">     420 </span>            : #include &lt;boost/bimap/tags/tagged.hpp&gt;
+<span class="lineNum">     421 </span>            : #include &lt;boost/bimap/relation/member_at.hpp&gt;
+<span class="lineNum">     422 </span>            : #include &lt;boost/multi_index/detail/unbounded.hpp&gt;
+<span class="lineNum">     423 </span>            : 
+<span class="lineNum">     424 </span>            : // Bring the most used namespaces directly to the user main namespace
+<span class="lineNum">     425 </span>            : namespace boost {
+<span class="lineNum">     426 </span>            : namespace bimaps {
+<span class="lineNum">     427 </span>            : 
+<span class="lineNum">     428 </span>            : using ::boost::bimaps::tags::tagged;
+<span class="lineNum">     429 </span>            : 
+<span class="lineNum">     430 </span>            : namespace member_at = ::boost::bimaps::relation::member_at;
+<span class="lineNum">     431 </span>            : 
+<span class="lineNum">     432 </span>            : using ::boost::multi_index::unbounded;
+<span class="lineNum">     433 </span>            : 
+<span class="lineNum">     434 </span>            : } // namespace bimaps
+<span class="lineNum">     435 </span>            : } // namespace boost
+<span class="lineNum">     436 </span>            : 
+<span class="lineNum">     437 </span>            : 
+<span class="lineNum">     438 </span>            : #endif // BOOST_BIMAP_BIMAP_HPP
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

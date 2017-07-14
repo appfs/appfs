@@ -1,0 +1,19 @@
+doc: ex5.cpp
+	doxygen -g ex5.doxygen.conf
+	doxygen ex5.doxygen.conf
+	
+coverage: ex5.cpp
+	g++ -std=c++11 ex5.cpp -o ex5 -lm --coverage
+	./ex5 world666.gph
+	lcov --capture --directory ex5.gcno --output-file ex5.coverage.info
+	genhtml ex5.coverage.info --output-directory coverage
+	
+check: ex5.cpp
+	cppcheck --enable=all ex5.cpp
+	
+build: ex5.cpp
+	g++ -std=c++11 ex5.cpp -o ex5
+	
+run: ex5.cpp
+	g++ -std=c++11 ex5.cpp -o ex5
+	./ex5 world666.gph

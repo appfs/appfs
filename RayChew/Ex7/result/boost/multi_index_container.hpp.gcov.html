@@ -1,0 +1,1438 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/multi_index_container.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">boost</a> - multi_index_container.hpp<span style="font-size: 80%;"> (source / <a href="multi_index_container.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">17</td>
+            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntryMed">85.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /* Multiply indexed container.</a>
+<span class="lineNum">       2 </span>            :  *
+<span class="lineNum">       3 </span>            :  * Copyright 2003-2014 Joaquin M Lopez Munoz.
+<span class="lineNum">       4 </span>            :  * Distributed under the Boost Software License, Version 1.0.
+<span class="lineNum">       5 </span>            :  * (See accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       6 </span>            :  * http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       7 </span>            :  *
+<span class="lineNum">       8 </span>            :  * See http://www.boost.org/libs/multi_index for library home page.
+<span class="lineNum">       9 </span>            :  */
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #ifndef BOOST_MULTI_INDEX_HPP
+<span class="lineNum">      12 </span>            : #define BOOST_MULTI_INDEX_HPP
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      15 </span>            : #pragma once
+<span class="lineNum">      16 </span>            : #endif
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : #include &lt;boost/config.hpp&gt; /* keep it first to prevent nasty warns in MSVC */
+<span class="lineNum">      19 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/detail/allocator_utilities.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/detail/no_exceptions_support.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/detail/workaround.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/move/core.hpp&gt;
+<span class="lineNum">      24 </span>            : #include &lt;boost/mpl/at.hpp&gt;
+<span class="lineNum">      25 </span>            : #include &lt;boost/mpl/contains.hpp&gt;
+<span class="lineNum">      26 </span>            : #include &lt;boost/mpl/find_if.hpp&gt;
+<span class="lineNum">      27 </span>            : #include &lt;boost/mpl/identity.hpp&gt;
+<span class="lineNum">      28 </span>            : #include &lt;boost/mpl/int.hpp&gt;
+<span class="lineNum">      29 </span>            : #include &lt;boost/mpl/size.hpp&gt;
+<span class="lineNum">      30 </span>            : #include &lt;boost/mpl/deref.hpp&gt;
+<span class="lineNum">      31 </span>            : #include &lt;boost/multi_index_container_fwd.hpp&gt;
+<span class="lineNum">      32 </span>            : #include &lt;boost/multi_index/detail/access_specifier.hpp&gt;
+<span class="lineNum">      33 </span>            : #include &lt;boost/multi_index/detail/adl_swap.hpp&gt;
+<span class="lineNum">      34 </span>            : #include &lt;boost/multi_index/detail/base_type.hpp&gt;
+<span class="lineNum">      35 </span>            : #include &lt;boost/multi_index/detail/do_not_copy_elements_tag.hpp&gt;
+<span class="lineNum">      36 </span>            : #include &lt;boost/multi_index/detail/converter.hpp&gt;
+<span class="lineNum">      37 </span>            : #include &lt;boost/multi_index/detail/header_holder.hpp&gt;
+<span class="lineNum">      38 </span>            : #include &lt;boost/multi_index/detail/has_tag.hpp&gt;
+<span class="lineNum">      39 </span>            : #include &lt;boost/multi_index/detail/no_duplicate_tags.hpp&gt;
+<span class="lineNum">      40 </span>            : #include &lt;boost/multi_index/detail/safe_mode.hpp&gt;
+<span class="lineNum">      41 </span>            : #include &lt;boost/multi_index/detail/scope_guard.hpp&gt;
+<span class="lineNum">      42 </span>            : #include &lt;boost/multi_index/detail/vartempl_support.hpp&gt;
+<span class="lineNum">      43 </span>            : #include &lt;boost/static_assert.hpp&gt;
+<span class="lineNum">      44 </span>            : #include &lt;boost/type_traits/is_same.hpp&gt;
+<span class="lineNum">      45 </span>            : #include &lt;boost/utility/base_from_member.hpp&gt;
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
+<span class="lineNum">      48 </span>            : #include &lt;initializer_list&gt;
+<span class="lineNum">      49 </span>            : #endif
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : #if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+<span class="lineNum">      52 </span>            : #include &lt;boost/multi_index/detail/archive_constructed.hpp&gt;
+<span class="lineNum">      53 </span>            : #include &lt;boost/multi_index/detail/serialization_version.hpp&gt;
+<span class="lineNum">      54 </span>            : #include &lt;boost/serialization/collection_size_type.hpp&gt;
+<span class="lineNum">      55 </span>            : #include &lt;boost/serialization/nvp.hpp&gt;
+<span class="lineNum">      56 </span>            : #include &lt;boost/serialization/split_member.hpp&gt;
+<span class="lineNum">      57 </span>            : #include &lt;boost/serialization/version.hpp&gt;
+<span class="lineNum">      58 </span>            : #include &lt;boost/throw_exception.hpp&gt; 
+<span class="lineNum">      59 </span>            : #endif
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            : #if defined(BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING)
+<span class="lineNum">      62 </span>            : #include &lt;boost/multi_index/detail/invariant_assert.hpp&gt;
+<span class="lineNum">      63 </span>            : #define BOOST_MULTI_INDEX_CHECK_INVARIANT_OF(x)                              \
+<span class="lineNum">      64 </span>            :   detail::scope_guard BOOST_JOIN(check_invariant_,__LINE__)=                 \
+<span class="lineNum">      65 </span>            :     detail::make_obj_guard(x,&amp;multi_index_container::check_invariant_);      \
+<span class="lineNum">      66 </span>            :   BOOST_JOIN(check_invariant_,__LINE__).touch();
+<span class="lineNum">      67 </span>            : #define BOOST_MULTI_INDEX_CHECK_INVARIANT                                    \
+<span class="lineNum">      68 </span>            :   BOOST_MULTI_INDEX_CHECK_INVARIANT_OF(*this)
+<span class="lineNum">      69 </span>            : #else
+<span class="lineNum">      70 </span>            : #define BOOST_MULTI_INDEX_CHECK_INVARIANT_OF(x)
+<span class="lineNum">      71 </span>            : #define BOOST_MULTI_INDEX_CHECK_INVARIANT
+<span class="lineNum">      72 </span>            : #endif
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : namespace boost{
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : namespace multi_index{
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : #if BOOST_WORKAROUND(BOOST_MSVC,BOOST_TESTED_AT(1500))
+<span class="lineNum">      79 </span>            : #pragma warning(push)
+<span class="lineNum">      80 </span>            : #pragma warning(disable:4522) /* spurious warning on multiple operator=()'s */
+<span class="lineNum">      81 </span>            : #endif
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : template&lt;typename Value,typename IndexSpecifierList,typename Allocator&gt;
+<span class="lineNum">      84 </span>            : class multi_index_container:
+<span class="lineNum">      85 </span>            :   private ::boost::base_from_member&lt;
+<span class="lineNum">      86 </span>            :     typename boost::detail::allocator::rebind_to&lt;
+<span class="lineNum">      87 </span>            :       Allocator,
+<span class="lineNum">      88 </span>            :       typename detail::multi_index_node_type&lt;
+<span class="lineNum">      89 </span>            :         Value,IndexSpecifierList,Allocator&gt;::type
+<span class="lineNum">      90 </span>            :     &gt;::type&gt;,
+<span class="lineNum">      91 </span>            :   BOOST_MULTI_INDEX_PRIVATE_IF_MEMBER_TEMPLATE_FRIENDS detail::header_holder&lt;
+<span class="lineNum">      92 </span>            :     typename boost::detail::allocator::rebind_to&lt;
+<span class="lineNum">      93 </span>            :       Allocator,
+<span class="lineNum">      94 </span>            :       typename detail::multi_index_node_type&lt;
+<span class="lineNum">      95 </span>            :         Value,IndexSpecifierList,Allocator&gt;::type
+<span class="lineNum">      96 </span>            :     &gt;::type::pointer,
+<span class="lineNum">      97 </span>            :     multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt; &gt;,
+<span class="lineNum">      98 </span>            :   public detail::multi_index_base_type&lt;
+<span class="lineNum">      99 </span>            :     Value,IndexSpecifierList,Allocator&gt;::type
+<span class="lineNum">     100 </span>            : {
+<span class="lineNum">     101 </span>            : #if defined(BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING)&amp;&amp;\
+<span class="lineNum">     102 </span>            :     BOOST_WORKAROUND(__MWERKS__,&lt;=0x3003)
+<span class="lineNum">     103 </span>            : /* The &quot;ISO C++ Template Parser&quot; option in CW8.3 has a problem with the
+<span class="lineNum">     104 </span>            :  * lifetime of const references bound to temporaries --precisely what
+<span class="lineNum">     105 </span>            :  * scopeguards are.
+<span class="lineNum">     106 </span>            :  */
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : #pragma parse_mfunc_templ off
+<span class="lineNum">     109 </span>            : #endif
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            : private:
+<span class="lineNum">     112 </span>            :   BOOST_COPYABLE_AND_MOVABLE(multi_index_container)
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : #if !defined(BOOST_NO_MEMBER_TEMPLATE_FRIENDS)
+<span class="lineNum">     115 </span>            :   template &lt;typename,typename,typename&gt; friend class  detail::index_base;
+<span class="lineNum">     116 </span>            :   template &lt;typename,typename&gt;          friend struct detail::header_holder;
+<span class="lineNum">     117 </span>            :   template &lt;typename,typename&gt;          friend struct detail::converter;
+<span class="lineNum">     118 </span>            : #endif
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            :   typedef typename detail::multi_index_base_type&lt;
+<span class="lineNum">     121 </span>            :       Value,IndexSpecifierList,Allocator&gt;::type   super;
+<span class="lineNum">     122 </span>            :   typedef typename
+<span class="lineNum">     123 </span>            :   boost::detail::allocator::rebind_to&lt;
+<span class="lineNum">     124 </span>            :     Allocator,
+<span class="lineNum">     125 </span>            :     typename super::node_type
+<span class="lineNum">     126 </span>            :   &gt;::type                                         node_allocator;
+<span class="lineNum">     127 </span>            :   typedef ::boost::base_from_member&lt;
+<span class="lineNum">     128 </span>            :     node_allocator&gt;                               bfm_allocator;
+<span class="lineNum">     129 </span>            :   typedef detail::header_holder&lt;
+<span class="lineNum">     130 </span>            :     typename node_allocator::pointer,
+<span class="lineNum">     131 </span>            :     multi_index_container&gt;                        bfm_header;
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : public:
+<span class="lineNum">     135 </span>            :   /* All types are inherited from super, a few are explicitly
+<span class="lineNum">     136 </span>            :    * brought forward here to save us some typename's.
+<span class="lineNum">     137 </span>            :    */
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span>            :   typedef typename super::ctor_args_list           ctor_args_list;
+<span class="lineNum">     140 </span>            :   typedef IndexSpecifierList                       index_specifier_type_list;
+<span class="lineNum">     141 </span>            :  
+<span class="lineNum">     142 </span>            :   typedef typename super::index_type_list          index_type_list;
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :   typedef typename super::iterator_type_list       iterator_type_list;
+<span class="lineNum">     145 </span>            :   typedef typename super::const_iterator_type_list const_iterator_type_list;
+<span class="lineNum">     146 </span>            :   typedef typename super::value_type               value_type;
+<span class="lineNum">     147 </span>            :   typedef typename super::final_allocator_type     allocator_type;
+<span class="lineNum">     148 </span>            :   typedef typename super::iterator                 iterator;
+<span class="lineNum">     149 </span>            :   typedef typename super::const_iterator           const_iterator;
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            :   BOOST_STATIC_ASSERT(
+<span class="lineNum">     152 </span>            :     detail::no_duplicate_tags_in_index_list&lt;index_type_list&gt;::value);
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span>            :   /* global project() needs to see this publicly */
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span>            :   typedef typename super::node_type node_type;
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            :   /* construct/copy/destroy */
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            :   explicit multi_index_container(
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            : #if BOOST_WORKAROUND(__IBMCPP__,&lt;=600)
+<span class="lineNum">     163 </span>            :     /* VisualAge seems to have an ETI issue with the default values
+<span class="lineNum">     164 </span>            :      * for arguments args_list and al.
+<span class="lineNum">     165 </span>            :      */
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            :     const ctor_args_list&amp; args_list=
+<span class="lineNum">     168 </span>            :       typename mpl::identity&lt;multi_index_container&gt;::type::
+<span class="lineNum">     169 </span>            :         ctor_args_list(),
+<span class="lineNum">     170 </span>            :     const allocator_type&amp; al=
+<span class="lineNum">     171 </span>            :       typename mpl::identity&lt;multi_index_container&gt;::type::
+<span class="lineNum">     172 </span>            :         allocator_type()):
+<span class="lineNum">     173 </span>            : #else
+<span class="lineNum">     174 </span>            :     const ctor_args_list&amp; args_list=ctor_args_list(),
+<span class="lineNum">     175 </span>            :     const allocator_type&amp; al=allocator_type()):
+<span class="lineNum">     176 </span>            : #endif
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :     bfm_allocator(al),
+<span class="lineNum">     179 </span>            :     super(args_list,bfm_allocator::member),
+<span class="lineNum">     180 </span>            :     node_count(0)
+<span class="lineNum">     181 </span>            :   {
+<span class="lineNum">     182 </span>            :     BOOST_MULTI_INDEX_CHECK_INVARIANT;
+<span class="lineNum">     183 </span>            :   }
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span><span class="lineCov">          1 :   explicit multi_index_container(const allocator_type&amp; al):</span>
+<span class="lineNum">     186 </span>            :     bfm_allocator(al),
+<span class="lineNum">     187 </span>            :     super(ctor_args_list(),bfm_allocator::member),
+<span class="lineNum">     188 </span><span class="lineCov">          1 :     node_count(0)</span>
+<span class="lineNum">     189 </span>            :   {
+<span class="lineNum">     190 </span>            :     BOOST_MULTI_INDEX_CHECK_INVARIANT;
+<span class="lineNum">     191 </span>            :   }
+<span class="lineNum">     192 </span>            :   
+<span class="lineNum">     193 </span>            :   template&lt;typename InputIterator&gt;
+<span class="lineNum">     194 </span>            :   multi_index_container(
+<span class="lineNum">     195 </span>            :     InputIterator first,InputIterator last,
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span>            : #if BOOST_WORKAROUND(__IBMCPP__,&lt;=600)
+<span class="lineNum">     198 </span>            :     /* VisualAge seems to have an ETI issue with the default values
+<span class="lineNum">     199 </span>            :      * for arguments args_list and al.
+<span class="lineNum">     200 </span>            :      */
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            :     const ctor_args_list&amp; args_list=
+<span class="lineNum">     203 </span>            :       typename mpl::identity&lt;multi_index_container&gt;::type::
+<span class="lineNum">     204 </span>            :         ctor_args_list(),
+<span class="lineNum">     205 </span>            :     const allocator_type&amp; al=
+<span class="lineNum">     206 </span>            :       typename mpl::identity&lt;multi_index_container&gt;::type::
+<span class="lineNum">     207 </span>            :         allocator_type()):
+<span class="lineNum">     208 </span>            : #else
+<span class="lineNum">     209 </span>            :     const ctor_args_list&amp; args_list=ctor_args_list(),
+<span class="lineNum">     210 </span>            :     const allocator_type&amp; al=allocator_type()):
+<span class="lineNum">     211 </span>            : #endif
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span>            :     bfm_allocator(al),
+<span class="lineNum">     214 </span>            :     super(args_list,bfm_allocator::member),
+<span class="lineNum">     215 </span>            :     node_count(0)
+<span class="lineNum">     216 </span>            :   {
+<span class="lineNum">     217 </span>            :     BOOST_MULTI_INDEX_CHECK_INVARIANT;
+<span class="lineNum">     218 </span>            :     BOOST_TRY{
+<span class="lineNum">     219 </span>            :       iterator hint=super::end();
+<span class="lineNum">     220 </span>            :       for(;first!=last;++first){
+<span class="lineNum">     221 </span>            :         hint=super::make_iterator(
+<span class="lineNum">     222 </span>            :           insert_ref_(*first,hint.get_node()).first);
+<span class="lineNum">     223 </span>            :         ++hint;
+<span class="lineNum">     224 </span>            :       }
+<span class="lineNum">     225 </span>            :     }
+<span class="lineNum">     226 </span>            :     BOOST_CATCH(...){
+<span class="lineNum">     227 </span>            :       clear_();
+<span class="lineNum">     228 </span>            :       BOOST_RETHROW;
+<span class="lineNum">     229 </span>            :     }
+<span class="lineNum">     230 </span>            :     BOOST_CATCH_END
+<span class="lineNum">     231 </span>            :   }
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span>            : #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
+<span class="lineNum">     234 </span>            :   multi_index_container(
+<span class="lineNum">     235 </span>            :     std::initializer_list&lt;Value&gt; list,
+<span class="lineNum">     236 </span>            :     const ctor_args_list&amp; args_list=ctor_args_list(),
+<span class="lineNum">     237 </span>            :     const allocator_type&amp; al=allocator_type()):
+<span class="lineNum">     238 </span>            :     bfm_allocator(al),
+<span class="lineNum">     239 </span>            :     super(args_list,bfm_allocator::member),
+<span class="lineNum">     240 </span>            :     node_count(0)
+<span class="lineNum">     241 </span>            :   {
+<span class="lineNum">     242 </span>            :     BOOST_MULTI_INDEX_CHECK_INVARIANT;
+<span class="lineNum">     243 </span>            :     BOOST_TRY{
+<span class="lineNum">     244 </span>            :       typedef const Value* init_iterator;
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            :       iterator hint=super::end();
+<span class="lineNum">     247 </span>            :       for(init_iterator first=list.begin(),last=list.end();
+<span class="lineNum">     248 </span>            :           first!=last;++first){
+<span class="lineNum">     249 </span>            :         hint=super::make_iterator(insert_(*first,hint.get_node()).first);
+<span class="lineNum">     250 </span>            :         ++hint;
+<span class="lineNum">     251 </span>            :       }
+<span class="lineNum">     252 </span>            :     }
+<span class="lineNum">     253 </span>            :     BOOST_CATCH(...){
+<span class="lineNum">     254 </span>            :       clear_();
+<span class="lineNum">     255 </span>            :       BOOST_RETHROW;
+<span class="lineNum">     256 </span>            :     }
+<span class="lineNum">     257 </span>            :     BOOST_CATCH_END
+<span class="lineNum">     258 </span>            :   }
+<span class="lineNum">     259 </span>            : #endif
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span>            :   multi_index_container(
+<span class="lineNum">     262 </span>            :     const multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; x):
+<span class="lineNum">     263 </span>            :     bfm_allocator(x.bfm_allocator::member),
+<span class="lineNum">     264 </span>            :     bfm_header(),
+<span class="lineNum">     265 </span>            :     super(x),
+<span class="lineNum">     266 </span>            :     node_count(0)
+<span class="lineNum">     267 </span>            :   {
+<span class="lineNum">     268 </span>            :     copy_map_type map(bfm_allocator::member,x.size(),x.header(),header());
+<span class="lineNum">     269 </span>            :     for(const_iterator it=x.begin(),it_end=x.end();it!=it_end;++it){
+<span class="lineNum">     270 </span>            :       map.clone(it.get_node());
+<span class="lineNum">     271 </span>            :     }
+<span class="lineNum">     272 </span>            :     super::copy_(x,map);
+<span class="lineNum">     273 </span>            :     map.release();
+<span class="lineNum">     274 </span>            :     node_count=x.size();
+<span class="lineNum">     275 </span>            : 
+<span class="lineNum">     276 </span>            :     /* Not until this point are the indices required to be consistent,
+<span class="lineNum">     277 </span>            :      * hence the position of the invariant checker.
+<span class="lineNum">     278 </span>            :      */
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span>            :     BOOST_MULTI_INDEX_CHECK_INVARIANT;
+<span class="lineNum">     281 </span>            :   }
+<span class="lineNum">     282 </span>            : 
+<span class="lineNum">     283 </span>            :   multi_index_container(BOOST_RV_REF(multi_index_container) x):
+<span class="lineNum">     284 </span>            :     bfm_allocator(x.bfm_allocator::member),
+<span class="lineNum">     285 </span>            :     bfm_header(),
+<span class="lineNum">     286 </span>            :     super(x,detail::do_not_copy_elements_tag()),
+<span class="lineNum">     287 </span>            :     node_count(0)
+<span class="lineNum">     288 </span>            :   {
+<span class="lineNum">     289 </span>            :     BOOST_MULTI_INDEX_CHECK_INVARIANT;
+<span class="lineNum">     290 </span>            :     BOOST_MULTI_INDEX_CHECK_INVARIANT_OF(x);
+<span class="lineNum">     291 </span>            :     swap_elements_(x);
+<a name="292"><span class="lineNum">     292 </span>            :   }</a>
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span><span class="lineCov">          1 :   ~multi_index_container()</span>
+<span class="lineNum">     295 </span>            :   {
+<span class="lineNum">     296 </span>            :     delete_all_nodes_();
+<span class="lineNum">     297 </span><span class="lineCov">          1 :   }</span>
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span>            : #if defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
+<span class="lineNum">     300 </span>            :   /* As per http://www.boost.org/doc/html/move/emulation_limitations.html
+<span class="lineNum">     301 </span>            :    * #move.emulation_limitations.assignment_operator
+<span class="lineNum">     302 </span>            :    */
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; operator=(
+<span class="lineNum">     305 </span>            :     const multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; x)
+<span class="lineNum">     306 </span>            :   {
+<span class="lineNum">     307 </span>            :     multi_index_container y(x);
+<span class="lineNum">     308 </span>            :     this-&gt;swap(y);
+<span class="lineNum">     309 </span>            :     return *this;
+<span class="lineNum">     310 </span>            :   }
+<span class="lineNum">     311 </span>            : #endif
+<span class="lineNum">     312 </span>            : 
+<span class="lineNum">     313 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; operator=(
+<span class="lineNum">     314 </span>            :     BOOST_COPY_ASSIGN_REF(multi_index_container) x)
+<span class="lineNum">     315 </span>            :   {
+<span class="lineNum">     316 </span>            :     multi_index_container y(x);
+<span class="lineNum">     317 </span>            :     this-&gt;swap(y);
+<span class="lineNum">     318 </span>            :     return *this;
+<span class="lineNum">     319 </span>            :   }
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; operator=(
+<span class="lineNum">     322 </span>            :     BOOST_RV_REF(multi_index_container) x)
+<span class="lineNum">     323 </span>            :   {
+<span class="lineNum">     324 </span>            :     this-&gt;swap(x);
+<span class="lineNum">     325 </span>            :     return *this;
+<span class="lineNum">     326 </span>            :   }
+<span class="lineNum">     327 </span>            : 
+<span class="lineNum">     328 </span>            : #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
+<span class="lineNum">     329 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; operator=(
+<span class="lineNum">     330 </span>            :     std::initializer_list&lt;Value&gt; list)
+<span class="lineNum">     331 </span>            :   {
+<span class="lineNum">     332 </span>            :     BOOST_MULTI_INDEX_CHECK_INVARIANT;
+<span class="lineNum">     333 </span>            :     typedef const Value* init_iterator;
+<span class="lineNum">     334 </span>            : 
+<span class="lineNum">     335 </span>            :     multi_index_container x(*this,detail::do_not_copy_elements_tag());    
+<span class="lineNum">     336 </span>            :     iterator hint=x.end();
+<span class="lineNum">     337 </span>            :     for(init_iterator first=list.begin(),last=list.end();
+<span class="lineNum">     338 </span>            :         first!=last;++first){
+<span class="lineNum">     339 </span>            :       hint=x.make_iterator(x.insert_(*first,hint.get_node()).first);
+<span class="lineNum">     340 </span>            :       ++hint;
+<span class="lineNum">     341 </span>            :     }
+<span class="lineNum">     342 </span>            :     x.swap_elements_(*this);
+<span class="lineNum">     343 </span>            :     return*this;
+<span class="lineNum">     344 </span>            :   }
+<span class="lineNum">     345 </span>            : #endif
+<span class="lineNum">     346 </span>            : 
+<span class="lineNum">     347 </span>            :   allocator_type get_allocator()const BOOST_NOEXCEPT
+<span class="lineNum">     348 </span>            :   {
+<span class="lineNum">     349 </span>            :     return allocator_type(bfm_allocator::member);
+<span class="lineNum">     350 </span>            :   }
+<span class="lineNum">     351 </span>            : 
+<span class="lineNum">     352 </span>            :   /* retrieval of indices by number */
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span>            : #if !defined(BOOST_NO_MEMBER_TEMPLATES)
+<span class="lineNum">     355 </span>            :   template&lt;int N&gt;
+<span class="lineNum">     356 </span>            :   struct nth_index
+<span class="lineNum">     357 </span>            :   {
+<span class="lineNum">     358 </span>            :     BOOST_STATIC_ASSERT(N&gt;=0&amp;&amp;N&lt;mpl::size&lt;index_type_list&gt;::type::value);
+<span class="lineNum">     359 </span>            :     typedef typename mpl::at_c&lt;index_type_list,N&gt;::type type;
+<span class="lineNum">     360 </span>            :   };
+<span class="lineNum">     361 </span>            : 
+<span class="lineNum">     362 </span>            :   template&lt;int N&gt;
+<span class="lineNum">     363 </span>            :   typename nth_index&lt;N&gt;::type&amp; get()BOOST_NOEXCEPT
+<span class="lineNum">     364 </span>            :   {
+<span class="lineNum">     365 </span>            :     BOOST_STATIC_ASSERT(N&gt;=0&amp;&amp;N&lt;mpl::size&lt;index_type_list&gt;::type::value);
+<span class="lineNum">     366 </span>            :     return *this;
+<span class="lineNum">     367 </span>            :   }
+<span class="lineNum">     368 </span>            : 
+<span class="lineNum">     369 </span>            :   template&lt;int N&gt;
+<span class="lineNum">     370 </span>            :   const typename nth_index&lt;N&gt;::type&amp; get()const BOOST_NOEXCEPT
+<span class="lineNum">     371 </span>            :   {
+<span class="lineNum">     372 </span>            :     BOOST_STATIC_ASSERT(N&gt;=0&amp;&amp;N&lt;mpl::size&lt;index_type_list&gt;::type::value);
+<span class="lineNum">     373 </span>            :     return *this;
+<span class="lineNum">     374 </span>            :   }
+<span class="lineNum">     375 </span>            : #endif
+<span class="lineNum">     376 </span>            : 
+<span class="lineNum">     377 </span>            :   /* retrieval of indices by tag */
+<span class="lineNum">     378 </span>            : 
+<span class="lineNum">     379 </span>            : #if !defined(BOOST_NO_MEMBER_TEMPLATES)
+<span class="lineNum">     380 </span>            :   template&lt;typename Tag&gt;
+<span class="lineNum">     381 </span>            :   struct index
+<span class="lineNum">     382 </span>            :   {
+<span class="lineNum">     383 </span>            :     typedef typename mpl::find_if&lt;
+<span class="lineNum">     384 </span>            :       index_type_list,
+<span class="lineNum">     385 </span>            :       detail::has_tag&lt;Tag&gt;
+<span class="lineNum">     386 </span>            :     &gt;::type                                    iter;
+<span class="lineNum">     387 </span>            : 
+<span class="lineNum">     388 </span>            :     BOOST_STATIC_CONSTANT(
+<span class="lineNum">     389 </span>            :       bool,index_found=!(is_same&lt;iter,typename mpl::end&lt;index_type_list&gt;::type &gt;::value));
+<span class="lineNum">     390 </span>            :     BOOST_STATIC_ASSERT(index_found);
+<span class="lineNum">     391 </span>            : 
+<span class="lineNum">     392 </span>            :     typedef typename mpl::deref&lt;iter&gt;::type    type;
+<span class="lineNum">     393 </span>            :   };
+<span class="lineNum">     394 </span>            : 
+<span class="lineNum">     395 </span>            :   template&lt;typename Tag&gt;
+<span class="lineNum">     396 </span>            :   typename index&lt;Tag&gt;::type&amp; get()BOOST_NOEXCEPT
+<span class="lineNum">     397 </span>            :   {
+<span class="lineNum">     398 </span>            :     return *this;
+<span class="lineNum">     399 </span>            :   }
+<span class="lineNum">     400 </span>            : 
+<span class="lineNum">     401 </span>            :   template&lt;typename Tag&gt;
+<span class="lineNum">     402 </span>            :   const typename index&lt;Tag&gt;::type&amp; get()const BOOST_NOEXCEPT
+<span class="lineNum">     403 </span>            :   {
+<span class="lineNum">     404 </span>            :     return *this;
+<span class="lineNum">     405 </span>            :   }
+<span class="lineNum">     406 </span>            : #endif
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span>            :   /* projection of iterators by number */
+<span class="lineNum">     409 </span>            : 
+<span class="lineNum">     410 </span>            : #if !defined(BOOST_NO_MEMBER_TEMPLATES)
+<span class="lineNum">     411 </span>            :   template&lt;int N&gt;
+<span class="lineNum">     412 </span>            :   struct nth_index_iterator
+<span class="lineNum">     413 </span>            :   {
+<span class="lineNum">     414 </span>            :     typedef typename nth_index&lt;N&gt;::type::iterator type;
+<span class="lineNum">     415 </span>            :   };
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span>            :   template&lt;int N&gt;
+<span class="lineNum">     418 </span>            :   struct nth_index_const_iterator
+<span class="lineNum">     419 </span>            :   {
+<span class="lineNum">     420 </span>            :     typedef typename nth_index&lt;N&gt;::type::const_iterator type;
+<span class="lineNum">     421 </span>            :   };
+<span class="lineNum">     422 </span>            : 
+<span class="lineNum">     423 </span>            :   template&lt;int N,typename IteratorType&gt;
+<span class="lineNum">     424 </span>            :   typename nth_index_iterator&lt;N&gt;::type project(IteratorType it)
+<span class="lineNum">     425 </span>            :   {
+<span class="lineNum">     426 </span>            :     typedef typename nth_index&lt;N&gt;::type index_type;
+<span class="lineNum">     427 </span>            : 
+<span class="lineNum">     428 </span>            : #if !defined(__SUNPRO_CC)||!(__SUNPRO_CC&lt;0x580) /* fails in Sun C++ 5.7 */
+<span class="lineNum">     429 </span>            :     BOOST_STATIC_ASSERT(
+<span class="lineNum">     430 </span>            :       (mpl::contains&lt;iterator_type_list,IteratorType&gt;::value));
+<span class="lineNum">     431 </span>            : #endif
+<span class="lineNum">     432 </span>            : 
+<span class="lineNum">     433 </span>            :     BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(it);
+<span class="lineNum">     434 </span>            :     BOOST_MULTI_INDEX_CHECK_IS_OWNER(
+<span class="lineNum">     435 </span>            :       it,static_cast&lt;typename IteratorType::container_type&amp;&gt;(*this));
+<span class="lineNum">     436 </span>            : 
+<span class="lineNum">     437 </span>            :     return index_type::make_iterator(static_cast&lt;node_type*&gt;(it.get_node()));
+<span class="lineNum">     438 </span>            :   }
+<span class="lineNum">     439 </span>            : 
+<span class="lineNum">     440 </span>            :   template&lt;int N,typename IteratorType&gt;
+<span class="lineNum">     441 </span>            :   typename nth_index_const_iterator&lt;N&gt;::type project(IteratorType it)const
+<span class="lineNum">     442 </span>            :   {
+<span class="lineNum">     443 </span>            :     typedef typename nth_index&lt;N&gt;::type index_type;
+<span class="lineNum">     444 </span>            : 
+<span class="lineNum">     445 </span>            : #if !defined(__SUNPRO_CC)||!(__SUNPRO_CC&lt;0x580) /* fails in Sun C++ 5.7 */
+<span class="lineNum">     446 </span>            :     BOOST_STATIC_ASSERT((
+<span class="lineNum">     447 </span>            :       mpl::contains&lt;iterator_type_list,IteratorType&gt;::value||
+<span class="lineNum">     448 </span>            :       mpl::contains&lt;const_iterator_type_list,IteratorType&gt;::value));
+<span class="lineNum">     449 </span>            : #endif
+<span class="lineNum">     450 </span>            : 
+<span class="lineNum">     451 </span>            :     BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(it);
+<span class="lineNum">     452 </span>            :     BOOST_MULTI_INDEX_CHECK_IS_OWNER(
+<span class="lineNum">     453 </span>            :       it,static_cast&lt;const typename IteratorType::container_type&amp;&gt;(*this));
+<span class="lineNum">     454 </span>            :     return index_type::make_iterator(static_cast&lt;node_type*&gt;(it.get_node()));
+<span class="lineNum">     455 </span>            :   }
+<span class="lineNum">     456 </span>            : #endif
+<span class="lineNum">     457 </span>            : 
+<span class="lineNum">     458 </span>            :   /* projection of iterators by tag */
+<span class="lineNum">     459 </span>            : 
+<span class="lineNum">     460 </span>            : #if !defined(BOOST_NO_MEMBER_TEMPLATES)
+<span class="lineNum">     461 </span>            :   template&lt;typename Tag&gt;
+<span class="lineNum">     462 </span>            :   struct index_iterator
+<span class="lineNum">     463 </span>            :   {
+<span class="lineNum">     464 </span>            :     typedef typename index&lt;Tag&gt;::type::iterator type;
+<span class="lineNum">     465 </span>            :   };
+<span class="lineNum">     466 </span>            : 
+<span class="lineNum">     467 </span>            :   template&lt;typename Tag&gt;
+<span class="lineNum">     468 </span>            :   struct index_const_iterator
+<span class="lineNum">     469 </span>            :   {
+<span class="lineNum">     470 </span>            :     typedef typename index&lt;Tag&gt;::type::const_iterator type;
+<span class="lineNum">     471 </span>            :   };
+<span class="lineNum">     472 </span>            : 
+<span class="lineNum">     473 </span>            :   template&lt;typename Tag,typename IteratorType&gt;
+<span class="lineNum">     474 </span>            :   typename index_iterator&lt;Tag&gt;::type project(IteratorType it)
+<span class="lineNum">     475 </span>            :   {
+<span class="lineNum">     476 </span>            :     typedef typename index&lt;Tag&gt;::type index_type;
+<span class="lineNum">     477 </span>            : 
+<span class="lineNum">     478 </span>            : #if !defined(__SUNPRO_CC)||!(__SUNPRO_CC&lt;0x580) /* fails in Sun C++ 5.7 */
+<span class="lineNum">     479 </span>            :     BOOST_STATIC_ASSERT(
+<span class="lineNum">     480 </span>            :       (mpl::contains&lt;iterator_type_list,IteratorType&gt;::value));
+<span class="lineNum">     481 </span>            : #endif
+<span class="lineNum">     482 </span>            : 
+<span class="lineNum">     483 </span>            :     BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(it);
+<span class="lineNum">     484 </span>            :     BOOST_MULTI_INDEX_CHECK_IS_OWNER(
+<span class="lineNum">     485 </span>            :       it,static_cast&lt;typename IteratorType::container_type&amp;&gt;(*this));
+<span class="lineNum">     486 </span>            :     return index_type::make_iterator(static_cast&lt;node_type*&gt;(it.get_node()));
+<span class="lineNum">     487 </span>            :   }
+<span class="lineNum">     488 </span>            : 
+<span class="lineNum">     489 </span>            :   template&lt;typename Tag,typename IteratorType&gt;
+<span class="lineNum">     490 </span>            :   typename index_const_iterator&lt;Tag&gt;::type project(IteratorType it)const
+<span class="lineNum">     491 </span>            :   {
+<span class="lineNum">     492 </span>            :     typedef typename index&lt;Tag&gt;::type index_type;
+<span class="lineNum">     493 </span>            : 
+<span class="lineNum">     494 </span>            : #if !defined(__SUNPRO_CC)||!(__SUNPRO_CC&lt;0x580) /* fails in Sun C++ 5.7 */
+<span class="lineNum">     495 </span>            :     BOOST_STATIC_ASSERT((
+<span class="lineNum">     496 </span>            :       mpl::contains&lt;iterator_type_list,IteratorType&gt;::value||
+<span class="lineNum">     497 </span>            :       mpl::contains&lt;const_iterator_type_list,IteratorType&gt;::value));
+<span class="lineNum">     498 </span>            : #endif
+<span class="lineNum">     499 </span>            : 
+<span class="lineNum">     500 </span>            :     BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(it);
+<span class="lineNum">     501 </span>            :     BOOST_MULTI_INDEX_CHECK_IS_OWNER(
+<span class="lineNum">     502 </span>            :       it,static_cast&lt;const typename IteratorType::container_type&amp;&gt;(*this));
+<span class="lineNum">     503 </span>            :     return index_type::make_iterator(static_cast&lt;node_type*&gt;(it.get_node()));
+<span class="lineNum">     504 </span>            :   }
+<span class="lineNum">     505 </span>            : #endif
+<span class="lineNum">     506 </span>            : 
+<span class="lineNum">     507 </span>            : BOOST_MULTI_INDEX_PROTECTED_IF_MEMBER_TEMPLATE_FRIENDS:
+<span class="lineNum">     508 </span>            :   typedef typename super::copy_map_type copy_map_type;
+<span class="lineNum">     509 </span>            : 
+<span class="lineNum">     510 </span>            : #if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST)
+<span class="lineNum">     511 </span>            :   multi_index_container(
+<span class="lineNum">     512 </span>            :     const multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; x,
+<span class="lineNum">     513 </span>            :     detail::do_not_copy_elements_tag):
+<span class="lineNum">     514 </span>            :     bfm_allocator(x.bfm_allocator::member),
+<span class="lineNum">     515 </span>            :     bfm_header(),
+<span class="lineNum">     516 </span>            :     super(x,detail::do_not_copy_elements_tag()),
+<span class="lineNum">     517 </span>            :     node_count(0)
+<span class="lineNum">     518 </span>            :   {
+<span class="lineNum">     519 </span>            :     BOOST_MULTI_INDEX_CHECK_INVARIANT;
+<span class="lineNum">     520 </span>            :   }
+<span class="lineNum">     521 </span>            : #endif
+<span class="lineNum">     522 </span>            : 
+<span class="lineNum">     523 </span>            :   node_type* header()const
+<span class="lineNum">     524 </span>            :   {
+<span class="lineNum">     525 </span>            :     return &amp;*bfm_header::member;
+<span class="lineNum">     526 </span>            :   }
+<span class="lineNum">     527 </span>            : 
+<span class="lineNum">     528 </span>            :   node_type* allocate_node()
+<span class="lineNum">     529 </span>            :   {
+<span class="lineNum">     530 </span>            :     return &amp;*bfm_allocator::member.allocate(1);
+<span class="lineNum">     531 </span>            :   }
+<span class="lineNum">     532 </span>            : 
+<span class="lineNum">     533 </span>            :   void deallocate_node(node_type* x)
+<span class="lineNum">     534 </span>            :   {
+<span class="lineNum">     535 </span>            :     typedef typename node_allocator::pointer node_pointer;
+<span class="lineNum">     536 </span>            :     bfm_allocator::member.deallocate(static_cast&lt;node_pointer&gt;(x),1);
+<span class="lineNum">     537 </span>            :   }
+<span class="lineNum">     538 </span>            : 
+<span class="lineNum">     539 </span>            :   bool empty_()const
+<span class="lineNum">     540 </span>            :   {
+<span class="lineNum">     541 </span>            :     return node_count==0;
+<span class="lineNum">     542 </span>            :   }
+<span class="lineNum">     543 </span>            : 
+<span class="lineNum">     544 </span>            :   std::size_t size_()const
+<span class="lineNum">     545 </span>            :   {
+<span class="lineNum">     546 </span>            :     return node_count;
+<span class="lineNum">     547 </span>            :   }
+<span class="lineNum">     548 </span>            : 
+<span class="lineNum">     549 </span>            :   std::size_t max_size_()const
+<span class="lineNum">     550 </span>            :   {
+<span class="lineNum">     551 </span>            :     return static_cast&lt;std::size_t &gt;(-1);
+<span class="lineNum">     552 </span>            :   }
+<a name="553"><span class="lineNum">     553 </span>            : </a>
+<span class="lineNum">     554 </span>            :   template&lt;typename Variant&gt;
+<span class="lineNum">     555 </span><span class="lineCov">      50000 :   std::pair&lt;node_type*,bool&gt; insert_(const Value&amp; v,Variant variant)</span>
+<span class="lineNum">     556 </span>            :   {
+<span class="lineNum">     557 </span><span class="lineCov">      50000 :     node_type* x=0;</span>
+<span class="lineNum">     558 </span><span class="lineCov">      50000 :     node_type* res=super::insert_(v,x,variant);</span>
+<span class="lineNum">     559 </span><span class="lineCov">      50000 :     if(res==x){</span>
+<span class="lineNum">     560 </span><span class="lineCov">      50000 :       ++node_count;</span>
+<span class="lineNum">     561 </span><span class="lineCov">      50000 :       return std::pair&lt;node_type*,bool&gt;(res,true);</span>
+<span class="lineNum">     562 </span>            :     }
+<span class="lineNum">     563 </span>            :     else{
+<span class="lineNum">     564 </span><span class="lineNoCov">          0 :       return std::pair&lt;node_type*,bool&gt;(res,false);</span>
+<span class="lineNum">     565 </span>            :     }
+<span class="lineNum">     566 </span>            :   }
+<span class="lineNum">     567 </span>            : 
+<span class="lineNum">     568 </span>            :   std::pair&lt;node_type*,bool&gt; insert_(const Value&amp; v)
+<span class="lineNum">     569 </span>            :   {
+<span class="lineNum">     570 </span><span class="lineCov">      50000 :     return insert_(v,detail::lvalue_tag());</span>
+<span class="lineNum">     571 </span>            :   }
+<span class="lineNum">     572 </span>            : 
+<span class="lineNum">     573 </span>            :   std::pair&lt;node_type*,bool&gt; insert_rv_(const Value&amp; v)
+<span class="lineNum">     574 </span>            :   {
+<span class="lineNum">     575 </span>            :     return insert_(v,detail::rvalue_tag());
+<span class="lineNum">     576 </span>            :   }
+<span class="lineNum">     577 </span>            : 
+<span class="lineNum">     578 </span>            :   template&lt;typename T&gt;
+<span class="lineNum">     579 </span>            :   std::pair&lt;node_type*,bool&gt; insert_ref_(T&amp; t)
+<span class="lineNum">     580 </span>            :   {
+<span class="lineNum">     581 </span>            :     node_type* x=allocate_node();
+<span class="lineNum">     582 </span>            :     BOOST_TRY{
+<span class="lineNum">     583 </span>            :       new(&amp;x-&gt;value()) value_type(t);
+<span class="lineNum">     584 </span>            :       BOOST_TRY{
+<span class="lineNum">     585 </span>            :         node_type* res=super::insert_(x-&gt;value(),x,detail::emplaced_tag());
+<span class="lineNum">     586 </span>            :         if(res==x){
+<span class="lineNum">     587 </span>            :           ++node_count;
+<span class="lineNum">     588 </span>            :           return std::pair&lt;node_type*,bool&gt;(res,true);
+<span class="lineNum">     589 </span>            :         }
+<span class="lineNum">     590 </span>            :         else{
+<span class="lineNum">     591 </span>            :           boost::detail::allocator::destroy(&amp;x-&gt;value());
+<span class="lineNum">     592 </span>            :           deallocate_node(x);
+<span class="lineNum">     593 </span>            :           return std::pair&lt;node_type*,bool&gt;(res,false);
+<span class="lineNum">     594 </span>            :         }
+<span class="lineNum">     595 </span>            :       }
+<span class="lineNum">     596 </span>            :       BOOST_CATCH(...){
+<span class="lineNum">     597 </span>            :         boost::detail::allocator::destroy(&amp;x-&gt;value());
+<span class="lineNum">     598 </span>            :         BOOST_RETHROW;
+<span class="lineNum">     599 </span>            :       }
+<span class="lineNum">     600 </span>            :       BOOST_CATCH_END
+<span class="lineNum">     601 </span>            :     }
+<span class="lineNum">     602 </span>            :     BOOST_CATCH(...){
+<span class="lineNum">     603 </span>            :       deallocate_node(x);
+<span class="lineNum">     604 </span>            :       BOOST_RETHROW;
+<span class="lineNum">     605 </span>            :     }
+<span class="lineNum">     606 </span>            :     BOOST_CATCH_END
+<span class="lineNum">     607 </span>            :   }
+<span class="lineNum">     608 </span>            : 
+<span class="lineNum">     609 </span>            :   std::pair&lt;node_type*,bool&gt; insert_ref_(const value_type&amp; x)
+<span class="lineNum">     610 </span>            :   {
+<span class="lineNum">     611 </span>            :     return insert_(x);
+<span class="lineNum">     612 </span>            :   }
+<span class="lineNum">     613 </span>            : 
+<span class="lineNum">     614 </span>            :   std::pair&lt;node_type*,bool&gt; insert_ref_(value_type&amp; x)
+<span class="lineNum">     615 </span>            :   {
+<span class="lineNum">     616 </span>            :     return insert_(x);
+<span class="lineNum">     617 </span>            :   }
+<span class="lineNum">     618 </span>            : 
+<span class="lineNum">     619 </span>            :   template&lt;BOOST_MULTI_INDEX_TEMPLATE_PARAM_PACK&gt;
+<span class="lineNum">     620 </span>            :   std::pair&lt;node_type*,bool&gt; emplace_(
+<span class="lineNum">     621 </span>            :     BOOST_MULTI_INDEX_FUNCTION_PARAM_PACK)
+<span class="lineNum">     622 </span>            :   {
+<span class="lineNum">     623 </span>            :     node_type* x=allocate_node();
+<span class="lineNum">     624 </span>            :     BOOST_TRY{
+<span class="lineNum">     625 </span>            :       detail::vartempl_placement_new(
+<span class="lineNum">     626 </span>            :         &amp;x-&gt;value(),BOOST_MULTI_INDEX_FORWARD_PARAM_PACK);
+<span class="lineNum">     627 </span>            :       BOOST_TRY{
+<span class="lineNum">     628 </span>            :         node_type* res=super::insert_(x-&gt;value(),x,detail::emplaced_tag());
+<span class="lineNum">     629 </span>            :         if(res==x){
+<span class="lineNum">     630 </span>            :           ++node_count;
+<span class="lineNum">     631 </span>            :           return std::pair&lt;node_type*,bool&gt;(res,true);
+<span class="lineNum">     632 </span>            :         }
+<span class="lineNum">     633 </span>            :         else{
+<span class="lineNum">     634 </span>            :           boost::detail::allocator::destroy(&amp;x-&gt;value());
+<span class="lineNum">     635 </span>            :           deallocate_node(x);
+<span class="lineNum">     636 </span>            :           return std::pair&lt;node_type*,bool&gt;(res,false);
+<span class="lineNum">     637 </span>            :         }
+<span class="lineNum">     638 </span>            :       }
+<span class="lineNum">     639 </span>            :       BOOST_CATCH(...){
+<span class="lineNum">     640 </span>            :         boost::detail::allocator::destroy(&amp;x-&gt;value());
+<span class="lineNum">     641 </span>            :         BOOST_RETHROW;
+<span class="lineNum">     642 </span>            :       }
+<span class="lineNum">     643 </span>            :       BOOST_CATCH_END
+<span class="lineNum">     644 </span>            :     }
+<span class="lineNum">     645 </span>            :     BOOST_CATCH(...){
+<span class="lineNum">     646 </span>            :       deallocate_node(x);
+<span class="lineNum">     647 </span>            :       BOOST_RETHROW;
+<span class="lineNum">     648 </span>            :     }
+<span class="lineNum">     649 </span>            :     BOOST_CATCH_END
+<span class="lineNum">     650 </span>            :   }
+<span class="lineNum">     651 </span>            : 
+<span class="lineNum">     652 </span>            :   template&lt;typename Variant&gt;
+<span class="lineNum">     653 </span>            :   std::pair&lt;node_type*,bool&gt; insert_(
+<span class="lineNum">     654 </span>            :     const Value&amp; v,node_type* position,Variant variant)
+<span class="lineNum">     655 </span>            :   {
+<span class="lineNum">     656 </span>            :     node_type* x=0;
+<span class="lineNum">     657 </span>            :     node_type* res=super::insert_(v,position,x,variant);
+<span class="lineNum">     658 </span>            :     if(res==x){
+<span class="lineNum">     659 </span>            :       ++node_count;
+<span class="lineNum">     660 </span>            :       return std::pair&lt;node_type*,bool&gt;(res,true);
+<span class="lineNum">     661 </span>            :     }
+<span class="lineNum">     662 </span>            :     else{
+<span class="lineNum">     663 </span>            :       return std::pair&lt;node_type*,bool&gt;(res,false);
+<span class="lineNum">     664 </span>            :     }
+<span class="lineNum">     665 </span>            :   }
+<span class="lineNum">     666 </span>            : 
+<span class="lineNum">     667 </span>            :   std::pair&lt;node_type*,bool&gt; insert_(const Value&amp; v,node_type* position)
+<span class="lineNum">     668 </span>            :   {
+<span class="lineNum">     669 </span>            :     return insert_(v,position,detail::lvalue_tag());
+<span class="lineNum">     670 </span>            :   }
+<span class="lineNum">     671 </span>            : 
+<span class="lineNum">     672 </span>            :   std::pair&lt;node_type*,bool&gt; insert_rv_(const Value&amp; v,node_type* position)
+<span class="lineNum">     673 </span>            :   {
+<span class="lineNum">     674 </span>            :     return insert_(v,position,detail::rvalue_tag());
+<span class="lineNum">     675 </span>            :   }
+<span class="lineNum">     676 </span>            : 
+<span class="lineNum">     677 </span>            :   template&lt;typename T&gt;
+<span class="lineNum">     678 </span>            :   std::pair&lt;node_type*,bool&gt; insert_ref_(
+<span class="lineNum">     679 </span>            :     T&amp; t,node_type* position)
+<span class="lineNum">     680 </span>            :   {
+<span class="lineNum">     681 </span>            :     node_type* x=allocate_node();
+<span class="lineNum">     682 </span>            :     BOOST_TRY{
+<span class="lineNum">     683 </span>            :       new(&amp;x-&gt;value()) value_type(t);
+<span class="lineNum">     684 </span>            :       BOOST_TRY{
+<span class="lineNum">     685 </span>            :         node_type* res=super::insert_(
+<span class="lineNum">     686 </span>            :           x-&gt;value(),position,x,detail::emplaced_tag());
+<span class="lineNum">     687 </span>            :         if(res==x){
+<span class="lineNum">     688 </span>            :           ++node_count;
+<span class="lineNum">     689 </span>            :           return std::pair&lt;node_type*,bool&gt;(res,true);
+<span class="lineNum">     690 </span>            :         }
+<span class="lineNum">     691 </span>            :         else{
+<span class="lineNum">     692 </span>            :           boost::detail::allocator::destroy(&amp;x-&gt;value());
+<span class="lineNum">     693 </span>            :           deallocate_node(x);
+<span class="lineNum">     694 </span>            :           return std::pair&lt;node_type*,bool&gt;(res,false);
+<span class="lineNum">     695 </span>            :         }
+<span class="lineNum">     696 </span>            :       }
+<span class="lineNum">     697 </span>            :       BOOST_CATCH(...){
+<span class="lineNum">     698 </span>            :         boost::detail::allocator::destroy(&amp;x-&gt;value());
+<span class="lineNum">     699 </span>            :         BOOST_RETHROW;
+<span class="lineNum">     700 </span>            :       }
+<span class="lineNum">     701 </span>            :       BOOST_CATCH_END
+<span class="lineNum">     702 </span>            :     }
+<span class="lineNum">     703 </span>            :     BOOST_CATCH(...){
+<span class="lineNum">     704 </span>            :       deallocate_node(x);
+<span class="lineNum">     705 </span>            :       BOOST_RETHROW;
+<span class="lineNum">     706 </span>            :     }
+<span class="lineNum">     707 </span>            :     BOOST_CATCH_END
+<span class="lineNum">     708 </span>            :   }
+<span class="lineNum">     709 </span>            : 
+<span class="lineNum">     710 </span>            :   std::pair&lt;node_type*,bool&gt; insert_ref_(
+<span class="lineNum">     711 </span>            :     const value_type&amp; x,node_type* position)
+<span class="lineNum">     712 </span>            :   {
+<span class="lineNum">     713 </span>            :     return insert_(x,position);
+<span class="lineNum">     714 </span>            :   }
+<span class="lineNum">     715 </span>            : 
+<span class="lineNum">     716 </span>            :   std::pair&lt;node_type*,bool&gt; insert_ref_(
+<span class="lineNum">     717 </span>            :     value_type&amp; x,node_type* position)
+<span class="lineNum">     718 </span>            :   {
+<span class="lineNum">     719 </span>            :     return insert_(x,position);
+<span class="lineNum">     720 </span>            :   }
+<span class="lineNum">     721 </span>            : 
+<span class="lineNum">     722 </span>            :   template&lt;BOOST_MULTI_INDEX_TEMPLATE_PARAM_PACK&gt;
+<span class="lineNum">     723 </span>            :   std::pair&lt;node_type*,bool&gt; emplace_hint_(
+<span class="lineNum">     724 </span>            :     node_type* position,
+<span class="lineNum">     725 </span>            :     BOOST_MULTI_INDEX_FUNCTION_PARAM_PACK)
+<span class="lineNum">     726 </span>            :   {
+<span class="lineNum">     727 </span>            :     node_type* x=allocate_node();
+<span class="lineNum">     728 </span>            :     BOOST_TRY{
+<span class="lineNum">     729 </span>            :       detail::vartempl_placement_new(
+<span class="lineNum">     730 </span>            :         &amp;x-&gt;value(),BOOST_MULTI_INDEX_FORWARD_PARAM_PACK);
+<span class="lineNum">     731 </span>            :       BOOST_TRY{
+<span class="lineNum">     732 </span>            :         node_type* res=super::insert_(
+<span class="lineNum">     733 </span>            :           x-&gt;value(),position,x,detail::emplaced_tag());
+<span class="lineNum">     734 </span>            :         if(res==x){
+<span class="lineNum">     735 </span>            :           ++node_count;
+<span class="lineNum">     736 </span>            :           return std::pair&lt;node_type*,bool&gt;(res,true);
+<span class="lineNum">     737 </span>            :         }
+<span class="lineNum">     738 </span>            :         else{
+<span class="lineNum">     739 </span>            :           boost::detail::allocator::destroy(&amp;x-&gt;value());
+<span class="lineNum">     740 </span>            :           deallocate_node(x);
+<span class="lineNum">     741 </span>            :           return std::pair&lt;node_type*,bool&gt;(res,false);
+<span class="lineNum">     742 </span>            :         }
+<span class="lineNum">     743 </span>            :       }
+<span class="lineNum">     744 </span>            :       BOOST_CATCH(...){
+<span class="lineNum">     745 </span>            :         boost::detail::allocator::destroy(&amp;x-&gt;value());
+<span class="lineNum">     746 </span>            :         BOOST_RETHROW;
+<span class="lineNum">     747 </span>            :       }
+<span class="lineNum">     748 </span>            :       BOOST_CATCH_END
+<span class="lineNum">     749 </span>            :     }
+<span class="lineNum">     750 </span>            :     BOOST_CATCH(...){
+<span class="lineNum">     751 </span>            :       deallocate_node(x);
+<span class="lineNum">     752 </span>            :       BOOST_RETHROW;
+<span class="lineNum">     753 </span>            :     }
+<span class="lineNum">     754 </span>            :     BOOST_CATCH_END
+<span class="lineNum">     755 </span>            :   }
+<span class="lineNum">     756 </span>            : 
+<span class="lineNum">     757 </span>            :   void erase_(node_type* x)
+<span class="lineNum">     758 </span>            :   {
+<span class="lineNum">     759 </span><span class="lineCov">      50000 :     --node_count;</span>
+<span class="lineNum">     760 </span><span class="lineCov">      50000 :     super::erase_(x);</span>
+<span class="lineNum">     761 </span>            :     deallocate_node(x);
+<span class="lineNum">     762 </span>            :   }
+<span class="lineNum">     763 </span>            : 
+<span class="lineNum">     764 </span>            :   void delete_node_(node_type* x)
+<span class="lineNum">     765 </span>            :   {
+<span class="lineNum">     766 </span>            :     super::delete_node_(x);
+<span class="lineNum">     767 </span>            :     deallocate_node(x);
+<span class="lineNum">     768 </span>            :   }
+<span class="lineNum">     769 </span>            : 
+<span class="lineNum">     770 </span>            :   void delete_all_nodes_()
+<span class="lineNum">     771 </span>            :   {
+<span class="lineNum">     772 </span><span class="lineCov">          1 :     super::delete_all_nodes_();</span>
+<span class="lineNum">     773 </span>            :   }
+<span class="lineNum">     774 </span>            : 
+<span class="lineNum">     775 </span>            :   void clear_()
+<span class="lineNum">     776 </span>            :   {
+<span class="lineNum">     777 </span>            :     delete_all_nodes_();
+<span class="lineNum">     778 </span>            :     super::clear_();
+<span class="lineNum">     779 </span>            :     node_count=0;
+<span class="lineNum">     780 </span>            :   }
+<span class="lineNum">     781 </span>            : 
+<span class="lineNum">     782 </span>            :   void swap_(multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; x)
+<span class="lineNum">     783 </span>            :   {
+<span class="lineNum">     784 </span>            :     if(bfm_allocator::member!=x.bfm_allocator::member){
+<span class="lineNum">     785 </span>            :       detail::adl_swap(bfm_allocator::member,x.bfm_allocator::member);
+<span class="lineNum">     786 </span>            :     }
+<span class="lineNum">     787 </span>            :     std::swap(bfm_header::member,x.bfm_header::member);
+<span class="lineNum">     788 </span>            :     super::swap_(x);
+<span class="lineNum">     789 </span>            :     std::swap(node_count,x.node_count);
+<span class="lineNum">     790 </span>            :   }
+<span class="lineNum">     791 </span>            : 
+<span class="lineNum">     792 </span>            :   void swap_elements_(
+<span class="lineNum">     793 </span>            :     multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; x)
+<span class="lineNum">     794 </span>            :   {
+<span class="lineNum">     795 </span>            :     std::swap(bfm_header::member,x.bfm_header::member);
+<span class="lineNum">     796 </span>            :     super::swap_elements_(x);
+<span class="lineNum">     797 </span>            :     std::swap(node_count,x.node_count);
+<span class="lineNum">     798 </span>            :   }
+<span class="lineNum">     799 </span>            : 
+<span class="lineNum">     800 </span>            :   bool replace_(const Value&amp; k,node_type* x)
+<span class="lineNum">     801 </span>            :   {
+<span class="lineNum">     802 </span><span class="lineCov">          1 :     return super::replace_(k,x,detail::lvalue_tag());</span>
+<span class="lineNum">     803 </span>            :   }
+<span class="lineNum">     804 </span>            : 
+<span class="lineNum">     805 </span>            :   bool replace_rv_(const Value&amp; k,node_type* x)
+<span class="lineNum">     806 </span>            :   {
+<span class="lineNum">     807 </span>            :     return super::replace_(k,x,detail::rvalue_tag());
+<span class="lineNum">     808 </span>            :   }
+<a name="809"><span class="lineNum">     809 </span>            : </a>
+<span class="lineNum">     810 </span>            :   template&lt;typename Modifier&gt;
+<span class="lineNum">     811 </span><span class="lineCov">     131257 :   bool modify_(Modifier&amp; mod,node_type* x)</span>
+<span class="lineNum">     812 </span>            :   {
+<span class="lineNum">     813 </span>            :     mod(const_cast&lt;value_type&amp;&gt;(x-&gt;value()));
+<span class="lineNum">     814 </span>            : 
+<span class="lineNum">     815 </span>            :     BOOST_TRY{
+<span class="lineNum">     816 </span><span class="lineCov">     131257 :       if(!super::modify_(x)){</span>
+<span class="lineNum">     817 </span>            :         deallocate_node(x);
+<span class="lineNum">     818 </span><span class="lineNoCov">          0 :         --node_count;</span>
+<span class="lineNum">     819 </span><span class="lineNoCov">          0 :         return false;</span>
+<span class="lineNum">     820 </span>            :       }
+<span class="lineNum">     821 </span>            :       else return true;
+<span class="lineNum">     822 </span>            :     }
+<span class="lineNum">     823 </span>            :     BOOST_CATCH(...){
+<span class="lineNum">     824 </span>            :       deallocate_node(x);
+<span class="lineNum">     825 </span>            :       --node_count;
+<span class="lineNum">     826 </span>            :       BOOST_RETHROW;
+<span class="lineNum">     827 </span>            :     }
+<span class="lineNum">     828 </span>            :     BOOST_CATCH_END
+<span class="lineNum">     829 </span>            :   }
+<span class="lineNum">     830 </span>            : 
+<span class="lineNum">     831 </span>            :   template&lt;typename Modifier,typename Rollback&gt;
+<span class="lineNum">     832 </span>            :   bool modify_(Modifier&amp; mod,Rollback&amp; back_,node_type* x)
+<span class="lineNum">     833 </span>            :   {
+<span class="lineNum">     834 </span>            :     mod(const_cast&lt;value_type&amp;&gt;(x-&gt;value()));
+<span class="lineNum">     835 </span>            : 
+<span class="lineNum">     836 </span>            :     bool b;
+<span class="lineNum">     837 </span>            :     BOOST_TRY{
+<span class="lineNum">     838 </span>            :       b=super::modify_rollback_(x);
+<span class="lineNum">     839 </span>            :     }
+<span class="lineNum">     840 </span>            :     BOOST_CATCH(...){
+<span class="lineNum">     841 </span>            :       BOOST_TRY{
+<span class="lineNum">     842 </span>            :         back_(const_cast&lt;value_type&amp;&gt;(x-&gt;value()));
+<span class="lineNum">     843 </span>            :         BOOST_RETHROW;
+<span class="lineNum">     844 </span>            :       }
+<span class="lineNum">     845 </span>            :       BOOST_CATCH(...){
+<span class="lineNum">     846 </span>            :         this-&gt;erase_(x);
+<span class="lineNum">     847 </span>            :         BOOST_RETHROW;
+<span class="lineNum">     848 </span>            :       }
+<span class="lineNum">     849 </span>            :       BOOST_CATCH_END
+<span class="lineNum">     850 </span>            :     }
+<span class="lineNum">     851 </span>            :     BOOST_CATCH_END
+<span class="lineNum">     852 </span>            : 
+<span class="lineNum">     853 </span>            :     BOOST_TRY{
+<span class="lineNum">     854 </span>            :       if(!b){
+<span class="lineNum">     855 </span>            :         back_(const_cast&lt;value_type&amp;&gt;(x-&gt;value()));
+<span class="lineNum">     856 </span>            :         return false;
+<span class="lineNum">     857 </span>            :       }
+<span class="lineNum">     858 </span>            :       else return true;
+<span class="lineNum">     859 </span>            :     }
+<span class="lineNum">     860 </span>            :     BOOST_CATCH(...){
+<span class="lineNum">     861 </span>            :       this-&gt;erase_(x);
+<span class="lineNum">     862 </span>            :       BOOST_RETHROW;
+<span class="lineNum">     863 </span>            :     }
+<span class="lineNum">     864 </span>            :     BOOST_CATCH_END
+<span class="lineNum">     865 </span>            :   }
+<span class="lineNum">     866 </span>            : 
+<span class="lineNum">     867 </span>            : #if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+<span class="lineNum">     868 </span>            :   /* serialization */
+<span class="lineNum">     869 </span>            : 
+<span class="lineNum">     870 </span>            :   friend class boost::serialization::access;
+<span class="lineNum">     871 </span>            : 
+<span class="lineNum">     872 </span>            :   BOOST_SERIALIZATION_SPLIT_MEMBER()
+<span class="lineNum">     873 </span>            : 
+<span class="lineNum">     874 </span>            :   typedef typename super::index_saver_type        index_saver_type;
+<span class="lineNum">     875 </span>            :   typedef typename super::index_loader_type       index_loader_type;
+<span class="lineNum">     876 </span>            : 
+<span class="lineNum">     877 </span>            :   template&lt;class Archive&gt;
+<span class="lineNum">     878 </span>            :   void save(Archive&amp; ar,const unsigned int version)const
+<span class="lineNum">     879 </span>            :   {
+<span class="lineNum">     880 </span>            :     const serialization::collection_size_type       s(size_());
+<span class="lineNum">     881 </span>            :     const detail::serialization_version&lt;value_type&gt; value_version;
+<span class="lineNum">     882 </span>            :     ar&lt;&lt;serialization::make_nvp(&quot;count&quot;,s);
+<span class="lineNum">     883 </span>            :     ar&lt;&lt;serialization::make_nvp(&quot;value_version&quot;,value_version);
+<span class="lineNum">     884 </span>            : 
+<span class="lineNum">     885 </span>            :     index_saver_type sm(bfm_allocator::member,s);
+<span class="lineNum">     886 </span>            : 
+<span class="lineNum">     887 </span>            :     for(iterator it=super::begin(),it_end=super::end();it!=it_end;++it){
+<span class="lineNum">     888 </span>            :       serialization::save_construct_data_adl(ar,&amp;*it,value_version);
+<span class="lineNum">     889 </span>            :       ar&lt;&lt;serialization::make_nvp(&quot;item&quot;,*it);
+<span class="lineNum">     890 </span>            :       sm.add(it.get_node(),ar,version);
+<span class="lineNum">     891 </span>            :     }
+<span class="lineNum">     892 </span>            :     sm.add_track(header(),ar,version);
+<span class="lineNum">     893 </span>            : 
+<span class="lineNum">     894 </span>            :     super::save_(ar,version,sm);
+<span class="lineNum">     895 </span>            :   }
+<span class="lineNum">     896 </span>            : 
+<span class="lineNum">     897 </span>            :   template&lt;class Archive&gt;
+<span class="lineNum">     898 </span>            :   void load(Archive&amp; ar,const unsigned int version)
+<span class="lineNum">     899 </span>            :   {
+<span class="lineNum">     900 </span>            :     BOOST_MULTI_INDEX_CHECK_INVARIANT;
+<span class="lineNum">     901 </span>            : 
+<span class="lineNum">     902 </span>            :     clear_(); 
+<span class="lineNum">     903 </span>            :     serialization::collection_size_type       s;
+<span class="lineNum">     904 </span>            :     detail::serialization_version&lt;value_type&gt; value_version;
+<span class="lineNum">     905 </span>            :     if(version&lt;1){
+<span class="lineNum">     906 </span>            :       std::size_t sz;
+<span class="lineNum">     907 </span>            :       ar&gt;&gt;serialization::make_nvp(&quot;count&quot;,sz);
+<span class="lineNum">     908 </span>            :       s=static_cast&lt;serialization::collection_size_type&gt;(sz);
+<span class="lineNum">     909 </span>            :     }
+<span class="lineNum">     910 </span>            :     else{
+<span class="lineNum">     911 </span>            :       ar&gt;&gt;serialization::make_nvp(&quot;count&quot;,s);
+<span class="lineNum">     912 </span>            :     }
+<span class="lineNum">     913 </span>            :     if(version&lt;2){
+<span class="lineNum">     914 </span>            :       value_version=0;
+<span class="lineNum">     915 </span>            :     }
+<span class="lineNum">     916 </span>            :     else{
+<span class="lineNum">     917 </span>            :       ar&gt;&gt;serialization::make_nvp(&quot;value_version&quot;,value_version);
+<span class="lineNum">     918 </span>            :     }
+<span class="lineNum">     919 </span>            : 
+<span class="lineNum">     920 </span>            :     index_loader_type lm(bfm_allocator::member,s);
+<span class="lineNum">     921 </span>            : 
+<span class="lineNum">     922 </span>            :     for(std::size_t n=0;n&lt;s;++n){
+<span class="lineNum">     923 </span>            :       detail::archive_constructed&lt;Value&gt; value(&quot;item&quot;,ar,value_version);
+<span class="lineNum">     924 </span>            :       std::pair&lt;node_type*,bool&gt; p=insert_(
+<span class="lineNum">     925 </span>            :         value.get(),super::end().get_node());
+<span class="lineNum">     926 </span>            :       if(!p.second)throw_exception(
+<span class="lineNum">     927 </span>            :         archive::archive_exception(
+<span class="lineNum">     928 </span>            :           archive::archive_exception::other_exception));
+<span class="lineNum">     929 </span>            :       ar.reset_object_address(&amp;p.first-&gt;value(),&amp;value.get());
+<span class="lineNum">     930 </span>            :       lm.add(p.first,ar,version);
+<span class="lineNum">     931 </span>            :     }
+<span class="lineNum">     932 </span>            :     lm.add_track(header(),ar,version);
+<span class="lineNum">     933 </span>            : 
+<span class="lineNum">     934 </span>            :     super::load_(ar,version,lm);
+<span class="lineNum">     935 </span>            :   }
+<span class="lineNum">     936 </span>            : #endif
+<span class="lineNum">     937 </span>            : 
+<span class="lineNum">     938 </span>            : #if defined(BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING)
+<span class="lineNum">     939 </span>            :   /* invariant stuff */
+<span class="lineNum">     940 </span>            : 
+<span class="lineNum">     941 </span>            :   bool invariant_()const
+<span class="lineNum">     942 </span>            :   {
+<span class="lineNum">     943 </span>            :     return super::invariant_();
+<span class="lineNum">     944 </span>            :   }
+<span class="lineNum">     945 </span>            : 
+<span class="lineNum">     946 </span>            :   void check_invariant_()const
+<span class="lineNum">     947 </span>            :   {
+<span class="lineNum">     948 </span>            :     BOOST_MULTI_INDEX_INVARIANT_ASSERT(invariant_());
+<span class="lineNum">     949 </span>            :   }
+<span class="lineNum">     950 </span>            : #endif
+<span class="lineNum">     951 </span>            : 
+<span class="lineNum">     952 </span>            : private:
+<span class="lineNum">     953 </span>            :   std::size_t node_count;
+<span class="lineNum">     954 </span>            : 
+<span class="lineNum">     955 </span>            : #if defined(BOOST_MULTI_INDEX_ENABLE_INVARIANT_CHECKING)&amp;&amp;\
+<span class="lineNum">     956 </span>            :     BOOST_WORKAROUND(__MWERKS__,&lt;=0x3003)
+<span class="lineNum">     957 </span>            : #pragma parse_mfunc_templ reset
+<span class="lineNum">     958 </span>            : #endif
+<span class="lineNum">     959 </span>            : };
+<span class="lineNum">     960 </span>            : 
+<span class="lineNum">     961 </span>            : #if BOOST_WORKAROUND(BOOST_MSVC,BOOST_TESTED_AT(1500))
+<span class="lineNum">     962 </span>            : #pragma warning(pop) /* C4522 */
+<span class="lineNum">     963 </span>            : #endif
+<span class="lineNum">     964 </span>            : 
+<span class="lineNum">     965 </span>            : /* retrieval of indices by number */
+<span class="lineNum">     966 </span>            : 
+<span class="lineNum">     967 </span>            : template&lt;typename MultiIndexContainer,int N&gt;
+<span class="lineNum">     968 </span>            : struct nth_index
+<span class="lineNum">     969 </span>            : {
+<span class="lineNum">     970 </span>            :   BOOST_STATIC_CONSTANT(
+<span class="lineNum">     971 </span>            :     int,
+<span class="lineNum">     972 </span>            :     M=mpl::size&lt;typename MultiIndexContainer::index_type_list&gt;::type::value);
+<span class="lineNum">     973 </span>            :   BOOST_STATIC_ASSERT(N&gt;=0&amp;&amp;N&lt;M);
+<span class="lineNum">     974 </span>            :   typedef typename mpl::at_c&lt;
+<span class="lineNum">     975 </span>            :     typename MultiIndexContainer::index_type_list,N&gt;::type type;
+<span class="lineNum">     976 </span>            : };
+<span class="lineNum">     977 </span>            : 
+<span class="lineNum">     978 </span>            : template&lt;int N,typename Value,typename IndexSpecifierList,typename Allocator&gt;
+<span class="lineNum">     979 </span>            : typename nth_index&lt;
+<span class="lineNum">     980 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;,N&gt;::type&amp;
+<span class="lineNum">     981 </span>            : get(
+<span class="lineNum">     982 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; m)BOOST_NOEXCEPT
+<span class="lineNum">     983 </span>            : {
+<span class="lineNum">     984 </span>            :   typedef multi_index_container&lt;
+<span class="lineNum">     985 </span>            :     Value,IndexSpecifierList,Allocator&gt;    multi_index_type;
+<span class="lineNum">     986 </span>            :   typedef typename nth_index&lt;
+<span class="lineNum">     987 </span>            :     multi_index_container&lt;
+<span class="lineNum">     988 </span>            :       Value,IndexSpecifierList,Allocator&gt;,
+<span class="lineNum">     989 </span>            :     N
+<span class="lineNum">     990 </span>            :   &gt;::type                                  index_type;
+<span class="lineNum">     991 </span>            : 
+<span class="lineNum">     992 </span>            :   BOOST_STATIC_ASSERT(N&gt;=0&amp;&amp;
+<span class="lineNum">     993 </span>            :     N&lt;
+<span class="lineNum">     994 </span>            :     mpl::size&lt;
+<span class="lineNum">     995 </span>            :       BOOST_DEDUCED_TYPENAME multi_index_type::index_type_list
+<span class="lineNum">     996 </span>            :     &gt;::type::value);
+<span class="lineNum">     997 </span>            : 
+<span class="lineNum">     998 </span>            :   return detail::converter&lt;multi_index_type,index_type&gt;::index(m);
+<span class="lineNum">     999 </span>            : }
+<span class="lineNum">    1000 </span>            : 
+<span class="lineNum">    1001 </span>            : template&lt;int N,typename Value,typename IndexSpecifierList,typename Allocator&gt;
+<span class="lineNum">    1002 </span>            : const typename nth_index&lt;
+<span class="lineNum">    1003 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;,N&gt;::type&amp;
+<span class="lineNum">    1004 </span>            : get(
+<span class="lineNum">    1005 </span>            :   const multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; m
+<span class="lineNum">    1006 </span>            : )BOOST_NOEXCEPT
+<span class="lineNum">    1007 </span>            : {
+<span class="lineNum">    1008 </span>            :   typedef multi_index_container&lt;
+<span class="lineNum">    1009 </span>            :     Value,IndexSpecifierList,Allocator&gt;    multi_index_type;
+<span class="lineNum">    1010 </span>            :   typedef typename nth_index&lt;
+<span class="lineNum">    1011 </span>            :     multi_index_container&lt;
+<span class="lineNum">    1012 </span>            :       Value,IndexSpecifierList,Allocator&gt;,
+<span class="lineNum">    1013 </span>            :     N
+<span class="lineNum">    1014 </span>            :   &gt;::type                                  index_type;
+<span class="lineNum">    1015 </span>            : 
+<span class="lineNum">    1016 </span>            :   BOOST_STATIC_ASSERT(N&gt;=0&amp;&amp;
+<span class="lineNum">    1017 </span>            :     N&lt;
+<span class="lineNum">    1018 </span>            :     mpl::size&lt;
+<span class="lineNum">    1019 </span>            :       BOOST_DEDUCED_TYPENAME multi_index_type::index_type_list
+<span class="lineNum">    1020 </span>            :     &gt;::type::value);
+<span class="lineNum">    1021 </span>            : 
+<span class="lineNum">    1022 </span>            :   return detail::converter&lt;multi_index_type,index_type&gt;::index(m);
+<span class="lineNum">    1023 </span>            : }
+<span class="lineNum">    1024 </span>            : 
+<span class="lineNum">    1025 </span>            : /* retrieval of indices by tag */
+<span class="lineNum">    1026 </span>            : 
+<span class="lineNum">    1027 </span>            : template&lt;typename MultiIndexContainer,typename Tag&gt;
+<span class="lineNum">    1028 </span>            : struct index
+<span class="lineNum">    1029 </span>            : {
+<span class="lineNum">    1030 </span>            :   typedef typename MultiIndexContainer::index_type_list index_type_list;
+<span class="lineNum">    1031 </span>            : 
+<span class="lineNum">    1032 </span>            :   typedef typename mpl::find_if&lt;
+<span class="lineNum">    1033 </span>            :     index_type_list,
+<span class="lineNum">    1034 </span>            :     detail::has_tag&lt;Tag&gt;
+<span class="lineNum">    1035 </span>            :   &gt;::type                                      iter;
+<span class="lineNum">    1036 </span>            : 
+<span class="lineNum">    1037 </span>            :   BOOST_STATIC_CONSTANT(
+<span class="lineNum">    1038 </span>            :     bool,index_found=!(is_same&lt;iter,typename mpl::end&lt;index_type_list&gt;::type &gt;::value));
+<span class="lineNum">    1039 </span>            :   BOOST_STATIC_ASSERT(index_found);
+<span class="lineNum">    1040 </span>            : 
+<span class="lineNum">    1041 </span>            :   typedef typename mpl::deref&lt;iter&gt;::type       type;
+<span class="lineNum">    1042 </span>            : };
+<span class="lineNum">    1043 </span>            : 
+<span class="lineNum">    1044 </span>            : template&lt;
+<span class="lineNum">    1045 </span>            :   typename Tag,typename Value,typename IndexSpecifierList,typename Allocator
+<span class="lineNum">    1046 </span>            : &gt;
+<span class="lineNum">    1047 </span>            : typename ::boost::multi_index::index&lt;
+<span class="lineNum">    1048 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;,Tag&gt;::type&amp;
+<span class="lineNum">    1049 </span>            : get(
+<span class="lineNum">    1050 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; m)BOOST_NOEXCEPT
+<span class="lineNum">    1051 </span>            : {
+<span class="lineNum">    1052 </span>            :   typedef multi_index_container&lt;
+<span class="lineNum">    1053 </span>            :     Value,IndexSpecifierList,Allocator&gt;         multi_index_type;
+<span class="lineNum">    1054 </span>            :   typedef typename ::boost::multi_index::index&lt;
+<span class="lineNum">    1055 </span>            :     multi_index_container&lt;
+<span class="lineNum">    1056 </span>            :       Value,IndexSpecifierList,Allocator&gt;,
+<span class="lineNum">    1057 </span>            :     Tag
+<span class="lineNum">    1058 </span>            :   &gt;::type                                       index_type;
+<span class="lineNum">    1059 </span>            : 
+<span class="lineNum">    1060 </span>            :   return detail::converter&lt;multi_index_type,index_type&gt;::index(m);
+<span class="lineNum">    1061 </span>            : }
+<span class="lineNum">    1062 </span>            : 
+<span class="lineNum">    1063 </span>            : template&lt;
+<span class="lineNum">    1064 </span>            :   typename Tag,typename Value,typename IndexSpecifierList,typename Allocator
+<span class="lineNum">    1065 </span>            : &gt;
+<span class="lineNum">    1066 </span>            : const typename ::boost::multi_index::index&lt;
+<span class="lineNum">    1067 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;,Tag&gt;::type&amp;
+<span class="lineNum">    1068 </span>            : get(
+<span class="lineNum">    1069 </span>            :   const multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; m
+<span class="lineNum">    1070 </span>            : )BOOST_NOEXCEPT
+<span class="lineNum">    1071 </span>            : {
+<span class="lineNum">    1072 </span>            :   typedef multi_index_container&lt;
+<span class="lineNum">    1073 </span>            :     Value,IndexSpecifierList,Allocator&gt;         multi_index_type;
+<span class="lineNum">    1074 </span>            :   typedef typename ::boost::multi_index::index&lt;
+<span class="lineNum">    1075 </span>            :     multi_index_container&lt;
+<span class="lineNum">    1076 </span>            :       Value,IndexSpecifierList,Allocator&gt;,
+<span class="lineNum">    1077 </span>            :     Tag
+<span class="lineNum">    1078 </span>            :   &gt;::type                                       index_type;
+<span class="lineNum">    1079 </span>            : 
+<span class="lineNum">    1080 </span>            :   return detail::converter&lt;multi_index_type,index_type&gt;::index(m);
+<span class="lineNum">    1081 </span>            : }
+<span class="lineNum">    1082 </span>            : 
+<span class="lineNum">    1083 </span>            : /* projection of iterators by number */
+<span class="lineNum">    1084 </span>            : 
+<span class="lineNum">    1085 </span>            : template&lt;typename MultiIndexContainer,int N&gt;
+<span class="lineNum">    1086 </span>            : struct nth_index_iterator
+<span class="lineNum">    1087 </span>            : {
+<span class="lineNum">    1088 </span>            :   typedef typename nth_index&lt;MultiIndexContainer,N&gt;::type::iterator type;
+<span class="lineNum">    1089 </span>            : };
+<span class="lineNum">    1090 </span>            : 
+<span class="lineNum">    1091 </span>            : template&lt;typename MultiIndexContainer,int N&gt;
+<span class="lineNum">    1092 </span>            : struct nth_index_const_iterator
+<span class="lineNum">    1093 </span>            : {
+<span class="lineNum">    1094 </span>            :   typedef typename nth_index&lt;MultiIndexContainer,N&gt;::type::const_iterator type;
+<span class="lineNum">    1095 </span>            : };
+<span class="lineNum">    1096 </span>            : 
+<span class="lineNum">    1097 </span>            : template&lt;
+<span class="lineNum">    1098 </span>            :   int N,typename IteratorType,
+<span class="lineNum">    1099 </span>            :   typename Value,typename IndexSpecifierList,typename Allocator&gt;
+<span class="lineNum">    1100 </span>            : typename nth_index_iterator&lt;
+<span class="lineNum">    1101 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;,N&gt;::type
+<span class="lineNum">    1102 </span>            : project(
+<span class="lineNum">    1103 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; m,
+<span class="lineNum">    1104 </span>            :   IteratorType it)
+<span class="lineNum">    1105 </span>            : {
+<span class="lineNum">    1106 </span>            :   typedef multi_index_container&lt;
+<span class="lineNum">    1107 </span>            :     Value,IndexSpecifierList,Allocator&gt;                multi_index_type;
+<span class="lineNum">    1108 </span>            :   typedef typename nth_index&lt;multi_index_type,N&gt;::type index_type;
+<span class="lineNum">    1109 </span>            : 
+<span class="lineNum">    1110 </span>            : #if !defined(__SUNPRO_CC)||!(__SUNPRO_CC&lt;0x580) /* Sun C++ 5.7 fails */
+<span class="lineNum">    1111 </span>            :   BOOST_STATIC_ASSERT((
+<span class="lineNum">    1112 </span>            :     mpl::contains&lt;
+<span class="lineNum">    1113 </span>            :       BOOST_DEDUCED_TYPENAME multi_index_type::iterator_type_list,
+<span class="lineNum">    1114 </span>            :       IteratorType&gt;::value));
+<span class="lineNum">    1115 </span>            : #endif
+<span class="lineNum">    1116 </span>            : 
+<span class="lineNum">    1117 </span>            :   BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(it);
+<span class="lineNum">    1118 </span>            : 
+<span class="lineNum">    1119 </span>            : #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
+<span class="lineNum">    1120 </span>            :   typedef detail::converter&lt;
+<span class="lineNum">    1121 </span>            :     multi_index_type,
+<span class="lineNum">    1122 </span>            :     BOOST_DEDUCED_TYPENAME IteratorType::container_type&gt; converter;
+<span class="lineNum">    1123 </span>            :   BOOST_MULTI_INDEX_CHECK_IS_OWNER(it,converter::index(m));
+<span class="lineNum">    1124 </span>            : #endif
+<span class="lineNum">    1125 </span>            : 
+<span class="lineNum">    1126 </span>            :   return detail::converter&lt;multi_index_type,index_type&gt;::iterator(
+<span class="lineNum">    1127 </span>            :     m,static_cast&lt;typename multi_index_type::node_type*&gt;(it.get_node()));
+<span class="lineNum">    1128 </span>            : }
+<span class="lineNum">    1129 </span>            : 
+<span class="lineNum">    1130 </span>            : template&lt;
+<span class="lineNum">    1131 </span>            :   int N,typename IteratorType,
+<span class="lineNum">    1132 </span>            :   typename Value,typename IndexSpecifierList,typename Allocator&gt;
+<span class="lineNum">    1133 </span>            : typename nth_index_const_iterator&lt;
+<span class="lineNum">    1134 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;,N&gt;::type
+<span class="lineNum">    1135 </span>            : project(
+<span class="lineNum">    1136 </span>            :   const multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; m,
+<span class="lineNum">    1137 </span>            :   IteratorType it)
+<span class="lineNum">    1138 </span>            : {
+<span class="lineNum">    1139 </span>            :   typedef multi_index_container&lt;
+<span class="lineNum">    1140 </span>            :     Value,IndexSpecifierList,Allocator&gt;                multi_index_type;
+<span class="lineNum">    1141 </span>            :   typedef typename nth_index&lt;multi_index_type,N&gt;::type index_type;
+<span class="lineNum">    1142 </span>            : 
+<span class="lineNum">    1143 </span>            : #if !defined(__SUNPRO_CC)||!(__SUNPRO_CC&lt;0x580) /* Sun C++ 5.7 fails */
+<span class="lineNum">    1144 </span>            :   BOOST_STATIC_ASSERT((
+<span class="lineNum">    1145 </span>            :     mpl::contains&lt;
+<span class="lineNum">    1146 </span>            :       BOOST_DEDUCED_TYPENAME multi_index_type::iterator_type_list,
+<span class="lineNum">    1147 </span>            :       IteratorType&gt;::value||
+<span class="lineNum">    1148 </span>            :     mpl::contains&lt;
+<span class="lineNum">    1149 </span>            :       BOOST_DEDUCED_TYPENAME multi_index_type::const_iterator_type_list,
+<span class="lineNum">    1150 </span>            :       IteratorType&gt;::value));
+<span class="lineNum">    1151 </span>            : #endif
+<span class="lineNum">    1152 </span>            : 
+<span class="lineNum">    1153 </span>            :   BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(it);
+<span class="lineNum">    1154 </span>            : 
+<span class="lineNum">    1155 </span>            : #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
+<span class="lineNum">    1156 </span>            :   typedef detail::converter&lt;
+<span class="lineNum">    1157 </span>            :     multi_index_type,
+<span class="lineNum">    1158 </span>            :     BOOST_DEDUCED_TYPENAME IteratorType::container_type&gt; converter;
+<span class="lineNum">    1159 </span>            :   BOOST_MULTI_INDEX_CHECK_IS_OWNER(it,converter::index(m));
+<span class="lineNum">    1160 </span>            : #endif
+<span class="lineNum">    1161 </span>            : 
+<span class="lineNum">    1162 </span>            :   return detail::converter&lt;multi_index_type,index_type&gt;::const_iterator(
+<span class="lineNum">    1163 </span>            :     m,static_cast&lt;typename multi_index_type::node_type*&gt;(it.get_node()));
+<span class="lineNum">    1164 </span>            : }
+<span class="lineNum">    1165 </span>            : 
+<span class="lineNum">    1166 </span>            : /* projection of iterators by tag */
+<span class="lineNum">    1167 </span>            : 
+<span class="lineNum">    1168 </span>            : template&lt;typename MultiIndexContainer,typename Tag&gt;
+<span class="lineNum">    1169 </span>            : struct index_iterator
+<span class="lineNum">    1170 </span>            : {
+<span class="lineNum">    1171 </span>            :   typedef typename ::boost::multi_index::index&lt;
+<span class="lineNum">    1172 </span>            :     MultiIndexContainer,Tag&gt;::type::iterator    type;
+<span class="lineNum">    1173 </span>            : };
+<span class="lineNum">    1174 </span>            : 
+<span class="lineNum">    1175 </span>            : template&lt;typename MultiIndexContainer,typename Tag&gt;
+<span class="lineNum">    1176 </span>            : struct index_const_iterator
+<span class="lineNum">    1177 </span>            : {
+<span class="lineNum">    1178 </span>            :   typedef typename ::boost::multi_index::index&lt;
+<span class="lineNum">    1179 </span>            :     MultiIndexContainer,Tag&gt;::type::const_iterator type;
+<span class="lineNum">    1180 </span>            : };
+<span class="lineNum">    1181 </span>            : 
+<span class="lineNum">    1182 </span>            : template&lt;
+<span class="lineNum">    1183 </span>            :   typename Tag,typename IteratorType,
+<span class="lineNum">    1184 </span>            :   typename Value,typename IndexSpecifierList,typename Allocator&gt;
+<span class="lineNum">    1185 </span>            : typename index_iterator&lt;
+<span class="lineNum">    1186 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;,Tag&gt;::type
+<span class="lineNum">    1187 </span>            : project(
+<span class="lineNum">    1188 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; m,
+<span class="lineNum">    1189 </span>            :   IteratorType it)
+<span class="lineNum">    1190 </span>            : {
+<span class="lineNum">    1191 </span>            :   typedef multi_index_container&lt;
+<span class="lineNum">    1192 </span>            :     Value,IndexSpecifierList,Allocator&gt;         multi_index_type;
+<span class="lineNum">    1193 </span>            :   typedef typename ::boost::multi_index::index&lt;
+<span class="lineNum">    1194 </span>            :     multi_index_type,Tag&gt;::type                 index_type;
+<span class="lineNum">    1195 </span>            : 
+<span class="lineNum">    1196 </span>            : #if !defined(__SUNPRO_CC)||!(__SUNPRO_CC&lt;0x580) /* Sun C++ 5.7 fails */
+<span class="lineNum">    1197 </span>            :   BOOST_STATIC_ASSERT((
+<span class="lineNum">    1198 </span>            :     mpl::contains&lt;
+<span class="lineNum">    1199 </span>            :       BOOST_DEDUCED_TYPENAME multi_index_type::iterator_type_list,
+<span class="lineNum">    1200 </span>            :       IteratorType&gt;::value));
+<span class="lineNum">    1201 </span>            : #endif
+<span class="lineNum">    1202 </span>            : 
+<span class="lineNum">    1203 </span>            :   BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(it);
+<span class="lineNum">    1204 </span>            : 
+<span class="lineNum">    1205 </span>            : #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
+<span class="lineNum">    1206 </span>            :   typedef detail::converter&lt;
+<span class="lineNum">    1207 </span>            :     multi_index_type,
+<span class="lineNum">    1208 </span>            :     BOOST_DEDUCED_TYPENAME IteratorType::container_type&gt; converter;
+<span class="lineNum">    1209 </span>            :   BOOST_MULTI_INDEX_CHECK_IS_OWNER(it,converter::index(m));
+<span class="lineNum">    1210 </span>            : #endif
+<span class="lineNum">    1211 </span>            : 
+<span class="lineNum">    1212 </span>            :   return detail::converter&lt;multi_index_type,index_type&gt;::iterator(
+<span class="lineNum">    1213 </span>            :     m,static_cast&lt;typename multi_index_type::node_type*&gt;(it.get_node()));
+<span class="lineNum">    1214 </span>            : }
+<span class="lineNum">    1215 </span>            : 
+<span class="lineNum">    1216 </span>            : template&lt;
+<span class="lineNum">    1217 </span>            :   typename Tag,typename IteratorType,
+<span class="lineNum">    1218 </span>            :   typename Value,typename IndexSpecifierList,typename Allocator&gt;
+<span class="lineNum">    1219 </span>            : typename index_const_iterator&lt;
+<span class="lineNum">    1220 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;,Tag&gt;::type
+<span class="lineNum">    1221 </span>            : project(
+<span class="lineNum">    1222 </span>            :   const multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; m,
+<span class="lineNum">    1223 </span>            :   IteratorType it)
+<span class="lineNum">    1224 </span>            : {
+<span class="lineNum">    1225 </span>            :   typedef multi_index_container&lt;
+<span class="lineNum">    1226 </span>            :     Value,IndexSpecifierList,Allocator&gt;         multi_index_type;
+<span class="lineNum">    1227 </span>            :   typedef typename ::boost::multi_index::index&lt;
+<span class="lineNum">    1228 </span>            :     multi_index_type,Tag&gt;::type                 index_type;
+<span class="lineNum">    1229 </span>            : 
+<span class="lineNum">    1230 </span>            : #if !defined(__SUNPRO_CC)||!(__SUNPRO_CC&lt;0x580) /* Sun C++ 5.7 fails */
+<span class="lineNum">    1231 </span>            :   BOOST_STATIC_ASSERT((
+<span class="lineNum">    1232 </span>            :     mpl::contains&lt;
+<span class="lineNum">    1233 </span>            :       BOOST_DEDUCED_TYPENAME multi_index_type::iterator_type_list,
+<span class="lineNum">    1234 </span>            :       IteratorType&gt;::value||
+<span class="lineNum">    1235 </span>            :     mpl::contains&lt;
+<span class="lineNum">    1236 </span>            :       BOOST_DEDUCED_TYPENAME multi_index_type::const_iterator_type_list,
+<span class="lineNum">    1237 </span>            :       IteratorType&gt;::value));
+<span class="lineNum">    1238 </span>            : #endif
+<span class="lineNum">    1239 </span>            : 
+<span class="lineNum">    1240 </span>            :   BOOST_MULTI_INDEX_CHECK_VALID_ITERATOR(it);
+<span class="lineNum">    1241 </span>            : 
+<span class="lineNum">    1242 </span>            : #if defined(BOOST_MULTI_INDEX_ENABLE_SAFE_MODE)
+<span class="lineNum">    1243 </span>            :   typedef detail::converter&lt;
+<span class="lineNum">    1244 </span>            :     multi_index_type,
+<span class="lineNum">    1245 </span>            :     BOOST_DEDUCED_TYPENAME IteratorType::container_type&gt; converter;
+<span class="lineNum">    1246 </span>            :   BOOST_MULTI_INDEX_CHECK_IS_OWNER(it,converter::index(m));
+<span class="lineNum">    1247 </span>            : #endif
+<span class="lineNum">    1248 </span>            : 
+<span class="lineNum">    1249 </span>            :   return detail::converter&lt;multi_index_type,index_type&gt;::const_iterator(
+<span class="lineNum">    1250 </span>            :     m,static_cast&lt;typename multi_index_type::node_type*&gt;(it.get_node()));
+<span class="lineNum">    1251 </span>            : }
+<span class="lineNum">    1252 </span>            : 
+<span class="lineNum">    1253 </span>            : /* Comparison. Simple forward to first index. */
+<span class="lineNum">    1254 </span>            : 
+<span class="lineNum">    1255 </span>            : template&lt;
+<span class="lineNum">    1256 </span>            :   typename Value1,typename IndexSpecifierList1,typename Allocator1,
+<span class="lineNum">    1257 </span>            :   typename Value2,typename IndexSpecifierList2,typename Allocator2
+<span class="lineNum">    1258 </span>            : &gt;
+<span class="lineNum">    1259 </span>            : bool operator==(
+<span class="lineNum">    1260 </span>            :   const multi_index_container&lt;Value1,IndexSpecifierList1,Allocator1&gt;&amp; x,
+<span class="lineNum">    1261 </span>            :   const multi_index_container&lt;Value2,IndexSpecifierList2,Allocator2&gt;&amp; y)
+<span class="lineNum">    1262 </span>            : {
+<span class="lineNum">    1263 </span>            :   return get&lt;0&gt;(x)==get&lt;0&gt;(y);
+<span class="lineNum">    1264 </span>            : }
+<span class="lineNum">    1265 </span>            : 
+<span class="lineNum">    1266 </span>            : template&lt;
+<span class="lineNum">    1267 </span>            :   typename Value1,typename IndexSpecifierList1,typename Allocator1,
+<span class="lineNum">    1268 </span>            :   typename Value2,typename IndexSpecifierList2,typename Allocator2
+<span class="lineNum">    1269 </span>            : &gt;
+<span class="lineNum">    1270 </span>            : bool operator&lt;(
+<span class="lineNum">    1271 </span>            :   const multi_index_container&lt;Value1,IndexSpecifierList1,Allocator1&gt;&amp; x,
+<span class="lineNum">    1272 </span>            :   const multi_index_container&lt;Value2,IndexSpecifierList2,Allocator2&gt;&amp; y)
+<span class="lineNum">    1273 </span>            : {
+<span class="lineNum">    1274 </span>            :   return get&lt;0&gt;(x)&lt;get&lt;0&gt;(y);
+<span class="lineNum">    1275 </span>            : }
+<span class="lineNum">    1276 </span>            : 
+<span class="lineNum">    1277 </span>            : template&lt;
+<span class="lineNum">    1278 </span>            :   typename Value1,typename IndexSpecifierList1,typename Allocator1,
+<span class="lineNum">    1279 </span>            :   typename Value2,typename IndexSpecifierList2,typename Allocator2
+<span class="lineNum">    1280 </span>            : &gt;
+<span class="lineNum">    1281 </span>            : bool operator!=(
+<span class="lineNum">    1282 </span>            :   const multi_index_container&lt;Value1,IndexSpecifierList1,Allocator1&gt;&amp; x,
+<span class="lineNum">    1283 </span>            :   const multi_index_container&lt;Value2,IndexSpecifierList2,Allocator2&gt;&amp; y)
+<span class="lineNum">    1284 </span>            : {
+<span class="lineNum">    1285 </span>            :   return get&lt;0&gt;(x)!=get&lt;0&gt;(y);
+<span class="lineNum">    1286 </span>            : }
+<span class="lineNum">    1287 </span>            : 
+<span class="lineNum">    1288 </span>            : template&lt;
+<span class="lineNum">    1289 </span>            :   typename Value1,typename IndexSpecifierList1,typename Allocator1,
+<span class="lineNum">    1290 </span>            :   typename Value2,typename IndexSpecifierList2,typename Allocator2
+<span class="lineNum">    1291 </span>            : &gt;
+<span class="lineNum">    1292 </span>            : bool operator&gt;(
+<span class="lineNum">    1293 </span>            :   const multi_index_container&lt;Value1,IndexSpecifierList1,Allocator1&gt;&amp; x,
+<span class="lineNum">    1294 </span>            :   const multi_index_container&lt;Value2,IndexSpecifierList2,Allocator2&gt;&amp; y)
+<span class="lineNum">    1295 </span>            : {
+<span class="lineNum">    1296 </span>            :   return get&lt;0&gt;(x)&gt;get&lt;0&gt;(y);
+<span class="lineNum">    1297 </span>            : }
+<span class="lineNum">    1298 </span>            : 
+<span class="lineNum">    1299 </span>            : template&lt;
+<span class="lineNum">    1300 </span>            :   typename Value1,typename IndexSpecifierList1,typename Allocator1,
+<span class="lineNum">    1301 </span>            :   typename Value2,typename IndexSpecifierList2,typename Allocator2
+<span class="lineNum">    1302 </span>            : &gt;
+<span class="lineNum">    1303 </span>            : bool operator&gt;=(
+<span class="lineNum">    1304 </span>            :   const multi_index_container&lt;Value1,IndexSpecifierList1,Allocator1&gt;&amp; x,
+<span class="lineNum">    1305 </span>            :   const multi_index_container&lt;Value2,IndexSpecifierList2,Allocator2&gt;&amp; y)
+<span class="lineNum">    1306 </span>            : {
+<span class="lineNum">    1307 </span>            :   return get&lt;0&gt;(x)&gt;=get&lt;0&gt;(y);
+<span class="lineNum">    1308 </span>            : }
+<span class="lineNum">    1309 </span>            : 
+<span class="lineNum">    1310 </span>            : template&lt;
+<span class="lineNum">    1311 </span>            :   typename Value1,typename IndexSpecifierList1,typename Allocator1,
+<span class="lineNum">    1312 </span>            :   typename Value2,typename IndexSpecifierList2,typename Allocator2
+<span class="lineNum">    1313 </span>            : &gt;
+<span class="lineNum">    1314 </span>            : bool operator&lt;=(
+<span class="lineNum">    1315 </span>            :   const multi_index_container&lt;Value1,IndexSpecifierList1,Allocator1&gt;&amp; x,
+<span class="lineNum">    1316 </span>            :   const multi_index_container&lt;Value2,IndexSpecifierList2,Allocator2&gt;&amp; y)
+<span class="lineNum">    1317 </span>            : {
+<span class="lineNum">    1318 </span>            :   return get&lt;0&gt;(x)&lt;=get&lt;0&gt;(y);
+<span class="lineNum">    1319 </span>            : }
+<span class="lineNum">    1320 </span>            : 
+<span class="lineNum">    1321 </span>            : /*  specialized algorithms */
+<span class="lineNum">    1322 </span>            : 
+<span class="lineNum">    1323 </span>            : template&lt;typename Value,typename IndexSpecifierList,typename Allocator&gt;
+<span class="lineNum">    1324 </span>            : void swap(
+<span class="lineNum">    1325 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; x,
+<span class="lineNum">    1326 </span>            :   multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;&amp; y)
+<span class="lineNum">    1327 </span>            : {
+<span class="lineNum">    1328 </span>            :   x.swap(y);
+<span class="lineNum">    1329 </span>            : }
+<span class="lineNum">    1330 </span>            : 
+<span class="lineNum">    1331 </span>            : } /* namespace multi_index */
+<span class="lineNum">    1332 </span>            : 
+<span class="lineNum">    1333 </span>            : #if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+<span class="lineNum">    1334 </span>            : /* class version = 1 : we now serialize the size through
+<span class="lineNum">    1335 </span>            :  * boost::serialization::collection_size_type.
+<span class="lineNum">    1336 </span>            :  * class version = 2 : proper use of {save|load}_construct_data.
+<span class="lineNum">    1337 </span>            :  */
+<span class="lineNum">    1338 </span>            : 
+<span class="lineNum">    1339 </span>            : namespace serialization {
+<span class="lineNum">    1340 </span>            : template&lt;typename Value,typename IndexSpecifierList,typename Allocator&gt;
+<span class="lineNum">    1341 </span>            : struct version&lt;
+<span class="lineNum">    1342 </span>            :   boost::multi_index_container&lt;Value,IndexSpecifierList,Allocator&gt;
+<span class="lineNum">    1343 </span>            : &gt;
+<span class="lineNum">    1344 </span>            : {
+<span class="lineNum">    1345 </span>            :   BOOST_STATIC_CONSTANT(int,value=2);
+<span class="lineNum">    1346 </span>            : };
+<span class="lineNum">    1347 </span>            : } /* namespace serialization */
+<span class="lineNum">    1348 </span>            : #endif
+<span class="lineNum">    1349 </span>            : 
+<span class="lineNum">    1350 </span>            : /* Associated global functions are promoted to namespace boost, except
+<span class="lineNum">    1351 </span>            :  * comparison operators and swap, which are meant to be Koenig looked-up.
+<span class="lineNum">    1352 </span>            :  */
+<span class="lineNum">    1353 </span>            : 
+<span class="lineNum">    1354 </span>            : using multi_index::get;
+<span class="lineNum">    1355 </span>            : using multi_index::project;
+<span class="lineNum">    1356 </span>            : 
+<span class="lineNum">    1357 </span>            : } /* namespace boost */
+<span class="lineNum">    1358 </span>            : 
+<span class="lineNum">    1359 </span>            : #undef BOOST_MULTI_INDEX_CHECK_INVARIANT
+<span class="lineNum">    1360 </span>            : #undef BOOST_MULTI_INDEX_CHECK_INVARIANT_OF
+<span class="lineNum">    1361 </span>            : 
+<span class="lineNum">    1362 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+##### New testrun: 4 cores, 4gb ram #####
+../data/b15.gph
+Check succeeded.
+
+RESULT OBJECTIVE 215
+RESULT TIME 0.000942
+
+real	0m0.002s
+user	0m0.000s
+sys	0m0.000s
+../data/big8.gph
+Check succeeded.
+
+RESULT OBJECTIVE 672334
+RESULT TIME 280.913635
+
+real	4m41.320s
+user	4m41.216s
+sys	0m0.032s
+../data/es10kaz.gph
+Check succeeded.
+
+RESULT OBJECTIVE 489190058
+RESULT TIME 195.717972
+
+real	3m16.512s
+user	3m16.504s
+sys	0m0.000s
+../data/example1.gph
+Check succeeded.
+
+RESULT OBJECTIVE 12
+RESULT TIME 0.000014
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/example2.gph
+Check succeeded.
+
+RESULT OBJECTIVE 150
+RESULT TIME 0.000059
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/i640-345.gph
+Check succeeded.
+
+RESULT OBJECTIVE 14156
+RESULT TIME 0.136335
+
+real	0m0.156s
+user	0m0.152s
+sys	0m0.000s
+../data/small.gph
+Check succeeded.
+
+RESULT OBJECTIVE 3
+RESULT TIME 0.000007
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/world666.gph
+Check succeeded.
+
+RESULT OBJECTIVE 117613
+RESULT TIME 0.549094
+
+real	0m0.637s
+user	0m0.632s
+sys	0m0.004s
+##### New testrun: 8 cores, 32 gb ram #####
+../data/b15.gph
+Check succeeded.
+
+RESULT OBJECTIVE 215
+RESULT TIME 0.000493
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/big8.gph
+Check succeeded.
+
+RESULT OBJECTIVE 672334
+RESULT TIME 180.627335
+
+real	3m0.803s
+user	3m0.796s
+sys	0m0.008s
+../data/clock.gph
+Check succeeded.
+
+RESULT OBJECTIVE 22
+RESULT TIME 0.000015
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/es10kaz.gph
+Check succeeded.
+
+RESULT OBJECTIVE 489190058
+RESULT TIME 128.494904
+
+real	2m8.986s
+user	2m8.980s
+sys	0m0.008s
+../data/i640-345.gph
+Check succeeded.
+
+RESULT OBJECTIVE 14156
+RESULT TIME 0.093624
+
+real	0m0.102s
+user	0m0.100s
+sys	0m0.000s
+../data/small.gph
+Check succeeded.
+
+RESULT OBJECTIVE 3
+RESULT TIME 0.000005
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/steiner.gph
+Check succeeded.
+
+RESULT OBJECTIVE 10
+RESULT TIME 0.000004
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/world666.gph
+Check succeeded.
+
+RESULT OBJECTIVE 117613
+RESULT TIME 0.436077
+
+real	0m0.479s
+user	0m0.476s
+sys	0m0.000s

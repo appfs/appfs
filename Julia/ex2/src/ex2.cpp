@@ -100,7 +100,7 @@ int main(int argc, char* argv[]){
 	try {
 		XMLPlatformUtils::Initialize();
 	}catch (const XMLException& toCatch) {
-		return 0;
+		return 1;
 	}
 
 	XMLDocument xmlDoc;
@@ -193,6 +193,6 @@ int main(int argc, char* argv[]){
     XMLPlatformUtils::Terminate();
 	cout << "Finished writing " << target_file_path << endl;
 
-	return 1;
+	return 0;
 
 }

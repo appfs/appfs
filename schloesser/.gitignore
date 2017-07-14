@@ -1,3 +1,5 @@
-appfs/*
-appfs/
+venv*
+data*
+appfs*
 
+*.c.gcov
