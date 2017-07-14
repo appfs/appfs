@@ -1,0 +1,463 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/proto/transform/detail/preprocessed/fold_impl.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">boost/proto/transform/detail/preprocessed</a> - fold_impl.hpp<span style="font-size: 80%;"> (source / <a href="fold_impl.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            :     ///////////////////////////////////////////////////////////////////////////////</a>
+<span class="lineNum">       2 </span>            :     /// \file fold_impl.hpp
+<span class="lineNum">       3 </span>            :     /// Contains definition of fold_impl&lt;&gt; and reverse_fold_impl&lt;&gt; templates.
+<span class="lineNum">       4 </span>            :     //
+<span class="lineNum">       5 </span>            :     //  Copyright 2008 Eric Niebler. Distributed under the Boost
+<span class="lineNum">       6 </span>            :     //  Software License, Version 1.0. (See accompanying file
+<span class="lineNum">       7 </span>            :     //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">       9 </span>            :     struct fold_impl&lt;State0, Fun, Expr, State, Data, 1&gt;
+<span class="lineNum">      10 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">      11 </span>            :     {
+<span class="lineNum">      12 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state0;
+<span class="lineNum">      13 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;::result_type state1;
+<span class="lineNum">      14 </span>            :         typedef state1 result_type;
+<span class="lineNum">      15 </span>            :         result_type operator ()(
+<span class="lineNum">      16 </span>            :             typename fold_impl::expr_param e
+<span class="lineNum">      17 </span>            :           , typename fold_impl::state_param s
+<span class="lineNum">      18 </span>            :           , typename fold_impl::data_param d
+<span class="lineNum">      19 </span>            :         ) const
+<span class="lineNum">      20 </span>            :         {
+<span class="lineNum">      21 </span>            :             state0 s0 =
+<span class="lineNum">      22 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">      23 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;()( proto::child_c&lt; 0&gt;(e) , s0 , d );
+<span class="lineNum">      24 </span>            :             return s1;
+<span class="lineNum">      25 </span>            :         }
+<span class="lineNum">      26 </span>            :     };
+<span class="lineNum">      27 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">      28 </span>            :     struct reverse_fold_impl&lt;State0, Fun, Expr, State, Data, 1&gt;
+<span class="lineNum">      29 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">      30 </span>            :     {
+<span class="lineNum">      31 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state1;
+<span class="lineNum">      32 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;::result_type state0;
+<span class="lineNum">      33 </span>            :         typedef state0 result_type;
+<span class="lineNum">      34 </span>            :         result_type operator ()(
+<span class="lineNum">      35 </span>            :             typename reverse_fold_impl::expr_param e
+<span class="lineNum">      36 </span>            :           , typename reverse_fold_impl::state_param s
+<span class="lineNum">      37 </span>            :           , typename reverse_fold_impl::data_param d
+<span class="lineNum">      38 </span>            :         ) const
+<span class="lineNum">      39 </span>            :         {
+<span class="lineNum">      40 </span>            :             state1 s1 =
+<span class="lineNum">      41 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">      42 </span>            :             state0 s0 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;()( proto::child_c&lt;0&gt;(e) , s1 , d );
+<span class="lineNum">      43 </span>            :             return s0;
+<span class="lineNum">      44 </span>            :         }
+<span class="lineNum">      45 </span>            :     };
+<span class="lineNum">      46 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">      47 </span>            :     struct fold_impl&lt;State0, Fun, Expr, State, Data, 2&gt;
+<span class="lineNum">      48 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">      49 </span>            :     {
+<span class="lineNum">      50 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state0;
+<span class="lineNum">      51 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;::result_type state2;
+<span class="lineNum">      52 </span>            :         typedef state2 result_type;
+<span class="lineNum">      53 </span>            :         result_type operator ()(
+<span class="lineNum">      54 </span>            :             typename fold_impl::expr_param e
+<span class="lineNum">      55 </span>            :           , typename fold_impl::state_param s
+<span class="lineNum">      56 </span>            :           , typename fold_impl::data_param d
+<span class="lineNum">      57 </span>            :         ) const
+<span class="lineNum">      58 </span>            :         {
+<span class="lineNum">      59 </span>            :             state0 s0 =
+<span class="lineNum">      60 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">      61 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;()( proto::child_c&lt; 0&gt;(e) , s0 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;()( proto::child_c&lt; 1&gt;(e) , s1 , d );
+<span class="lineNum">      62 </span>            :             return s2;
+<span class="lineNum">      63 </span>            :         }
+<span class="lineNum">      64 </span>            :     };
+<span class="lineNum">      65 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">      66 </span>            :     struct reverse_fold_impl&lt;State0, Fun, Expr, State, Data, 2&gt;
+<span class="lineNum">      67 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">      68 </span>            :     {
+<span class="lineNum">      69 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state2;
+<a name="70"><span class="lineNum">      70 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;::result_type state0;</a>
+<span class="lineNum">      71 </span>            :         typedef state0 result_type;
+<span class="lineNum">      72 </span><span class="lineCov">    4000002 :         result_type operator ()(</span>
+<span class="lineNum">      73 </span>            :             typename reverse_fold_impl::expr_param e
+<span class="lineNum">      74 </span>            :           , typename reverse_fold_impl::state_param s
+<span class="lineNum">      75 </span>            :           , typename reverse_fold_impl::data_param d
+<span class="lineNum">      76 </span>            :         ) const
+<span class="lineNum">      77 </span>            :         {
+<span class="lineNum">      78 </span>            :             state2 s2 =
+<span class="lineNum">      79 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">      80 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;()( proto::child_c&lt;1&gt;(e) , s2 , d ); state0 s0 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;()( proto::child_c&lt;0&gt;(e) , s1 , d );
+<span class="lineNum">      81 </span><span class="lineCov">    4000002 :             return s0;</span>
+<span class="lineNum">      82 </span>            :         }
+<span class="lineNum">      83 </span>            :     };
+<span class="lineNum">      84 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">      85 </span>            :     struct fold_impl&lt;State0, Fun, Expr, State, Data, 3&gt;
+<span class="lineNum">      86 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">      87 </span>            :     {
+<span class="lineNum">      88 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state0;
+<span class="lineNum">      89 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;::result_type state3;
+<span class="lineNum">      90 </span>            :         typedef state3 result_type;
+<span class="lineNum">      91 </span>            :         result_type operator ()(
+<span class="lineNum">      92 </span>            :             typename fold_impl::expr_param e
+<span class="lineNum">      93 </span>            :           , typename fold_impl::state_param s
+<span class="lineNum">      94 </span>            :           , typename fold_impl::data_param d
+<span class="lineNum">      95 </span>            :         ) const
+<span class="lineNum">      96 </span>            :         {
+<span class="lineNum">      97 </span>            :             state0 s0 =
+<span class="lineNum">      98 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">      99 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;()( proto::child_c&lt; 0&gt;(e) , s0 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;()( proto::child_c&lt; 1&gt;(e) , s1 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;()( proto::child_c&lt; 2&gt;(e) , s2 , d );
+<span class="lineNum">     100 </span>            :             return s3;
+<span class="lineNum">     101 </span>            :         }
+<span class="lineNum">     102 </span>            :     };
+<span class="lineNum">     103 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     104 </span>            :     struct reverse_fold_impl&lt;State0, Fun, Expr, State, Data, 3&gt;
+<span class="lineNum">     105 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     106 </span>            :     {
+<span class="lineNum">     107 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state3;
+<span class="lineNum">     108 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;::result_type state0;
+<span class="lineNum">     109 </span>            :         typedef state0 result_type;
+<span class="lineNum">     110 </span>            :         result_type operator ()(
+<span class="lineNum">     111 </span>            :             typename reverse_fold_impl::expr_param e
+<span class="lineNum">     112 </span>            :           , typename reverse_fold_impl::state_param s
+<span class="lineNum">     113 </span>            :           , typename reverse_fold_impl::data_param d
+<span class="lineNum">     114 </span>            :         ) const
+<span class="lineNum">     115 </span>            :         {
+<span class="lineNum">     116 </span>            :             state3 s3 =
+<span class="lineNum">     117 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     118 </span>            :             state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;()( proto::child_c&lt;2&gt;(e) , s3 , d ); state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;()( proto::child_c&lt;1&gt;(e) , s2 , d ); state0 s0 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;()( proto::child_c&lt;0&gt;(e) , s1 , d );
+<span class="lineNum">     119 </span>            :             return s0;
+<span class="lineNum">     120 </span>            :         }
+<span class="lineNum">     121 </span>            :     };
+<span class="lineNum">     122 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     123 </span>            :     struct fold_impl&lt;State0, Fun, Expr, State, Data, 4&gt;
+<span class="lineNum">     124 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     125 </span>            :     {
+<span class="lineNum">     126 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state0;
+<span class="lineNum">     127 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;::result_type state4;
+<span class="lineNum">     128 </span>            :         typedef state4 result_type;
+<span class="lineNum">     129 </span>            :         result_type operator ()(
+<span class="lineNum">     130 </span>            :             typename fold_impl::expr_param e
+<span class="lineNum">     131 </span>            :           , typename fold_impl::state_param s
+<span class="lineNum">     132 </span>            :           , typename fold_impl::data_param d
+<span class="lineNum">     133 </span>            :         ) const
+<span class="lineNum">     134 </span>            :         {
+<span class="lineNum">     135 </span>            :             state0 s0 =
+<span class="lineNum">     136 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     137 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;()( proto::child_c&lt; 0&gt;(e) , s0 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;()( proto::child_c&lt; 1&gt;(e) , s1 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;()( proto::child_c&lt; 2&gt;(e) , s2 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;()( proto::child_c&lt; 3&gt;(e) , s3 , d );
+<span class="lineNum">     138 </span>            :             return s4;
+<span class="lineNum">     139 </span>            :         }
+<span class="lineNum">     140 </span>            :     };
+<span class="lineNum">     141 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     142 </span>            :     struct reverse_fold_impl&lt;State0, Fun, Expr, State, Data, 4&gt;
+<span class="lineNum">     143 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     144 </span>            :     {
+<span class="lineNum">     145 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state4;
+<span class="lineNum">     146 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;::result_type state0;
+<span class="lineNum">     147 </span>            :         typedef state0 result_type;
+<span class="lineNum">     148 </span>            :         result_type operator ()(
+<span class="lineNum">     149 </span>            :             typename reverse_fold_impl::expr_param e
+<span class="lineNum">     150 </span>            :           , typename reverse_fold_impl::state_param s
+<span class="lineNum">     151 </span>            :           , typename reverse_fold_impl::data_param d
+<span class="lineNum">     152 </span>            :         ) const
+<span class="lineNum">     153 </span>            :         {
+<span class="lineNum">     154 </span>            :             state4 s4 =
+<span class="lineNum">     155 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     156 </span>            :             state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;()( proto::child_c&lt;3&gt;(e) , s4 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;()( proto::child_c&lt;2&gt;(e) , s3 , d ); state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;()( proto::child_c&lt;1&gt;(e) , s2 , d ); state0 s0 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;()( proto::child_c&lt;0&gt;(e) , s1 , d );
+<span class="lineNum">     157 </span>            :             return s0;
+<span class="lineNum">     158 </span>            :         }
+<span class="lineNum">     159 </span>            :     };
+<span class="lineNum">     160 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     161 </span>            :     struct fold_impl&lt;State0, Fun, Expr, State, Data, 5&gt;
+<span class="lineNum">     162 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     163 </span>            :     {
+<span class="lineNum">     164 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state0;
+<span class="lineNum">     165 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;::result_type state5;
+<span class="lineNum">     166 </span>            :         typedef state5 result_type;
+<span class="lineNum">     167 </span>            :         result_type operator ()(
+<span class="lineNum">     168 </span>            :             typename fold_impl::expr_param e
+<span class="lineNum">     169 </span>            :           , typename fold_impl::state_param s
+<span class="lineNum">     170 </span>            :           , typename fold_impl::data_param d
+<span class="lineNum">     171 </span>            :         ) const
+<span class="lineNum">     172 </span>            :         {
+<span class="lineNum">     173 </span>            :             state0 s0 =
+<span class="lineNum">     174 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     175 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;()( proto::child_c&lt; 0&gt;(e) , s0 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;()( proto::child_c&lt; 1&gt;(e) , s1 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;()( proto::child_c&lt; 2&gt;(e) , s2 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;()( proto::child_c&lt; 3&gt;(e) , s3 , d ); state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;()( proto::child_c&lt; 4&gt;(e) , s4 , d );
+<span class="lineNum">     176 </span>            :             return s5;
+<span class="lineNum">     177 </span>            :         }
+<span class="lineNum">     178 </span>            :     };
+<span class="lineNum">     179 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     180 </span>            :     struct reverse_fold_impl&lt;State0, Fun, Expr, State, Data, 5&gt;
+<span class="lineNum">     181 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     182 </span>            :     {
+<span class="lineNum">     183 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state5;
+<span class="lineNum">     184 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;::result_type state0;
+<span class="lineNum">     185 </span>            :         typedef state0 result_type;
+<span class="lineNum">     186 </span>            :         result_type operator ()(
+<span class="lineNum">     187 </span>            :             typename reverse_fold_impl::expr_param e
+<span class="lineNum">     188 </span>            :           , typename reverse_fold_impl::state_param s
+<span class="lineNum">     189 </span>            :           , typename reverse_fold_impl::data_param d
+<span class="lineNum">     190 </span>            :         ) const
+<span class="lineNum">     191 </span>            :         {
+<span class="lineNum">     192 </span>            :             state5 s5 =
+<span class="lineNum">     193 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     194 </span>            :             state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;()( proto::child_c&lt;4&gt;(e) , s5 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;()( proto::child_c&lt;3&gt;(e) , s4 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;()( proto::child_c&lt;2&gt;(e) , s3 , d ); state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;()( proto::child_c&lt;1&gt;(e) , s2 , d ); state0 s0 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;()( proto::child_c&lt;0&gt;(e) , s1 , d );
+<span class="lineNum">     195 </span>            :             return s0;
+<span class="lineNum">     196 </span>            :         }
+<span class="lineNum">     197 </span>            :     };
+<span class="lineNum">     198 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     199 </span>            :     struct fold_impl&lt;State0, Fun, Expr, State, Data, 6&gt;
+<span class="lineNum">     200 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     201 </span>            :     {
+<span class="lineNum">     202 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state0;
+<span class="lineNum">     203 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;::result_type state5; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 5&gt;::type , state5 , Data &gt;::result_type state6;
+<span class="lineNum">     204 </span>            :         typedef state6 result_type;
+<span class="lineNum">     205 </span>            :         result_type operator ()(
+<span class="lineNum">     206 </span>            :             typename fold_impl::expr_param e
+<span class="lineNum">     207 </span>            :           , typename fold_impl::state_param s
+<span class="lineNum">     208 </span>            :           , typename fold_impl::data_param d
+<span class="lineNum">     209 </span>            :         ) const
+<span class="lineNum">     210 </span>            :         {
+<span class="lineNum">     211 </span>            :             state0 s0 =
+<span class="lineNum">     212 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     213 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;()( proto::child_c&lt; 0&gt;(e) , s0 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;()( proto::child_c&lt; 1&gt;(e) , s1 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;()( proto::child_c&lt; 2&gt;(e) , s2 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;()( proto::child_c&lt; 3&gt;(e) , s3 , d ); state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;()( proto::child_c&lt; 4&gt;(e) , s4 , d ); state6 s6 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 5&gt;::type , state5 , Data &gt;()( proto::child_c&lt; 5&gt;(e) , s5 , d );
+<span class="lineNum">     214 </span>            :             return s6;
+<span class="lineNum">     215 </span>            :         }
+<span class="lineNum">     216 </span>            :     };
+<span class="lineNum">     217 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     218 </span>            :     struct reverse_fold_impl&lt;State0, Fun, Expr, State, Data, 6&gt;
+<span class="lineNum">     219 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     220 </span>            :     {
+<span class="lineNum">     221 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state6;
+<span class="lineNum">     222 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 5 &gt;::type , state6 , Data &gt;::result_type state5; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;::result_type state0;
+<span class="lineNum">     223 </span>            :         typedef state0 result_type;
+<span class="lineNum">     224 </span>            :         result_type operator ()(
+<span class="lineNum">     225 </span>            :             typename reverse_fold_impl::expr_param e
+<span class="lineNum">     226 </span>            :           , typename reverse_fold_impl::state_param s
+<span class="lineNum">     227 </span>            :           , typename reverse_fold_impl::data_param d
+<span class="lineNum">     228 </span>            :         ) const
+<span class="lineNum">     229 </span>            :         {
+<span class="lineNum">     230 </span>            :             state6 s6 =
+<span class="lineNum">     231 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     232 </span>            :             state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 5 &gt;::type , state6 , Data &gt;()( proto::child_c&lt;5&gt;(e) , s6 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;()( proto::child_c&lt;4&gt;(e) , s5 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;()( proto::child_c&lt;3&gt;(e) , s4 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;()( proto::child_c&lt;2&gt;(e) , s3 , d ); state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;()( proto::child_c&lt;1&gt;(e) , s2 , d ); state0 s0 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;()( proto::child_c&lt;0&gt;(e) , s1 , d );
+<span class="lineNum">     233 </span>            :             return s0;
+<span class="lineNum">     234 </span>            :         }
+<span class="lineNum">     235 </span>            :     };
+<span class="lineNum">     236 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     237 </span>            :     struct fold_impl&lt;State0, Fun, Expr, State, Data, 7&gt;
+<span class="lineNum">     238 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     239 </span>            :     {
+<span class="lineNum">     240 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state0;
+<span class="lineNum">     241 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;::result_type state5; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 5&gt;::type , state5 , Data &gt;::result_type state6; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 6&gt;::type , state6 , Data &gt;::result_type state7;
+<span class="lineNum">     242 </span>            :         typedef state7 result_type;
+<span class="lineNum">     243 </span>            :         result_type operator ()(
+<span class="lineNum">     244 </span>            :             typename fold_impl::expr_param e
+<span class="lineNum">     245 </span>            :           , typename fold_impl::state_param s
+<span class="lineNum">     246 </span>            :           , typename fold_impl::data_param d
+<span class="lineNum">     247 </span>            :         ) const
+<span class="lineNum">     248 </span>            :         {
+<span class="lineNum">     249 </span>            :             state0 s0 =
+<span class="lineNum">     250 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     251 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;()( proto::child_c&lt; 0&gt;(e) , s0 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;()( proto::child_c&lt; 1&gt;(e) , s1 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;()( proto::child_c&lt; 2&gt;(e) , s2 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;()( proto::child_c&lt; 3&gt;(e) , s3 , d ); state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;()( proto::child_c&lt; 4&gt;(e) , s4 , d ); state6 s6 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 5&gt;::type , state5 , Data &gt;()( proto::child_c&lt; 5&gt;(e) , s5 , d ); state7 s7 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 6&gt;::type , state6 , Data &gt;()( proto::child_c&lt; 6&gt;(e) , s6 , d );
+<span class="lineNum">     252 </span>            :             return s7;
+<span class="lineNum">     253 </span>            :         }
+<span class="lineNum">     254 </span>            :     };
+<span class="lineNum">     255 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     256 </span>            :     struct reverse_fold_impl&lt;State0, Fun, Expr, State, Data, 7&gt;
+<span class="lineNum">     257 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     258 </span>            :     {
+<span class="lineNum">     259 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state7;
+<span class="lineNum">     260 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 6 &gt;::type , state7 , Data &gt;::result_type state6; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 5 &gt;::type , state6 , Data &gt;::result_type state5; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;::result_type state0;
+<span class="lineNum">     261 </span>            :         typedef state0 result_type;
+<span class="lineNum">     262 </span>            :         result_type operator ()(
+<span class="lineNum">     263 </span>            :             typename reverse_fold_impl::expr_param e
+<span class="lineNum">     264 </span>            :           , typename reverse_fold_impl::state_param s
+<span class="lineNum">     265 </span>            :           , typename reverse_fold_impl::data_param d
+<span class="lineNum">     266 </span>            :         ) const
+<span class="lineNum">     267 </span>            :         {
+<span class="lineNum">     268 </span>            :             state7 s7 =
+<span class="lineNum">     269 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     270 </span>            :             state6 s6 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 6 &gt;::type , state7 , Data &gt;()( proto::child_c&lt;6&gt;(e) , s7 , d ); state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 5 &gt;::type , state6 , Data &gt;()( proto::child_c&lt;5&gt;(e) , s6 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;()( proto::child_c&lt;4&gt;(e) , s5 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;()( proto::child_c&lt;3&gt;(e) , s4 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;()( proto::child_c&lt;2&gt;(e) , s3 , d ); state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;()( proto::child_c&lt;1&gt;(e) , s2 , d ); state0 s0 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;()( proto::child_c&lt;0&gt;(e) , s1 , d );
+<span class="lineNum">     271 </span>            :             return s0;
+<span class="lineNum">     272 </span>            :         }
+<span class="lineNum">     273 </span>            :     };
+<span class="lineNum">     274 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     275 </span>            :     struct fold_impl&lt;State0, Fun, Expr, State, Data, 8&gt;
+<span class="lineNum">     276 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     277 </span>            :     {
+<span class="lineNum">     278 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state0;
+<span class="lineNum">     279 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;::result_type state5; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 5&gt;::type , state5 , Data &gt;::result_type state6; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 6&gt;::type , state6 , Data &gt;::result_type state7; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 7&gt;::type , state7 , Data &gt;::result_type state8;
+<span class="lineNum">     280 </span>            :         typedef state8 result_type;
+<span class="lineNum">     281 </span>            :         result_type operator ()(
+<span class="lineNum">     282 </span>            :             typename fold_impl::expr_param e
+<span class="lineNum">     283 </span>            :           , typename fold_impl::state_param s
+<span class="lineNum">     284 </span>            :           , typename fold_impl::data_param d
+<span class="lineNum">     285 </span>            :         ) const
+<span class="lineNum">     286 </span>            :         {
+<span class="lineNum">     287 </span>            :             state0 s0 =
+<span class="lineNum">     288 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     289 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;()( proto::child_c&lt; 0&gt;(e) , s0 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;()( proto::child_c&lt; 1&gt;(e) , s1 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;()( proto::child_c&lt; 2&gt;(e) , s2 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;()( proto::child_c&lt; 3&gt;(e) , s3 , d ); state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;()( proto::child_c&lt; 4&gt;(e) , s4 , d ); state6 s6 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 5&gt;::type , state5 , Data &gt;()( proto::child_c&lt; 5&gt;(e) , s5 , d ); state7 s7 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 6&gt;::type , state6 , Data &gt;()( proto::child_c&lt; 6&gt;(e) , s6 , d ); state8 s8 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 7&gt;::type , state7 , Data &gt;()( proto::child_c&lt; 7&gt;(e) , s7 , d );
+<span class="lineNum">     290 </span>            :             return s8;
+<span class="lineNum">     291 </span>            :         }
+<span class="lineNum">     292 </span>            :     };
+<span class="lineNum">     293 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     294 </span>            :     struct reverse_fold_impl&lt;State0, Fun, Expr, State, Data, 8&gt;
+<span class="lineNum">     295 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     296 </span>            :     {
+<span class="lineNum">     297 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state8;
+<span class="lineNum">     298 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 7 &gt;::type , state8 , Data &gt;::result_type state7; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 6 &gt;::type , state7 , Data &gt;::result_type state6; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 5 &gt;::type , state6 , Data &gt;::result_type state5; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;::result_type state0;
+<span class="lineNum">     299 </span>            :         typedef state0 result_type;
+<span class="lineNum">     300 </span>            :         result_type operator ()(
+<span class="lineNum">     301 </span>            :             typename reverse_fold_impl::expr_param e
+<span class="lineNum">     302 </span>            :           , typename reverse_fold_impl::state_param s
+<span class="lineNum">     303 </span>            :           , typename reverse_fold_impl::data_param d
+<span class="lineNum">     304 </span>            :         ) const
+<span class="lineNum">     305 </span>            :         {
+<span class="lineNum">     306 </span>            :             state8 s8 =
+<span class="lineNum">     307 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     308 </span>            :             state7 s7 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 7 &gt;::type , state8 , Data &gt;()( proto::child_c&lt;7&gt;(e) , s8 , d ); state6 s6 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 6 &gt;::type , state7 , Data &gt;()( proto::child_c&lt;6&gt;(e) , s7 , d ); state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 5 &gt;::type , state6 , Data &gt;()( proto::child_c&lt;5&gt;(e) , s6 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;()( proto::child_c&lt;4&gt;(e) , s5 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;()( proto::child_c&lt;3&gt;(e) , s4 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;()( proto::child_c&lt;2&gt;(e) , s3 , d ); state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;()( proto::child_c&lt;1&gt;(e) , s2 , d ); state0 s0 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;()( proto::child_c&lt;0&gt;(e) , s1 , d );
+<span class="lineNum">     309 </span>            :             return s0;
+<span class="lineNum">     310 </span>            :         }
+<span class="lineNum">     311 </span>            :     };
+<span class="lineNum">     312 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     313 </span>            :     struct fold_impl&lt;State0, Fun, Expr, State, Data, 9&gt;
+<span class="lineNum">     314 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     315 </span>            :     {
+<span class="lineNum">     316 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state0;
+<span class="lineNum">     317 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;::result_type state5; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 5&gt;::type , state5 , Data &gt;::result_type state6; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 6&gt;::type , state6 , Data &gt;::result_type state7; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 7&gt;::type , state7 , Data &gt;::result_type state8; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 8&gt;::type , state8 , Data &gt;::result_type state9;
+<span class="lineNum">     318 </span>            :         typedef state9 result_type;
+<span class="lineNum">     319 </span>            :         result_type operator ()(
+<span class="lineNum">     320 </span>            :             typename fold_impl::expr_param e
+<span class="lineNum">     321 </span>            :           , typename fold_impl::state_param s
+<span class="lineNum">     322 </span>            :           , typename fold_impl::data_param d
+<span class="lineNum">     323 </span>            :         ) const
+<span class="lineNum">     324 </span>            :         {
+<span class="lineNum">     325 </span>            :             state0 s0 =
+<span class="lineNum">     326 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     327 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;()( proto::child_c&lt; 0&gt;(e) , s0 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;()( proto::child_c&lt; 1&gt;(e) , s1 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;()( proto::child_c&lt; 2&gt;(e) , s2 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;()( proto::child_c&lt; 3&gt;(e) , s3 , d ); state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;()( proto::child_c&lt; 4&gt;(e) , s4 , d ); state6 s6 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 5&gt;::type , state5 , Data &gt;()( proto::child_c&lt; 5&gt;(e) , s5 , d ); state7 s7 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 6&gt;::type , state6 , Data &gt;()( proto::child_c&lt; 6&gt;(e) , s6 , d ); state8 s8 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 7&gt;::type , state7 , Data &gt;()( proto::child_c&lt; 7&gt;(e) , s7 , d ); state9 s9 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 8&gt;::type , state8 , Data &gt;()( proto::child_c&lt; 8&gt;(e) , s8 , d );
+<span class="lineNum">     328 </span>            :             return s9;
+<span class="lineNum">     329 </span>            :         }
+<span class="lineNum">     330 </span>            :     };
+<span class="lineNum">     331 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     332 </span>            :     struct reverse_fold_impl&lt;State0, Fun, Expr, State, Data, 9&gt;
+<span class="lineNum">     333 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     334 </span>            :     {
+<span class="lineNum">     335 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state9;
+<span class="lineNum">     336 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 8 &gt;::type , state9 , Data &gt;::result_type state8; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 7 &gt;::type , state8 , Data &gt;::result_type state7; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 6 &gt;::type , state7 , Data &gt;::result_type state6; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 5 &gt;::type , state6 , Data &gt;::result_type state5; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;::result_type state0;
+<span class="lineNum">     337 </span>            :         typedef state0 result_type;
+<span class="lineNum">     338 </span>            :         result_type operator ()(
+<span class="lineNum">     339 </span>            :             typename reverse_fold_impl::expr_param e
+<span class="lineNum">     340 </span>            :           , typename reverse_fold_impl::state_param s
+<span class="lineNum">     341 </span>            :           , typename reverse_fold_impl::data_param d
+<span class="lineNum">     342 </span>            :         ) const
+<span class="lineNum">     343 </span>            :         {
+<span class="lineNum">     344 </span>            :             state9 s9 =
+<span class="lineNum">     345 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     346 </span>            :             state8 s8 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 8 &gt;::type , state9 , Data &gt;()( proto::child_c&lt;8&gt;(e) , s9 , d ); state7 s7 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 7 &gt;::type , state8 , Data &gt;()( proto::child_c&lt;7&gt;(e) , s8 , d ); state6 s6 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 6 &gt;::type , state7 , Data &gt;()( proto::child_c&lt;6&gt;(e) , s7 , d ); state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 5 &gt;::type , state6 , Data &gt;()( proto::child_c&lt;5&gt;(e) , s6 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;()( proto::child_c&lt;4&gt;(e) , s5 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;()( proto::child_c&lt;3&gt;(e) , s4 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;()( proto::child_c&lt;2&gt;(e) , s3 , d ); state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;()( proto::child_c&lt;1&gt;(e) , s2 , d ); state0 s0 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;()( proto::child_c&lt;0&gt;(e) , s1 , d );
+<span class="lineNum">     347 </span>            :             return s0;
+<span class="lineNum">     348 </span>            :         }
+<span class="lineNum">     349 </span>            :     };
+<span class="lineNum">     350 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     351 </span>            :     struct fold_impl&lt;State0, Fun, Expr, State, Data, 10&gt;
+<span class="lineNum">     352 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     353 </span>            :     {
+<span class="lineNum">     354 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state0;
+<span class="lineNum">     355 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;::result_type state5; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 5&gt;::type , state5 , Data &gt;::result_type state6; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 6&gt;::type , state6 , Data &gt;::result_type state7; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 7&gt;::type , state7 , Data &gt;::result_type state8; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 8&gt;::type , state8 , Data &gt;::result_type state9; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 9&gt;::type , state9 , Data &gt;::result_type state10;
+<span class="lineNum">     356 </span>            :         typedef state10 result_type;
+<span class="lineNum">     357 </span>            :         result_type operator ()(
+<span class="lineNum">     358 </span>            :             typename fold_impl::expr_param e
+<span class="lineNum">     359 </span>            :           , typename fold_impl::state_param s
+<span class="lineNum">     360 </span>            :           , typename fold_impl::data_param d
+<span class="lineNum">     361 </span>            :         ) const
+<span class="lineNum">     362 </span>            :         {
+<span class="lineNum">     363 </span>            :             state0 s0 =
+<span class="lineNum">     364 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     365 </span>            :             state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 0&gt;::type , state0 , Data &gt;()( proto::child_c&lt; 0&gt;(e) , s0 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 1&gt;::type , state1 , Data &gt;()( proto::child_c&lt; 1&gt;(e) , s1 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 2&gt;::type , state2 , Data &gt;()( proto::child_c&lt; 2&gt;(e) , s2 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 3&gt;::type , state3 , Data &gt;()( proto::child_c&lt; 3&gt;(e) , s3 , d ); state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 4&gt;::type , state4 , Data &gt;()( proto::child_c&lt; 4&gt;(e) , s4 , d ); state6 s6 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 5&gt;::type , state5 , Data &gt;()( proto::child_c&lt; 5&gt;(e) , s5 , d ); state7 s7 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 6&gt;::type , state6 , Data &gt;()( proto::child_c&lt; 6&gt;(e) , s6 , d ); state8 s8 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 7&gt;::type , state7 , Data &gt;()( proto::child_c&lt; 7&gt;(e) , s7 , d ); state9 s9 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 8&gt;::type , state8 , Data &gt;()( proto::child_c&lt; 8&gt;(e) , s8 , d ); state10 s10 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt;Expr, 9&gt;::type , state9 , Data &gt;()( proto::child_c&lt; 9&gt;(e) , s9 , d );
+<span class="lineNum">     366 </span>            :             return s10;
+<span class="lineNum">     367 </span>            :         }
+<span class="lineNum">     368 </span>            :     };
+<span class="lineNum">     369 </span>            :     template&lt;typename State0, typename Fun, typename Expr, typename State, typename Data&gt;
+<span class="lineNum">     370 </span>            :     struct reverse_fold_impl&lt;State0, Fun, Expr, State, Data, 10&gt;
+<span class="lineNum">     371 </span>            :       : transform_impl&lt;Expr, State, Data&gt;
+<span class="lineNum">     372 </span>            :     {
+<span class="lineNum">     373 </span>            :         typedef typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;::result_type state10;
+<span class="lineNum">     374 </span>            :         typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 9 &gt;::type , state10 , Data &gt;::result_type state9; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 8 &gt;::type , state9 , Data &gt;::result_type state8; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 7 &gt;::type , state8 , Data &gt;::result_type state7; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 6 &gt;::type , state7 , Data &gt;::result_type state6; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 5 &gt;::type , state6 , Data &gt;::result_type state5; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;::result_type state4; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;::result_type state3; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;::result_type state2; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;::result_type state1; typedef typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;::result_type state0;
+<span class="lineNum">     375 </span>            :         typedef state0 result_type;
+<span class="lineNum">     376 </span>            :         result_type operator ()(
+<span class="lineNum">     377 </span>            :             typename reverse_fold_impl::expr_param e
+<span class="lineNum">     378 </span>            :           , typename reverse_fold_impl::state_param s
+<span class="lineNum">     379 </span>            :           , typename reverse_fold_impl::data_param d
+<span class="lineNum">     380 </span>            :         ) const
+<span class="lineNum">     381 </span>            :         {
+<span class="lineNum">     382 </span>            :             state10 s10 =
+<span class="lineNum">     383 </span>            :                 typename when&lt;_, State0&gt;::template impl&lt;Expr, State, Data&gt;()(e, s, d);
+<span class="lineNum">     384 </span>            :             state9 s9 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 9 &gt;::type , state10 , Data &gt;()( proto::child_c&lt;9&gt;(e) , s10 , d ); state8 s8 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 8 &gt;::type , state9 , Data &gt;()( proto::child_c&lt;8&gt;(e) , s9 , d ); state7 s7 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 7 &gt;::type , state8 , Data &gt;()( proto::child_c&lt;7&gt;(e) , s8 , d ); state6 s6 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 6 &gt;::type , state7 , Data &gt;()( proto::child_c&lt;6&gt;(e) , s7 , d ); state5 s5 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 5 &gt;::type , state6 , Data &gt;()( proto::child_c&lt;5&gt;(e) , s6 , d ); state4 s4 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 4 &gt;::type , state5 , Data &gt;()( proto::child_c&lt;4&gt;(e) , s5 , d ); state3 s3 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 3 &gt;::type , state4 , Data &gt;()( proto::child_c&lt;3&gt;(e) , s4 , d ); state2 s2 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 2 &gt;::type , state3 , Data &gt;()( proto::child_c&lt;2&gt;(e) , s3 , d ); state1 s1 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 1 &gt;::type , state2 , Data &gt;()( proto::child_c&lt;1&gt;(e) , s2 , d ); state0 s0 = typename when&lt;_, Fun&gt;::template impl&lt; typename result_of::child_c&lt; Expr , 0 &gt;::type , state1 , Data &gt;()( proto::child_c&lt;0&gt;(e) , s1 , d );
+<span class="lineNum">     385 </span>            :             return s0;
+<span class="lineNum">     386 </span>            :         }
+<span class="lineNum">     387 </span>            :     };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

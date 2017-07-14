@@ -20,7 +20,7 @@ using Edge = std::pair<int, int>;
  */
 using WeightMap = std::vector<int>;
 /*
- *
+ *\typedef Pair of two ints, first int represents the end-vertex of a edge, second int represents total weight from starting point to end-vertex
  */
 using DijkstraPair = std::pair<int, int>;
 /*
@@ -32,7 +32,7 @@ class dijkstra {
 public:
 	dijkstra(WeightMap, Edges, unsigned int);
 
-	WeightMap computeShortestPath();
+	WeightMap computeShortestPath(int);
 
 private:
 	SortedEdges sortedEdges;

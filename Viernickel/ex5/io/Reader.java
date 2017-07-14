@@ -54,7 +54,6 @@ public class Reader{
             for(i=0; i<nNodes; i++){
                 nodes[i] = new Node(i);
             }
-            nodes[0].distance = 0;
             
             /** Read and save edges */
             for(j=0; j<nEdges; j++){

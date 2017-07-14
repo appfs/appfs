@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/spirit/home/support/detail/make_cons.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">boost/spirit/home/support/detail</a> - make_cons.hpp<span style="font-size: 80%;"> (source / <a href="make_cons.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :   Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            :   http://spirit.sourceforge.net/
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            :   Distributed under the Boost Software License, Version 1.0. (See accompanying
+<span class="lineNum">       6 </span>            :   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       7 </span>            : =============================================================================*/
+<span class="lineNum">       8 </span>            : #ifndef BOOST_SPIRIT_MAKE_CONS_OCTOBER_16_2008_1252PM
+<span class="lineNum">       9 </span>            : #define BOOST_SPIRIT_MAKE_CONS_OCTOBER_16_2008_1252PM
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      12 </span>            : #pragma once
+<span class="lineNum">      13 </span>            : #endif
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #include &lt;boost/spirit/include/phoenix_limits.hpp&gt;      // needs to be included before proto
+<span class="lineNum">      16 </span>            : #include &lt;boost/proto/proto.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/mpl/eval_if.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/fusion/include/cons.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/type_traits/remove_const.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/type_traits/is_abstract.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/type_traits/is_function.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/type_traits/add_reference.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/utility/enable_if.hpp&gt;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : namespace boost { namespace spirit { namespace detail
+<span class="lineNum">      26 </span>            : {
+<span class="lineNum">      27 </span>            :     template &lt;typename T&gt;
+<span class="lineNum">      28 </span>            :     struct as_meta_element
+<span class="lineNum">      29 </span>            :       : mpl::eval_if_c&lt;is_abstract&lt;T&gt;::value || is_function&lt;T&gt;::value
+<span class="lineNum">      30 </span>            :           , add_reference&lt;T&gt;, remove_const&lt;T&gt; &gt;
+<span class="lineNum">      31 </span>            :     {};
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :     template &lt;typename T&gt;
+<span class="lineNum">      34 </span>            :     struct as_meta_element&lt;T&amp;&gt; : as_meta_element&lt;T&gt;   // always store by value
+<span class="lineNum">      35 </span>            :     {};
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            :     template &lt;typename T, int N&gt;
+<span class="lineNum">      38 </span>            :     struct as_meta_element&lt;T[N]&gt;
+<span class="lineNum">      39 </span>            :     {
+<span class="lineNum">      40 </span>            :         typedef const T(&amp;type)[N];
+<span class="lineNum">      41 </span>            :     };
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :     namespace result_of
+<span class="lineNum">      44 </span>            :     {
+<span class="lineNum">      45 </span>            :         template &lt;typename Car, typename Cdr = fusion::nil_&gt;
+<span class="lineNum">      46 </span>            :         struct make_cons
+<span class="lineNum">      47 </span>            :         {
+<span class="lineNum">      48 </span>            :             typedef typename as_meta_element&lt;Car&gt;::type car_type;            typedef typename fusion::cons&lt;car_type, Cdr&gt; type;
+<span class="lineNum">      49 </span>            :         };
+<span class="lineNum">      50 </span>            :     }
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :     template &lt;typename Car, typename Cdr&gt;
+<span class="lineNum">      53 </span>            :     fusion::cons&lt;typename as_meta_element&lt;Car&gt;::type, Cdr&gt;
+<span class="lineNum">      54 </span>            :     make_cons(Car const&amp; car, Cdr const&amp; cdr)
+<span class="lineNum">      55 </span>            :     {
+<span class="lineNum">      56 </span>            :         typedef typename as_meta_element&lt;Car&gt;::type car_type;
+<span class="lineNum">      57 </span>            :         typedef typename fusion::cons&lt;car_type, Cdr&gt; result;
+<span class="lineNum">      58 </span>            :         return result(car, cdr);
+<span class="lineNum">      59 </span>            :     }
+<span class="lineNum">      60 </span>            : 
+<a name="61"><span class="lineNum">      61 </span>            :     template &lt;typename Car&gt;</a>
+<span class="lineNum">      62 </span>            :     fusion::cons&lt;typename as_meta_element&lt;Car&gt;::type&gt;
+<span class="lineNum">      63 </span><span class="lineCov">          2 :     make_cons(Car const&amp; car)</span>
+<span class="lineNum">      64 </span>            :     {
+<span class="lineNum">      65 </span>            :         typedef typename as_meta_element&lt;Car&gt;::type car_type;
+<span class="lineNum">      66 </span>            :         typedef typename fusion::cons&lt;car_type&gt; result;
+<span class="lineNum">      67 </span><span class="lineCov">          2 :         return result(car);</span>
+<span class="lineNum">      68 </span>            :     }
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : #if defined(__GNUC__) &amp;&amp; (__GNUC__ == 4) &amp;&amp; (__GNUC_MINOR__ == 0)
+<span class="lineNum">      71 </span>            :     // workaround for gcc-4.0 bug where illegal function types
+<span class="lineNum">      72 </span>            :     // can be formed (const is added to function type)
+<span class="lineNum">      73 </span>            :     // description: http://lists.boost.org/Archives/boost/2009/04/150743.php
+<span class="lineNum">      74 </span>            :     template &lt;typename Car&gt;
+<span class="lineNum">      75 </span>            :     fusion::cons&lt;typename as_meta_element&lt;Car&gt;::type&gt;
+<span class="lineNum">      76 </span>            :     make_cons(Car&amp; car, typename enable_if&lt;is_function&lt;Car&gt; &gt;::type* = 0)
+<span class="lineNum">      77 </span>            :     {
+<span class="lineNum">      78 </span>            :         typedef typename as_meta_element&lt;Car&gt;::type car_type;
+<span class="lineNum">      79 </span>            :         typedef typename fusion::cons&lt;car_type&gt; result;
+<span class="lineNum">      80 </span>            :         return result(car);
+<span class="lineNum">      81 </span>            :     }
+<span class="lineNum">      82 </span>            : #endif
+<span class="lineNum">      83 </span>            : }}}
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
