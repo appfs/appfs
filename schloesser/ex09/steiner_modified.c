@@ -1,7 +1,7 @@
-/** @file steiner.c
+/** @file steiner_modified.c
  * @author Franziska Schlösser
  * @date July 2017
- * @brief Main programm fulfilling ex8
+ * @brief Main programm fulfilling ex9
  */
 
 #include <limits.h>
