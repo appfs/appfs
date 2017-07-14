@@ -1,5 +1,17 @@
-compile:
-	g++ -std=c++0x -O3 -Wall ex10.cpp Dijkstra.cpp Steiner.cpp GraphChecker.cpp -o ex10 -lboost_system -lboost_timer -lboost_program_options -fopenmp
+!ifndef FILE
+FILE=world666
+!endif
+!ifndef THREADS
+THREADS=8
+!endif
+
+compile: ex10.o Dijkstra.o Steiner.o GraphChecker.o
+	@echo Compiling
+	g++ -std=c++0x -O3 -Wall ex10.o Dijkstra.o Steiner.o GraphChecker.o -o ex10 -lboost_system -lboost_timer -lboost_program_options -fopenmp
+	@echo done
+
+test: compile
+	./ex10 $(THREADS) SP/$(FILE)
 
 doc:
 	doxygen doxy
@@ -19,8 +31,18 @@ coverage:
 check:
 	cppcheck ./
 	
-run:
-	make compile
-	./ex10 phard-1
+run: compile
+	./ex10 $(FILE)
 	
+ex10.o : ex10.c
+	 g++ -std=c++0x -O3 -Wall -c ex10.cpp -lboost_system -lboost_timer -lboost_program_options -fopenmp
+	
+Dijkstra.o : Dijkstra.c
+	 g++ -std=c++0x -O3 -Wall -c Dijkstra.cpp -fopenmp
+	 
+Steiner.o : Steiner.c
+	 g++ -std=c++0x -O3 -Wall -c Steiner.cpp -fopenmp
+	 
+GraphChecker.o : GraphChecker.c
+	 g++ -std=c++0x -O3 -Wall -c GraphChecker.cpp -fopenmp
 	

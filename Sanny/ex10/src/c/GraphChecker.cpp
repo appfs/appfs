@@ -16,6 +16,7 @@ GraphChecker::~GraphChecker() {
 	//nop
 }
 
+/** Search and collects all adjacents for each node*/
 AdjacentsMap GraphChecker::makeAdjacentsMap() {
 	AdjacentsMap adjacentsMap = AdjacentsMap();
 	for (unsigned int i = 0; i < nodes.size(); i++) {
@@ -27,6 +28,7 @@ AdjacentsMap GraphChecker::makeAdjacentsMap() {
 	return adjacentsMap;
 }
 
+/** gets all adjacents and returns them in the given param adjs*/
 void GraphChecker::getAdjacents(int node, Adjacents* adjs) {
 	// collect adjacents
 	for (unsigned int i = 0; i < edges.size(); i++) {
@@ -47,6 +49,7 @@ void GraphChecker::getAdjacents(int node, Adjacents* adjs) {
 	}
 }
 
+/** Check wether the graph is connected or not via BFS */
 char GraphChecker::isConnected(){
 	AdjacentsMap adjacentsMap = makeAdjacentsMap();
 
@@ -83,6 +86,7 @@ char GraphChecker::isConnected(){
 	return 1;
 }
 
+/** Checks recursive if the graph has a cycle via DFS */
 char GraphChecker::hasCycle(){
     char* visited = new char[nodes.size()];
 

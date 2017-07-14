@@ -13,12 +13,14 @@
 #include "Steiner.h"
 #include "GraphChecker.h"
 
+
 // Constants
 namespace {
-
 	const char* FILEEND = ".gph";
-
+	const int MAX_FOR_DEFAULT_TERMINALS = 100;
+	const int DEFAULT_THREAD_NUMBER = 8;
 }
+
 
 // declaring print
 using std::cout;
@@ -27,29 +29,35 @@ using std::flush;
 using std::cerr;
 using std::string;
 
+
 // declaring types
 namespace po = boost::program_options;
+namespace bTime = boost::timer;
 using Primes = std::vector<int >;
+
 
 /**
  * Computes all primes less than vertexCount
  * by beginning with the prime 2 and trying to divide all numbers smaller than vertexCount
  * and try do divide by all found primes.
  */
-void getPrimes(unsigned int vertexCount, Primes* primes) {
-	primes->push_back(2);
+Primes getPrimes(unsigned int vertexCount) {
+	Primes primes = Primes();
+	primes.push_back(2);
 	for (unsigned int i = 3; i < vertexCount; i++) {
 		char isPrime = true;
-		for (unsigned int i = 0; i < primes->size(); i++) {
-			if (i % primes->at(i) == 0) {
+		for (int prime : primes) {
+			if (i % prime == 0) {
 				isPrime = false;
 			}
 		}
 		if (isPrime) {
-			primes->push_back(i);
+			primes.push_back(i);
 		}
 	}
+	return primes;
 }
+
 
 /** Parsing the arguments given via command line */
 po::variables_map parseCommandLine(po::options_description desc, int argn,
@@ -57,9 +65,11 @@ po::variables_map parseCommandLine(po::options_description desc, int argn,
 	desc.add_options()//
 			("help,h", "produce help message")//
 			("start_nodes,sn", po::value<std::vector<int >>(),"nodes, where to start")//
-			("input-file", po::value<string>(), "input file");
+			("input_file", po::value<string>(), "input file");
+			("thread_number", po::value<int>(), "number of threads for parallelization");
 	po::positional_options_description p;
-	p.add("input-file", 1);
+	p.add("input_file", 1);
+	p.add("thread_number", 1);
 	p.add("start_nodes", -1);
 	po::variables_map vm;
 	po::store(
@@ -69,9 +79,10 @@ po::variables_map parseCommandLine(po::options_description desc, int argn,
 	return vm;
 }
 
+
 /** Reading in a Graphfile, computes the Steiner */
 int main(int argn, char *argv[]) {
-	boost::timer::auto_cpu_timer t;
+	bTime::cpu_timer timerProgram;
 	if (argn <= 1) {
 		cerr << "ERROR : There was no filename" << endl;
 		return 1;
@@ -110,6 +121,16 @@ int main(int argn, char *argv[]) {
 		startnodes = vm["start_node"].as<std::vector<int >>();
 	}
 
+	int threadNumber;
+	if(vm.count("thread_number") == 0){
+		cout << "Using default number of threads (8)" << endl;
+		threadNumber = DEFAULT_THREAD_NUMBER;
+	} else {
+		threadNumber = vm["start_node"].as<int >();
+	}
+
+	cout << endl;
+
 	string line;
 
 	unsigned int edgeCount;
@@ -147,21 +168,24 @@ int main(int argn, char *argv[]) {
 	}
 	cout << "done" << endl << endl;
 
-	Primes* terminals = new Primes();
-	getPrimes(vertexCount, terminals);
+	Primes terminals = getPrimes(vertexCount);
 	if(startnodes.empty()){
-		for(unsigned int i = 0; i < 100 && i < terminals->size(); i++){
-			startnodes.push_back(terminals->at(i));
+		for (unsigned int i = 0;
+				i < MAX_FOR_DEFAULT_TERMINALS && i < terminals.size(); i++) {
+			startnodes.push_back(terminals[i]);
 		}
 	}
 
+	cout << "Solves Steiner-tree for " << startnodes.size() << " startnodes..." << flush;
+	bTime::cpu_timer timerSteiner;
 	Steiner** steiners = new Steiner*[startnodes.size()];
 	#pragma omp parallel for
 	for(unsigned int i = 0; i < startnodes.size(); i++){
 		steiners[i] = new Steiner();
-		steiners[i]->computeSteinerTree(vertexCount, edges, *weights, *terminals, startnodes[i]);
-		cout << "Objective value of Steiner-tree for startnode " << startnodes[i] << ": " << steiners[i]->getWeight() << endl;
+		steiners[i]->computeSteinerTree(vertexCount, edges, *weights, terminals, startnodes[i]);
 	}
+	bTime::cpu_times timesSteiner = timerSteiner.elapsed();
+	cout << "done" << endl;
 
 	Steiner* s = steiners[0];
 	int node = startnodes[0];
@@ -194,16 +218,22 @@ int main(int argn, char *argv[]) {
 	}
 	cout << "passed" << endl << endl;
 
-	cout << "Edges:" << endl;
+	cout << "TLEN: " << s->getWeight() << endl;
+
+	cout << "TREE:";
 	for(unsigned int i = 0; i < steinerEdges.size(); i++){
 		Edge edge = steinerEdges[i];
-		cout << edge.first << " " << edge.second << endl;
+		cout << " (" << edge.first << ", " << edge.second << ")";
 	}
+	cout << endl;
+
+	bTime::cpu_times timesProgram = timerProgram.elapsed();
+	cout << "TIME: " << bTime::format(timesProgram, 4, "%t") << endl;
+	cout << "WALL: " << bTime::format(timesSteiner, 4, "%w") << endl;
 
 	delete edges;
 	delete weights;
 	delete checker;
-	delete terminals;
 	for(unsigned int i = 0; i < startnodes.size(); i++){
 		delete steiners[i];
 	}
