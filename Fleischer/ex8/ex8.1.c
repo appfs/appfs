@@ -6,7 +6,7 @@
  *
  * @section DESCRIPTION
  *
- * This program parses a graph and builds a steiner tree with every prime indexed node as terminal. In this programm are components, which gives the oppurtunity to give out every edge of the tree. And every, through the heuristic computed tree is compared, which means, that we let the heuristic work starting with a different start terminal in the beginning.
+ * This program parses a graph and parses the longest shortest path from any edge to edge with the index 1.
  */
 
 #define _GNU_SOURCE
@@ -28,7 +28,7 @@ size_t*** graph;
 //size_t temp2;
 size_t vertexInd;
 size_t lastFirst;
-double* value;
+//double* value;
 
 
 
@@ -89,6 +89,7 @@ void buildGraph(FILE *fp){
 	}
 	printf("Graph fitted\n");
 }
+
 /**
 *Findes every prime indexed node
 *@return An array which workes as an boolen, and says that node x is a prime indexed node.
@@ -152,12 +153,12 @@ size_t** minHeapify(size_t i, size_t** index66, double* heapVal){
     	index66[index66[smallest][0]][1] = smallest;
         index66 = minHeapify(smallest, index66, heapVal);
     }  
+
     return index66;   
 }        
 
 /**
 * Check if still heap for updated element.
-
 *@param The heap array and the array with the values, on which the heap based should be build.
 *@return The heap array, where the first line is are index in heap order and in the second one we can read out where to find which node in the heap.
 */
@@ -219,6 +220,7 @@ double** dijkstra(char* inTree, double** dist, double* heapVal, size_t** index66
 		visited[i] = 0;
 		index66[i][0] = i;
 		index66[i][1] = i;
+
 
 		if(inTree[i] == 0){
 			dist[i][0] = INFINITY;
@@ -290,19 +292,19 @@ char terminalsLeft(char* marker, size_t numberOfTerminal){
 * @param All the terminal edges
 * @return The objective value
 */
-double** steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTerminal){
+
+double steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTerminal){
 	char* marker = malloc(numberOfTerminal*sizeof(char));
 	char* inTree = malloc(graphSize*sizeof(char));
 	
 	double* heapVal = (double*) malloc(sizeof(double)*graphSize);
 	size_t** index66 = (size_t**) malloc(sizeof(size_t*)*graphSize);
 	size_t nodesInTree = 1;
-	size_t noOfEdges = 1;
 	double min = INFINITY;
+	double value = 0;
 	
-	value[startTerminal] = 0;
+	value = 0;
 	
-	double** tree = malloc(sizeof(double*)*1);
 	size_t temp = 0;	
 	double** vector = malloc(sizeof(double*)*graphSize);
 
@@ -325,17 +327,13 @@ double** steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTerm
 		}
 	}
 	marker[temp] = 1;
-	value[startTerminal] = min;
+	value = min;
 	size_t iter = terminal[temp];
-	tree[0] = malloc(sizeof(double));
 	while(vector[iter][1] != -1){
 		inTree[iter] = 1;
-		tree = realloc(tree, sizeof(double)* noOfEdges);
-		tree[noOfEdges-1] = malloc(sizeof(double)* 2);
-		tree[noOfEdges-1][0] = (double) iter;
+
 		iter = (size_t) vector[iter][1]; 
-		tree[noOfEdges-1][1] = (double) iter;
-		++noOfEdges;
+
 		++nodesInTree;
 	}
 	
@@ -366,22 +364,19 @@ double** steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTerm
 			inTree[iter] = 1;
 
 			for(size_t h = 0; h < numberOfTerminal; ++h){
+			//printf("so\n");
 				if(iter == terminal[h]){
 					marker[h] = 1;
 				}
 			}
-			tree = realloc(tree, sizeof(double)* noOfEdges);
-			tree[noOfEdges-1] = malloc(sizeof(double)* 2);
-			tree[noOfEdges-1][0] = (double) iter;
+
 			iter = (size_t) vector[iter][1]; 
-			tree[noOfEdges-1][1] = (double) iter;
-			//printf("sko\n");
-			++noOfEdges;
+
 			++nodesInTree;
 		}		
 
-		value[startTerminal] = value[startTerminal] + min;
-
+		value = value + min;
+	
 	}
 	
 	for(size_t i = 0; i < graphSize; ++i){
@@ -393,7 +388,7 @@ double** steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTerm
 	free(heapVal);
 	free(index66);
 	free(vector);
-	return tree;
+	return value;
 }
 
 /**
@@ -439,25 +434,28 @@ int main(int argc, char *argv[]){
 	}
 	++noOfTerminal;		
 	printf("Terminal vector fitted\n");
-	value = malloc(sizeof(double)*noOfTerminal);
-	value[0] = 0;
-	double*** tree = malloc(sizeof(double**)*noOfTerminal);
-	for(size_t i = 0; i < noOfTerminal; ++i){
-		tree[i] = steinerTree(terminal, noOfTerminal, i);
-	}
-	
-	double minValue = value[0];
-	size_t j = 0;
+
 	size_t howFar = 100;
 	if(noOfTerminal < 100){
 		howFar = noOfTerminal;
 	}
+	double* value = malloc(sizeof(double*)*howFar);
+	
+	for(size_t i = 0; i < howFar; ++i){
+
+		value[i] = steinerTree(terminal, noOfTerminal, i);
+	}
+	
+	double minValue = value[0];
+
+
 	for(size_t i = 1; i < howFar; ++i){
 		if(minValue > value[i]){
-			j = i;
+			//j = i;
 			minValue = value[i];
 		}
 	}
+
 
 	
 	printf("Objective value: %f\n", minValue);
