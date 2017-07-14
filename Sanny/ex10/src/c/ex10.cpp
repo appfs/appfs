@@ -29,17 +29,38 @@ using std::string;
 
 // declaring types
 namespace po = boost::program_options;
+using Primes = std::vector<int >;
+
+/**
+ * Computes all primes less than vertexCount
+ * by beginning with the prime 2 and trying to divide all numbers smaller than vertexCount
+ * and try do divide by all found primes.
+ */
+void getPrimes(unsigned int vertexCount, Primes* primes) {
+	primes->push_back(2);
+	for (unsigned int i = 3; i < vertexCount; i++) {
+		char isPrime = true;
+		for (unsigned int i = 0; i < primes->size(); i++) {
+			if (i % primes->at(i) == 0) {
+				isPrime = false;
+			}
+		}
+		if (isPrime) {
+			primes->push_back(i);
+		}
+	}
+}
 
 /** Parsing the arguments given via command line */
 po::variables_map parseCommandLine(po::options_description desc, int argn,
 		char* argv[]) {
 	desc.add_options()//
 			("help,h", "produce help message")//
-			("start_node,sn", po::value<std::vector<int >>(),"node, where to start")//
+			("start_nodes,sn", po::value<std::vector<int >>(),"nodes, where to start")//
 			("input-file", po::value<string>(), "input file");
 	po::positional_options_description p;
 	p.add("input-file", 1);
-	p.add("start_node", -1);
+	p.add("start_nodes", -1);
 	po::variables_map vm;
 	po::store(
 			po::command_line_parser(argn, argv).options(desc).positional(p).run(),
@@ -70,16 +91,6 @@ int main(int argn, char *argv[]) {
 		return 1;
 	}
 
-	std::vector<int > startnodes;
-	if(vm.count("start_node") == 0){
-		cout << "using default startnode 2" << endl;
-		startnodes = std::vector<int >();
-		startnodes.push_back(2);
-	} else {
-		startnodes = vm["start_node"].as<std::vector<int >>();
-	}
-
-
 	string filename = vm["input-file"].as<string >();
 	if(filename.find(FILEEND) == std::string::npos){
 		filename += FILEEND;
@@ -90,6 +101,13 @@ int main(int argn, char *argv[]) {
 	if ( (fileStream.rdstate()) != 0 ){
 		std::perror("ERROR : Encoutered Problem opening file");
 		return 1;
+	}
+
+	std::vector<int > startnodes;
+	if(vm.count("start_nodes") == 0){
+		cout << "Using default startnodes (first 100 primes)" << endl;
+	} else {
+		startnodes = vm["start_node"].as<std::vector<int >>();
 	}
 
 	string line;
@@ -129,20 +147,19 @@ int main(int argn, char *argv[]) {
 	}
 	cout << "done" << endl << endl;
 
-	Steiner** steiners = new Steiner*[startnodes.size()];
-	cout << "Solves Steiner problem for startnodes ";
-	for(unsigned int i = 0; i < startnodes.size(); i++){
-		cout << startnodes[i];
-		if(i != startnodes.size() - 1){
-			cout << ", ";
-		} else {
-			cout << endl;
+	Primes* terminals = new Primes();
+	getPrimes(vertexCount, terminals);
+	if(startnodes.empty()){
+		for(unsigned int i = 0; i < 100 && i < terminals->size(); i++){
+			startnodes.push_back(terminals->at(i));
 		}
 	}
+
+	Steiner** steiners = new Steiner*[startnodes.size()];
 	#pragma omp parallel for
 	for(unsigned int i = 0; i < startnodes.size(); i++){
 		steiners[i] = new Steiner();
-		steiners[i]->steiner(vertexCount, edges, *weights, startnodes[i]);
+		steiners[i]->computeSteinerTree(vertexCount, edges, *weights, *terminals, startnodes[i]);
 		cout << "Objective value of Steiner-tree for startnode " << startnodes[i] << ": " << steiners[i]->getWeight() << endl;
 	}
 
@@ -186,6 +203,7 @@ int main(int argn, char *argv[]) {
 	delete edges;
 	delete weights;
 	delete checker;
+	delete terminals;
 	for(unsigned int i = 0; i < startnodes.size(); i++){
 		delete steiners[i];
 	}

@@ -84,7 +84,7 @@ void Steiner::steiner(int vertexCount, Edges* edges, Weights& weights, int start
 	while(!primes.empty()){
 		//compute distances
 		Weights w = *localWeights;
-		WeightsAndPrenodeMap map = dijsktra->dijkstra(startnode);
+		WeightsAndPrenodeMap map = dijsktra->computeShortestPath(startnode);
 		int primeToAdd = 0;
 		int distToPrime = INT_MAX;
 		//go through all missing primes and find the nearest

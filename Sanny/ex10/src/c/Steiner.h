@@ -11,21 +11,20 @@
 #include <algorithm>
 #include "Dijkstra.h"
 
-using Primes = std::vector<int >;
 using Nodes = std::vector<int >;
+using Terminals = std::vector<int >;
 
 class Steiner {
 private:
 	int steinerWeight = 0;
 	Nodes* nodesInTree;
 	Edges* steinerEdges;
-	Primes getPrimes(unsigned int vertexCount);
 	void addToSteiner(Edge edge, unsigned int i, Weights* weights);
 
 public:
 	Steiner();
 	virtual ~Steiner();
-	void steiner(int vertexCount, Edges* edges, Weights& weights, int startnode);
+	void computeSteinerTree(int vertexCount, Edges* edges, Weights& weights, Terminals& terminals, int startnode);
 	int getWeight();
 	Edges getEdges();
 	Nodes getNodes();

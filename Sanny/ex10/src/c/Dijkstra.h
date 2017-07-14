@@ -36,7 +36,7 @@ private:
 public:
 	Dijkstra(int vertexCount, NodeToEdgeMap* vertexToEdges, Weights* weights);
 	virtual ~Dijkstra();
-	WeightsAndPrenodeMap dijkstra(int source);
+	WeightsAndPrenodeMap computeShortestPath(int source);
 };
 
 #endif /* C_DIJKSTRA_H_ */

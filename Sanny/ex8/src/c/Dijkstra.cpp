@@ -18,7 +18,7 @@ Dijkstra::~Dijkstra() {
 	// nop
 }
 
-WeightsAndPrenodeMap Dijkstra::dijkstra(int source){
+WeightsAndPrenodeMap Dijkstra::computeShortestPath(int source){
 	WeightsAndPrenodeMap weightAndNodeMap(vertexCount);
 	weightAndNodeMap[source].first = 0.;
 
