@@ -1,9 +1,9 @@
 import datastructure.*;
-import dijkstra.*;
+import algorithm.*;
 import io.*;
 import java.lang.management.*;
 
-/** @brief Main class that reads in a file of the specified format and calculates the
+/** Main class that reads in a file of the specified format and calculates the
  * furthest vertex from vertex 1 and its distance.
  * 
  * Reads a file of the format:
@@ -20,12 +20,12 @@ import java.lang.management.*;
  */
 public class ex5 {
     
-    private static final String MYALGORITHM = "0";
-    private static final String LIBALGORITHM = "1";
+    private static final String MYALGORITHM = "-m1";
+    private static final String LIBALGORITHM = "-m2";
     
     /**
      * Main method
-     * @param args String array with algorithm mode (0 or 1) as first entry and path to file as second entry
+     * @param args String array with algorithm mode (-m1 or -m2) as first entry and path to file as second entry
      */
     public static void main(String[] args){
         long startWallClockTimeNano = System.nanoTime();
@@ -38,14 +38,15 @@ public class ex5 {
         if(args[0].equals(MYALGORITHM))
         {
             Dijkstra dijkstra = new Dijkstra(nodes);
-            furthestNode = dijkstra.findFurthestNode();                   
+            dijkstra.calculateDistances(nodes[0]);
+            furthestNode = dijkstra.getHighestDistNode();
         /** Mode 1: Use library Dijkstra implementation */
         }else if(args[0].equals(LIBALGORITHM)){
         	JGraphTDijkstra dijkstra = new JGraphTDijkstra(nodes);
-        	furthestNode = dijkstra.findFurthestNode();
+        	furthestNode = dijkstra.findFurthestNode(nodes[0]);
         }else{
             System.out.println("Invalid Algorithm Mode.");
-            System.out.println("Proper usage: ex5 0 path/to/file/file.txt");
+            System.out.println("Proper usage: ex5 -m1 path/to/file/file.txt");
             return;
         }
         
@@ -53,13 +54,28 @@ public class ex5 {
         long taskWallClockTimeNano  = System.nanoTime() - startWallClockTimeNano;
         long taskUserTimeNano    = getUserTime( ) - startUserTimeNano;
         
+        /** Get results */
+        String fileName = args[1].split("/")[args[1].split("/").length-1];
+        String resultVertex = "RESULT VERTEX " + (furthestNode.id+1);
+        String resultDist = "RESULT DIST " + furthestNode.distance;
+        String wallClockTime = "RESULT WALL-CLOCK TIME " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds";
+        String userTime = "RESULT USER TIME " + (round(taskUserTimeNano/1000000000.0)) + " seconds";
+        
+        String[] results = {fileName, resultVertex, resultDist, wallClockTime, userTime};
+        
         /** Print results */
+        for(int i=0; i<results.length; i++){
+            System.out.println(results[i]);
+        }
         
-        System.out.println("RESULT VERTEX " + (furthestNode.id+1));
-        System.out.println("RESULT DIST " + furthestNode.distance);
-        
-        System.out.println("RESULT WALL-CLOCK TIME: " + (round(taskWallClockTimeNano/1000000000.0)) + " seconds");
-        System.out.println("RESULT USER TIME: " + (round(taskUserTimeNano/1000000000.0)) + " seconds");
+        /** Save results to file */
+        String path = "";
+        String[] pathSplit = args[1].split("/");
+        for(int i=0; i<pathSplit.length-1; i++){
+            path = path + pathSplit[i] + "/";
+        }
+        path = path + "ex5_results/";
+        Writer.write(results, path, fileName);
     }
     
     /** Round to three decimal places */

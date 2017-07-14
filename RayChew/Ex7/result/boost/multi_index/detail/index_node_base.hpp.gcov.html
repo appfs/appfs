@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/multi_index/detail/index_node_base.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">boost/multi_index/detail</a> - index_node_base.hpp<span style="font-size: 80%;"> (source / <a href="index_node_base.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /* Copyright 2003-2015 Joaquin M Lopez Munoz.</a>
+<span class="lineNum">       2 </span>            :  * Distributed under the Boost Software License, Version 1.0.
+<span class="lineNum">       3 </span>            :  * (See accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       4 </span>            :  * http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       5 </span>            :  *
+<span class="lineNum">       6 </span>            :  * See http://www.boost.org/libs/multi_index for library home page.
+<span class="lineNum">       7 </span>            :  */
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #ifndef BOOST_MULTI_INDEX_DETAIL_INDEX_NODE_BASE_HPP
+<span class="lineNum">      10 </span>            : #define BOOST_MULTI_INDEX_DETAIL_INDEX_NODE_BASE_HPP
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      13 </span>            : #pragma once
+<span class="lineNum">      14 </span>            : #endif
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &lt;boost/config.hpp&gt; /* keep it first to prevent nasty warns in MSVC */
+<span class="lineNum">      17 </span>            : #include &lt;boost/type_traits/aligned_storage.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/type_traits/alignment_of.hpp&gt; 
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : #if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+<span class="lineNum">      21 </span>            : #include &lt;boost/archive/archive_exception.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/serialization/access.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/throw_exception.hpp&gt; 
+<span class="lineNum">      24 </span>            : #endif
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : namespace boost{
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : namespace multi_index{
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : namespace detail{
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : /* index_node_base tops the node hierarchy of multi_index_container. It holds
+<span class="lineNum">      33 </span>            :  * the value of the element contained.
+<span class="lineNum">      34 </span>            :  */
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : template&lt;typename Value&gt;
+<span class="lineNum">      37 </span>            : struct pod_value_holder
+<span class="lineNum">      38 </span>            : {
+<span class="lineNum">      39 </span>            :   typename aligned_storage&lt;
+<span class="lineNum">      40 </span>            :     sizeof(Value),
+<span class="lineNum">      41 </span>            :     alignment_of&lt;Value&gt;::value
+<span class="lineNum">      42 </span>            :   &gt;::type                      space;
+<span class="lineNum">      43 </span>            : };
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : template&lt;typename Value,typename Allocator&gt;
+<span class="lineNum">      46 </span>            : struct index_node_base:private pod_value_holder&lt;Value&gt;
+<span class="lineNum">      47 </span>            : {
+<span class="lineNum">      48 </span>            :   typedef index_node_base base_type; /* used for serialization purposes */
+<span class="lineNum">      49 </span>            :   typedef Value           value_type;
+<span class="lineNum">      50 </span>            :   typedef Allocator       allocator_type;
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :   value_type&amp; value()
+<span class="lineNum">      53 </span>            :   {
+<span class="lineNum">      54 </span><span class="lineCov">     262514 :     return *reinterpret_cast&lt;value_type*&gt;(&amp;this-&gt;space);</span>
+<span class="lineNum">      55 </span>            :   }
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            :   const value_type&amp; value()const
+<span class="lineNum">      58 </span>            :   {
+<span class="lineNum">      59 </span>            :     return *reinterpret_cast&lt;const value_type*&gt;(&amp;this-&gt;space);
+<span class="lineNum">      60 </span>            :   }
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :   static index_node_base* from_value(const value_type* p)
+<span class="lineNum">      63 </span>            :   {
+<span class="lineNum">      64 </span>            :     return static_cast&lt;index_node_base *&gt;(
+<span class="lineNum">      65 </span>            :       reinterpret_cast&lt;pod_value_holder&lt;Value&gt;*&gt;( /* std 9.2.17 */
+<span class="lineNum">      66 </span>            :         const_cast&lt;value_type*&gt;(p))); 
+<span class="lineNum">      67 </span>            :   }
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : private:
+<span class="lineNum">      70 </span>            : #if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+<span class="lineNum">      71 </span>            :   friend class boost::serialization::access;
+<span class="lineNum">      72 </span>            :   
+<span class="lineNum">      73 </span>            :   /* nodes do not emit any kind of serialization info. They are
+<span class="lineNum">      74 </span>            :    * fed to Boost.Serialization so that pointers to nodes are
+<span class="lineNum">      75 </span>            :    * tracked correctly.
+<span class="lineNum">      76 </span>            :    */
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :   template&lt;class Archive&gt;
+<span class="lineNum">      79 </span>            :   void serialize(Archive&amp;,const unsigned int)
+<span class="lineNum">      80 </span>            :   {
+<span class="lineNum">      81 </span>            :   }
+<span class="lineNum">      82 </span>            : #endif
+<span class="lineNum">      83 </span>            : };
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : template&lt;typename Node,typename Value&gt;
+<span class="lineNum">      86 </span>            : Node* node_from_value(const Value* p)
+<span class="lineNum">      87 </span>            : {
+<span class="lineNum">      88 </span>            :   typedef typename Node::allocator_type allocator_type;
+<span class="lineNum">      89 </span>            :   return static_cast&lt;Node*&gt;(
+<span class="lineNum">      90 </span>            :     index_node_base&lt;Value,allocator_type&gt;::from_value(p));
+<span class="lineNum">      91 </span>            : }
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : } /* namespace multi_index::detail */
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : } /* namespace multi_index */
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : #if !defined(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+<span class="lineNum">      98 </span>            : /* Index nodes never get constructed directly by Boost.Serialization,
+<span class="lineNum">      99 </span>            :  * as archives are always fed pointers to previously existent
+<span class="lineNum">     100 </span>            :  * nodes. So, if this is called it means we are dealing with a
+<span class="lineNum">     101 </span>            :  * somehow invalid archive.
+<span class="lineNum">     102 </span>            :  */
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            : #if defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
+<span class="lineNum">     105 </span>            : namespace serialization{
+<span class="lineNum">     106 </span>            : #else
+<span class="lineNum">     107 </span>            : namespace multi_index{
+<span class="lineNum">     108 </span>            : namespace detail{
+<span class="lineNum">     109 </span>            : #endif
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            : template&lt;class Archive,typename Value,typename Allocator&gt;
+<span class="lineNum">     112 </span>            : inline void load_construct_data(
+<span class="lineNum">     113 </span>            :   Archive&amp;,boost::multi_index::detail::index_node_base&lt;Value,Allocator&gt;*,
+<span class="lineNum">     114 </span>            :   const unsigned int)
+<span class="lineNum">     115 </span>            : {
+<span class="lineNum">     116 </span>            :   throw_exception(
+<span class="lineNum">     117 </span>            :     archive::archive_exception(archive::archive_exception::other_exception));
+<span class="lineNum">     118 </span>            : }
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            : #if defined(BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP)
+<span class="lineNum">     121 </span>            : } /* namespace serialization */
+<span class="lineNum">     122 </span>            : #else
+<span class="lineNum">     123 </span>            : } /* namespace multi_index::detail */
+<span class="lineNum">     124 </span>            : } /* namespace multi_index */
+<span class="lineNum">     125 </span>            : #endif
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            : #endif
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : } /* namespace boost */
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

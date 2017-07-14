@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/graph/exception.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">boost/graph</a> - exception.hpp<span style="font-size: 80%;"> (source / <a href="exception.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : //=======================================================================</a>
+<span class="lineNum">       2 </span>            : // Copyright 2002 Indiana University.
+<span class="lineNum">       3 </span>            : // Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
+<span class="lineNum">       4 </span>            : //
+<span class="lineNum">       5 </span>            : // Distributed under the Boost Software License, Version 1.0. (See
+<span class="lineNum">       6 </span>            : // accompanying file LICENSE_1_0.txt or copy at
+<span class="lineNum">       7 </span>            : // http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       8 </span>            : //=======================================================================
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #ifndef BOOST_GRAPH_EXCEPTION_HPP
+<span class="lineNum">      11 </span>            : #define BOOST_GRAPH_EXCEPTION_HPP
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #include &lt;stdexcept&gt;
+<span class="lineNum">      14 </span>            : #include &lt;string&gt;
+<span class="lineNum">      15 </span>            : 
+<a name="16"><span class="lineNum">      16 </span>            : namespace boost {</a>
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineNoCov">          0 :     struct bad_graph : public std::invalid_argument {</span>
+<span class="lineNum">      19 </span>            :         bad_graph(const std::string&amp; what_arg)
+<span class="lineNum">      20 </span><span class="lineNoCov">          0 :             : std::invalid_argument(what_arg) { }</span>
+<span class="lineNum">      21 </span>            :     };
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            :     struct not_a_dag : public bad_graph {
+<span class="lineNum">      24 </span>            :         not_a_dag()
+<span class="lineNum">      25 </span>            :             : bad_graph(&quot;The graph must be a DAG.&quot;)
+<span class="lineNum">      26 </span>            :         { }
+<a name="27"><span class="lineNum">      27 </span>            :     };</a>
+<a name="28"><span class="lineNum">      28 </span>            : </a>
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 :     struct negative_edge : public bad_graph {</span>
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :         negative_edge()</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :             : bad_graph(&quot;The graph may not contain an edge with negative weight.&quot;)</span>
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :         { }</span>
+<span class="lineNum">      33 </span>            :     };
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            :     struct negative_cycle : public bad_graph {
+<span class="lineNum">      36 </span>            :         negative_cycle()
+<span class="lineNum">      37 </span>            :             : bad_graph(&quot;The graph may not contain negative cycles.&quot;)
+<span class="lineNum">      38 </span>            :         { }
+<span class="lineNum">      39 </span>            :     };
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            :     struct not_connected : public bad_graph {
+<span class="lineNum">      42 </span>            :         not_connected()
+<span class="lineNum">      43 </span>            :             : bad_graph(&quot;The graph must be connected.&quot;)
+<span class="lineNum">      44 </span>            :         { }
+<span class="lineNum">      45 </span>            :     };
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :    struct not_complete : public bad_graph {
+<span class="lineNum">      48 </span>            :        not_complete()
+<span class="lineNum">      49 </span>            :            : bad_graph(&quot;The graph must be complete.&quot;)
+<span class="lineNum">      50 </span>            :        { }
+<span class="lineNum">      51 </span>            :    };
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            : } // namespace boost
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : #endif // BOOST_GRAPH_EXCEPTION_HPP
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

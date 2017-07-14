@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/spirit/home/qi/char/char_parser.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">boost/spirit/home/qi/char</a> - char_parser.hpp<span style="font-size: 80%;"> (source / <a href="char_parser.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntryHi">-</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :     Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :     Distributed under the Boost Software License, Version 1.0. (See accompanying
+<span class="lineNum">       5 </span>            :     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">       6 </span>            : ==============================================================================*/
+<span class="lineNum">       7 </span>            : #if !defined(BOOST_SPIRIT_CHAR_PARSER_APR_16_2006_0906AM)
+<span class="lineNum">       8 </span>            : #define BOOST_SPIRIT_CHAR_PARSER_APR_16_2006_0906AM
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      11 </span>            : #pragma once
+<span class="lineNum">      12 </span>            : #endif
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #include &lt;boost/spirit/home/qi/domain.hpp&gt;
+<span class="lineNum">      15 </span>            : #include &lt;boost/spirit/home/qi/parser.hpp&gt;
+<span class="lineNum">      16 </span>            : #include &lt;boost/spirit/home/qi/detail/assign_to.hpp&gt;
+<span class="lineNum">      17 </span>            : #include &lt;boost/spirit/home/qi/meta_compiler.hpp&gt;
+<span class="lineNum">      18 </span>            : #include &lt;boost/spirit/home/qi/skip_over.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/spirit/home/support/unused.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/spirit/home/support/info.hpp&gt;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : namespace boost { namespace spirit
+<span class="lineNum">      23 </span>            : {
+<span class="lineNum">      24 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      25 </span>            :     // Enablers
+<span class="lineNum">      26 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      27 </span>            :     template &lt;&gt;
+<span class="lineNum">      28 </span>            :     struct use_operator&lt;qi::domain, proto::tag::complement&gt; // enables ~
+<span class="lineNum">      29 </span>            :       : mpl::true_ {};
+<span class="lineNum">      30 </span>            : }}
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : namespace boost { namespace spirit { namespace traits // classification
+<span class="lineNum">      33 </span>            : {
+<span class="lineNum">      34 </span>            :     namespace detail
+<span class="lineNum">      35 </span>            :     {
+<span class="lineNum">      36 </span>            :         BOOST_MPL_HAS_XXX_TRAIT_DEF(char_parser_id)
+<span class="lineNum">      37 </span>            :     }
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :     template &lt;typename T&gt;
+<span class="lineNum">      40 </span>            :     struct is_char_parser : detail::has_char_parser_id&lt;T&gt; {};
+<span class="lineNum">      41 </span>            : }}}
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : namespace boost { namespace spirit { namespace qi
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      46 </span>            :     // The base char_parser
+<span class="lineNum">      47 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      48 </span>            :     template &lt;typename Derived, typename Char, typename Attr = Char&gt;
+<span class="lineNum">      49 </span>            :     struct char_parser : primitive_parser&lt;Derived&gt;
+<span class="lineNum">      50 </span>            :     {
+<span class="lineNum">      51 </span>            :         typedef Char char_type;
+<span class="lineNum">      52 </span>            :         struct char_parser_id;
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :         // if Attr is unused_type, Derived must supply its own attribute
+<span class="lineNum">      55 </span>            :         // metafunction
+<span class="lineNum">      56 </span>            :         template &lt;typename Context, typename Iterator&gt;
+<span class="lineNum">      57 </span>            :         struct attribute
+<span class="lineNum">      58 </span>            :         {
+<span class="lineNum">      59 </span>            :             typedef Attr type;
+<span class="lineNum">      60 </span>            :         };
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :         template &lt;typename Iterator, typename Context, typename Skipper, typename Attribute&gt;
+<span class="lineNum">      63 </span>            :         bool parse(Iterator&amp; first, Iterator const&amp; last
+<span class="lineNum">      64 </span>            :           , Context&amp; context, Skipper const&amp; skipper, Attribute&amp; attr_) const
+<span class="lineNum">      65 </span>            :         {
+<span class="lineNum">      66 </span>            :             qi::skip_over(first, last, skipper);
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span><span class="lineCov">    2000000 :             if (first != last &amp;&amp; this-&gt;derived().test(*first, context))</span>
+<span class="lineNum">      69 </span>            :             {
+<span class="lineNum">      70 </span>            :                 spirit::traits::assign_to(*first, attr_);
+<span class="lineNum">      71 </span>            :                 ++first;
+<span class="lineNum">      72 </span>            :                 return true;
+<span class="lineNum">      73 </span>            :             }
+<span class="lineNum">      74 </span>            :             return false;
+<span class="lineNum">      75 </span>            :         }
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :         // Requirement: p.test(ch, context) -&gt; bool
+<span class="lineNum">      78 </span>            :         //
+<span class="lineNum">      79 </span>            :         //  ch:         character being parsed
+<span class="lineNum">      80 </span>            :         //  context:    enclosing rule context
+<span class="lineNum">      81 </span>            :     };
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      84 </span>            :     // negated_char_parser handles ~cp expressions (cp is a char_parser)
+<span class="lineNum">      85 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      86 </span>            :     template &lt;typename Positive&gt;
+<span class="lineNum">      87 </span>            :     struct negated_char_parser :
+<span class="lineNum">      88 </span>            :         char_parser&lt;negated_char_parser&lt;Positive&gt;, typename Positive::char_type&gt;
+<span class="lineNum">      89 </span>            :     {
+<span class="lineNum">      90 </span>            :         negated_char_parser(Positive const&amp; positive_)
+<span class="lineNum">      91 </span>            :           : positive(positive_) {}
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :         template &lt;typename CharParam, typename Context&gt;
+<span class="lineNum">      94 </span>            :         bool test(CharParam ch, Context&amp; context) const
+<span class="lineNum">      95 </span>            :         {
+<span class="lineNum">      96 </span>            :             return !positive.test(ch, context);
+<span class="lineNum">      97 </span>            :         }
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :         template &lt;typename Context&gt;
+<span class="lineNum">     100 </span>            :         info what(Context&amp; context) const
+<span class="lineNum">     101 </span>            :         {
+<span class="lineNum">     102 </span>            :             return info(&quot;not&quot;, positive.what(context));
+<span class="lineNum">     103 </span>            :         }
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            :         Positive positive;
+<span class="lineNum">     106 </span>            :     };
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     109 </span>            :     // Parser generators: make_xxx function (objects)
+<span class="lineNum">     110 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     111 </span>            :     namespace detail
+<span class="lineNum">     112 </span>            :     {
+<span class="lineNum">     113 </span>            :         template &lt;typename Positive&gt;
+<span class="lineNum">     114 </span>            :         struct make_negated_char_parser
+<span class="lineNum">     115 </span>            :         {
+<span class="lineNum">     116 </span>            :             typedef negated_char_parser&lt;Positive&gt; result_type;
+<span class="lineNum">     117 </span>            :             result_type operator()(Positive const&amp; positive) const
+<span class="lineNum">     118 </span>            :             {
+<span class="lineNum">     119 </span>            :                 return result_type(positive);
+<span class="lineNum">     120 </span>            :             }
+<span class="lineNum">     121 </span>            :         };
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            :         template &lt;typename Positive&gt;
+<span class="lineNum">     124 </span>            :         struct make_negated_char_parser&lt;negated_char_parser&lt;Positive&gt; &gt;
+<span class="lineNum">     125 </span>            :         {
+<span class="lineNum">     126 </span>            :             typedef Positive result_type;
+<span class="lineNum">     127 </span>            :             result_type operator()(negated_char_parser&lt;Positive&gt; const&amp; ncp) const
+<span class="lineNum">     128 </span>            :             {
+<span class="lineNum">     129 </span>            :                 return ncp.positive;
+<span class="lineNum">     130 </span>            :             }
+<span class="lineNum">     131 </span>            :         };
+<span class="lineNum">     132 </span>            :     }
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            :     template &lt;typename Elements, typename Modifiers&gt;
+<span class="lineNum">     135 </span>            :     struct make_composite&lt;proto::tag::complement, Elements, Modifiers&gt;
+<span class="lineNum">     136 </span>            :     {
+<span class="lineNum">     137 </span>            :         typedef typename
+<span class="lineNum">     138 </span>            :             fusion::result_of::value_at_c&lt;Elements, 0&gt;::type
+<span class="lineNum">     139 </span>            :         subject;
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            :         BOOST_SPIRIT_ASSERT_MSG((
+<span class="lineNum">     142 </span>            :             traits::is_char_parser&lt;subject&gt;::value
+<span class="lineNum">     143 </span>            :         ), subject_is_not_negatable, (subject));
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            :         typedef typename
+<span class="lineNum">     146 </span>            :             detail::make_negated_char_parser&lt;subject&gt;::result_type
+<span class="lineNum">     147 </span>            :         result_type;
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            :         result_type operator()(Elements const&amp; elements, unused_type) const
+<span class="lineNum">     150 </span>            :         {
+<span class="lineNum">     151 </span>            :             return detail::make_negated_char_parser&lt;subject&gt;()(
+<span class="lineNum">     152 </span>            :                 fusion::at_c&lt;0&gt;(elements));
+<span class="lineNum">     153 </span>            :         }
+<span class="lineNum">     154 </span>            :     };
+<span class="lineNum">     155 </span>            : }}}
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,7 +1,7 @@
 /**
  * @file
  * @author  Sven Fleischer
- * @version 2.0
+ * @version 2.1
 
  *
  * @section DESCRIPTION
@@ -26,9 +26,13 @@ size_t graphSize;
 size_t* vertexNo;
 size_t*** graph;
 double* dist;
-size_t temp2;
+double* heapVal;
+//size_t temp2;
 size_t vertexInd;
+size_t lastFirst;
 char* temp;
+size_t* index66;
+size_t* reversedIndex;
 
 
 
@@ -107,52 +111,153 @@ char extPath(size_t a, size_t b){
 }
 
 /**
-* Findes the minimal enty of an array. Solution is going to be saved into one of the input parameters.
-*
+* Makes shure everything is still a heap.
+*@param The heap-array
+*@return The heap-array
 *
 */
 
-void minDist(){
-	double min= INFINITY;
-	temp2 = 0;
-	for(size_t i = 0; i < graphSize; ++i){
-		if(temp[i] == 0 && dist[i] <= min){
-			min = dist[i];
-			temp2 = i;
-		}	
-	}
+size_t* minHeapify(size_t i){
+    size_t left;
+    size_t right;
+    size_t smallest;
+    
+    if(i != 0){
+    	left = 2*i;
+    	right = 2*i + 1;
+    	smallest = i;
+    }
+    else{
+    	left = 1;
+    	right = 2;
+    	smallest = 0;    	
+    }
+    if (left < graphSize && heapVal[index66[left]] < heapVal[index66[smallest]]){
+    	//printf("HHH\n");
+        smallest = left;
+    }  
+    if (right < graphSize && heapVal[index66[right]] < heapVal[index66[smallest]]){
+        smallest = right;
+    }    
+    
+    if (smallest != i){
+    	size_t temp6 = index66[i];
+    	index66[i] = index66[smallest];
+    	index66[smallest] = temp6;
+    	reversedIndex[index66[i]] = i;
+    	reversedIndex[index66[smallest]] = smallest;
+        index66 = minHeapify(smallest);
+    }  
+    return index66;   
+}        
+
+/**
+* Check if still heap for updated element.
+*@param The heap-array
+*@return The heap array
+*
+*/
+size_t* update(size_t i){
+	size_t child;
+    	size_t father;
+    	if(i ==0){
+    		return index66;
+    	}
+    	else{
+    		child = i;
+    		father = i/2;
+    	}
+    	
+    	if(heapVal[index66[child]] < heapVal[index66[father]]){
+    		size_t temp6 = index66[father];
+    		if (father == 0){
+    			lastFirst == child;
+    		}
+    		index66[father] = index66[child];
+    		index66[child] = temp6;
+    		reversedIndex[index66[child]] = child;
+    		reversedIndex[index66[father]] = father;
+        	index66 = update(father);
+    	}
+    	return index66;
+}
+
+/**
+* Builds the heap.
+*@return The heap in array form.
+*
+*/
+
+size_t* buildMinHeap(){
+    
+    for(size_t i = graphSize/2; i>0; --i){
+        index66 = minHeapify(i);
+    } 
+    index66 = minHeapify(0);
+    return index66;	        
+}        
+
+/**
+* Deletes the first element.
+*@return The heap array
+*
+*/
+
+size_t* popHeap(){
+	heapVal[index66[lastFirst]] = INFINITY;
+    	index66 = minHeapify(lastFirst);
+	return index66;
 }
 
 
 /**
 * Computes the shortest paths from vertex with inex 0 to every other else
-*
+*@return An array with all the values of the solution
 *
 */
 
 double* dijkstra(){
-
+	
 	dist = (double*) malloc(sizeof(double)*graphSize);
+	heapVal = (double*) malloc(sizeof(double)*graphSize);
+	index66 = (size_t*) malloc(sizeof(size_t)*graphSize);
+	reversedIndex = (size_t*) malloc(sizeof(size_t)*graphSize);
 	temp =(char*) malloc(sizeof(char)*graphSize);
+	size_t minVal;
 	
 	for (size_t i = 0; i < graphSize; ++i){
 		dist[i] = INFINITY;
 		temp[i] = 0;
+		heapVal[i] = INFINITY;
+		index66[i] = i;
+		reversedIndex[i] = i;
 	}
 	
 	dist[0] = 0;
-
+	heapVal[0] =0;
+	index66 = buildMinHeap();
+	
 	for(size_t j = 0; j < graphSize; ++j){
-		minDist();
-		temp[temp2] = 1;
-		for (size_t n= 0; n < graphSize; n++){
-			if(!temp[n] && extPath(temp2, n) && dist[temp2] != INFINITY){
-				if(dist[temp2] + (double)graph[temp2][vertexInd][1] < dist[n]){
-					dist[n] = dist[temp2] + (double)graph[temp2][vertexInd][1];
+		minVal = index66[0];
+		if (minVal == INFINITY){
+			return dist;
+		}
+		lastFirst = 0;
+		size_t deapTree = 0;
+		temp[minVal] = 1;
+		for (size_t n= 0; n < vertexNo[minVal]; n++){
+			if(!temp[graph[minVal][n][0]-1] && dist[minVal] != INFINITY){
+				if(dist[minVal] + (double)graph[minVal][n][1] < dist[graph[minVal][n][0]-1]){
+					dist[graph[minVal][n][0]-1] = dist[minVal] + (double)graph[minVal][n][1];
+					heapVal[graph[minVal][n][0]-1] = dist[graph[minVal][n][0]-1];
+					index66 = update(reversedIndex[graph[minVal][n][0]-1]);
 					assert(!fetestexcept(FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW));
 				}
 			}
 		}
+		index66 = popHeap();
+		//deapTree);		
+		
 	}
 	return dist;
 }
@@ -183,7 +288,7 @@ int main(int argc, char *argv[]){
     	if (fp == NULL)	exit(EXIT_FAILURE);
         
 
-        size_t index = 0;
+        size_t indEx1 = 0;
         double max = 0;
         
 	buildGraph(fp);
@@ -191,7 +296,7 @@ int main(int argc, char *argv[]){
 	for (size_t i = 0; i < graphSize; ++i){
 		if (max < dist[i]){
 			max = dist[i];
-			index = i;
+			indEx1 = i;
 		}
 	}
 	for (size_t i = 0; i<graphSize; ++i){
@@ -200,10 +305,10 @@ int main(int argc, char *argv[]){
 		}
 		free(graph[i]);
 	}
-	printf("RESULT VERTEX %ld \n", index+1);
+	printf("RESULT VERTEX %ld \n", indEx1+1);
         printf("RESULT DIST %ld \n", (size_t)max);
 	
-	cpu = clock() - cpu;
+	        cpu = clock() - cpu;
         assert(!gettimeofday(&time,NULL));
 	wall=(double)time.tv_sec + (double)time.tv_usec * .000001 -wall;
         printf("The programm used the CPU time of: %fs\n",((float)cpu)/CLOCKS_PER_SEC);

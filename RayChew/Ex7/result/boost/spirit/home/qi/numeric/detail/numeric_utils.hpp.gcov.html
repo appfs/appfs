@@ -1,0 +1,610 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - boost/spirit/home/qi/numeric/detail/numeric_utils.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../../index.html">top level</a> - <a href="index.html">boost/spirit/home/qi/numeric/detail</a> - numeric_utils.hpp<span style="font-size: 80%;"> (source / <a href="numeric_utils.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">39</td>
+            <td class="headerCovTableEntryLo">38.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-07 11:26:11</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">40.0 %</td>
+          </tr>
+          <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*=============================================================================</a>
+<span class="lineNum">       2 </span>            :     Copyright (c) 2001-2011 Joel de Guzman
+<span class="lineNum">       3 </span>            :     Copyright (c) 2001-2011 Hartmut Kaiser
+<span class="lineNum">       4 </span>            :     Copyright (c) 2011 Jan Frederick Eick
+<span class="lineNum">       5 </span>            :     Copyright (c) 2011 Christopher Jefferson
+<span class="lineNum">       6 </span>            :     Copyright (c) 2006 Stephen Nutt
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :     Distributed under the Boost Software License, Version 1.0. (See accompanying
+<span class="lineNum">       9 </span>            :     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+<span class="lineNum">      10 </span>            : =============================================================================*/
+<span class="lineNum">      11 </span>            : #if !defined(SPIRIT_NUMERIC_UTILS_APRIL_17_2006_0816AM)
+<span class="lineNum">      12 </span>            : #define SPIRIT_NUMERIC_UTILS_APRIL_17_2006_0816AM
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : #if defined(_MSC_VER)
+<span class="lineNum">      15 </span>            : #pragma once
+<span class="lineNum">      16 </span>            : #endif
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : #include &lt;boost/detail/iterator.hpp&gt;
+<span class="lineNum">      19 </span>            : #include &lt;boost/spirit/home/support/unused.hpp&gt;
+<span class="lineNum">      20 </span>            : #include &lt;boost/spirit/home/qi/detail/attributes.hpp&gt;
+<span class="lineNum">      21 </span>            : #include &lt;boost/spirit/home/support/char_encoding/ascii.hpp&gt;
+<span class="lineNum">      22 </span>            : #include &lt;boost/spirit/home/support/numeric_traits.hpp&gt;
+<span class="lineNum">      23 </span>            : #include &lt;boost/preprocessor/repetition/repeat.hpp&gt;
+<span class="lineNum">      24 </span>            : #include &lt;boost/preprocessor/iteration/local.hpp&gt;
+<span class="lineNum">      25 </span>            : #include &lt;boost/preprocessor/comparison/less.hpp&gt;
+<span class="lineNum">      26 </span>            : #include &lt;boost/preprocessor/control/if.hpp&gt;
+<span class="lineNum">      27 </span>            : #include &lt;boost/preprocessor/seq/elem.hpp&gt;
+<span class="lineNum">      28 </span>            : #include &lt;boost/utility/enable_if.hpp&gt;
+<span class="lineNum">      29 </span>            : #include &lt;boost/type_traits/is_integral.hpp&gt;
+<span class="lineNum">      30 </span>            : #include &lt;boost/type_traits/is_signed.hpp&gt;
+<span class="lineNum">      31 </span>            : #include &lt;boost/mpl/bool.hpp&gt;
+<span class="lineNum">      32 </span>            : #include &lt;boost/mpl/and.hpp&gt;
+<span class="lineNum">      33 </span>            : #include &lt;boost/limits.hpp&gt;
+<span class="lineNum">      34 </span>            : #include &lt;boost/integer_traits.hpp&gt;
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : #if defined(BOOST_MSVC)
+<span class="lineNum">      37 </span>            : # pragma warning(push)
+<span class="lineNum">      38 </span>            : # pragma warning(disable: 4127) // conditional expression is constant
+<span class="lineNum">      39 </span>            : #endif
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : #if !defined(SPIRIT_NUMERICS_LOOP_UNROLL)
+<span class="lineNum">      42 </span>            : # define SPIRIT_NUMERICS_LOOP_UNROLL 3
+<span class="lineNum">      43 </span>            : #endif
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : namespace boost { namespace spirit { namespace qi { namespace detail
+<span class="lineNum">      46 </span>            : {
+<span class="lineNum">      47 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      48 </span>            :     //
+<span class="lineNum">      49 </span>            :     //  The maximum radix digits that can be represented without
+<span class="lineNum">      50 </span>            :     //  overflow:
+<span class="lineNum">      51 </span>            :     //
+<span class="lineNum">      52 </span>            :     //          template&lt;typename T, unsigned Radix&gt;
+<span class="lineNum">      53 </span>            :     //          struct digits_traits::value;
+<span class="lineNum">      54 </span>            :     //
+<span class="lineNum">      55 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      56 </span>            :     template &lt;typename T, unsigned Radix&gt;
+<span class="lineNum">      57 </span>            :     struct digits_traits;
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : // lookup table for log2(x) : 2 &lt;= x &lt;= 36
+<span class="lineNum">      60 </span>            : #define BOOST_SPIRIT_LOG2 (#error)(#error)                                    \
+<span class="lineNum">      61 </span>            :         (1000000)(1584960)(2000000)(2321920)(2584960)(2807350)                \
+<span class="lineNum">      62 </span>            :         (3000000)(3169920)(3321920)(3459430)(3584960)(3700430)                \
+<span class="lineNum">      63 </span>            :         (3807350)(3906890)(4000000)(4087460)(4169920)(4247920)                \
+<span class="lineNum">      64 </span>            :         (4321920)(4392310)(4459430)(4523560)(4584960)(4643850)                \
+<span class="lineNum">      65 </span>            :         (4700430)(4754880)(4807350)(4857980)(4906890)(4954190)                \
+<span class="lineNum">      66 </span>            :         (5000000)(5044390)(5087460)(5129280)(5169925)                         \
+<span class="lineNum">      67 </span>            :     /***/
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : #define BOOST_PP_LOCAL_MACRO(Radix)                                           \
+<span class="lineNum">      70 </span>            :     template &lt;typename T&gt; struct digits_traits&lt;T, Radix&gt;                      \
+<span class="lineNum">      71 </span>            :     {                                                                         \
+<span class="lineNum">      72 </span>            :         typedef std::numeric_limits&lt;T&gt; numeric_limits_type;                   \
+<span class="lineNum">      73 </span>            :         BOOST_STATIC_CONSTANT(int, value = static_cast&lt;int&gt;(                  \
+<span class="lineNum">      74 </span>            :             (numeric_limits_type::digits * 1000000) /                         \
+<span class="lineNum">      75 </span>            :                 BOOST_PP_SEQ_ELEM(Radix, BOOST_SPIRIT_LOG2)));                \
+<span class="lineNum">      76 </span>            :     };                                                                        \
+<span class="lineNum">      77 </span>            :     /***/
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : #define BOOST_PP_LOCAL_LIMITS (2, 36)
+<span class="lineNum">      80 </span>            : #include BOOST_PP_LOCAL_ITERATE()
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            : #undef BOOST_SPIRIT_LOG2
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      85 </span>            :     //
+<span class="lineNum">      86 </span>            :     //  Traits class for radix specific number conversion
+<span class="lineNum">      87 </span>            :     //
+<span class="lineNum">      88 </span>            :     //      Test the validity of a single character:
+<span class="lineNum">      89 </span>            :     //
+<span class="lineNum">      90 </span>            :     //          template&lt;typename Char&gt; static bool is_valid(Char ch);
+<span class="lineNum">      91 </span>            :     //
+<span class="lineNum">      92 </span>            :     //      Convert a digit from character representation to binary
+<span class="lineNum">      93 </span>            :     //      representation:
+<span class="lineNum">      94 </span>            :     //
+<span class="lineNum">      95 </span>            :     //          template&lt;typename Char&gt; static int digit(Char ch);
+<span class="lineNum">      96 </span>            :     //
+<span class="lineNum">      97 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">      98 </span>            :     template &lt;unsigned Radix&gt;
+<span class="lineNum">      99 </span>            :     struct radix_traits
+<span class="lineNum">     100 </span>            :     {
+<span class="lineNum">     101 </span>            :         template &lt;typename Char&gt;
+<span class="lineNum">     102 </span>            :         inline static bool is_valid(Char ch)
+<span class="lineNum">     103 </span>            :         {
+<span class="lineNum">     104 </span>            :             if (Radix &lt;= 10)
+<span class="lineNum">     105 </span><span class="lineCov">   14472800 :                 return (ch &gt;= '0' &amp;&amp; ch &lt;= static_cast&lt;Char&gt;('0' + Radix -1));</span>
+<span class="lineNum">     106 </span>            :             return (ch &gt;= '0' &amp;&amp; ch &lt;= '9')
+<span class="lineNum">     107 </span>            :                 || (ch &gt;= 'a' &amp;&amp; ch &lt;= static_cast&lt;Char&gt;('a' + Radix -10 -1))
+<span class="lineNum">     108 </span>            :                 || (ch &gt;= 'A' &amp;&amp; ch &lt;= static_cast&lt;Char&gt;('A' + Radix -10 -1));
+<span class="lineNum">     109 </span>            :         }
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :         template &lt;typename Char&gt;
+<span class="lineNum">     112 </span>            :         inline static unsigned digit(Char ch)
+<span class="lineNum">     113 </span>            :         {
+<span class="lineNum">     114 </span>            :             if (Radix &lt;= 10 || (ch &gt;= '0' &amp;&amp; ch &lt;= '9'))
+<span class="lineNum">     115 </span><span class="lineCov">   12472796 :                 return ch - '0';</span>
+<span class="lineNum">     116 </span>            :             return spirit::char_encoding::ascii::tolower(ch) - 'a' + 10;
+<span class="lineNum">     117 </span>            :         }
+<span class="lineNum">     118 </span>            :     };
+<span class="lineNum">     119 </span>            :     
+<span class="lineNum">     120 </span>            :     template &lt;typename T, T Val&gt;
+<span class="lineNum">     121 </span>            :     struct constexpr_int
+<span class="lineNum">     122 </span>            :     {
+<span class="lineNum">     123 </span>            :         BOOST_STATIC_CONSTEXPR T value = Val; 
+<span class="lineNum">     124 </span>            :     };
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     127 </span>            :     //  positive_accumulator/negative_accumulator: Accumulator policies for
+<span class="lineNum">     128 </span>            :     //  extracting integers. Use positive_accumulator if number is positive.
+<span class="lineNum">     129 </span>            :     //  Use negative_accumulator if number is negative.
+<span class="lineNum">     130 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     131 </span>            :     template &lt;unsigned Radix&gt;
+<span class="lineNum">     132 </span>            :     struct positive_accumulator
+<span class="lineNum">     133 </span>            :     {
+<span class="lineNum">     134 </span>            :         template &lt;typename T, typename Char&gt;
+<span class="lineNum">     135 </span>            :         inline static void add(T&amp; n, Char ch, mpl::false_) // unchecked add
+<span class="lineNum">     136 </span>            :         {
+<span class="lineNum">     137 </span>            :             const int digit = radix_traits&lt;Radix&gt;::digit(ch);
+<span class="lineNum">     138 </span><span class="lineCov">   10472794 :             n = n * T(Radix) + T(digit);</span>
+<span class="lineNum">     139 </span>            :         }
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            :         template &lt;typename T, typename Char&gt;
+<span class="lineNum">     142 </span>            :         inline static bool add(T&amp; n, Char ch, mpl::true_) // checked add
+<span class="lineNum">     143 </span>            :         {
+<span class="lineNum">     144 </span>            :             // Ensure n *= Radix will not overflow
+<span class="lineNum">     145 </span>            :             typedef constexpr_int&lt;T, boost::integer_traits&lt;T&gt;::const_max&gt; max;
+<span class="lineNum">     146 </span>            :             typedef constexpr_int&lt;T, max::value / Radix&gt; val;
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :             if (n &gt; val::value)</span>
+<span class="lineNum">     149 </span>            :                 return false;
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :             n *= Radix;</span>
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            :             // Ensure n += digit will not overflow
+<span class="lineNum">     154 </span>            :             const int digit = radix_traits&lt;Radix&gt;::digit(ch);
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :             if (n &gt; max::value - digit)</span>
+<span class="lineNum">     156 </span>            :                 return false;
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :             n += static_cast&lt;T&gt;(digit);</span>
+<span class="lineNum">     159 </span>            :             return true;
+<span class="lineNum">     160 </span>            :         }
+<span class="lineNum">     161 </span>            :     };
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span>            :     template &lt;unsigned Radix&gt;
+<span class="lineNum">     164 </span>            :     struct negative_accumulator
+<span class="lineNum">     165 </span>            :     {
+<span class="lineNum">     166 </span>            :         template &lt;typename T, typename Char&gt;
+<span class="lineNum">     167 </span>            :         inline static void add(T&amp; n, Char ch, mpl::false_) // unchecked subtract
+<span class="lineNum">     168 </span>            :         {
+<span class="lineNum">     169 </span>            :             const int digit = radix_traits&lt;Radix&gt;::digit(ch);
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :             n = n * T(Radix) - T(digit);</span>
+<span class="lineNum">     171 </span>            :         }
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            :         template &lt;typename T, typename Char&gt;
+<span class="lineNum">     174 </span>            :         inline static bool add(T&amp; n, Char ch, mpl::true_) // checked subtract
+<span class="lineNum">     175 </span>            :         {
+<span class="lineNum">     176 </span>            :             // Ensure n *= Radix will not underflow
+<span class="lineNum">     177 </span>            :             typedef constexpr_int&lt;T, boost::integer_traits&lt;T&gt;::const_min&gt; min;
+<span class="lineNum">     178 </span>            :             typedef constexpr_int&lt;T, (min::value + 1) / T(Radix)&gt; val;
+<span class="lineNum">     179 </span>            : 
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :             if (n &lt; val::value)</span>
+<span class="lineNum">     181 </span>            :                 return false;
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :             n *= Radix;</span>
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            :             // Ensure n -= digit will not underflow
+<span class="lineNum">     186 </span>            :             int const digit = radix_traits&lt;Radix&gt;::digit(ch);
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :             if (n &lt; min::value + digit)</span>
+<span class="lineNum">     188 </span>            :                 return false;
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :             n -= static_cast&lt;T&gt;(digit);</span>
+<span class="lineNum">     191 </span>            :             return true;
+<span class="lineNum">     192 </span>            :         }
+<span class="lineNum">     193 </span>            :     };
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     196 </span>            :     //  Common code for extract_int::parse specializations
+<span class="lineNum">     197 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     198 </span>            :     template &lt;unsigned Radix, typename Accumulator, int MaxDigits, bool AlwaysCheckOverflow&gt;
+<span class="lineNum">     199 </span>            :     struct int_extractor
+<span class="lineNum">     200 </span>            :     {
+<span class="lineNum">     201 </span>            :         template &lt;typename Char, typename T&gt;
+<span class="lineNum">     202 </span>            :         inline static bool
+<span class="lineNum">     203 </span>            :         call(Char ch, std::size_t count, T&amp; n, mpl::true_)
+<span class="lineNum">     204 </span>            :         {
+<span class="lineNum">     205 </span>            :             typedef constexpr_int&lt;std::size_t, digits_traits&lt;T, Radix&gt;::value - 1&gt; overflow_free;
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span><span class="lineCov">    9472794 :             if (!AlwaysCheckOverflow &amp;&amp; (count &lt; overflow_free::value))</span>
+<span class="lineNum">     208 </span>            :             {
+<span class="lineNum">     209 </span>            :                 Accumulator::add(n, ch, mpl::false_());
+<span class="lineNum">     210 </span>            :             }
+<span class="lineNum">     211 </span>            :             else
+<span class="lineNum">     212 </span>            :             {
+<span class="lineNum">     213 </span>            :                 if (!Accumulator::add(n, ch, mpl::true_()))
+<span class="lineNum">     214 </span>            :                     return false; //  over/underflow!
+<span class="lineNum">     215 </span>            :             }
+<span class="lineNum">     216 </span>            :             return true;
+<span class="lineNum">     217 </span>            :         }
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            :         template &lt;typename Char, typename T&gt;
+<span class="lineNum">     220 </span>            :         inline static bool
+<span class="lineNum">     221 </span>            :         call(Char ch, std::size_t /*count*/, T&amp; n, mpl::false_)
+<span class="lineNum">     222 </span>            :         {
+<span class="lineNum">     223 </span>            :             // no need to check for overflow
+<span class="lineNum">     224 </span>            :             Accumulator::add(n, ch, mpl::false_());
+<span class="lineNum">     225 </span>            :             return true;
+<span class="lineNum">     226 </span>            :         }
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span>            :         template &lt;typename Char&gt;
+<span class="lineNum">     229 </span>            :         inline static bool
+<span class="lineNum">     230 </span>            :         call(Char /*ch*/, std::size_t /*count*/, unused_type, mpl::false_)
+<span class="lineNum">     231 </span>            :         {
+<span class="lineNum">     232 </span>            :             return true;
+<span class="lineNum">     233 </span>            :         }
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span>            :         template &lt;typename Char, typename T&gt;
+<span class="lineNum">     236 </span>            :         inline static bool
+<span class="lineNum">     237 </span>            :         call(Char ch, std::size_t count, T&amp; n)
+<span class="lineNum">     238 </span>            :         {
+<span class="lineNum">     239 </span>            :             return call(ch, count, n
+<span class="lineNum">     240 </span>            :               , mpl::bool_&lt;
+<span class="lineNum">     241 </span>            :                     (   (MaxDigits &lt; 0)
+<span class="lineNum">     242 </span>            :                     ||  (MaxDigits &gt; digits_traits&lt;T, Radix&gt;::value)
+<span class="lineNum">     243 </span>            :                     )
+<span class="lineNum">     244 </span>            :                   &amp;&amp; traits::check_overflow&lt;T&gt;::value
+<span class="lineNum">     245 </span>            :                 &gt;()
+<span class="lineNum">     246 </span>            :             );
+<span class="lineNum">     247 </span>            :         }
+<span class="lineNum">     248 </span>            :     };
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     251 </span>            :     //  End of loop checking: check if the number of digits
+<span class="lineNum">     252 </span>            :     //  being parsed exceeds MaxDigits. Note: if MaxDigits == -1
+<span class="lineNum">     253 </span>            :     //  we don't do any checking.
+<span class="lineNum">     254 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     255 </span>            :     template &lt;int MaxDigits&gt;
+<span class="lineNum">     256 </span>            :     struct check_max_digits
+<span class="lineNum">     257 </span>            :     {
+<span class="lineNum">     258 </span>            :         inline static bool
+<span class="lineNum">     259 </span>            :         call(std::size_t count)
+<span class="lineNum">     260 </span>            :         {
+<span class="lineNum">     261 </span>            :             return count &lt; MaxDigits; // bounded
+<span class="lineNum">     262 </span>            :         }
+<span class="lineNum">     263 </span>            :     };
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span>            :     template &lt;&gt;
+<span class="lineNum">     266 </span>            :     struct check_max_digits&lt;-1&gt;
+<span class="lineNum">     267 </span>            :     {
+<span class="lineNum">     268 </span>            :         inline static bool
+<span class="lineNum">     269 </span>            :         call(std::size_t /*count*/)
+<span class="lineNum">     270 </span>            :         {
+<span class="lineNum">     271 </span>            :             return true; // unbounded
+<span class="lineNum">     272 </span>            :         }
+<span class="lineNum">     273 </span>            :     };
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     276 </span>            :     //  extract_int: main code for extracting integers
+<span class="lineNum">     277 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     278 </span>            : #define SPIRIT_NUMERIC_INNER_LOOP(z, x, data)                                 \
+<span class="lineNum">     279 </span>            :         if (!check_max_digits&lt;MaxDigits&gt;::call(count + leading_zeros)         \
+<span class="lineNum">     280 </span>            :             || it == last)                                                    \
+<span class="lineNum">     281 </span>            :             break;                                                            \
+<span class="lineNum">     282 </span>            :         ch = *it;                                                             \
+<span class="lineNum">     283 </span>            :         if (!radix_check::is_valid(ch))                                       \
+<span class="lineNum">     284 </span>            :             break;                                                            \
+<span class="lineNum">     285 </span>            :         if (!extractor::call(ch, count, val))                                 \
+<span class="lineNum">     286 </span>            :         {                                                                     \
+<span class="lineNum">     287 </span>            :             if (IgnoreOverflowDigits)                                         \
+<span class="lineNum">     288 </span>            :                 first = it;                                                   \
+<span class="lineNum">     289 </span>            :             traits::assign_to(val, attr);                                     \
+<span class="lineNum">     290 </span>            :             return IgnoreOverflowDigits;                                      \
+<span class="lineNum">     291 </span>            :         }                                                                     \
+<span class="lineNum">     292 </span>            :         ++it;                                                                 \
+<span class="lineNum">     293 </span>            :         ++count;                                                              \
+<span class="lineNum">     294 </span>            :     /**/
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            :     template &lt;
+<span class="lineNum">     297 </span>            :         typename T, unsigned Radix, unsigned MinDigits, int MaxDigits
+<span class="lineNum">     298 </span>            :       , typename Accumulator = positive_accumulator&lt;Radix&gt;
+<span class="lineNum">     299 </span>            :       , bool Accumulate = false
+<span class="lineNum">     300 </span>            :       , bool IgnoreOverflowDigits = false
+<span class="lineNum">     301 </span>            :     &gt;
+<span class="lineNum">     302 </span>            :     struct extract_int
+<span class="lineNum">     303 </span>            :     {
+<span class="lineNum">     304 </span>            : #if BOOST_WORKAROUND(BOOST_MSVC, &gt;= 1400)
+<span class="lineNum">     305 </span>            : # pragma warning(push)
+<span class="lineNum">     306 </span>            : # pragma warning(disable: 4127)   // conditional expression is constant
+<span class="lineNum">     307 </span>            : #endif
+<a name="308"><span class="lineNum">     308 </span>            :         template &lt;typename Iterator, typename Attribute&gt;</a>
+<span class="lineNum">     309 </span>            :         inline static bool
+<span class="lineNum">     310 </span><span class="lineNoCov">          0 :         parse_main(</span>
+<span class="lineNum">     311 </span>            :             Iterator&amp; first
+<span class="lineNum">     312 </span>            :           , Iterator const&amp; last
+<span class="lineNum">     313 </span>            :           , Attribute&amp; attr)
+<span class="lineNum">     314 </span>            :         {
+<span class="lineNum">     315 </span>            :             typedef radix_traits&lt;Radix&gt; radix_check;
+<span class="lineNum">     316 </span>            :             typedef int_extractor&lt;Radix, Accumulator, MaxDigits, Accumulate&gt; extractor;
+<span class="lineNum">     317 </span>            :             typedef typename
+<span class="lineNum">     318 </span>            :                 boost::detail::iterator_traits&lt;Iterator&gt;::value_type
+<span class="lineNum">     319 </span>            :             char_type;
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span><span class="lineNoCov">          0 :             Iterator it = first;</span>
+<span class="lineNum">     322 </span>            :             std::size_t leading_zeros = 0;
+<span class="lineNum">     323 </span>            :             if (!Accumulate)
+<span class="lineNum">     324 </span>            :             {
+<span class="lineNum">     325 </span>            :                 // skip leading zeros
+<span class="lineNum">     326 </span>            :                 while (it != last &amp;&amp; *it == '0' &amp;&amp; (MaxDigits &lt; 0 || leading_zeros &lt; static_cast&lt; std::size_t &gt;(MaxDigits)))
+<span class="lineNum">     327 </span>            :                 {
+<span class="lineNum">     328 </span>            :                     ++it;
+<span class="lineNum">     329 </span>            :                     ++leading_zeros;
+<span class="lineNum">     330 </span>            :                 }
+<span class="lineNum">     331 </span>            :             }
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span>            :             typedef typename
+<span class="lineNum">     334 </span>            :                 traits::attribute_type&lt;Attribute&gt;::type
+<span class="lineNum">     335 </span>            :             attribute_type;
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span><span class="lineNoCov">          0 :             attribute_type val = Accumulate ? attr : attribute_type(0);</span>
+<span class="lineNum">     338 </span>            :             std::size_t count = 0;
+<span class="lineNum">     339 </span>            :             char_type ch;
+<span class="lineNum">     340 </span>            : 
+<span class="lineNum">     341 </span>            :             while (true)
+<span class="lineNum">     342 </span>            :             {
+<span class="lineNum">     343 </span><span class="lineNoCov">          0 :                 BOOST_PP_REPEAT(</span>
+<span class="lineNum">     344 </span>            :                     SPIRIT_NUMERICS_LOOP_UNROLL
+<span class="lineNum">     345 </span>            :                   , SPIRIT_NUMERIC_INNER_LOOP, _)
+<span class="lineNum">     346 </span>            :             }
+<span class="lineNum">     347 </span>            : 
+<span class="lineNum">     348 </span><span class="lineNoCov">          0 :             if (count + leading_zeros &gt;= MinDigits)</span>
+<span class="lineNum">     349 </span>            :             {
+<span class="lineNum">     350 </span>            :                 traits::assign_to(val, attr);
+<span class="lineNum">     351 </span><span class="lineNoCov">          0 :                 first = it;</span>
+<span class="lineNum">     352 </span><span class="lineNoCov">          0 :                 return true;</span>
+<span class="lineNum">     353 </span>            :             }
+<span class="lineNum">     354 </span>            :             return false;
+<span class="lineNum">     355 </span>            :         }
+<span class="lineNum">     356 </span>            : #if BOOST_WORKAROUND(BOOST_MSVC, &gt;= 1400)
+<span class="lineNum">     357 </span>            : # pragma warning(pop)
+<span class="lineNum">     358 </span>            : #endif
+<span class="lineNum">     359 </span>            : 
+<span class="lineNum">     360 </span>            :         template &lt;typename Iterator&gt;
+<span class="lineNum">     361 </span>            :         inline static bool
+<span class="lineNum">     362 </span>            :         parse(
+<span class="lineNum">     363 </span>            :             Iterator&amp; first
+<span class="lineNum">     364 </span>            :           , Iterator const&amp; last
+<span class="lineNum">     365 </span>            :           , unused_type)
+<span class="lineNum">     366 </span>            :         {
+<span class="lineNum">     367 </span>            :             T n = 0; // must calculate value to detect over/underflow
+<span class="lineNum">     368 </span>            :             return parse_main(first, last, n);
+<span class="lineNum">     369 </span>            :         }
+<span class="lineNum">     370 </span>            : 
+<span class="lineNum">     371 </span>            :         template &lt;typename Iterator, typename Attribute&gt;
+<span class="lineNum">     372 </span>            :         inline static bool
+<span class="lineNum">     373 </span>            :         parse(
+<span class="lineNum">     374 </span>            :             Iterator&amp; first
+<span class="lineNum">     375 </span>            :           , Iterator const&amp; last
+<span class="lineNum">     376 </span>            :           , Attribute&amp; attr)
+<span class="lineNum">     377 </span>            :         {
+<span class="lineNum">     378 </span><span class="lineNoCov">          0 :             return parse_main(first, last, attr);</span>
+<span class="lineNum">     379 </span>            :         }
+<span class="lineNum">     380 </span>            :     };
+<span class="lineNum">     381 </span>            : #undef SPIRIT_NUMERIC_INNER_LOOP
+<span class="lineNum">     382 </span>            : 
+<span class="lineNum">     383 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     384 </span>            :     //  extract_int: main code for extracting integers
+<span class="lineNum">     385 </span>            :     //  common case where MinDigits == 1 and MaxDigits = -1
+<span class="lineNum">     386 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     387 </span>            : #define SPIRIT_NUMERIC_INNER_LOOP(z, x, data)                                 \
+<span class="lineNum">     388 </span>            :         if (it == last)                                                       \
+<span class="lineNum">     389 </span>            :             break;                                                            \
+<span class="lineNum">     390 </span>            :         ch = *it;                                                             \
+<span class="lineNum">     391 </span>            :         if (!radix_check::is_valid(ch))                                       \
+<span class="lineNum">     392 </span>            :             break;                                                            \
+<span class="lineNum">     393 </span>            :         if (!extractor::call(ch, count, val))                                 \
+<span class="lineNum">     394 </span>            :         {                                                                     \
+<span class="lineNum">     395 </span>            :             traits::assign_to(val, attr);                                     \
+<span class="lineNum">     396 </span>            :             return false;                                                     \
+<span class="lineNum">     397 </span>            :         }                                                                     \
+<span class="lineNum">     398 </span>            :         ++it;                                                                 \
+<span class="lineNum">     399 </span>            :         ++count;                                                              \
+<span class="lineNum">     400 </span>            :     /**/
+<span class="lineNum">     401 </span>            : 
+<span class="lineNum">     402 </span>            :     template &lt;typename T, unsigned Radix, typename Accumulator, bool Accumulate&gt;
+<span class="lineNum">     403 </span>            :     struct extract_int&lt;T, Radix, 1, -1, Accumulator, Accumulate&gt;
+<span class="lineNum">     404 </span>            :     {
+<span class="lineNum">     405 </span>            : #if BOOST_WORKAROUND(BOOST_MSVC, &gt;= 1400)
+<span class="lineNum">     406 </span>            : # pragma warning(push)
+<span class="lineNum">     407 </span>            : # pragma warning(disable: 4127)   // conditional expression is constant
+<span class="lineNum">     408 </span>            : #endif
+<a name="409"><span class="lineNum">     409 </span>            :         template &lt;typename Iterator, typename Attribute&gt;</a>
+<span class="lineNum">     410 </span>            :         inline static bool
+<span class="lineNum">     411 </span><span class="lineCov">    3000004 :         parse_main(</span>
+<span class="lineNum">     412 </span>            :             Iterator&amp; first
+<span class="lineNum">     413 </span>            :           , Iterator const&amp; last
+<span class="lineNum">     414 </span>            :           , Attribute&amp; attr)
+<span class="lineNum">     415 </span>            :         {
+<span class="lineNum">     416 </span>            :             typedef radix_traits&lt;Radix&gt; radix_check;
+<span class="lineNum">     417 </span>            :             typedef int_extractor&lt;Radix, Accumulator, -1, Accumulate&gt; extractor;
+<span class="lineNum">     418 </span>            :             typedef typename
+<span class="lineNum">     419 </span>            :                 boost::detail::iterator_traits&lt;Iterator&gt;::value_type
+<span class="lineNum">     420 </span>            :             char_type;
+<span class="lineNum">     421 </span>            : 
+<span class="lineNum">     422 </span><span class="lineCov">    3000004 :             Iterator it = first;</span>
+<span class="lineNum">     423 </span>            :             std::size_t count = 0;
+<span class="lineNum">     424 </span>            :             if (!Accumulate)
+<span class="lineNum">     425 </span>            :             {
+<span class="lineNum">     426 </span>            :                 // skip leading zeros
+<span class="lineNum">     427 </span><span class="lineCov">    3000004 :                 while (it != last &amp;&amp; *it == '0')</span>
+<span class="lineNum">     428 </span>            :                 {
+<span class="lineNum">     429 </span>            :                     ++it;
+<span class="lineNum">     430 </span><span class="lineNoCov">          0 :                     ++count;</span>
+<span class="lineNum">     431 </span>            :                 }
+<span class="lineNum">     432 </span>            : 
+<span class="lineNum">     433 </span><span class="lineCov">    3000004 :                 if (it == last)</span>
+<span class="lineNum">     434 </span>            :                 {
+<span class="lineNum">     435 </span><span class="lineNoCov">          0 :                     if (count == 0) // must have at least one digit</span>
+<span class="lineNum">     436 </span>            :                         return false;
+<span class="lineNum">     437 </span>            :                     traits::assign_to(0, attr);
+<span class="lineNum">     438 </span><span class="lineNoCov">          0 :                     first = it;</span>
+<span class="lineNum">     439 </span><span class="lineNoCov">          0 :                     return true;</span>
+<span class="lineNum">     440 </span>            :                 }
+<span class="lineNum">     441 </span>            :             }
+<span class="lineNum">     442 </span>            : 
+<span class="lineNum">     443 </span>            :             typedef typename
+<span class="lineNum">     444 </span>            :                 traits::attribute_type&lt;Attribute&gt;::type
+<span class="lineNum">     445 </span>            :             attribute_type;
+<span class="lineNum">     446 </span>            : 
+<span class="lineNum">     447 </span>            :             attribute_type val = Accumulate ? attr : attribute_type(0);
+<span class="lineNum">     448 </span><span class="lineCov">    3000004 :             char_type ch = *it;</span>
+<span class="lineNum">     449 </span>            : 
+<span class="lineNum">     450 </span><span class="lineCov">    6000008 :             if (!radix_check::is_valid(ch) || !extractor::call(ch, 0, val))</span>
+<span class="lineNum">     451 </span>            :             {
+<span class="lineNum">     452 </span><span class="lineCov">          2 :                 if (count == 0) // must have at least one digit</span>
+<span class="lineNum">     453 </span>            :                     return false;
+<span class="lineNum">     454 </span>            :                 traits::assign_to(val, attr);
+<span class="lineNum">     455 </span><span class="lineNoCov">          0 :                 first = it;</span>
+<span class="lineNum">     456 </span><span class="lineNoCov">          0 :                 return true;</span>
+<span class="lineNum">     457 </span>            :             }
+<span class="lineNum">     458 </span>            : 
+<span class="lineNum">     459 </span>            :             // count = 0; $$$ verify: I think this is wrong $$$
+<span class="lineNum">     460 </span>            :             ++it;
+<span class="lineNum">     461 </span>            :             while (true)
+<span class="lineNum">     462 </span>            :             {
+<span class="lineNum">     463 </span><span class="lineCov">   35393986 :                 BOOST_PP_REPEAT(</span>
+<span class="lineNum">     464 </span>            :                     SPIRIT_NUMERICS_LOOP_UNROLL
+<span class="lineNum">     465 </span>            :                   , SPIRIT_NUMERIC_INNER_LOOP, _)
+<span class="lineNum">     466 </span>            :             }
+<span class="lineNum">     467 </span>            : 
+<span class="lineNum">     468 </span>            :             traits::assign_to(val, attr);
+<span class="lineNum">     469 </span><span class="lineCov">    3000002 :             first = it;</span>
+<span class="lineNum">     470 </span><span class="lineCov">    3000002 :             return true;</span>
+<span class="lineNum">     471 </span>            :         }
+<span class="lineNum">     472 </span>            : #if BOOST_WORKAROUND(BOOST_MSVC, &gt;= 1400)
+<span class="lineNum">     473 </span>            : # pragma warning(pop)
+<span class="lineNum">     474 </span>            : #endif
+<span class="lineNum">     475 </span>            : 
+<span class="lineNum">     476 </span>            :         template &lt;typename Iterator&gt;
+<span class="lineNum">     477 </span>            :         inline static bool
+<span class="lineNum">     478 </span>            :         parse(
+<span class="lineNum">     479 </span>            :             Iterator&amp; first
+<span class="lineNum">     480 </span>            :           , Iterator const&amp; last
+<span class="lineNum">     481 </span>            :           , unused_type)
+<span class="lineNum">     482 </span>            :         {
+<span class="lineNum">     483 </span>            :             T n = 0; // must calculate value to detect over/underflow
+<span class="lineNum">     484 </span><span class="lineNoCov">          0 :             return parse_main(first, last, n);</span>
+<span class="lineNum">     485 </span>            :         }
+<span class="lineNum">     486 </span>            : 
+<span class="lineNum">     487 </span>            :         template &lt;typename Iterator, typename Attribute&gt;
+<span class="lineNum">     488 </span>            :         inline static bool
+<span class="lineNum">     489 </span>            :         parse(
+<span class="lineNum">     490 </span>            :             Iterator&amp; first
+<span class="lineNum">     491 </span>            :           , Iterator const&amp; last
+<span class="lineNum">     492 </span>            :           , Attribute&amp; attr)
+<span class="lineNum">     493 </span>            :         {
+<span class="lineNum">     494 </span><span class="lineCov">    1000000 :             return parse_main(first, last, attr);</span>
+<span class="lineNum">     495 </span>            :         }
+<span class="lineNum">     496 </span>            :     };
+<span class="lineNum">     497 </span>            : 
+<span class="lineNum">     498 </span>            : #undef SPIRIT_NUMERIC_INNER_LOOP
+<span class="lineNum">     499 </span>            : 
+<span class="lineNum">     500 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     501 </span>            :     // Cast an signed integer to an unsigned integer
+<span class="lineNum">     502 </span>            :     ///////////////////////////////////////////////////////////////////////////
+<span class="lineNum">     503 </span>            :     template &lt;typename T,
+<span class="lineNum">     504 </span>            :         bool force_unsigned
+<span class="lineNum">     505 </span>            :             = mpl::and_&lt;is_integral&lt;T&gt;, is_signed&lt;T&gt; &gt;::value&gt;
+<span class="lineNum">     506 </span>            :     struct cast_unsigned;
+<span class="lineNum">     507 </span>            : 
+<span class="lineNum">     508 </span>            :     template &lt;typename T&gt;
+<span class="lineNum">     509 </span>            :     struct cast_unsigned&lt;T, true&gt;
+<span class="lineNum">     510 </span>            :     {
+<span class="lineNum">     511 </span>            :         typedef typename make_unsigned&lt;T&gt;::type unsigned_type;
+<span class="lineNum">     512 </span>            :         typedef typename make_unsigned&lt;T&gt;::type&amp; unsigned_type_ref;
+<span class="lineNum">     513 </span>            : 
+<span class="lineNum">     514 </span>            :         inline static unsigned_type_ref call(T&amp; n)
+<span class="lineNum">     515 </span>            :         {
+<span class="lineNum">     516 </span>            :             return unsigned_type_ref(n);
+<span class="lineNum">     517 </span>            :         }
+<span class="lineNum">     518 </span>            :     };
+<span class="lineNum">     519 </span>            : 
+<span class="lineNum">     520 </span>            :     template &lt;typename T&gt;
+<span class="lineNum">     521 </span>            :     struct cast_unsigned&lt;T, false&gt;
+<span class="lineNum">     522 </span>            :     {
+<span class="lineNum">     523 </span>            :         inline static T&amp; call(T&amp; n)
+<span class="lineNum">     524 </span>            :         {
+<span class="lineNum">     525 </span>            :             return n;
+<span class="lineNum">     526 </span>            :         }
+<span class="lineNum">     527 </span>            :     };
+<span class="lineNum">     528 </span>            : }}}}
+<span class="lineNum">     529 </span>            : 
+<span class="lineNum">     530 </span>            : #if defined(BOOST_MSVC)
+<span class="lineNum">     531 </span>            : # pragma warning(pop)
+<span class="lineNum">     532 </span>            : #endif
+<span class="lineNum">     533 </span>            : 
+<span class="lineNum">     534 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+##### New testrun: 8 cores, 32 gb ram #####
+../data/b15.gph
+MINIMAL OBJECTIVE VALUE 217
+
+real	0m0.005s
+user	0m0.008s
+sys	0m0.000s
+../data/big8.gph
+MINIMAL OBJECTIVE VALUE 715797
+
+real	4m19.170s
+user	31m47.628s
+sys	0m0.040s
+../data/clock.gph
+MINIMAL OBJECTIVE VALUE 25
+
+real	0m0.006s
+user	0m0.020s
+sys	0m0.000s
+../data/es10kaz.gph
+MINIMAL OBJECTIVE VALUE 520126975
+
+real	3m49.326s
+user	28m23.464s
+sys	0m1.880s
+../data/i640-345.gph
+MINIMAL OBJECTIVE VALUE 14156
+
+real	0m0.150s
+user	0m0.996s
+sys	0m0.004s
+../data/small.gph
+MINIMAL OBJECTIVE VALUE 3
+
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+../data/steiner.gph
+MINIMAL OBJECTIVE VALUE 10
+
+real	0m0.004s
+user	0m0.016s
+sys	0m0.000s
+../data/world666.gph
+MINIMAL OBJECTIVE VALUE 117613
+
+real	0m0.695s
+user	0m4.748s
+sys	0m0.004s

@@ -10,8 +10,23 @@
 #include "dijkstra.h"
 #include <climits>
 #include <iostream>
+#include <boost/heap/fibonacci_heap.hpp>
+#include <exception>
 
 using VisitedMap = std::vector<bool>;
+
+/**
+ * \struct compare_function
+ * \brief defines how 2 dijkstra pairs should be compared at fibonacci-heap
+ * \param edge1 first edge to compare
+ * \param edge2 second edge to compare
+ * \return true if the weight of edge2 is smaller than edge1's weight
+ */
+struct compare_function{
+	bool operator()(const DijkstraPair edge1, const DijkstraPair edge2) const{
+		return edge1.second > edge2.second;
+	}
+};
 
 /**
  * \fn the constructor
@@ -32,53 +47,52 @@ dijkstra::dijkstra(WeightMap weights, Edges edges, unsigned int numberOfVertices
 
 /**
  * \fn vector<int> dijkstra::computeShortestPath
- * \brief computes all shortest paths from vertex 1 for the initialized dijkstra instance
+ * \brief computes all shortest paths from given start vertex for the initialized dijkstra instance
  * \param unsigned int numberOfVertices Number of Vertices for the graph
  * \return vector of the weights for all shortest paths
  */
-WeightMap dijkstra::computeShortestPath(){
+WeightMap dijkstra::computeShortestPath(int startNode){
+	if(startNode > numberOfVertices){
+		std::cerr << "Index of StartVertex must be less or equal to number of vertices" << std::endl;
+		throw std::exception();
+	}
 	WeightMap weightsToVertices(numberOfVertices); //should be returned
 	std::vector<int> predecessorMap(numberOfVertices);
 	VisitedMap alreadyVisited(numberOfVertices);
 
-	for (unsigned int i = 0; i < numberOfVertices + 1; i++) {
+	for (unsigned int i = 0; i < numberOfVertices; i++) {
 		weightsToVertices[i] = INT_MAX;
 		predecessorMap[i] = -1;
 	}
-	//Start in point 1
-	weightsToVertices[1] = 0;
-	predecessorMap[1] = 1;
-	int currentVertex = 1;
+	//Start in point startNode
+	weightsToVertices[startNode] = 0;
+	predecessorMap[startNode] = startNode;
+	int currentVertex = startNode;
+	int currentDist = 0;
 
-	std::vector<DijkstraPair> verticesToVisit;
-
+	boost::heap::fibonacci_heap<DijkstraPair, boost::heap::compare<compare_function>> heap;
 	//Put the start vertex in the verticesToVisit list
-	verticesToVisit.push_back(std::make_pair(1, 0));
+	heap.push(std::make_pair(startNode, 0));
 
+	while(!heap.empty()){
+		if (!alreadyVisited.at(heap.top().first)){
+			currentVertex = heap.top().first;
+			currentDist = heap.top().second;
 
-	while(!verticesToVisit.empty()){
-		if (!alreadyVisited.at(verticesToVisit[0].first)){
-			currentVertex = verticesToVisit[0].first;
-			verticesToVisit.erase(verticesToVisit.begin());
+			heap.pop();
+
 			std::vector<DijkstraPair> currentEdges = sortedEdges.at(currentVertex);
 
-			for (unsigned int i = 0; i<currentEdges.size(); i++){
+			for (const DijkstraPair pair : currentEdges){
+				//Find out the current neighbor vertex and the weight of the current edge
+				int neighborVertex = pair.first;
+				int currentWeight = pair.second;
 				//Search for the right position in verticesToVisit-list. If Vertex is already visited, don't add this edge
-				if (!alreadyVisited.at(currentEdges.at(i).first)){
-					unsigned int pos = 0;
-					int distanceFromOneToCurrentEdgeEndPoint = currentEdges.at(i).second + weightsToVertices.at(currentVertex);
-					while (pos < verticesToVisit.size() && verticesToVisit.at(pos).second + weightsToVertices.at(currentVertex) <= distanceFromOneToCurrentEdgeEndPoint){
-						pos++;
-					}
-					verticesToVisit.insert(verticesToVisit.begin() + pos, currentEdges.at(i));
-
+				if (!alreadyVisited.at(neighborVertex)){
+					heap.push(std::make_pair(neighborVertex, currentDist + currentWeight));
 				}
 
-				//Find out the current neighbor vertex and the weight of the current edge
-				int neighborVertex = currentEdges.at(i).first;
-				int currentWeight = currentEdges.at(i).second;
-
-				int currentDistance = weightsToVertices[currentVertex] + currentWeight;
+				int currentDistance = currentDist + currentWeight;
 
 				//Update the predecessor and weightsToVerices maps
 				if (currentDistance < weightsToVertices[neighborVertex]){
@@ -89,7 +103,7 @@ WeightMap dijkstra::computeShortestPath(){
 			//Current vertex is visited now
 			alreadyVisited.at(currentVertex) = true;
 		} else {
-			verticesToVisit.erase(verticesToVisit.begin());
+			heap.pop();
 		}
 	}
 	return weightsToVertices;
