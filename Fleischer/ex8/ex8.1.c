@@ -138,19 +138,14 @@ size_t** minHeapify(size_t i, size_t** index66, double* heapVal){
     	right = 2;
     	smallest = 0;    	
     }
-    //printf("1st: %f+ %f\n", heapVal[index66[left]], heapVal[index66[smallest]]);
     if (left < graphSize && heapVal[index66[left][0]] < heapVal[index66[smallest][0]]){
-    	//printf("HHH\n");
         smallest = left;
     }  
-    //printf("2nd: %f+ %f\n", heapVal[index66[right]], heapVal[index66[smallest]]);  
     if (right < graphSize && heapVal[index66[right][0]] < heapVal[index66[smallest][0]]){
-	//printf("TTT\n");    
         smallest = right;
     }    
     
     if (smallest != i){
-	//printf("LOL\n");
     	size_t temp6 = index66[i][0];
     	index66[i][0] = index66[smallest][0];
     	index66[smallest][0] = temp6;
@@ -158,10 +153,7 @@ size_t** minHeapify(size_t i, size_t** index66, double* heapVal){
     	index66[index66[smallest][0]][1] = smallest;
         index66 = minHeapify(smallest, index66, heapVal);
     }  
-    		//for(size_t i=0; i< graphSize; ++i){
-		//	printf("index66 %ld\n", index66[i]);
-		//}
-		//printf("hjkh\n");
+
     return index66;   
 }        
 
@@ -228,7 +220,7 @@ double** dijkstra(char* inTree, double** dist, double* heapVal, size_t** index66
 		visited[i] = 0;
 		index66[i][0] = i;
 		index66[i][1] = i;
-		//reversedIndex[i] = i;
+
 
 		if(inTree[i] == 0){
 			dist[i][0] = INFINITY;
@@ -242,8 +234,7 @@ double** dijkstra(char* inTree, double** dist, double* heapVal, size_t** index66
 		}
 	}
 	
-	//dist[0][] = 0;
-	//heapVal[0] =0;
+
 	index66 = buildMinHeap(index66, heapVal);
 	
 	for(size_t j = 0; j < graphSize; ++j)
@@ -285,11 +276,8 @@ double** dijkstra(char* inTree, double** dist, double* heapVal, size_t** index66
 */
 
 char terminalsLeft(char* marker, size_t numberOfTerminal){
-	//for(size_t j= 0; j < numberOfTerminal; ++j){
-	//	printf("markel: %d\n", marker[j]);
-	//}	
+	
 	for(size_t j= 0; j < numberOfTerminal; ++j){
-		//printf("marker: %d\n", marker[j]);
 		if(!marker[j]){
 			return 1;
 		}
@@ -312,13 +300,11 @@ double steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTermin
 	double* heapVal = (double*) malloc(sizeof(double)*graphSize);
 	size_t** index66 = (size_t**) malloc(sizeof(size_t*)*graphSize);
 	size_t nodesInTree = 1;
-	//size_t noOfEdges = 1;
 	double min = INFINITY;
 	double value = 0;
 	
 	value = 0;
 	
-	//double** tree = malloc(sizeof(double*)*1);
 	size_t temp = 0;	
 	double** vector = malloc(sizeof(double*)*graphSize);
 
@@ -343,28 +329,18 @@ double steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTermin
 	marker[temp] = 1;
 	value = min;
 	size_t iter = terminal[temp];
-	//tree[0] = malloc(sizeof(double));
 	while(vector[iter][1] != -1){
 		inTree[iter] = 1;
-		//tree = realloc(tree, sizeof(double)* noOfEdges);
-		//tree[noOfEdges-1] = malloc(sizeof(double)* 2);
-		//tree[noOfEdges-1][0] = (double) iter;
+
 		iter = (size_t) vector[iter][1]; 
-		//tree[noOfEdges-1][1] = (double) iter;
-		//++noOfEdges;
+
 		++nodesInTree;
 	}
 	
 	//repeat the hole procedure
 	while (terminalsLeft(marker, numberOfTerminal)){
-			//printf("stto + %ld\n", startTerminal);
 		vector = dijkstra(inTree, vector, heapVal, index66);
-//for(size_t i = 0; i< graphSize; ++i){
-//printf("vec %f\n", vector[i][0]);
-//}
-		
-		
-					//printf("sojk\n");
+
 		min = INFINITY;
 
 		temp = 0;
@@ -378,18 +354,13 @@ double steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTermin
 				}	
 			}
 		}
-		//printf("temp %ld\n", temp);
+
 		marker[temp] = 1;
 
 		iter = terminal[temp];
-		//if(iter == 1){
-		//	for(size_t i = 0; i< graphSize; ++i){
-		//		printf("as %s\n", inTree[i]);
-		//	}
-		//}
+
 		while(vector[iter][1] != -1){
-			//printf("jhg\n");
-			//printf("iter : %ld\n", iter);
+
 			inTree[iter] = 1;
 
 			for(size_t h = 0; h < numberOfTerminal; ++h){
@@ -398,22 +369,14 @@ double steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTermin
 					marker[h] = 1;
 				}
 			}
-			//tree = realloc(tree, sizeof(double)* noOfEdges);
-			//tree[noOfEdges-1] = malloc(sizeof(double)* 2);
-			//tree[noOfEdges-1][0] = (double) iter;
+
 			iter = (size_t) vector[iter][1]; 
-			//tree[noOfEdges-1][1] = (double) iter;
-			//printf("sko\n");
-			//++noOfEdges;
+
 			++nodesInTree;
 		}		
 
 		value = value + min;
-		//for(size_t i = 0; i < graphSize; ++i){
-		//	free(vector[i]);
-		//}
-		//free(vector);	
-		//printf("one more connected\n");	
+	
 	}
 	
 	for(size_t i = 0; i < graphSize; ++i){
@@ -455,10 +418,7 @@ int main(int argc, char *argv[]){
         size_t* terminal = malloc(sizeof(size_t)*(1));
         size_t noOfTerminal = 0;
         terminal[0] = 1;
-        //printf("tt %ld\n", noOfTerminal);
-	//for(int i = 2;i < argc; ++i){
-	//	terminal[i-2] = strtoul(argv[i], NULL, 10)-1;
-	//}
+
 
 	
 	buildGraph(fp);
@@ -474,8 +434,7 @@ int main(int argc, char *argv[]){
 	}
 	++noOfTerminal;		
 	printf("Terminal vector fitted\n");
-	//doublevalue = malloc(sizeof(double)*noOfTerminal);
-	//value[0] = 0;
+
 	size_t howFar = 100;
 	if(noOfTerminal < 100){
 		howFar = noOfTerminal;
@@ -483,12 +442,12 @@ int main(int argc, char *argv[]){
 	double* value = malloc(sizeof(double*)*howFar);
 	
 	for(size_t i = 0; i < howFar; ++i){
-	//printf("Hi + %ld\n", i);
+
 		value[i] = steinerTree(terminal, noOfTerminal, i);
 	}
 	
 	double minValue = value[0];
-	//size_t j = 0;
+
 
 	for(size_t i = 1; i < howFar; ++i){
 		if(minValue > value[i]){
@@ -497,12 +456,7 @@ int main(int argc, char *argv[]){
 		}
 	}
 
-	//for (size_t i = 0; i<graphSize; ++i){
-	//	for(size_t j = 0; j < vertexNo[i]; ++j){
-	//		free(graph[i][j]);
-	//	}
-	//	free(graph[i]);
-	//}
+
 	
 	printf("Objective value: %f\n", minValue);
 	        cpu = clock() - cpu;
