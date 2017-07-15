@@ -25,13 +25,13 @@ private:
 	Edges edges;
 	Nodes nodes;
 
-	char hasCycle(int node, char* visited, int parent, AdjacentsMap adjacentsMap);
+	bool hasCycle(int node, char* visited, int parent, AdjacentsMap adjacentsMap);
 	void getAdjacents(int node, Adjacents* adjs);
 	AdjacentsMap makeAdjacentsMap();
 
 public:
-	char isConnected();
-	char hasCycle();
+	bool isConnected();
+	bool hasCycle();
 	GraphChecker(Edges edges, Nodes nodes);
 	virtual ~GraphChecker();
 };

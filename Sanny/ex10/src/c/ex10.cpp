@@ -32,7 +32,8 @@ using std::string;
 
 // declaring types
 namespace po = boost::program_options;
-namespace bTime = boost::timer;
+using BoostTimer = boost::timer::cpu_timer;
+using BoostTimes = boost::timer::cpu_times;
 using Primes = std::vector<int >;
 
 
@@ -80,7 +81,7 @@ po::variables_map parseCommandLine(po::options_description desc, int argn,
 
 /** Reading in a Graphfile, computes the Steiner */
 int main(int argn, char *argv[]) {
-	bTime::cpu_timer timerProgram;
+	BoostTimer timerProgram;
 	if (argn <= 1) {
 		cerr << "ERROR : There was no filename" << endl;
 		return 1;
@@ -175,14 +176,16 @@ int main(int argn, char *argv[]) {
 	}
 
 	cout << "Solves Steiner-tree for " << startnodes.size() << " startnodes..." << flush;
-	bTime::cpu_timer timerSteiner;
+
+	BoostTimer timerSteiner;
 	Steiner** steiners = new Steiner*[startnodes.size()];
 	#pragma omp parallel for num_threads(threadNumber)
 	for(unsigned int i = 0; i < startnodes.size(); i++){
 		steiners[i] = new Steiner();
 		steiners[i]->computeSteinerTree(vertexCount, edges, *weights, terminals, startnodes[i]);
 	}
-	bTime::cpu_times timesSteiner = timerSteiner.elapsed();
+	timerSteiner.stop();
+	BoostTimes timesSteiner = timerSteiner.elapsed();
 	cout << "done" << endl;
 
 	Steiner* s = steiners[0];
@@ -225,9 +228,10 @@ int main(int argn, char *argv[]) {
 	}
 	cout << endl;
 
-	bTime::cpu_times timesProgram = timerProgram.elapsed();
-	cout << "TIME: " << bTime::format(timesProgram, 4, "%t") << endl;
-	cout << "WALL: " << bTime::format(timesSteiner, 4, "%w") << endl;
+	timerProgram.stop();
+	BoostTimes timesProgram = timerProgram.elapsed();
+	cout << "TIME: " << boost::timer::format(timesProgram, 4, "%t") << endl;
+	cout << "WALL: " << boost::timer::format(timesSteiner, 4, "%w") << endl;
 
 	delete edges;
 	delete weights;

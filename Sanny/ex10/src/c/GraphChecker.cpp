@@ -50,7 +50,7 @@ void GraphChecker::getAdjacents(int node, Adjacents* adjs) {
 }
 
 /** Check wether the graph is connected or not via BFS */
-char GraphChecker::isConnected(){
+bool GraphChecker::isConnected(){
 	AdjacentsMap adjacentsMap = makeAdjacentsMap();
 
 	char *visited = new char[nodes.size()];
@@ -78,16 +78,16 @@ char GraphChecker::isConnected(){
 	for (unsigned int i = 0; i < nodes.size(); i++){
 		if(visited[i] == 0){
 			delete [] visited;
-			return 0;
+			return false;
 		}
 	}
 	delete [] visited;
 	delete nodesToVisit;
-	return 1;
+	return true;
 }
 
 /** Checks recursive if the graph has a cycle via DFS */
-char GraphChecker::hasCycle(){
+bool GraphChecker::hasCycle(){
     char* visited = new char[nodes.size()];
 
 	AdjacentsMap adjacentsMap = makeAdjacentsMap();
@@ -97,17 +97,17 @@ char GraphChecker::hasCycle(){
     }
     for(unsigned int i = 0; i < nodes.size(); i++){
     	if(visited[i] == 0){
-    		if (hasCycle(i, visited, -1, adjacentsMap) == 1){
+    		if (hasCycle(i, visited, -1, adjacentsMap)){
     			delete [] visited;
-    			return 1;
+    			return true;
     		}
     	}
     }
     delete [] visited;
-	return 0;
+	return false;
 }
 
-char GraphChecker::hasCycle(int nodeIndex, char* visited, int parentIndex, AdjacentsMap adjacentsMap){
+bool GraphChecker::hasCycle(int nodeIndex, char* visited, int parentIndex, AdjacentsMap adjacentsMap){
 	visited[nodeIndex] = 1;
 	Adjacents adjs = adjacentsMap[nodeIndex];
 
@@ -115,14 +115,14 @@ char GraphChecker::hasCycle(int nodeIndex, char* visited, int parentIndex, Adjac
     	Adjacent adj = adjs[i];
         if (!visited[adj.first]){
            if (hasCycle(adj.first, visited, nodeIndex, adjacentsMap) == 1){
-        	   return 1;
+        	   return true;
            }
         }
 
         else if (adj.first != parentIndex){
-        	return 1;
+        	return true;
         }
     }
-	return 0;
+	return false;
 }
 
