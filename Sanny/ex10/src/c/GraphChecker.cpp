@@ -7,9 +7,10 @@
 
 #include "GraphChecker.h"
 
-GraphChecker::GraphChecker(Edges edges, Nodes nodes) {
+GraphChecker::GraphChecker(Edges edges, Nodes nodes, Nodes terminals) {
 	this->edges = edges;
 	this->nodes = nodes;
+	this->terminals = terminals;
 }
 
 GraphChecker::~GraphChecker() {
@@ -105,6 +106,33 @@ bool GraphChecker::hasCycle(){
     }
     delete [] visited;
 	return false;
+}
+
+/** Checks recursive if the graph has a cycle via DFS */
+bool GraphChecker::containsAllTerminals(){
+    char* contained = new char[terminals.size()];
+
+	#pragma omp parallel for
+    for (unsigned int i = 0; i < terminals.size(); i++){
+    	contained[i] = 0;
+    }
+
+    for (unsigned int j = 0; j < terminals.size(); j++){
+    	int terminal = terminals[j];
+    	for(unsigned int i = 0; i < nodes.size(); i++){
+        	if(terminal == nodes[i]){
+        		contained[j] = 1;
+        	}
+        }
+    }
+
+    for (unsigned int i = 0; i < terminals.size(); i++){
+    	if(contained[i] == 0){
+    		return false;
+    	}
+    }
+    delete [] contained;
+	return true;
 }
 
 bool GraphChecker::hasCycle(int nodeIndex, char* visited, int parentIndex, AdjacentsMap adjacentsMap){

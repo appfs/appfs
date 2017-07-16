@@ -205,7 +205,7 @@ int main(int argn, char *argv[]) {
 
 	cout << "Checking for cycle..." << flush;
 	Edges steinerEdges = s->getEdges();
-	GraphChecker* checker = new GraphChecker(steinerEdges, s->getNodes());
+	GraphChecker* checker = new GraphChecker(steinerEdges, s->getNodes(), terminals);
 	if(checker->hasCycle()){
 		cout << "failed" << endl;
 		return 1;
@@ -214,6 +214,13 @@ int main(int argn, char *argv[]) {
 
 	cout << "Checking if graph is connected..." << flush;
 	if(!checker->isConnected()){
+		cout << "failed" << endl;
+		return 1;
+	}
+	cout << "passed" << endl;
+
+	cout << "Checking if all terminals are included..." << flush;
+	if(!checker->containsAllTerminals()){
 		cout << "failed" << endl;
 		return 1;
 	}

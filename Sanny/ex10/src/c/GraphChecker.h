@@ -24,6 +24,7 @@ class GraphChecker {
 private:
 	Edges edges;
 	Nodes nodes;
+	Nodes terminals;
 
 	bool hasCycle(int node, char* visited, int parent, AdjacentsMap adjacentsMap);
 	void getAdjacents(int node, Adjacents* adjs);
@@ -32,7 +33,8 @@ private:
 public:
 	bool isConnected();
 	bool hasCycle();
-	GraphChecker(Edges edges, Nodes nodes);
+	bool containsAllTerminals();
+	GraphChecker(Edges edges, Nodes nodes, Nodes terminals);
 	virtual ~GraphChecker();
 };
 
