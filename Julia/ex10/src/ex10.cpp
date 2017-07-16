@@ -7,11 +7,12 @@
  *  \date      15.07.2017
  */
 
-#include "Steiner.h"
 #include "GraphReader.h"
 #include <iostream>
+#include <sstream>
 #include <boost/program_options.hpp>
 #include <boost/timer/timer.hpp>
+#include "SteinerSolver.h"
 
 using namespace std;
 using namespace boost::program_options;
@@ -52,11 +53,15 @@ vector<int> computePrimes(int upperBound){
  * \return EXIT_SUCCESS if program exited correctly, otherwise EXIT_FAILURE
  */
 int main(int argc, char* argv[]){
-	//Initialize timer for time measurement
-	boost::timer::cpu_timer timer;
+	//Initialize timer for cpu time measurement
+	boost::timer::cpu_timer cpu_timer;
+
+	int numberOfThreads;
+	stringstream ss(argv[1]);
+	ss >> numberOfThreads;
 
 	GraphReader reader;
-	if(!reader.readDataFromFile(argv[1])){
+	if(!reader.readDataFromFile(argv[2])){
 		cerr << "Error while reading data. Exit program" << endl;
 		return EXIT_FAILURE;
 	}
@@ -66,40 +71,56 @@ int main(int argc, char* argv[]){
 	SortedEdges edges = reader.getSortedEdges();
 	WeightMap weights = reader.getWeightMap();
 
+	//Initialize timer for wallclock time measurement
+	boost::timer::cpu_timer wall_timer;
+
 	vector<int> terminals = computePrimes(numberVertices);
-	vector<int> firstHundredTerminals(terminals.begin(), terminals.begin() + 100);
-
-	//Solve the Steiner Problem for the given graph and given start nodes
-	Steiner mySteiner(terminals);
-
-	Edges result;
-	int minObjValue = INT_MAX;
-	int minStartNode;
-
-//	for(int startNode : firstHundredTerminals){
-		Edges temp_result = mySteiner.solveSteiner(edges, numberVertices, 2);
-//		if (mySteiner.getObjectiveValue() < minObjValue){
-//			minObjValue = mySteiner.getObjectiveValue();
-//			result = temp_result;
-//			minStartNode = startNode;
-//		}
-//	}
-
-
-	//print results
-//	cout << "Minimal spanning tree is computed for starting node " << minStartNode << endl;
-
-	cout << "Its edges of the minimal spanning tree are: " << endl;
-	for(pair<int, int> result_pair : temp_result){
-		cout << result_pair.first << " " << result_pair.second << endl;
+	vector<int> firstHundredTerminals;
+	if(terminals.size() < 100){
+		firstHundredTerminals = terminals;
+	}else {
+		firstHundredTerminals = vector<int>(terminals.begin(), terminals.begin() + 100);
 	}
 
-//	cout << "The objective value of the minimal spanning tree is " << minObjValue << endl;
+
+	//Solve the Steiner Problem for the given graph and given start nodes
+	Edges resultEdges[100];
+	int resultObjValues[100];
+
+	#pragma omp parallel for num_threads(numberOfThreads)
+	for(int i = 0; i < firstHundredTerminals.size(); i++){
+		SteinerSolver mySteiner(terminals);
+		resultEdges[i] = mySteiner.solveSteiner(edges, numberVertices, firstHundredTerminals.at(i));
+		resultObjValues[i] = mySteiner.getObjectiveValue();
+	}
+
+	//Search for the minimal steiner tree
+	int indexMinNode;
+	int minObjValue = INT_MAX;
+	for(int i = 0; i < firstHundredTerminals.size(); i++){
+		if(resultObjValues[i] < minObjValue){
+			indexMinNode = i;
+			minObjValue = resultObjValues[i];
+		}
+	}
+
+	//print results
+	cout << "TLEN: " << resultObjValues[indexMinNode] << endl;
+	Edges result = resultEdges[indexMinNode];
+	cout << "TREE: ";
+	for(int i = 0; i < result.size(); i++){
+		if(i == result.size() -1){
+			cout << "(" << result.at(i).first << "," << result.at(i).second << ")" << endl;
+		}else {
+			cout << "(" << result.at(i).first << "," << result.at(i).second << ") ";
+		}
+	}
 
 	//Print measured time
-	boost::timer::cpu_times times = timer.elapsed();
-	cout << "Wall-clock time: " << times.wall * 1e-9 << " seconds" << endl;
-	cout << "User-time: " << times.user * 1e-9 <<  " seconds" << endl;
+	boost::timer::cpu_times cpu_time = cpu_timer.elapsed();
+	boost::timer::cpu_times wall_time = wall_timer.elapsed();
+	cout << "TIME: " << (cpu_time.system + cpu_time.user) * 1e-9 << " seconds" << endl;
+	cout << "WALL: " << wall_time.wall * 1e-9 <<  " seconds" << endl;
 
 	return EXIT_SUCCESS;
 }

@@ -1,5 +1,5 @@
 /*
- * Steiner.h
+ * SteinerSolver.h
  *
  * 	\brief     My steiner problem solver for ex8
  *  \details   This class solves a steiner tree problem
@@ -7,19 +7,19 @@
  *  \date      02.07.2017
  */
 
-#ifndef STEINER_H_
-#define STEINER_H_
+#ifndef STEINERSOLVER_H_
+#define STEINERSOLVER_H_
 
-#include "Dijkstra.h"
+#include "DijkstraSolver.h"
 
 /*
  * \typedef Edges which representes all edges in a graph in a list
  */
 using Edges = std::vector<std::pair<int, int> >;
 
-class Steiner {
+class SteinerSolver {
 public:
-	Steiner(std::vector<int>);
+	SteinerSolver(std::vector<int>);
 	Edges solveSteiner(SortedEdges&, unsigned int, unsigned int);
 	int getObjectiveValue();
 
@@ -30,4 +30,4 @@ private:
 	int findNearestTerminal(WeightMap);
 };
 
-#endif /* STEINER_H_ */
+#endif /* STEINERSOLVER_H_ */

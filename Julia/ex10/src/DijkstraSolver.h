@@ -1,5 +1,5 @@
 /*
- * Dijkstra.cpp
+ * DijkstraSolver.cpp
  *
  * 	\brief     My dijkstra implementation for the tenth exercise
  *  \details   This class computes the longest shortest path for given startingPoint
@@ -8,8 +8,8 @@
  */
 
 
-#ifndef DIJKSTRA_H_
-#define DIJKSTRA_H_
+#ifndef DIJKSTRASOLVER_H_
+#define DIJKSTRASOLVER_H_
 
 #include <vector>
 #include "GraphReader.h"
@@ -19,9 +19,9 @@
  */
 using VisitedMap = std::vector<bool>;
 
-class dijkstra {
+class DijkstraSolver {
 public:
-	dijkstra(SortedEdges, unsigned int);
+	DijkstraSolver(SortedEdges, unsigned int);
 
 	void computeShortestPath(unsigned int, WeightMap&, std::vector<int>&);
 	int setEdgeWeightToZero(int, int);
@@ -31,4 +31,4 @@ private:
 	unsigned int numberOfVertices;
 };
 
-#endif /* DIJKSTRA_H_ */
+#endif /* DIJKSTRASOLVER_H_ */

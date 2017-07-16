@@ -7,7 +7,8 @@
  *  \date      15.07.2017
  */
 
-#include "Steiner.h"
+#include "SteinerSolver.h"
+
 #include <iostream>
 #include <climits>
 #include <algorithm>
@@ -16,7 +17,7 @@
  * \fn Constructor
  * \brief Construct a Steiner instance by initializing numberOfVertices, edges, weights and terminals
  */
-Steiner::Steiner(std::vector<int> terminals):
+SteinerSolver::SteinerSolver(std::vector<int> terminals):
 	terminals(terminals){
 	objectiveValue = 0;
 }
@@ -26,11 +27,15 @@ Steiner::Steiner(std::vector<int> terminals):
  * \brief Solves the Steiner problem for a given start node
  * \return Edges of the minimal spanning tree
  */
-Edges Steiner::solveSteiner(SortedEdges& sortedEdges, unsigned int numberOfVertices, unsigned int startNode){
+Edges SteinerSolver::solveSteiner(SortedEdges& sortedEdges, unsigned int numberOfVertices, unsigned int startNode){
 	Edges result;
+	if(numberOfVertices < startNode){
+		std::cout << "StartNode must be less or equal numberOfVertices" << std::endl;
+		return result;
+	}
 	VisitedMap alreadyAdded(numberOfVertices + 1, false);
 
-	dijkstra myDijkstra(sortedEdges, numberOfVertices);
+	DijkstraSolver myDijkstra(sortedEdges, numberOfVertices);
 	WeightMap weightMap(numberOfVertices + 1, INT_MAX);
 	std::vector<int> predecessorMap(numberOfVertices, -1);
 
@@ -58,7 +63,7 @@ Edges Steiner::solveSteiner(SortedEdges& sortedEdges, unsigned int numberOfVerti
 	return result;
 }
 
-int Steiner::getObjectiveValue(){
+int SteinerSolver::getObjectiveValue(){
 	return objectiveValue;
 }
 
@@ -67,7 +72,7 @@ int Steiner::getObjectiveValue(){
  * \brief finds the lowest weight of a terminal in a weight-map
  * \return index of the nearest terminal
  */
-int Steiner::findNearestTerminal(WeightMap weightMap){
+int SteinerSolver::findNearestTerminal(WeightMap weightMap){
 	int nearestWeight = INT_MAX;
 	int nearestVertex = 0;
 	for(int prime : terminals){

@@ -7,7 +7,7 @@
  *  \date      15.07.2017
  */
 
-#include "Dijkstra.h"
+#include "DijkstraSolver.h"
 
 #include <climits>
 #include <iostream>
@@ -34,7 +34,7 @@ struct compare_function{
  * \param edges Vector of the edges for the given graph
  * \return the new dijkstra instance
  */
-dijkstra::dijkstra(SortedEdges sortedEdges, unsigned int numberOfVertices):
+DijkstraSolver::DijkstraSolver(SortedEdges sortedEdges, unsigned int numberOfVertices):
 	sortedEdges(sortedEdges), numberOfVertices(numberOfVertices) {
 }
 
@@ -45,7 +45,7 @@ dijkstra::dijkstra(SortedEdges sortedEdges, unsigned int numberOfVertices):
  * \param WeightMap& weightsToVertices map to store the weight to the i-th node at the i-th position
  * \param vector<int>& predecessorMap map to store the i-th's predecessor at the i-th position
  */
-void dijkstra::computeShortestPath(unsigned int startNode, WeightMap& weightsToVertices, std::vector<int>& predecessorMap){
+void DijkstraSolver::computeShortestPath(unsigned int startNode, WeightMap& weightsToVertices, std::vector<int>& predecessorMap){
 	if(startNode > numberOfVertices){
 		std::cerr << "Index of StartVertex must be less or equal to number of vertices" << std::endl;
 		throw std::exception();
@@ -103,7 +103,7 @@ void dijkstra::computeShortestPath(unsigned int startNode, WeightMap& weightsToV
  * \param int edgeEnd end vertex of the edge
  * \return returns the old weight of the edge
  */
-int dijkstra::setEdgeWeightToZero(int edgeStart, int edgeEnd){
+int DijkstraSolver::setEdgeWeightToZero(int edgeStart, int edgeEnd){
 	std::vector<DijkstraPair> edges = sortedEdges[edgeStart];
 	for(DijkstraPair pair : edges){
 		if(pair.first == edgeEnd){
