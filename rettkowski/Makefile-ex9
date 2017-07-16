@@ -1,0 +1,19 @@
+doc: ex9.cpp
+	doxygen -g ex9.doxygen.conf
+	doxygen ex9.doxygen.conf
+	
+coverage: ex9.cpp
+	g++ -fopenmp -std=c++11 ex9.cpp -o ex9 -lm --coverage
+	./ex9 world666.gph
+	lcov --capture --directory ex9.gcno --output-file ex9.coverage.info
+	genhtml ex9.coverage.info --output-directory coverage
+	
+check: ex9.cpp
+	cppcheck --enable=all ex9.cpp
+	
+build: ex9.cpp
+	g++ -fopenmp -std=c++11 ex9.cpp -o ex6 -lboost_timer -lboost_system
+	
+run: ex9.cpp
+	g++ -fopenmp -std=c++11 ex9.cpp -o ex9 -lboost_timer -lboost_system
+  ./ex9 world666.gph
