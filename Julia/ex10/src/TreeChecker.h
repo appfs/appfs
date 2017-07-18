@@ -10,19 +10,28 @@
 #ifndef SRC_TREECHECKER_H_
 #define SRC_TREECHECKER_H_
 
-#include "DijkstraSolver.h"
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+/*
+ * \typedef Edges which representes all edges in a graph in a list
+ */
+using Edges = std::vector<std::pair<int, int> >;
+using OrderedEdges = std::vector<std::vector<int> >;
+using namespace std;
 
 class TreeChecker {
 public:
 	TreeChecker(Edges, int);
-	virtual ~TreeChecker();
-	bool allNodesContained(std::vector<int>);
+	bool allNodesContained(std::vector<int>&);
 	bool hasNoCircles();
 	bool isConnected();
 	
 private:
-	Edges edges;
-	SortedEdges sortedEdges;
+	OrderedEdges orderedEdges;
+	vector<bool> relevantVertices;
+	vector<int> vertices;
 
 };
 

@@ -13,6 +13,7 @@
 #include <boost/program_options.hpp>
 #include <boost/timer/timer.hpp>
 #include "SteinerSolver.h"
+#include "TreeChecker.h"
 
 using namespace std;
 using namespace boost::program_options;
@@ -93,6 +94,8 @@ int main(int argc, char* argv[]){
 		resultEdges[i] = mySteiner.solveSteiner(edges, numberVertices, firstHundredTerminals.at(i));
 		resultObjValues[i] = mySteiner.getObjectiveValue();
 	}
+	//Stop wall time
+	boost::timer::cpu_times wall_time = wall_timer.elapsed();
 
 	//Search for the minimal steiner tree
 	int indexMinNode;
@@ -102,6 +105,18 @@ int main(int argc, char* argv[]){
 			indexMinNode = i;
 			minObjValue = resultObjValues[i];
 		}
+	}
+
+	//Check if the minimal steiner tree is a tree and contains all terminals
+	TreeChecker myChecker(resultEdges[indexMinNode], numberVertices);
+	if(!myChecker.allNodesContained(firstHundredTerminals)){
+		cout << "CONTAINS NOT ALL TERMINALS" << endl;
+	}
+	if(!myChecker.hasNoCircles()){
+		cout << "CONTAINS CIRLCES" << endl;
+	}
+	if(!myChecker.isConnected()){
+		cout << "NOT CONNECTED" << endl;
 	}
 
 	//print results
@@ -118,7 +133,7 @@ int main(int argc, char* argv[]){
 
 	//Print measured time
 	boost::timer::cpu_times cpu_time = cpu_timer.elapsed();
-	boost::timer::cpu_times wall_time = wall_timer.elapsed();
+
 	cout << "TIME: " << (cpu_time.system + cpu_time.user) * 1e-9 << " seconds" << endl;
 	cout << "WALL: " << wall_time.wall * 1e-9 <<  " seconds" << endl;
 
