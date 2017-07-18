@@ -19,12 +19,13 @@ using Edges = std::vector<std::pair<int, int> >;
 
 class SteinerSolver {
 public:
-	SteinerSolver(std::vector<int>);
+	SteinerSolver(std::vector<int>&);
+	~ SteinerSolver();
 	Edges solveSteiner(SortedEdges&, unsigned int, unsigned int);
 	int getObjectiveValue();
 
 private:
-	std::vector<int> terminals;
+	std::vector<int>* terminals;
 	int objectiveValue;
 
 	int findNearestTerminal(WeightMap);

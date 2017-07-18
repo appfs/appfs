@@ -90,9 +90,10 @@ int main(int argc, char* argv[]){
 
 	#pragma omp parallel for num_threads(numberOfThreads)
 	for(int i = 0; i < firstHundredTerminals.size(); i++){
-		SteinerSolver mySteiner(terminals);
-		resultEdges[i] = mySteiner.solveSteiner(edges, numberVertices, firstHundredTerminals.at(i));
-		resultObjValues[i] = mySteiner.getObjectiveValue();
+		SteinerSolver* mySteiner = new SteinerSolver(terminals);
+		resultEdges[i] = mySteiner->solveSteiner(edges, numberVertices, firstHundredTerminals.at(i));
+		resultObjValues[i] = mySteiner->getObjectiveValue();
+		delete mySteiner;
 	}
 	//Stop wall time
 	boost::timer::cpu_times wall_time = wall_timer.elapsed();

@@ -17,9 +17,13 @@
  * \fn Constructor
  * \brief Construct a Steiner instance by initializing numberOfVertices, edges, weights and terminals
  */
-SteinerSolver::SteinerSolver(std::vector<int> terminals):
-	terminals(terminals){
+SteinerSolver::SteinerSolver(std::vector<int>& terminal){
+	terminals = new std::vector<int>(terminal);
 	objectiveValue = 0;
+}
+
+SteinerSolver::~SteinerSolver(){
+	delete terminals;
 }
 
 /**
@@ -39,12 +43,12 @@ Edges SteinerSolver::solveSteiner(SortedEdges& sortedEdges, unsigned int numberO
 	WeightMap weightMap(numberOfVertices + 1, INT_MAX);
 	std::vector<int> predecessorMap(numberOfVertices, -1);
 
-	while(!terminals.empty()){
+	while(!terminals->empty()){
 		myDijkstra.computeShortestPath(startNode, weightMap, predecessorMap);
 
 		int vertexToAdd = findNearestTerminal(weightMap);
 		//Remove nearest terminal from terminal list
-		terminals.erase(std::find(terminals.begin(), terminals.end(), vertexToAdd));
+		terminals->erase(std::find(terminals->begin(), terminals->end(), vertexToAdd));
 		while(vertexToAdd != startNode){
 			//break if vertexToAdd is already in the edgeList. Means, that also all predecessors are in the list.
 			if(alreadyAdded[vertexToAdd]){
@@ -75,10 +79,10 @@ int SteinerSolver::getObjectiveValue(){
 int SteinerSolver::findNearestTerminal(WeightMap weightMap){
 	int nearestWeight = INT_MAX;
 	int nearestVertex = 0;
-	for(int prime : terminals){
-		if(weightMap[prime] < nearestWeight){
-			nearestWeight = weightMap[prime];
-			nearestVertex = prime;
+	for(int i= 0; i < terminals->size(); i++){
+		if(weightMap[terminals->at(i)] < nearestWeight){
+			nearestWeight = weightMap[terminals->at(i)];
+			nearestVertex = terminals->at(i);
 		}
 	}
 	return nearestVertex;
