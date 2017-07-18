@@ -2,15 +2,12 @@
 *    @Excercise 8
 *    @date 17.07.2017
 *
-*   Algorithm to find optimal Steiner tree on a graph where primes count as termainals.
+*   Algorithm to find Steiner tree on a graph where primes count as termainals.
 *
 *   I decided to leave all code in one file since its mainly consistent of two bigger algorithms
 *   1. Dijkstra
 *   2. Analyzing Dijkstra output in main-function
 *   I don't think it gets to complicated reading it from top to bottom.
-*   
-*   In this version I calculate the OPTIMAL STEINER TREE!
-*   which is quite expensive for larger graphs
 */
 
 #include <string>
