@@ -1,4 +1,4 @@
-FOLDER=../SP
+FOLDER=../../SP
 FILE=world666
 THREADS=8
 
