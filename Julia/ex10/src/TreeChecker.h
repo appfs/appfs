@@ -32,6 +32,10 @@ private:
 	OrderedEdges orderedEdges;
 	vector<bool> relevantVertices;
 	vector<int> vertices;
+	bool BFSalreadyDone = false;
+	vector<int> numberOfVisits;
+
+	void doBFS();
 
 };
 

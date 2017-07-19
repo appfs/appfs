@@ -9,9 +9,15 @@
 
 #include "TreeChecker.h"
 
-TreeChecker::TreeChecker(Edges edges, int numberVertices){
-	orderedEdges.resize(numberVertices + 1);
-	relevantVertices.resize(numberVertices + 1);
+/**
+ * \fn TreeChecker(Edges, int)
+ * \brief Constructor for TreeChecker instance. Sorts the edges in a more efficient way and initialize variables
+ */
+TreeChecker::TreeChecker(Edges edges, int maxIndexOfVertex){
+	orderedEdges.resize(maxIndexOfVertex + 1);
+	relevantVertices.resize(maxIndexOfVertex + 1);
+	numberOfVisits.resize(maxIndexOfVertex + 1, 1);
+
 	vertices.push_back(edges.at(0).first);
 	for(pair<int, int> edge : edges){
 		orderedEdges.at(edge.first).push_back(edge.second);
@@ -25,7 +31,6 @@ TreeChecker::TreeChecker(Edges edges, int numberVertices){
 			vertices.push_back(edge.second);
 		}
 	}
-
 }
 
 /*
@@ -43,68 +48,66 @@ bool TreeChecker::allNodesContained(vector<int>* nodes){
 	return true;
 }
 
+/*
+ * \fn bool hasNoCircles()
+ * \brief checks if the given graph has circles or not by doing a BFS
+ * \return true if has no circles, otherwise false
+ */
 bool TreeChecker::hasNoCircles(){
-	//Initialize for breath first search
-	vector<bool> alreadyVisited(relevantVertices.size(), true);
-	for(int vertex : vertices){
-		alreadyVisited.at(vertex) = false;
+	if(!BFSalreadyDone){
+		doBFS();
+		BFSalreadyDone = true;
 	}
-
-	vector<int> verticesToVisit;
-	verticesToVisit.push_back(vertices.at(0));
-
-	int currNode;
-
-	while(!verticesToVisit.empty()){
-
-		currNode = verticesToVisit.at(0);
-		verticesToVisit.erase(verticesToVisit.begin());
-		alreadyVisited.at(currNode) = true;
-
-		for(int endVertex : orderedEdges.at(currNode)){
-			//Check if we already visited this node, we found a circle
-			if(alreadyVisited.at(endVertex) == true){
-				cout << "Break at " << endVertex << endl;
-				return false;
-			}
-			verticesToVisit.push_back(endVertex);
-			orderedEdges.at(endVertex)//
-					.erase(//
-					find(orderedEdges.at(endVertex).begin(), orderedEdges.at(endVertex).end(), currNode)//
-					);
-		}
-	}
-	return true;
-
-}
-
-
-bool TreeChecker::isConnected(){
-	//Initialize for breath first search
-	vector<bool> alreadyVisited(relevantVertices.size(), true);
-	for(int vertex : vertices){
-		alreadyVisited.at(vertex) = false;
-	}
-	vector<int> verticesToVisit;
-	verticesToVisit.push_back(vertices.at(0));
-
-	int currNode;
-
-	while(!verticesToVisit.empty()){
-		currNode = verticesToVisit.at(0);
-		verticesToVisit.erase(verticesToVisit.begin());
-		alreadyVisited.at(currNode) = true;
-		for(int endVertex : orderedEdges.at(currNode)){
-			verticesToVisit.push_back(endVertex);
-//			orderedEdges.at(endVertex)//
-//					.erase(//
-//					find(orderedEdges.at(endVertex).begin(), orderedEdges.at(endVertex).end(), currNode)//
-//					);
-		}
-	}
-	if(find(alreadyVisited.begin(), alreadyVisited.end(), false) != alreadyVisited.end()){
+	//Search if any of the relevant vertices is visited twice
+	if(find(numberOfVisits.begin(), numberOfVisits.end(), 2) != numberOfVisits.end()){
 		return false;
 	}
 	return true;
+}
+
+/*
+ * \fn bool isConnected()
+ * \brief checks if the given graph is connected or not
+ * \return true if the graph is connected, otherwise false
+ */
+bool TreeChecker::isConnected(){
+	if(!BFSalreadyDone){
+			doBFS();
+			BFSalreadyDone = true;
+	}
+	//Search if any of the relevant vertices is never visited
+	if(find(numberOfVisits.begin(), numberOfVisits.end(), 0) != numberOfVisits.end()){
+		return false;
+	}
+	return true;
+}
+
+/*
+ * \fn void doBFS()
+ * \brief computes a breath first search on the given graph and counts the visits of the relevant vertices
+ */
+void TreeChecker::doBFS(){
+	for(int vertex : vertices){
+		numberOfVisits.at(vertex) = 0;
+	}
+	vector<int> verticesToVisit;
+	verticesToVisit.push_back(vertices.at(0));
+
+	int currNode;
+
+	while(!verticesToVisit.empty()){
+
+		currNode = verticesToVisit.at(0);
+		verticesToVisit.erase(verticesToVisit.begin());
+		numberOfVisits.at(currNode)++;
+
+		for(int endVertex : orderedEdges.at(currNode)){
+			verticesToVisit.push_back(endVertex);
+			orderedEdges.at(endVertex)//
+				.erase(//
+				find(orderedEdges.at(endVertex).begin(), orderedEdges.at(endVertex).end(), currNode)//
+			);
+		}
+	}
 }
 

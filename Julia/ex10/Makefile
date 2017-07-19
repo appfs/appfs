@@ -23,4 +23,4 @@ debug:
 	
 test:
 	g++ -O3 -std=c++0x src/ex10.cpp src/DijkstraSolver.cpp src/SteinerSolver.cpp src/GraphReader.cpp src/TreeChecker.cpp -o ex10 -lboost_timer -fopenmp
-	./ex10 ${THREADS} ../${FILE}
+	./ex10 ${THREADS} ../../${FILE}

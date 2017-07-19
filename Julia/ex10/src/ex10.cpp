@@ -93,7 +93,6 @@ int main(int argc, char* argv[]){
 	cout << "compute steiner" << endl;
 	#pragma omp parallel for num_threads(numberOfThreads)
 	for(int i = 0; i < firstHundredTerminals->size(); i++){
-		cout << "solve steiner " << i << endl;
 		SteinerSolver* mySteiner = new SteinerSolver(*terminals);
 		resultEdges[i] = mySteiner->solveSteiner(edges, numberVertices, firstHundredTerminals->at(i));
 		resultObjValues[i] = mySteiner->getObjectiveValue();
