@@ -18,6 +18,7 @@ Dijkstra::~Dijkstra() {
 	// nop
 }
 
+/** Computes the shortest path with the Dijkstra-Algo in O(log(m)n) */
 WeightsAndPrenodeMap Dijkstra::computeShortestPath(int source){
 	WeightsAndPrenodeMap weightAndNodeMap(vertexCount);
 	weightAndNodeMap[source].first = 0.;

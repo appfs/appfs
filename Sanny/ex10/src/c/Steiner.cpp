@@ -7,11 +7,13 @@
 
 #include "Steiner.h"
 
+/** Constructor */
 Steiner::Steiner() {
 	nodesInTree = new Nodes();
 	steinerEdges = new Edges();
 }
 
+/** Deconstructor */
 Steiner::~Steiner() {
 	delete nodesInTree;
 	delete steinerEdges;
@@ -32,32 +34,14 @@ Nodes Steiner::getNodes() {
 	return *nodesInTree;
 }
 
-/** Computes all primes less than vertexCount */
-Primes Steiner::getPrimes(unsigned int vertexCount) {
-	Primes primes = Primes();
-	primes.push_back(2);
-	for (unsigned int i = 3; i < vertexCount; i++) {
-		char isPrime = true;
-		for (int prime : primes) {
-			if (i % prime == 0) {
-				isPrime = false;
-			}
-		}
-		if (isPrime) {
-			primes.push_back(i);
-		}
-	}
-	return primes;
-}
-
 void Steiner::addToSteiner(Edge edge, unsigned int i, Weights* localWeights) {
 	steinerEdges->push_back(edge);
 	steinerWeight += localWeights->at(i);
 	localWeights->at(i) = 0;
 }
 
-/** Uses prime numbers for terminals and solves the Steiner-tree problem */
-void Steiner::steiner(int vertexCount, Edges* edges, Weights& weights, int startnode) {
+/** Solves the Steiner-Tree by computing the shortest Path via Dijkstra and searching for the nearest terminal untill no terminal is left */
+void Steiner::computeSteinerTree(int vertexCount, Edges* edges, Weights& weights, Terminals& terminals, int startnode) {
 	NodeToEdgeMap* vertexToEdges = new NodeToEdgeMap(vertexCount);
 	for(unsigned int i = 0; i < edges->size(); i++){
 		Edge edge = edges->at(i);
@@ -74,22 +58,22 @@ void Steiner::steiner(int vertexCount, Edges* edges, Weights& weights, int start
 		return;
 	}
 
-	Primes primes = getPrimes(vertexCount);
-	if(std::find(primes.begin(), primes.end(), startnode) != primes.end()){
-		primes.erase(std::find(primes.begin(), primes.end(), startnode));
+	Terminals* localTerminals = new Terminals(terminals);
+	if(std::find(localTerminals->begin(), localTerminals->end(), startnode) != localTerminals->end()){
+		localTerminals->erase(std::find(localTerminals->begin(), localTerminals->end(), startnode));
 	}
 	nodesInTree->push_back(startnode);
 
 	// while there aren't all primes in the steiner-tree
-	while(!primes.empty()){
+	while(!localTerminals->empty()){
 		//compute distances
 		Weights w = *localWeights;
 		WeightsAndPrenodeMap map = dijsktra->computeShortestPath(startnode);
 		int primeToAdd = 0;
 		int distToPrime = INT_MAX;
 		//go through all missing primes and find the nearest
-		for (unsigned int i = 0; i<primes.size(); i++){
-			int prime = primes[i];
+		for (unsigned int i = 0; i<localTerminals->size(); i++){
+			int prime = localTerminals->at(i);
 			if(map[prime].first < distToPrime){
 				primeToAdd = prime;
 				distToPrime = map[prime].first;
@@ -116,11 +100,12 @@ void Steiner::steiner(int vertexCount, Edges* edges, Weights& weights, int start
 			node = preNode;
 			preNode = map[node].second;
 		}while(node != startnode);
-		primes.erase(std::find(primes.begin(), primes.end(), primeToAdd));
+		localTerminals->erase(std::find(localTerminals->begin(), localTerminals->end(), primeToAdd));
 	}
 
 	delete dijsktra;
 	delete localWeights;
+	delete localTerminals;
 	delete vertexToEdges;
 }
 
