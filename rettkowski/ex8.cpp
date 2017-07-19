@@ -1,8 +1,8 @@
 /*
-*  @file 		ex7.cpp
-*  @details  	This file is the solution to exercise 7.
+*  @file 		ex8.cpp
+*  @details  	This file is the solution to exercise 8.
 *  @author    	Alexander Rettkowski
-*  @date      	28.06.2017
+*  @date      	12.07.2017
 */
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
@@ -28,7 +28,7 @@
 
 using namespace boost;
 
-namespace exercise5
+namespace exercise8
 {
 	namespace qi = boost::spirit::qi;
 	namespace ascii = boost::spirit::ascii;
@@ -42,13 +42,13 @@ namespace exercise5
 
 
 BOOST_FUSION_ADAPT_STRUCT(
-	exercise5::edge,
+	exercise8::edge,
 	(int, startNode)
 	(int, endNode)
 	(int, length)
 )
 
-namespace exercise5
+namespace exercise8
 {
 	template <typename Iterator>
 	struct line_parser : qi::grammar<Iterator, edge()>
@@ -64,16 +64,19 @@ namespace exercise5
 }
 
 /**
-* The function that calculates the longest shortest path from node 0.
+* The function that calculates the shortest paths using Dijkstra's method.
 * @param numberOfNodes Number of nodes in the graph.
 * @param graph The graph represented as a vector auf edge-vectors.
+* @param startNode The id of the node where the search starts.
 */
-std::pair<int, int> dijkstra( int numberOfNodes, std::vector< std::vector< std::pair<int, int> > > graph)
+std::vector<int> dijkstra(int numberOfNodes, std::vector< std::vector< std::pair<int, int> > > graph, int startNode, std::vector<int>& predecessors)
 {
+	predecessors.resize(numberOfNodes, -1);
 	std::vector<int> distanceTo(numberOfNodes, INT_MAX);
 	std::priority_queue< std::pair<int, int>, std::vector< std::pair<int, int> >, std::greater< std::pair<int, int> > > queue;
-	queue.push(std::pair<int, int>(0, 0));
-	distanceTo[0] = 0;
+	queue.push(std::pair<int, int>(startNode, 0));
+	distanceTo[startNode] = 0;
+	//predecessors[startNode] = -1;
 
 	int currentNode, compareNode, compareNodeDistance, currentNodeDistance;
 
@@ -90,25 +93,28 @@ std::pair<int, int> dijkstra( int numberOfNodes, std::vector< std::vector< std::
 			if (distanceTo[compareNode] > distanceTo[currentNode] + compareNodeDistance) {
 				distanceTo[compareNode] = distanceTo[currentNode] + compareNodeDistance;
 				queue.push(std::pair<int, int>(compareNode, distanceTo[compareNode]));
+				predecessors[compareNode] = currentNode;
 			}
 		}
 	}
+	return distanceTo;
+}
 
-	std::pair<int, int> solution(-1, -1);
-	for (int i = 0; i < numberOfNodes; i++)
-	{
-		if (distanceTo[i] > solution.second)
-		{
-			solution.second = distanceTo[i];
-			solution.first = i;
-		}
-		if ((distanceTo[i] == solution.second) && (i > solution.first))
-		{
-			solution.first = i;
-		}
+
+/**
+* This method checks (in a naive way), if a given number is prime or not.
+* @param number The number to check.
+* @returns True, if number is prime; false otherwise.
+*/
+bool isPrime(int number) {
+	if (number == 2)
+		return true;
+	if (number % 2 == 0)
+		return false;
+	for (int i = 3; (i*i) <= number; i += 2) {
+		if (number % i == 0) return false;
 	}
-
-	return solution;
+	return true;
 }
 
 /**
@@ -122,7 +128,7 @@ int main(int argc, char *argv[])
 
 	using boost::spirit::ascii::space;
 	typedef std::string::const_iterator iterator_type;
-	typedef exercise5::line_parser<iterator_type> line_parser;
+	typedef exercise8::line_parser<iterator_type> line_parser;
 	line_parser parser;
 	std::string currentLine;
 	std::ifstream file(argv[1]);
@@ -130,14 +136,14 @@ int main(int argc, char *argv[])
 	// get number of nodes
 	char delimiter = ' ';
 	getline(file, currentLine, delimiter);
-	const int numberOfNodes = std::stoi(currentLine);
+	const int numberOfNodes = stoi(currentLine);
 	getline(file, currentLine);
 	int constSub = 1;
 
 	std::vector<std::vector<std::pair<int, int>>> edges(numberOfNodes);
 	while (getline(file, currentLine))
 	{
-		exercise5::edge parsedLine;
+		exercise8::edge parsedLine;
 		std::string::const_iterator currentPosition = currentLine.begin();
 		std::string::const_iterator lineEnd = currentLine.end();
 		bool parsingSucceeded = phrase_parse(currentPosition, lineEnd, parser, space, parsedLine);
@@ -158,15 +164,82 @@ int main(int argc, char *argv[])
 
 	file.close();
 	
-	std::pair<int, int> solution = dijkstra(numberOfNodes, edges);
-	int vertex = solution.first, distance = solution.second;
 
-	std::cout << "RESULT VERTEX " << vertex << std::endl;
-	std::cout << "RESULT DIST " << distance << std::endl;
 
-	timer::cpu_times time = boostTimer.elapsed();
-	std::cout << "CPU TIME: " << (time.user + time.system) / 1e9 << "s\n";
-	std::cout << "WALL CLOCK TIME: " << time.wall / 1e9 << "s\n";
+
+
+
+
+	std::vector<int> connectedVertices, unconnectedTerminals;
+	for (int i = 0; i < numberOfNodes; i++)
+	{
+		if (isPrime(i))
+			unconnectedTerminals.push_back(i);
+	}
+
+	connectedVertices.push_back(unconnectedTerminals.back());
+	unconnectedTerminals.pop_back();
+
+	std::map<int, std::vector<int>> distancesFromTerminals;
+	std::map<int, std::vector<int>> predecessorsFromTerminals;
+	for (int i : unconnectedTerminals)
+	{
+		std::vector<int> predecessors;
+		std::vector<int> distancesFromI = dijkstra(numberOfNodes, edges, i, predecessors);
+		distancesFromTerminals.insert(std::pair<int, std::vector<int>>(i, distancesFromI));
+		predecessorsFromTerminals.insert(std::pair<int, std::vector<int>>(i, predecessors));
+	}
+
+	int steinerWeight = 0;
+
+	while (unconnectedTerminals.size() > 0)
+	{
+		int connectingPointId = -1, connectingPointDistance = INT32_MAX;
+		std::vector<int> path;
+
+		int pathFrom = -1, pathTo = -1, mindist = INT32_MAX;
+		for (int i = 0; i < unconnectedTerminals.size(); i++)
+		{
+			int vertexId = unconnectedTerminals[i];
+			for (int j : connectedVertices)
+			{
+				if (distancesFromTerminals[vertexId][j] < mindist)
+				{
+					mindist = distancesFromTerminals[vertexId][j];
+					pathTo = j;
+					pathFrom = vertexId;
+				}
+			}
+		}
+
+		path.push_back(pathFrom);
+		do
+		{
+			path.push_back(pathTo);
+			pathTo = predecessorsFromTerminals[pathFrom][pathTo];
+		} while (pathTo != pathFrom);
+
+		// get path from 
+		for (int i : path)
+		{
+			// if the vertex wasn't in the tree before, add
+			if (std::find(connectedVertices.begin(), connectedVertices.end(), i) == connectedVertices.end())
+			{
+				connectedVertices.push_back(i);
+			}
+			// if it was an unconnected terminal, delete from the list
+			auto pos = std::find(unconnectedTerminals.begin(), unconnectedTerminals.end(), i);
+			if (pos != unconnectedTerminals.end())
+			{
+				unconnectedTerminals.erase(pos);
+			}
+		}
+
+		steinerWeight += mindist;
+
+	}
+
+	std::cout << steinerWeight;
 
 	return 0;
 }

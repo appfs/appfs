@@ -1,0 +1,19 @@
+doc: ex8.cpp
+	doxygen -g ex8.doxygen.conf
+	doxygen ex8.doxygen.conf
+	
+coverage: ex8.cpp
+	g++ -std=c++11 ex8.cpp -o ex8 -lm --coverage
+	./ex8 world666.gph
+	lcov --capture --directory ex8.gcno --output-file ex8.coverage.info
+	genhtml ex8.coverage.info --output-directory coverage
+	
+check: ex8.cpp
+	cppcheck --enable=all ex8.cpp
+	
+build: ex8.cpp
+	g++ -std=c++11 ex8.cpp -o ex6 -lboost_timer -lboost_system
+	
+run: ex8.cpp
+	g++ -std=c++11 ex8.cpp -o ex8 -lboost_timer -lboost_system
+./ex8 world666.gph
