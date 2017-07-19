@@ -17,8 +17,8 @@
  * \fn Constructor
  * \brief Construct a Steiner instance by initializing numberOfVertices, edges, weights and terminals
  */
-SteinerSolver::SteinerSolver(std::vector<int>& terminal){
-	terminals = new std::vector<int>(terminal);
+SteinerSolver::SteinerSolver(std::vector<int> terminal){
+	terminals = new vector<int>(terminal);
 	objectiveValue = 0;
 }
 

@@ -34,9 +34,9 @@ TreeChecker::TreeChecker(Edges edges, int numberVertices){
  * \param vector<int> nodes list of nodes which should be contained
  * \return true if all nodes are contained, otherwise false
  */
-bool TreeChecker::allNodesContained(vector<int>& nodes){
-	for(int node : nodes){
-		if(relevantVertices.at(node) != true){
+bool TreeChecker::allNodesContained(vector<int>* nodes){
+	for(int i = 0; i < nodes->size(); i++){
+		if(relevantVertices.at(nodes->at(i)) != true){
 			return false;
 		}
 	}

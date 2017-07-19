@@ -31,6 +31,8 @@ using namespace std;
 class GraphReader {
 
 public:
+	GraphReader();
+	~ GraphReader();
 	bool readDataFromFile(char*);
 	SortedEdges getSortedEdges();
 	WeightMap getWeightMap();
@@ -40,8 +42,8 @@ public:
 private:
 	unsigned int numberVertices;
 	unsigned int numberEdges;
-	SortedEdges sortedEdges;
-	WeightMap weightMap;
+	SortedEdges* sortedEdges;
+	WeightMap* weightMap;
 };
 
 #endif /* SRC_GRAPHREADER_H_ */

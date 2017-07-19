@@ -24,7 +24,7 @@ using namespace std;
 class TreeChecker {
 public:
 	TreeChecker(Edges, int);
-	bool allNodesContained(std::vector<int>&);
+	bool allNodesContained(std::vector<int>*);
 	bool hasNoCircles();
 	bool isConnected();
 	

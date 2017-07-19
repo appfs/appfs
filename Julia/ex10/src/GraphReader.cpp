@@ -9,6 +9,29 @@
 
 #include "GraphReader.h"
 
+/**
+ * \fn  GraphReader()
+ * \brief Constructor for GraphReader Instance
+ */
+GraphReader::GraphReader(){
+	weightMap = new vector<int>();
+	sortedEdges = new vector<vector<DijkstraPair> >();
+}
+
+/*
+ * \fn ~GraphReader()
+ * \brief deconstructor for GraphReader instance
+ */
+GraphReader::~GraphReader(){
+	delete sortedEdges;
+	delete weightMap;
+}
+
+/*
+ * \fn readDataFromFile(char* path)
+ * \brief reads in graph data from a given path and sort edges and weights in an useful way
+ * \return true if reading was successful, otherwise false
+ */
 bool GraphReader::readDataFromFile(char* path){
 	ifstream infile;
 	infile.open(path, ios::in);
@@ -27,8 +50,7 @@ bool GraphReader::readDataFromFile(char* path){
 	}
 
 	//Reading the edge data
-	sortedEdges.resize(numberVertices + 1);
-	weightMap.resize(numberVertices + 1);
+	sortedEdges->resize(numberVertices + 1, vector<DijkstraPair>());
 
 	int startEdge;
 	int endEdge;
@@ -39,28 +61,46 @@ bool GraphReader::readDataFromFile(char* path){
 			s.clear();
 			s.str(line);
 			s >> startEdge >> endEdge >> weight;
-			weightMap.push_back(weight);
-			for (unsigned int i = 0; i < numberEdges + 1; i++){
-				sortedEdges.at(startEdge).push_back(std::make_pair(endEdge, weight));
-				sortedEdges.at(endEdge).push_back(std::make_pair(startEdge, weight));
-			}
+			weightMap->push_back(weight);
+			sortedEdges->at(startEdge).push_back(make_pair(endEdge, weight));
+			sortedEdges->at(endEdge).push_back(make_pair(startEdge, weight));
 		}
 	}
 	return true;
 }
 
+/*
+ * \fn SortedEdges getSortedEdges()
+ * \brief returns sortedEdges
+ * \return *sortedEdges
+ */
 SortedEdges GraphReader::getSortedEdges(){
-	return sortedEdges;
+	return *sortedEdges;
 }
 
+/*
+ * \fn WeightMap getWeightMap()
+ * \brief returns weightMap
+ * \return *weightMap
+ */
 WeightMap GraphReader::getWeightMap(){
-	return weightMap;
+	return *weightMap;
 }
 
+/*
+ * \fn unsigned int getNumberOfEdges()
+ * \brief returns numberEdges
+ * \return numberEdges
+ */
 unsigned int GraphReader::getNumberOfEdges(){
 	return numberEdges;
 }
 
+/*
+ * \fn unsigned int getNumberOfVertices()
+ * \brief returns numberVertices
+ * \return numberVertices
+ */
 unsigned int GraphReader::getNumberOfVertices(){
 	return numberVertices;
 }
