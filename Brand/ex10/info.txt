@@ -1,0 +1,16 @@
+ex10
+- ex10.cpp
+- makefile
+boost needs to be installed on local server and path needs to be modified in makefile
+
+to compile call: make
+-> g++ -I /usr/local/boost_dir ex10.cpp -o ex10 -std=c++11 -fopenmp
+
+Output of edges of steinerTree is not submitted since program crashes on big graphs beacuase of output
+
+Program is called
+./ex10 'path_to_gph_file' 'no_threads' 'n_source_nodes'
+
+-> example:
+./ex10 ./exampleGraphs/big8.gph 4 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+calls ex10 on big8.gph with 4 threads and searches on initial source nodes 1,2,3,...,14,15
