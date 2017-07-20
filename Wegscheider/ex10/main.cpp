@@ -104,6 +104,7 @@ int main(int numargs, char* args[]) {
 		exit(EXIT_FAILURE);
 	}
 
+
 	Edge* edges = new Edge[numEdges];
 	double* weights = new double[numEdges];
 
@@ -114,7 +115,7 @@ int main(int numargs, char* args[]) {
 	}
 
 	//undirected graph is constructed with all edges and their weights
-	Graph g(edges, edges + numEdges , weights, numVertices);
+	const Graph g(edges, edges + numEdges , weights, numVertices);
 
 
 	//all primes in {2,...,numVertices} are considered to be terminals
@@ -128,12 +129,16 @@ int main(int numargs, char* args[]) {
 	//In these arrays the tree is implicitly stored by remembering the
 	//predecessor of each vertex, a -1 means that the vertex is not in the tree
 	vector<int*> treePredecessors(iterations);
+	for (int i = 0; i < iterations; ++i) {
+		treePredecessors[i] = new int[numVertices];
+
+	}
 
 #pragma omp parallel for schedule(dynamic) num_threads(N_THREADS)
 	for (int i = 0; i < iterations; ++i) {
-		treePredecessors[i] = new int[numVertices];
 		objectiveValues[i] = SteinerTreeHeuristic::computeSteinerTree(g,
 			numVertices, treePredecessors[i], terminals, terminals[i]);
+
 	}
 
 	double minValue = std::numeric_limits<double>::infinity();

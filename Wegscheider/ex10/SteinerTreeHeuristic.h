@@ -19,9 +19,7 @@ using Graph = adjacency_list<vecS, vecS, undirectedS,
 
 
 
-class SteinerTreeHeuristic {
-
-public:
+namespace SteinerTreeHeuristic {
 
 	/**
 	 * Computes a Steiner Tree on an undirected graph using an improved version
@@ -33,8 +31,8 @@ public:
 	 * @param root the vertex from which to start the heuristic
 	 * @return the objective value of the constructed tree
 	 */
-	static double computeSteinerTree(Graph& g, int numVertices, int treePredecessors[],
-			vector<int>& terminals, int root);
+	double computeSteinerTree(const Graph& g, const int& numVertices, int treePredecessors[],
+			const vector<int>& terminals, const int& root);
 
 	/**
 	 * Tests whether an array of integers implicitly represents a Steiner Tree
@@ -48,7 +46,7 @@ public:
 	 * @param edgeString the string to which all edges are printed
 	 * @return whether the array represents a Steiner Tree
 	 */
-	static bool testAndPrintTree(Graph& g, int numVertices, int treePredecessors[],
+	bool testAndPrintTree(const Graph& g, int numVertices, int treePredecessors[],
 			vector<int>& terminals, int root, string& edgeString);
 
 	/**
@@ -62,11 +60,8 @@ public:
 	 * @param root the root from which the tree was constructed
 	 * @return whether the array represents a Steiner Tree
 	 */
-	static bool testTree(Graph& g, int numVertices, int treePredecessors[],
+	bool testTree(const Graph& g, int numVertices, int treePredecessors[],
 			vector<int>& terminals, int root);
 
-private:
-	SteinerTreeHeuristic() {}
-};
-
+}
 #endif /* SRC_STEINERTREEHEURISTIC_H_ */
