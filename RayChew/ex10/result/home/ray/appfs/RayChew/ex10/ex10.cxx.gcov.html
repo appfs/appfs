@@ -1,0 +1,290 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - result.info - /home/ray/appfs/RayChew/ex10/ex10.cxx</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">home/ray/appfs/RayChew/ex10</a> - ex10.cxx<span style="font-size: 80%;"> (source / <a href="ex10.cxx.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">result.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">83</td>
+            <td class="headerCovTableEntry">83</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2017-07-20 03:50:30</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /**</a>
+<span class="lineNum">       2 </span>            :  * \file ex10.cxx
+<span class="lineNum">       3 </span>            :  * \author Ray Chew
+<span class="lineNum">       4 </span>            :  * \date 20 July 2017
+<span class="lineNum">       5 </span>            :  * \brief Steiner-Tree builder for undirected .gph graphs
+<span class="lineNum">       6 </span>            :  */
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : /**
+<span class="lineNum">       9 </span>            :  * \mainpage Ex10
+<span class="lineNum">      10 </span>            :  * 
+<span class="lineNum">      11 </span>            :  * \section Description
+<span class="lineNum">      12 </span>            :  * 
+<span class="lineNum">      13 </span>            :  * * compile: `g++ -std=c++14 utils.cxx checker.cxx boost_dijkstra.cxx m2alg.cxx ex8.cxx -o ex8 -lboost_timer -Wall`&lt;br&gt;
+<span class="lineNum">      14 </span>            :  * * OR: just use make.
+<span class="lineNum">      15 </span>            :  * * run: `./ex10 filepath/graph.gph [source node]`&lt;br&gt;
+<span class="lineNum">      16 </span>            :  */
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : #include &quot;src/utils.h&quot;
+<span class="lineNum">      19 </span>            : #include &quot;src/checker.h&quot;
+<span class="lineNum">      20 </span>            : #include &quot;src/heap.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;src/dijkstra_alg.h&quot;
+<span class="lineNum">      22 </span>            : //#include &lt;stdlib.h&gt; 
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : using namespace std;
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineCov">          2 : int main(int argc, char* argv[]) {</span>
+<span class="lineNum">      27 </span>            :   
+<span class="lineNum">      28 </span>            :   /* start getting command line arguments */
+<span class="lineNum">      29 </span><span class="lineCov">          2 :   int firstNTerminals = numeric_limits&lt;int&gt;::max(); // store the number of first N terminals to loop/check through.</span>
+<span class="lineNum">      30 </span><span class="lineCov">          2 :   int nThreads = numeric_limits&lt;int&gt;::max(); // store the number of threads to use.</span>
+<span class="lineNum">      31 </span>            :   int nThreadsUsed = nThreads; // to check if indeed threads were used.
+<span class="lineNum">      32 </span>            :   string fileName; // to store path/filename.
+<span class="lineNum">      33 </span>            :   
+<span class="lineNum">      34 </span>            :   // boost::program_options. Reference/Tutorial: http://www.boost.org/doc/libs/1_60_0/doc/html/program_options/tutorial.html
+<span class="lineNum">      35 </span><span class="lineCov">          6 :   po::options_description desc(&quot;Allowed options&quot;);</span>
+<span class="lineNum">      36 </span><span class="lineCov">          4 :   desc.add_options()</span>
+<span class="lineNum">      37 </span><span class="lineCov">          2 :       (&quot;help&quot;, &quot;This help message.&quot;)</span>
+<span class="lineNum">      38 </span><span class="lineCov">          2 :       (&quot;FILE&quot;, po::value&lt;string&gt;(&amp;fileName), &quot;Input file path and name.&quot;)</span>
+<span class="lineNum">      39 </span><span class="lineCov">          4 :       (&quot;firstNTerminals&quot;, po::value&lt;int&gt;(&amp;firstNTerminals)-&gt;default_value(100),&quot;First N terminals to check.&quot;)</span>
+<span class="lineNum">      40 </span><span class="lineCov">          4 :       (&quot;showEdges,s&quot;, po::value&lt;string&gt;()-&gt;implicit_value(&quot;&quot;),&quot;Show best Steiner-Graph edges.&quot;)</span>
+<span class="lineNum">      41 </span><span class="lineCov">          2 :       (&quot;THREADS&quot;, po::value&lt;int&gt;(&amp;nThreads)-&gt;default_value(4),&quot;Number of threads to use for parallelization.&quot;);</span>
+<span class="lineNum">      42 </span>            :   
+<span class="lineNum">      43 </span><span class="lineCov">          4 :   po::positional_options_description p;</span>
+<span class="lineNum">      44 </span><span class="lineCov">          2 :   p.add(&quot;FILE&quot;, 1);</span>
+<span class="lineNum">      45 </span><span class="lineCov">          2 :   p.add(&quot;firstNTerminals&quot;, 2);</span>
+<span class="lineNum">      46 </span>            :   
+<span class="lineNum">      47 </span><span class="lineCov">          4 :   po::variables_map vm;</span>
+<span class="lineNum">      48 </span><span class="lineCov">          6 :   po::store(po::command_line_parser(argc, argv).</span>
+<span class="lineNum">      49 </span><span class="lineCov">          4 :             options(desc).positional(p).run(), vm);</span>
+<span class="lineNum">      50 </span><span class="lineCov">          2 :   po::notify(vm);</span>
+<span class="lineNum">      51 </span>            :     
+<span class="lineNum">      52 </span><span class="lineCov">          4 :   if (vm.count(&quot;help&quot;)) { // display help message and end program.</span>
+<span class="lineNum">      53 </span><span class="lineCov">          1 :       cout &lt;&lt; desc &lt;&lt; endl;</span>
+<span class="lineNum">      54 </span>            :       return 0;
+<span class="lineNum">      55 </span>            :   }
+<span class="lineNum">      56 </span>            :   
+<span class="lineNum">      57 </span><span class="lineCov">          2 :   if (!vm.count(&quot;FILE&quot;)) { // if no filename...</span>
+<span class="lineNum">      58 </span>            :       cout &lt;&lt; &quot;No graph file.&quot; &lt;&lt; endl;
+<span class="lineNum">      59 </span>            :       return -1; // return error.
+<span class="lineNum">      60 </span>            :   }
+<span class="lineNum">      61 </span>            :   /* start getting command line arguments */
+<span class="lineNum">      62 </span>            :   
+<span class="lineNum">      63 </span>            :   
+<span class="lineNum">      64 </span>            :   /* start get number of edges */
+<span class="lineNum">      65 </span><span class="lineCov">          2 :   ifstream file(fileName);  // read graph file.</span>
+<span class="lineNum">      66 </span>            :   string str; /// read graph file line by line.
+<span class="lineNum">      67 </span>            :   
+<span class="lineNum">      68 </span><span class="lineCov">          1 :   getline(file, str);</span>
+<span class="lineNum">      69 </span>            :   int n; /// store n as int for number of edges.
+<span class="lineNum">      70 </span>            :   
+<span class="lineNum">      71 </span><span class="lineCov">          1 :   auto it = str.begin();</span>
+<span class="lineNum">      72 </span><span class="lineCov">          3 :   parse(it, str.end(), int_[([&amp;n](int i){n = i;})] &gt;&gt; int_);</span>
+<span class="lineNum">      73 </span><span class="lineCov">          1 :   n++;</span>
+<span class="lineNum">      74 </span>            :   /* end get number of edges */
+<span class="lineNum">      75 </span>            :   
+<span class="lineNum">      76 </span>            :   
+<span class="lineNum">      77 </span>            :   /* start read edges and weights from file */
+<span class="lineNum">      78 </span>            :   cout &lt;&lt; endl;
+<span class="lineNum">      79 </span>            :   cout &lt;&lt; &quot;Getting edges and weights from file...&quot; &lt;&lt; endl;
+<span class="lineNum">      80 </span><span class="lineCov">          2 :   pair&lt;vector&lt;Edge&gt;,vector&lt;int&gt;&gt; edgesWeights = utils::get_EdgesWeights(n, file);</span>
+<span class="lineNum">      81 </span><span class="lineCov">          1 :   file.close();</span>
+<span class="lineNum">      82 </span>            :   /* end read edges and weights from file */
+<span class="lineNum">      83 </span>            :   
+<span class="lineNum">      84 </span>            :   
+<span class="lineNum">      85 </span>            :   /* start generating primes and get number of primes */
+<span class="lineNum">      86 </span><span class="lineCov">          1 :   vector&lt;int&gt; primes = utils::gen_Primes(n);</span>
+<span class="lineNum">      87 </span><span class="lineCov">          1 :   int primesSize = primes.size();</span>
+<span class="lineNum">      88 </span>            :   
+<span class="lineNum">      89 </span><span class="lineCov">          1 :   if (firstNTerminals &gt; primesSize) { // if the number of terminals to go through is larger than there are terminals, then use the number of terminals.</span>
+<span class="lineNum">      90 </span><span class="lineCov">          1 :     firstNTerminals = primesSize;</span>
+<span class="lineNum">      91 </span>            :   }
+<span class="lineNum">      92 </span>            :   /* end generating primes andn get number of primes */
+<span class="lineNum">      93 </span>            :   
+<span class="lineNum">      94 </span>            :   
+<span class="lineNum">      95 </span>            :   /* start building graph and initalising needed stuff for Steiner subgraph. */
+<span class="lineNum">      96 </span>            :   vector&lt;Edge&gt; bestSteinerEdges;
+<span class="lineNum">      97 </span>            :   int bestObjVal = numeric_limits&lt;int&gt;::max();
+<span class="lineNum">      98 </span><span class="lineCov">          1 :   int bestStartTerminal = numeric_limits&lt;int&gt;::max();</span>
+<span class="lineNum">      99 </span>            :   
+<span class="lineNum">     100 </span>            :   cout &lt;&lt; &quot;Building graph...&quot; &lt;&lt; endl;
+<span class="lineNum">     101 </span><span class="lineCov">          2 :   vector&lt;vector&lt;Vertex&gt;&gt; originalAdjList = utils::build_adjList(n, edgesWeights.first, edgesWeights.second); // build the original adjacency list. Each thread will get a copy of this adjList.</span>
+<span class="lineNum">     102 </span>            :   /* end building graph and initalising needed stuff for Steiner subgraph. */
+<span class="lineNum">     103 </span>            :   
+<span class="lineNum">     104 </span>            :   /* start calculating steiner trees. */
+<span class="lineNum">     105 </span>            :   cout &lt;&lt; &quot;Calculating steiner-trees...&quot; &lt;&lt; endl;
+<span class="lineNum">     106 </span>            :   
+<a name="107"><span class="lineNum">     107 </span>            :   boost::timer::cpu_timer timer; // start timer</a>
+<span class="lineNum">     108 </span>            :   
+<span class="lineNum">     109 </span><span class="lineCov">          9 :   #pragma omp parallel for firstprivate(originalAdjList) num_threads(nThreads) // parallel!!! Aha!</span>
+<span class="lineNum">     110 </span><span class="lineCov">          4 :   for (int i=0;i&lt;firstNTerminals;i++) { // for the number of terminals to be looped over,</span>
+<span class="lineNum">     111 </span><span class="lineCov">         50 :     vector&lt;vector&lt;Vertex&gt;&gt; adjList =  originalAdjList; // make a copy of the adjacency list.</span>
+<span class="lineNum">     112 </span><span class="lineCov">         50 :     const int startTerminal = primes[i]; // get the terminal index that is the current start terminal.</span>
+<span class="lineNum">     113 </span>            :     
+<span class="lineNum">     114 </span>            :     vector&lt;Edge&gt; subgraphEdges; // edge vector to store edges of the Steiner-subgraph.
+<span class="lineNum">     115 </span>            :     vector&lt;int&gt; subgraphWeights; // weight vector to store the weights of the edges of the Steiner-subgraph.
+<span class="lineNum">     116 </span>            :     vector&lt;int&gt; dists; // dist and parents to store the distances and parents/predecessors of the calculated shortest-paths from start node.
+<span class="lineNum">     117 </span>            :     vector&lt;int&gt; parents; 
+<span class="lineNum">     118 </span>            :     
+<span class="lineNum">     119 </span>            :     // steiner-tree heuristic looks through each terminal while building the steiner-subgraph. The first terminal is the start terminal.
+<span class="lineNum">     120 </span><span class="lineCov">         25 :     int currentPrime = startTerminal; // each terminal to be looped over is the &quot;currentPrime&quot;.</span>
+<span class="lineNum">     121 </span>            :     
+<span class="lineNum">     122 </span><span class="lineCov">       1275 :     for(int j = 0; j&lt;primesSize; j++) { // for each prime/terminal,</span>
+<span class="lineNum">     123 </span><span class="lineCov">        625 :       vector&lt;int&gt; subgraphNodes = utils::get_Nodes(subgraphEdges); // get the current subgraph.</span>
+<span class="lineNum">     124 </span><span class="lineCov">       1250 :       myHeap Unvisited(n, currentPrime, subgraphNodes); // and initialise the priority queue for the dijkstra algorithm.</span>
+<span class="lineNum">     125 </span>            :       
+<span class="lineNum">     126 </span><span class="lineCov">       1250 :       pair&lt;vector&lt;int&gt;,vector&lt;int&gt;&gt; shortestDists = dijkstra_alg::alg(n, Unvisited, adjList, currentPrime); // calculate the shortest distances using dijkstra algorithm.</span>
+<span class="lineNum">     127 </span><span class="lineCov">        625 :       dists = shortestDists.first; // get the distances of all the nodes from the current prime, </span>
+<span class="lineNum">     128 </span><span class="lineCov">        625 :       parents = shortestDists.second; // and their parents/predecessors.</span>
+<span class="lineNum">     129 </span>            :       
+<span class="lineNum">     130 </span><span class="lineCov">        625 :       vector&lt;int&gt; primeDists = utils::get_PrimeDists(dists, primes); // from these distances, get those of the primes,</span>
+<span class="lineNum">     131 </span><span class="lineCov">        625 :       pair&lt;int,int&gt; minPrimeIdxDist = utils::get_Min(primeDists,primes); // and then get the minimum of all the prime distances, and the corresponding index of the prime in the primes list.</span>
+<span class="lineNum">     132 </span>            :       
+<span class="lineNum">     133 </span>            :       int minPrimeIdx = minPrimeIdxDist.first; // index of the prime in the primes list.
+<span class="lineNum">     134 </span><span class="lineCov">       1250 :       int minPrime = primes[minPrimeIdx]; // the minimum prime-value itself.</span>
+<span class="lineNum">     135 </span>            :       
+<span class="lineNum">     136 </span><span class="lineCov">        625 :       int currentWeight = numeric_limits&lt;int&gt;::max(); // initialise current weight of the edge under consideration, for the steiner-heuristic.</span>
+<span class="lineNum">     137 </span><span class="lineCov">        625 :       int currentNode = minPrime; // start node for the steiner-heuristic is the current minimum prime-value.</span>
+<span class="lineNum">     138 </span><span class="lineCov">       1250 :       int pred = parents[currentNode]; // trace the next node on the edge by looking up the parents list.</span>
+<span class="lineNum">     139 </span>            :       
+<span class="lineNum">     140 </span><span class="lineCov">       3791 :       while(find(subgraphNodes.begin(),subgraphNodes.end(),currentNode)==subgraphNodes.end()){ // so long as the current node is not in the Steiner-subgraph...</span>
+<span class="lineNum">     141 </span><span class="lineCov">       1071 :         Edge edge = make_pair(pred,currentNode); // make an edge out of current node and its parent.</span>
+<span class="lineNum">     142 </span>            :         
+<span class="lineNum">     143 </span><span class="lineCov">       1071 :         int predIdx = dijkstra_alg::get_NeighbourIndex(currentNode, pred, adjList); // look up the index of the parent on the adjacency list from perspective of current node.</span>
+<span class="lineNum">     144 </span><span class="lineCov">       1071 :         int currentNodeIdx = dijkstra_alg::get_NeighbourIndex(pred, currentNode,adjList); // look up the index of the current node from the perspective of the parent.</span>
+<span class="lineNum">     145 </span>            :         
+<span class="lineNum">     146 </span><span class="lineCov">       2142 :         currentWeight = adjList[currentNode][predIdx].second; // get the weight of this edge.</span>
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :         // add the edge and its weight to the steiner-subgraph.
+<span class="lineNum">     149 </span><span class="lineCov">       1071 :         subgraphEdges.push_back(edge);</span>
+<span class="lineNum">     150 </span><span class="lineCov">       1071 :         subgraphWeights.push_back(currentWeight);</span>
+<span class="lineNum">     151 </span>            :         
+<span class="lineNum">     152 </span>            :         // change edge weight on both directions (undirected graph)
+<span class="lineNum">     153 </span><span class="lineCov">       2142 :         adjList[currentNode][predIdx].second = 0;</span>
+<span class="lineNum">     154 </span><span class="lineCov">       2142 :         adjList[pred][currentNodeIdx].second = 0;</span>
+<span class="lineNum">     155 </span>            :         
+<span class="lineNum">     156 </span>            :         // update to the next edge.
+<span class="lineNum">     157 </span><span class="lineCov">       1071 :         currentNode = pred;</span>
+<span class="lineNum">     158 </span><span class="lineCov">       1071 :         pred = parents[currentNode];</span>
+<span class="lineNum">     159 </span>            :         
+<span class="lineNum">     160 </span>            :         // check if the edge has been traced to the start terminal, if yes, then break.
+<span class="lineNum">     161 </span><span class="lineCov">       1071 :         if (pred == currentNode) {</span>
+<span class="lineNum">     162 </span>            :           break;
+<span class="lineNum">     163 </span>            :         }
+<span class="lineNum">     164 </span>            :       }
+<span class="lineNum">     165 </span><span class="lineCov">        625 :       currentPrime = minPrime; // in the next iteration, find shortest distances in graph from the terminal that was just added to the Steiner subgraph.</span>
+<span class="lineNum">     166 </span>            :     }
+<span class="lineNum">     167 </span>            :     
+<span class="lineNum">     168 </span><span class="lineCov">         25 :     int objVal = 0;</span>
+<span class="lineNum">     169 </span>            :     for_each(subgraphWeights.begin(), subgraphWeights.end(), [&amp;] (int n) { // objective value is the sum of the edge weights.
+<span class="lineNum">     170 </span><span class="lineCov">       1071 :       objVal += n;</span>
+<span class="lineNum">     171 </span>            :     });
+<span class="lineNum">     172 </span>            :     
+<span class="lineNum">     173 </span><span class="lineCov">         25 :     if (omp_get_num_threads() != nThreadsUsed) { // check if a different number of threads than specified were used, in that case, openMP has issues...</span>
+<span class="lineNum">     174 </span>            :       nThreadsUsed = omp_get_num_threads();
+<span class="lineNum">     175 </span>            :     }
+<span class="lineNum">     176 </span>            :     
+<span class="lineNum">     177 </span><span class="lineCov">         50 :     #pragma omp critical</span>
+<span class="lineNum">     178 </span><span class="lineCov">         25 :     if(objVal&lt;bestObjVal) { // update the best objective value if it is less than before.</span>
+<span class="lineNum">     179 </span><span class="lineCov">          2 :       bestObjVal = objVal;</span>
+<span class="lineNum">     180 </span><span class="lineCov">          2 :       bestSteinerEdges = subgraphEdges; // update the best Steiner subgraph as well,</span>
+<span class="lineNum">     181 </span><span class="lineCov">          2 :       bestStartTerminal = startTerminal; // and the best StartTerminal that allowed this to happen...</span>
+<span class="lineNum">     182 </span>            :     }
+<span class="lineNum">     183 </span>            :   }
+<span class="lineNum">     184 </span><span class="lineCov">          1 :   boost::timer::cpu_times times = timer.elapsed(); // once done, stop recording time.</span>
+<span class="lineNum">     185 </span>            :   /* end calculating steiner trees. */
+<span class="lineNum">     186 </span>            :   
+<span class="lineNum">     187 </span>            :   
+<span class="lineNum">     188 </span>            :   /* start checking the best tree. */
+<span class="lineNum">     189 </span>            :   cout &lt;&lt; &quot;Checking steiner tree...&quot; &lt;&lt; endl; // see if graph is a tree and contains all terminals.
+<span class="lineNum">     190 </span><span class="lineCov">          1 :   checker::isConnected(bestSteinerEdges, bestStartTerminal);</span>
+<span class="lineNum">     191 </span><span class="lineCov">          1 :   checker::isFeasible(bestSteinerEdges,primes);</span>
+<span class="lineNum">     192 </span><span class="lineCov">          1 :   cout &lt;&lt; &quot;Number of threads used: &quot; &lt;&lt; nThreadsUsed &lt;&lt; endl;</span>
+<span class="lineNum">     193 </span>            :   cout &lt;&lt; endl;
+<span class="lineNum">     194 </span>            :   /* end checking the best tree. */
+<span class="lineNum">     195 </span>            :   
+<span class="lineNum">     196 </span>            :   
+<span class="lineNum">     197 </span>            :   /* start printing values. */
+<span class="lineNum">     198 </span><span class="lineCov">          1 :   cout &lt;&lt; &quot;TLEN: &quot; &lt;&lt; bestObjVal &lt;&lt; endl;</span>
+<span class="lineNum">     199 </span>            :   
+<span class="lineNum">     200 </span><span class="lineCov">          2 :   if (vm.count(&quot;showEdges&quot;)) { // print the edges of the subgraph if -s is present.</span>
+<span class="lineNum">     201 </span><span class="lineCov">          1 :     cout &lt;&lt; &quot;TREE: &quot;;</span>
+<span class="lineNum">     202 </span><span class="lineCov">         44 :     for (auto edge=bestSteinerEdges.begin(),end=bestSteinerEdges.end(); edge!=end; edge++) {</span>
+<span class="lineNum">     203 </span><span class="lineCov">         86 :       cout &lt;&lt; &quot;(&quot;&lt;&lt;edge-&gt;first&lt;&lt;&quot;,&quot;&lt;&lt;edge-&gt;second&lt;&lt;&quot;) &quot;;</span>
+<span class="lineNum">     204 </span>            :     }
+<span class="lineNum">     205 </span>            :     cout &lt;&lt; endl;
+<span class="lineNum">     206 </span>            :   }
+<span class="lineNum">     207 </span>            :   /// print CPU- and Wall-Time. 
+<span class="lineNum">     208 </span><span class="lineCov">          1 :   cout &lt;&lt; &quot;TIME: &quot; &lt;&lt; setprecision(4) &lt;&lt; times.user / 1e9 &lt;&lt; &quot;s&quot; &lt;&lt; endl;</span>
+<span class="lineNum">     209 </span><span class="lineCov">          1 :   cout &lt;&lt; &quot;WALL: &quot; &lt;&lt; setprecision(4) &lt;&lt; times.wall / 1e9 &lt;&lt; &quot;s&quot; &lt;&lt; endl;</span>
+<span class="lineNum">     210 </span>            :   cout &lt;&lt; endl;
+<span class="lineNum">     211 </span>            :   /* end printing values. */
+<a name="212"><span class="lineNum">     212 </span>            :   </a>
+<span class="lineNum">     213 </span>            :   return 0;
+<span class="lineNum">     214 </span><span class="lineCov">          4 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
