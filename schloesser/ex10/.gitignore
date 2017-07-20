@@ -3,3 +3,5 @@
 *gcov
 
 ex10
+coverage*
+result.xml

@@ -21,10 +21,13 @@ valgrind: ex5
 	valgrind ./ex5 ../../data/b15.gph
 
 check:
-	echo "add cppcheck"
+	cppcheck . 2> result.xml
+	cat result.xml
 
 coverage: run
-	gcov longest_shortest.c graph.c misc.c heap.c
+	gcov *.c $(LIBSDIR)*.c -o . 
+	lcov --capture --directory . --output-file coverage.info
+	genhtml coverage.info --output-directory coverage
 
 clean:
-	rm -f *.o ex5 *.gcno *.gcda
+	rm -rf *.o ex5 *.gcno *.gcda coverage*

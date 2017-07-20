@@ -13,5 +13,3 @@ clean:
 	rm -fr latex
 	rm -fr html
 
-doc:
-	doxygen dox-conf

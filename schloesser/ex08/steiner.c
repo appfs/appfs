@@ -4,11 +4,14 @@
  * @brief Main programm fulfilling ex8
  */
 
+#include <assert.h>
 #include <time.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "graph.h"
-#include "misc.h"
+#include <string.h>
+#include "../library/graph.h"
+#include "../library/misc.h"
 
 /** @brief Solves Exercise 8
  *
@@ -20,53 +23,42 @@ int main(int argc, char **argv) {
         exit(0);
     }
 
-// ##### init from file
-    // filename is first commandlinearg
-    char *file = argv[1];
-
+    // ############### init from file
     Graph *g = malloc(sizeof(Graph));
+    init_from_graph_file(g, argv[1]);
 
-    unsigned int **edges;
-    unsigned int n_edges = read_graph_file(g, file, &edges);
-
-    //float density = ((float)n_edges)/(n_verts/2 * n_verts);
-    //bool sparse = (density < 0.1 ? true : false);
-
-    // sort edges to neighbors
-    fill_neighbors(g, edges, n_edges); // for each vertex this holds a list of neighbors with weights
-    free(edges);
-
-// ##### find lengths of shortest paths to destination
+    // ############### find lengths of shortest paths to destination
     // measure time
     clock_t start = clock();
 
     // steiner tree connecting prime nodes
     unsigned int *vertex_mask = get_primes(g->n_verts);
+	unsigned int *terminal_mask = malloc(sizeof(*terminal_mask) * g->n_verts);
+    memcpy(terminal_mask, vertex_mask, sizeof(*terminal_mask) * g->n_verts);
+
     unsigned int *prev = steiner(g, 2, vertex_mask);
+
+    // stop clock
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
     
 	// check result
-	unsigned int *terminal_mask = get_primes(g->n_verts);
-	if (check_steiner(g, terminal_mask, vertex_mask, prev)) {
-		printf("Check succeeded.\n");
-	} else {
-		printf("Check failed.\n");
-	}
-   
-    // calculate objective
-	signed long objective = weight_of_tree(g, vertex_mask, prev);
+	assert(check_steiner(g, terminal_mask, vertex_mask, prev)); 
 
-// ##### free memory of graph
+    // calculate objective
+	unsigned long objective = weight_of_tree(g, vertex_mask, prev);
+
+    // ############### free memory
     free_graph(g);
     free(g);
     free(prev);
-
     free(vertex_mask);
     free(terminal_mask);
-    printf("\n");
+
+    // ############### print result
     printf("RESULT OBJECTIVE %li\n", objective);
     printf("RESULT TIME %f\n", seconds);
+
     return 0; // everything went fine (hopefully)
 }
 

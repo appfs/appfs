@@ -21,7 +21,13 @@ valgrind: ex8
 	valgrind ./ex8 ../../data/b15.gph
 
 check:
-	echo "add cppcheck"
+	cppcheck . 2> result.xml
+	cat result.xml
+
+coverage: run
+	gcov *.c $(LIBSDIR)*.c
+	lcov --capture --directory . --output-file coverage.info
+	genhtml coverage.info --output-directory coverage
 
 clean:
-	rm -f *.o ex8 *.gcno *.gcda
+	rm -f *.o ex8 *.gcno *.gcda coverage*

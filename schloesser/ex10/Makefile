@@ -1,6 +1,7 @@
 CFLAGS= -std=gnu11 -Wall -g -lm -fprofile-arcs -ftest-coverage -lgcov -fopenmp 
 CC=gcc
 LIBSDIR=../library/
+MAKEFLAGS+=--silent
 
 default: ex10
 all: ex10 
@@ -15,13 +16,27 @@ deps:
 	$(MAKE) -C $(LIBSDIR)
 
 run: ex10
-	./ex10 ../../data/b15.gph 10 -s
+	./ex10 ../../data/b15.gph 10
+
+test: ex10 
+ifeq ($(THREADS),)
+	./ex10 $(FILE) 100 -s
+else
+	OMP_THREAD_LIMIT=$(THREADS) \
+	OMP_NUM_THREADS=$(THREADS) \
+	./ex10 $(FILE) 100 -s
+endif
 
 valgrind: ex10
 	valgrind ./ex10 ../../data/b15.gph 100
 
 check:
-	echo "add cppcheck"
+	cppcheck . 2> result.xml 
+
+coverage: run
+	gcov *.c $(LIBSDIR)*.c -o . 
+	lcov --capture --directory . --output-file coverage.info
+	genhtml coverage.info --output-directory coverage
 
 clean:
-	rm -f *.o ex10 *.gcno *.gcda
+	rm -rf *.o ex10 *.gcno *.gcda coverage* 

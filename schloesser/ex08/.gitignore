@@ -11,3 +11,6 @@ ex8
 
 *check*.txt
 *.gc*
+
+coverage*
+result.xml
