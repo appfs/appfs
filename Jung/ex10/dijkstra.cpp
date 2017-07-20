@@ -89,10 +89,16 @@ int dijkstra(std::vector<Edge_wW>* edges, bool* steinTree, bool* used, int* pre,
 
 
 
+	#if BIG
+		int* heap=new int[heapLength]();
+		int* whereInHeap = new int[vertNumb]();		//determine from the node the position in the heap
+		int* whichNode = new int[heapLength]();		//determine from the position of the heap which node
+	#else
 
-	int heap[heapLength];
-	int whereInHeap[vertNumb];		//determine from the node the position in the heap
-	int whichNode[heapLength];		//determine from the position of the heap which node
+		int heap[heapLength];
+		int whereInHeap[vertNumb];		//determine from the node the position in the heap
+		int whichNode[heapLength];		//determine from the position of the heap which node
+	#endif
 
 
 	for(int i=0;i<vertNumb;i++){
@@ -176,7 +182,17 @@ int dijkstra(std::vector<Edge_wW>* edges, bool* steinTree, bool* used, int* pre,
 
 		if(whichNode[1]==vertNumb-1){			
 
-			return heap[1];
+			
+			#if BIG
+				int sol=heap[1];
+				delete[] heap;
+				delete[] whichNode;
+				delete[] whereInHeap;
+				return sol;
+			#endif
+				return heap[1];
+
+			
 		}
 		else{
 

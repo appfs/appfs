@@ -12,10 +12,9 @@
 #include <list>
 #include <climits>
 #include <cmath>
-#include <boost/timer/timer.hpp>
-#include <chrono>
 #include <omp.h>
 #include <sys/time.h>
+#include <algorithm> 
 #include "dijkstra.h"
 #include "findSteiner.h"
 #include "steinCheck.h"
@@ -28,6 +27,14 @@ typedef std::pair<int,int> Edge_wW;
 
 
 
+void copyVecArray(std::vector<Edge_wW>* copyTo,std::vector<Edge_wW>* copyFrom, int arrSize){
+	for(int i=0; i<arrSize; i++){
+	
+			copyTo[i]=copyFrom[i];
+		
+		
+	}
+}
 
 
 //find the prime vertexes
@@ -35,6 +42,12 @@ int findPrimes(std::vector<int> &primes, int vertNumb){
 
 		std::ifstream file;
 		file.open("primes1.txt");
+
+		if (!file.is_open()) {
+			std::cerr << "You need the primes1.txt in the same Directory as your ex10.cpp" << std::endl;
+			return 0;
+		}
+
 		int searchingPrimes=true;
 
 		int primesNumb=0;
@@ -136,11 +149,24 @@ void initializeEdge(std::vector<Edge_wW>* nodes,std::vector<int> primes, int ver
  
 int main(int argc, char* argv[]){
 
+
+
 	clock_t cc=clock();
 	
-	// number of terminals to start with
-	unsigned int starts=std::stoi(argv[3]);
+	// number of threads , default=1
 	int threads=1;
+	omp_set_num_threads(1);
+	// number of terminals to start with (100 default)
+	unsigned int starts=100;
+	if(argc>2){
+		try{
+			starts=std::stoi(argv[2]);
+		}
+		catch(...){
+			std::cout<<"Wrong input for terminalNumber";
+		}
+	}
+	
 
 	
 
@@ -153,7 +179,10 @@ int main(int argc, char* argv[]){
 	}
 
 	std::ifstream file;
-	file.open(argv[1]);
+	std::string fileString(argv[1]);
+	std::string dir="SP/";
+	fileString=dir+fileString;
+	file.open(fileString);
 		
 
 	if (!file.is_open()) {
@@ -161,22 +190,20 @@ int main(int argc, char* argv[]){
 			return 0;
 	}
 	
-	if(argc>2){
+	if(argc>3){
 
 		try{
 
 			// set the number of threads which should be used
-			omp_set_num_threads(std::stoi(argv[2]));
-			threads=std::stoi(argv[2]);
+			omp_set_num_threads(std::stoi(argv[3]));
+			threads=std::stoi(argv[3]);
 		}
 		catch(...){
 
-			std::cout<<"wrong input"<<std::endl;
+			std::cout<<"wrong input for threads"<<std::endl;
 		}
 	}
-	else{
-		omp_set_num_threads(1);
-	}
+
 
 
 
@@ -195,7 +222,12 @@ int main(int argc, char* argv[]){
 	int primeNumb=findPrimes(primes,vertNumb-2);
 
 	//vector array , for each node the edges are stored here, node 0 is the (added) source and vertNumb-1 is the (added) sink
-	std::vector<Edge_wW> nodes[vertNumb];
+
+	#if BIG
+		std::vector<Edge_wW>* nodes=new std::vector<Edge_wW>[vertNumb]();
+	#else
+		std::vector<Edge_wW> nodes[vertNumb];
+	#endif
 
 	// get the Number of arcs
 	getline(file, str);
@@ -221,8 +253,11 @@ int main(int argc, char* argv[]){
 		loops=starts;
 	}
 	
-
-	bool steinTree[vertNumb];
+	#if BIG
+		bool* steinTree= new bool[vertNumb]();
+	#else
+		bool steinTree[vertNumb];
+	#endif
 
 	// the Weight of the Steiner tree
 	long long weightST=0;
@@ -240,8 +275,15 @@ int main(int argc, char* argv[]){
 	long long min= LONG_LONG_MAX;
 	int minPos=0;
 
+	#if BIG
+		bool** st = new bool*[threads];
+		for(int i = 0; i < threads; ++i){
+	   		st[i] = new bool[vertNumb];
+		}
+	#else
+		bool st[threads][vertNumb];
+	#endif
 
-	bool st[threads][vertNumb];
 
 	long long m[threads];
 
@@ -263,9 +305,20 @@ int main(int argc, char* argv[]){
 	#pragma omp parallel for //reduction(min:min)
 	for(int i=0; i<loops; i++){
 
+		#if BIG
+			bool* steinTreeCopy= new bool[vertNumb]();
+			std::fill_n(steinTreeCopy, vertNumb, false); 
+			std::vector<Edge_wW>* nodesCopy=new std::vector<Edge_wW>[vertNumb]();
+			copyVecArray(nodesCopy,nodes,vertNumb);
+		#else
+			bool steinTreeCopy[vertNumb]={false};
+			std::vector<Edge_wW> nodesCopy[vertNumb]=nodes;
+		#endif
 
-		bool steinTreeCopy[vertNumb]={false};
-		std::vector<Edge_wW> nodesCopy[vertNumb]=nodes;
+		
+
+		
+		
 
 		weightST=findSteiner(nodesCopy, vertNumb, primeNumb,steinEdges[i], steinTreeCopy, primes[i]);
 
@@ -276,32 +329,42 @@ int main(int argc, char* argv[]){
 			mp[omp_get_thread_num()]=i;
 			copyArray(st[omp_get_thread_num()],steinTreeCopy, vertNumb);
 		}
+
+		#if BIG
+			delete[] steinTreeCopy;
+			delete[] nodesCopy;
+		#endif
 	}
 
 
-	gettimeofday(&end, NULL);
-	delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
-         end.tv_usec - start.tv_usec) / 1.e6;
+
 
 	//////// compare thread results
 
-
 	int j=0;
-
+		
 	for(int i =0; i< threads; i++){
 
 		if(m[i]<min){
-			
+				
 			j=i;
 			min=m[i];
 		}
 	}
+	
+
+	
+	
 
 	copyArray(steinTree,st[j],vertNumb);
 	minPos=mp[j];
 
 
-	
+
+	////// get the time
+	gettimeofday(&end, NULL);
+	delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
+         end.tv_usec - start.tv_usec) / 1.e6;
 	
 
 

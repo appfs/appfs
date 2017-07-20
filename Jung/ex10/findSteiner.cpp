@@ -149,15 +149,22 @@ long long findSteiner(std::vector<Edge_wW> nodes[],int vertNumb, int primeNumb, 
 	// add the start node to the steiner Tree
 	steinTree[start]=true;
 	
-	int pre[vertNumb];		// the predecessor map of steiner Tree
-	int dijPre[vertNumb];		// the predecessor map after every dijkstra
+	#if BIG
+		int* pre=new int[vertNumb]();		// the predecessor map of steiner Tree
+		int* dijPre=new int[vertNumb]();	// the predecessor map after every dijkstra
+		bool* used= new bool[vertNumb]();
+	#else
+		int pre[vertNumb];		// the predecessor map of steiner Tree
+		int dijPre[vertNumb];		// the predecessor map after every dijkstra
+		bool used[vertNumb];
+	#endif
 
 	std::vector<int> steinerNodes;
 
 	steinerNodes.push_back(0);
 	steinerNodes.push_back(start);
 
-	bool used[vertNumb];
+	
 
 	//calculates the heapLeangth , vertNumb+1 because the zero entry
 	int heapLength=nextPower(vertNumb+1);		
@@ -168,21 +175,29 @@ long long findSteiner(std::vector<Edge_wW> nodes[],int vertNumb, int primeNumb, 
 
 		copyArray(used,steinTree,vertNumb);
 
+			 		//std::cout <<  i<<"   "<< std::endl;
+
+
 		weightST= weightST+dijkstra(nodes,steinTree ,used, dijPre, vertNumb, vertNumb-steinerNodes.size(), steinerNodes, heapLength);
 
 		updateSteiner(nodes,steinTree,steinerNodes,pre,dijPre, vertNumb, steinEdges);
 
-		/*
-	 	if(i%100==0){
-	 		clock_t sg=clock();
+	#if BIG	
+	 	if(i%500==0){
+	 		//clock_t sg=clock();
 	 		simplifyGraph(nodes,steinTree,vertNumb);
-	 		std::cout <<"INFORM TIME SIMPLIFY: "<<  i<<"   "<< (double)(clock() - sg) / CLOCKS_PER_SEC << " seconds" << std::endl;
+	 		std::cout <<"STEP "<<i << std::endl;
 
 	 	}
-	*/
+	#endif	
+	
 		
 	}
-
+	#if BIG
+		delete[] pre;
+		delete[] dijPre;
+		delete[] used;
+	#endif
 	return weightST;
 }
 

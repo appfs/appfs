@@ -125,13 +125,36 @@ bool isEmpty(std::vector<int>* edges, int length){
 bool steinCheck(std::vector<Edge> &steinEdges, bool* steinTree, int vertNumb){
 
 
+	#if BIG
+		bool* check=new bool[vertNumb]();	// checks if every node in the Steinertree is reached by edges
 
-	bool check[vertNumb]={false};	// checks if every node in the Steinertree is reached by edges
+		for(int i=0;i<vertNumb; i++){
+		check[i]=false;
+		}
+
+		std::vector<int>* edges= new std::vector<int>[vertNumb]();
+
+		bool* alr=new bool[vertNumb]();		//	checks if node was already visited
+
+		for(int i=0;i<vertNumb; i++){
+			check[i]=false;
+		}	
+	
+	#else
+
+		bool check[vertNumb]={false};
+		std::vector<int> edges[vertNumb];
+		bool alr[vertNumb]={false};		//	checks if node was already visited
+	#endif
+
+
+
+
 
 
 	//int vertNumb2= countNodes(steinTree);
 
-	std::vector<int> edges[vertNumb];
+	
 
 	////////////// fill in the edges
 
@@ -144,11 +167,6 @@ bool steinCheck(std::vector<Edge> &steinEdges, bool* steinTree, int vertNumb){
 	}
 
 
-	//////////// 
-
-
-
-	bool alr[vertNumb]={false};		//	checks if node was already visited
 	check[2]=true;
 	alr[2]=true;
 	bool noCyc=dfs(edges,2, check, alr);
