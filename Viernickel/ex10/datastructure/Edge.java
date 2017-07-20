@@ -10,6 +10,7 @@ public class Edge {
     public Node head;
     public Node tail;
     public int weight;
+    public boolean isSteinerEdge;
     
 
     /**
@@ -22,6 +23,10 @@ public class Edge {
         this.head = head;
         this.tail = tail;
         this.weight = weight;
+        this.isSteinerEdge = false;
     }
     
+    public String toString(){
+        return "(" + Integer.toString((Integer.valueOf(head.id)+1)) + "," + Integer.toString((Integer.valueOf(tail.id)+1)) + ")";
+    }
 }

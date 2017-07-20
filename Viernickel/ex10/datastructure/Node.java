@@ -12,6 +12,7 @@ public class Node implements Comparable<Node>{
     public int id;
     public int distance;
     public Node predecessor;
+    public Edge predecessorEdge;
     public ArrayList<Edge> edges;
     
     /**
@@ -54,6 +55,10 @@ public class Node implements Comparable<Node>{
      */
     public int getDistanceToNeighbour(int i){
         return this.edges.get(i).weight;
+    }
+    
+    public String toString(){
+        return Integer.toString(this.id);
     }
 }
 
