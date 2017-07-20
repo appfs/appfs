@@ -11,9 +11,8 @@
 
 using std::vector;
 
-class PrimeNumbers {
+namespace PrimeNumbers {
 
-public:
 
 	/**
 	 * Finds all primes in {2,...,n} using the fact that if a natural number
@@ -22,12 +21,10 @@ public:
 	 * @param n the natural number up to which primes are generated
 	 * @return a vector containing the prime numbers -1
 	 */
-	static vector<int> findPrimes(int n);
+	vector<int> findPrimes(int n);
 
-private:
-	PrimeNumbers() {}
-};
 
+}
 
 
 #endif /* SRC_PRIMENUMBERS_H_ */

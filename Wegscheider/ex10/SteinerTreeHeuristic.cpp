@@ -36,8 +36,8 @@ struct heapData
  * whenever a better path is found. The resulting tree is stored implicitly in
  * treePredecessors.
  */
-double SteinerTreeHeuristic::computeSteinerTree(Graph& g, int numVertices,
-		int treePredecessors[], vector<int>& terminals, int root) {
+double SteinerTreeHeuristic::computeSteinerTree(const Graph& g, const int& numVertices,
+		int treePredecessors[], const vector<int>& terminals, const int& root) {
 
 	assert(NULL != treePredecessors);
 
@@ -72,8 +72,8 @@ double SteinerTreeHeuristic::computeSteinerTree(Graph& g, int numVertices,
 		}
 	}
 
-	property_map<Graph, edge_weight_t>::type weights = get(edge_weight, g);
-	property_map<Graph, vertex_index_t>::type index = get(vertex_index, g);
+	property_map<Graph, edge_weight_t>::const_type weights = get(edge_weight, g);
+	property_map<Graph, vertex_index_t>::const_type index = get(vertex_index, g);
 
 
 	int connectedTerminals = 1;
@@ -136,7 +136,7 @@ double SteinerTreeHeuristic::computeSteinerTree(Graph& g, int numVertices,
 
 
 
-bool SteinerTreeHeuristic::testAndPrintTree(Graph& g, int numVertices, int treePredecessors[],
+bool SteinerTreeHeuristic::testAndPrintTree(const Graph& g, int numVertices, int treePredecessors[],
 		vector<int>& terminals, int root, string& edgeString) {
 
 	std::stringstream stream;
@@ -173,7 +173,7 @@ bool SteinerTreeHeuristic::testAndPrintTree(Graph& g, int numVertices, int treeP
 
 
 
-bool SteinerTreeHeuristic::testTree(Graph& g, int numVertices, int treePredecessors[],
+bool SteinerTreeHeuristic::testTree(const Graph& g, int numVertices, int treePredecessors[],
 		vector<int>& terminals, int root) {
 
 		bool* visited = new bool[numVertices]();
