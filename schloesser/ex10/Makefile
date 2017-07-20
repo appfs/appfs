@@ -1,4 +1,4 @@
-CFLAGS= -std=gnu11 -Wall -g -lm -fprofile-arcs -ftest-coverage -lgcov -fopenmp
+CFLAGS= -std=gnu11 -Wall -g -lm -fprofile-arcs -ftest-coverage -lgcov -fopenmp 
 CC=gcc
 LIBSDIR=../library/
 
@@ -15,7 +15,7 @@ deps:
 	$(MAKE) -C $(LIBSDIR)
 
 run: ex10
-	./ex10 ../../data/b15.gph 100
+	./ex10 ../../data/b15.gph 10 -s
 
 valgrind: ex10
 	valgrind ./ex10 ../../data/b15.gph 100

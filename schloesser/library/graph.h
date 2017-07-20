@@ -143,6 +143,16 @@ void read_numbers(
         int n, 
         char *line);
 
+/** @brief Initialize a graph from file.
+ *
+ * @param g a graph
+ * @param file Read graph from file with this filename
+ * @return modifies g
+ */
+void init_from_graph_file(
+        Graph *g, 
+        char *file); 
+
 /** @brief Read in a graph from file.
  *
  * @param g a graph
@@ -207,9 +217,20 @@ void join_closest_terminal(
         unsigned int *vertex_mask,
         unsigned int *prev);
 
+/** @brief print the edges of the tree
+ *
+ * @param g the underlying graph
+ * @param vertex_mask the mask indicating the subgraph via values > 1
+ * @param prev the list of predecessors in the tree
+ */
+void print_tree(
+        Graph *g,
+        unsigned int *vertex_mask,
+        unsigned int *prev);
+
 /** @brief Calculate the weight of a spanning tree.
  *
- * @param g a graph
+ * @param g the underlying graph
  * @param vertex_mask the mask indicating the subgraph via values > 1
  * @param prev the list of predecessors in the tree
  * @return the total weight
