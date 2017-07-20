@@ -1,24 +1,29 @@
 /*
  * Steiner.h
  *
- * 	\brief     My steiner problem solver for ex8
+ * 	\brief     My steiner problem solver for ex10
  *  \details   This class solves a steiner tree problem
  *  \author    Julia Baumbach
- *  \date      02.07.2017
+ *  \date      15.07.2017
  */
 
-#include "Steiner.h"
+#include "SteinerSolver.h"
+
 #include <iostream>
 #include <climits>
 #include <algorithm>
 
 /**
  * \fn Constructor
- * \brief Construct a Steiner instance by initializing numberOfVertices, edges and weights. Computes also the terminals of the graph.
+ * \brief Construct a Steiner instance by initializing numberOfVertices, edges, weights and terminals
  */
-Steiner::Steiner(int numberOfVertices, Edges edges, WeightMap weights, std::vector<int> terminals):
-	numberOfVertices(numberOfVertices), edges(edges), weights(weights), terminals(terminals){
+SteinerSolver::SteinerSolver(std::vector<int> terminal){
+	terminals = new vector<int>(terminal);
 	objectiveValue = 0;
+}
+
+SteinerSolver::~SteinerSolver(){
+	delete terminals;
 }
 
 /**
@@ -26,20 +31,24 @@ Steiner::Steiner(int numberOfVertices, Edges edges, WeightMap weights, std::vect
  * \brief Solves the Steiner problem for a given start node
  * \return Edges of the minimal spanning tree
  */
-Edges Steiner::solveSteiner(unsigned int startNode){
+Edges SteinerSolver::solveSteiner(SortedEdges& sortedEdges, unsigned int numberOfVertices, unsigned int startNode){
 	Edges result;
-	VisitedMap alreadyAdded(numberOfVertices, false);
+	if(numberOfVertices < startNode){
+		cout << "StartNode must be less or equal numberOfVertices" << std::endl;
+		return result;
+	}
+	VisitedMap alreadyAdded(numberOfVertices + 1, false);
 
-	dijkstra myDijkstra(weights, edges, numberOfVertices);
-	WeightMap weightMap(numberOfVertices, INT_MAX);
-	std::vector<int> predecessorMap(numberOfVertices, -1);
+	DijkstraSolver myDijkstra(sortedEdges, numberOfVertices);
+	WeightMap weightMap(numberOfVertices + 1, INT_MAX);
+	std::vector<int> predecessorMap(numberOfVertices + 1, -1);
 
-	while(!terminals.empty()){
+	while(!terminals->empty()){
 		myDijkstra.computeShortestPath(startNode, weightMap, predecessorMap);
 
 		int vertexToAdd = findNearestTerminal(weightMap);
 		//Remove nearest terminal from terminal list
-		terminals.erase(std::find(terminals.begin(), terminals.end(), vertexToAdd));
+		terminals->erase(std::find(terminals->begin(), terminals->end(), vertexToAdd));
 		while(vertexToAdd != startNode){
 			//break if vertexToAdd is already in the edgeList. Means, that also all predecessors are in the list.
 			if(alreadyAdded[vertexToAdd]){
@@ -58,7 +67,7 @@ Edges Steiner::solveSteiner(unsigned int startNode){
 	return result;
 }
 
-int Steiner::getObjectiveValue(){
+int SteinerSolver::getObjectiveValue(){
 	return objectiveValue;
 }
 
@@ -67,13 +76,13 @@ int Steiner::getObjectiveValue(){
  * \brief finds the lowest weight of a terminal in a weight-map
  * \return index of the nearest terminal
  */
-int Steiner::findNearestTerminal(WeightMap weightMap){
+int SteinerSolver::findNearestTerminal(WeightMap weightMap){
 	int nearestWeight = INT_MAX;
 	int nearestVertex = 0;
-	for(int prime : terminals){
-		if(weightMap[prime] < nearestWeight){
-			nearestWeight = weightMap[prime];
-			nearestVertex = prime;
+	for(int i= 0; i < terminals->size(); i++){
+		if(weightMap[terminals->at(i)] < nearestWeight){
+			nearestWeight = weightMap[terminals->at(i)];
+			nearestVertex = terminals->at(i);
 		}
 	}
 	return nearestVertex;

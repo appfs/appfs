@@ -14,8 +14,8 @@
 
 class Steiner {
 public:
-	Steiner(int, Edges, WeightMap);
-	Edges solve(unsigned int);
+	Steiner(int, Edges, WeightMap, std::vector<int>);
+	Edges solveSteiner(unsigned int);
 	int getObjectiveValue();
 
 private:
@@ -25,8 +25,6 @@ private:
 	std::vector<int> terminals;
 	int objectiveValue;
 
-	std::vector<int> computePrimes();
-	bool hasDivisor(const std::vector<int>& result, int i);
 	int findNearestTerminal(WeightMap);
 };
 
