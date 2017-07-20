@@ -16,8 +16,6 @@
 #include "TreeChecker.h"
 
 using namespace std;
-using namespace boost::program_options;
-
 
 /*
  * \fn bool hasDivisor(vector<int>, int)
@@ -49,7 +47,7 @@ void computePrimes(vector<int>* target, int upperBound){
 
 /*
  * \fn int main(int argc, char* argv[])
- * \brief main function. reads in graph data and prints the solution for the steiner tree problem
+ * \brief main function. reads in graph data and prints the solution for the steiner tree problem. Run program with ./ex10 NUMBERTHREADS FILENAME
  * \return EXIT_SUCCESS if program exited correctly, otherwise EXIT_FAILURE
  */
 int main(int argc, char* argv[]){
@@ -60,7 +58,7 @@ int main(int argc, char* argv[]){
 	stringstream ss(argv[1]);
 	ss >> numberOfThreads;
 
-	cout << "read graph " << endl;
+	cout << "Read graph... " << endl;
 	GraphReader* reader = new GraphReader();
 	if(!reader->readDataFromFile(argv[2])){
 		cerr << "Error while reading data. Exit program" << endl;
@@ -76,7 +74,7 @@ int main(int argc, char* argv[]){
 	//Initialize timer for wallclock time measurement
 	boost::timer::cpu_timer wall_timer;
 
-	cout << "Compute primes " << endl;
+	cout << "Compute primes... " << endl;
 	vector<int>* terminals = new vector<int>();
 	computePrimes(terminals, numberVertices);
 	vector<int>* firstHundredTerminals;
@@ -90,7 +88,7 @@ int main(int argc, char* argv[]){
 	Edges resultEdges[100];
 	int resultObjValues[100];
 
-	cout << "compute steiner" << endl;
+	cout << "Compute Steiner..." << endl;
 	#pragma omp parallel for num_threads(numberOfThreads)
 	for(int i = 0; i < firstHundredTerminals->size(); i++){
 		SteinerSolver* mySteiner = new SteinerSolver(*terminals);
@@ -101,7 +99,7 @@ int main(int argc, char* argv[]){
 	//Stop wall time
 	boost::timer::cpu_times wall_time = wall_timer.elapsed();
 
-	cout << "Search for minimum" << endl;
+	cout << "Search for minimum..." << endl;
 	//Search for the minimal steiner tree
 	int indexMinNode;
 	int minObjValue = INT_MAX;
@@ -112,7 +110,7 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-	cout << "Check tree" << endl;
+	cout << "Check tree..." << endl;
 	//Check if the minimal steiner tree is a tree and contains all terminals
 	TreeChecker myChecker(resultEdges[indexMinNode], numberVertices);
 	if(!myChecker.allNodesContained(firstHundredTerminals)){

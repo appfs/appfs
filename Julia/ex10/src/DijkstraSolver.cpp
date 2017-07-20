@@ -50,7 +50,7 @@ void DijkstraSolver::computeShortestPath(unsigned int startNode, WeightMap& weig
 		std::cerr << "Index of StartVertex must be less or equal to number of vertices" << std::endl;
 		throw std::exception();
 	}
-	VisitedMap alreadyVisited(++numberOfVertices, false);
+	VisitedMap alreadyVisited(numberOfVertices+1, false);
 
 	//Start in point startNode
 	weightsToVertices[startNode] = 0;
@@ -104,12 +104,15 @@ void DijkstraSolver::computeShortestPath(unsigned int startNode, WeightMap& weig
  * \return returns the old weight of the edge
  */
 int DijkstraSolver::setEdgeWeightToZero(int edgeStart, int edgeEnd){
-	std::vector<DijkstraPair> edges = sortedEdges[edgeStart];
-	for(DijkstraPair pair : edges){
+	std::vector<DijkstraPair>& edges = sortedEdges[edgeStart];
+
+	for(DijkstraPair& pair : edges){
 		if(pair.first == edgeEnd){
 			int oldWeight = pair.second;
 			pair.second = 0;
 			return oldWeight;
 		}
-	}return 0;
+	}
+
+	return 0;
 }

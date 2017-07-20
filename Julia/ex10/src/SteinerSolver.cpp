@@ -34,14 +34,14 @@ SteinerSolver::~SteinerSolver(){
 Edges SteinerSolver::solveSteiner(SortedEdges& sortedEdges, unsigned int numberOfVertices, unsigned int startNode){
 	Edges result;
 	if(numberOfVertices < startNode){
-		std::cout << "StartNode must be less or equal numberOfVertices" << std::endl;
+		cout << "StartNode must be less or equal numberOfVertices" << std::endl;
 		return result;
 	}
 	VisitedMap alreadyAdded(numberOfVertices + 1, false);
 
 	DijkstraSolver myDijkstra(sortedEdges, numberOfVertices);
 	WeightMap weightMap(numberOfVertices + 1, INT_MAX);
-	std::vector<int> predecessorMap(numberOfVertices, -1);
+	std::vector<int> predecessorMap(numberOfVertices + 1, -1);
 
 	while(!terminals->empty()){
 		myDijkstra.computeShortestPath(startNode, weightMap, predecessorMap);
