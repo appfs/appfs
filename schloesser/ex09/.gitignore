@@ -1,0 +1,16 @@
+*.swp
+ex9
+
+data*
+
+html*
+latex*
+
+ex5
+ex8
+
+*check*.txt
+*.gc*
+
+result.xml
+coverage*

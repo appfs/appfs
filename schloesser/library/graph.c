@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <ctype.h>
 #include <assert.h>
 #include "misc.h"
@@ -238,6 +239,19 @@ void read_numbers(
     }
 }
 
+void init_from_graph_file(
+        Graph *g, 
+        char *file) {
+    
+    unsigned int **edges;
+    unsigned int n_edges = read_graph_file(g, file, &edges);
+    
+    // sort edges to neighbors
+    fill_neighbors(g, edges, n_edges);
+    
+    free(edges);
+}
+
 unsigned int read_graph_file(
         Graph *g, 
         char *file, 
@@ -421,6 +435,20 @@ unsigned long weight_of_tree(
     return treeweight;
 }
 
+void print_tree(
+        Graph *g,
+        unsigned int *vertex_mask,
+        unsigned int *prev) {
+    
+    for(int i = 0; i < g->n_verts; i++) {
+		// for all vertices that are not root and that are in subgraph
+        if(vertex_mask[i] > 1 && prev[i] != UINT_MAX) { 
+            printf("(%d,%d) ", i+1, prev[i]+1);
+        }
+    }
+    printf("\n");
+}
+
 unsigned long edgeweight(
         Graph *g,
         unsigned int v1,
@@ -475,4 +503,3 @@ bool check_steiner(
 	}
 	return true;
 }
-

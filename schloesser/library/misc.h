@@ -7,14 +7,11 @@
  * @brief Header file of misc.c
  */
 
-/** @brief Define bool type
- */
-typedef enum { false, true } bool;
-
-/** @brief Returns a list of primes
+/** @brief Returns a mask indicating primes.
+ * Computation via the sieve method
  *
  * @param upper_bound upper bound, not included 
- * @return sieve number of primes found
+ * @return number of primes found
  */
 unsigned int* get_primes(unsigned int upper_bound);
 

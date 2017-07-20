@@ -1,0 +1,7 @@
+*gcda
+*gcno
+*gcov
+
+ex10
+coverage*
+result.xml
