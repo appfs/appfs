@@ -13,7 +13,9 @@
 #include <sys/time.h>
 #include<omp.h>
 
-
+/**
+* The heap structure, with the current distances, the values needed in the heap, the previous smallest node, the index, called index66, since gcc didn't allowed me to use index, and the reversed index.
+*/
 struct BinaryHeap{
 	double* dist;
 	double* heapVal;
