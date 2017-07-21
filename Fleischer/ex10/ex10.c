@@ -6,7 +6,7 @@
  *
  * @section DESCRIPTION
  *
- * This program parses a graph and parses the longest shortest path from any edge to edge with the index 1.
+ * This program parses a graph and build a steiner tree, with prime nodes (node index start at 1) as terminal.
  */
 
 #define _GNU_SOURCE
