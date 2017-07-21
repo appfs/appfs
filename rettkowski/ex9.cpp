@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
 
 	file.close();
 
-
+	timer::cpu_timer runTimer;
 	omp_set_dynamic(0);
 	omp_set_num_threads(std::stoi(argv[2]));
 	std::vector<int> terminalIds;
@@ -229,13 +229,24 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	timer::cpu_times runtime = boostTimer.elapsed();
 	std::list<std::pair<int, int>> edgelist = steinerTree(numberOfNodes, edges, minId).second;
+
+
+	std::cout << "TLEN: " << minlength << std::endl;
+	std::cout << "TREE: ";
+
 	for (std::pair<int, int> edge : edgelist)
 	{
-		std::cout << "(" << edge.first << ", " << edge.second << ")" << std::endl;
+		std::cout << "(" << edge.first << ", " << edge.second << ") ";
 	}
+	std::cout << std::endl;
 
-	std::cout << "TOTAL WEIGHT: " << minlength;
+	timer::cpu_times time = boostTimer.elapsed();
+	std::cout << "TIME: " << (time.user + time.system) / 1e9 << "s\n";
+	std::cout << "WALL: " << runtime.wall / 1e9 << "s\n";
+
+
 	return 0;
 }
 
