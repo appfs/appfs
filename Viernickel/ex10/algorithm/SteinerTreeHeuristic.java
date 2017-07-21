@@ -57,6 +57,7 @@ public class SteinerTreeHeuristic {
         Arrays.fill(this.isNodeInSteinerTree, false);
         
         startTerminal.distance = 0;
+        isNodeInSteinerTree[startTerminal.id] = true;
         heap.add(new BinaryHeapNode(currNode));
         
         while(!heap.isEmpty()){
@@ -71,7 +72,7 @@ public class SteinerTreeHeuristic {
                 currPathNode = currNode;
                 
                 /** Find shortest path from predecessors and save nodes in Steiner tree */
-                while(currPathNode.predecessor != null){
+                while(!isNodeInSteinerTree[currPathNode.id]){
                     objectiveValue += currPathNode.distance;
                     isNodeInSteinerTree[currPathNode.id] = true;
                     
@@ -79,7 +80,6 @@ public class SteinerTreeHeuristic {
                     prevPathNode = currPathNode;
                     currPathNode = currPathNode.predecessor;
                     prevPathNode.distance = 0;
-                    prevPathNode.predecessor = null;
                 }
             }
             /** Touch all neighboring nodes */
@@ -110,7 +110,7 @@ public class SteinerTreeHeuristic {
     
     public boolean buildAndCheckSteinerTree(Node startTerminal){
         Stack<Node> stack = new Stack<>();
-        boolean[] bfsVisited = new boolean[this.nodes.length];
+        boolean[] dfsVisited = new boolean[this.nodes.length];
         Node currNode;
         Node neighbourNode;
         
@@ -118,13 +118,13 @@ public class SteinerTreeHeuristic {
         while(!stack.isEmpty()){
             currNode = stack.pop();
             
-            if(bfsVisited[currNode.id])
+            if(dfsVisited[currNode.id])
                 return false;
-            bfsVisited[currNode.id] = true;
+            dfsVisited[currNode.id] = true;
             
             for(int i=0; i<currNode.edges.size(); i++){
                 neighbourNode = currNode.getNeighbour(i);
-                if(isNodeInSteinerTree[neighbourNode.id] && !bfsVisited[neighbourNode.id] && !stack.contains(neighbourNode)){
+                if(isNodeInSteinerTree[neighbourNode.id] && (currNode == neighbourNode.predecessor)){
                     stack.push(neighbourNode);
                     this.treeEdges.add(neighbourNode.predecessorEdge);
                 }
@@ -132,7 +132,7 @@ public class SteinerTreeHeuristic {
         }
         
         for(int i=0; i<this.nodes.length; i++){
-            if(isTerminal[i] && !bfsVisited[i])
+            if(isTerminal[i] && !dfsVisited[i])
                 return false;
         }
         return true;

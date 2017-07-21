@@ -31,8 +31,6 @@ public class ex10 {
      * Main method
      */
     public static void main(String[] args){
-        long startWallClockTimeNano = System.nanoTime();
-        long startUserTimeNano   = getUserTime();
         
         Node[] nodes;
         Node[] terminals;
@@ -53,6 +51,11 @@ public class ex10 {
             }
         }
         
+        /** Initialize Wall-clock time and user time */
+        long startWallClockTimeNano = System.nanoTime();
+        long startUserTimeNano   = getUserTime();
+        
+        /** Calculate first n prime numbers and set them as terminals */
         terminals = new Node[nTerminals];
         int termCounter=0;
         for(int i=0; i<nodes.length; i++){
@@ -62,20 +65,19 @@ public class ex10 {
         	}
         }
         
-        /** Calculate Steiner tree and objective value */
+        /** Calculate Steiner tree and objective value for every starting terminal */
         nStartTerminals = Math.min(Integer.valueOf(args[1]), terminals.length);
         for(int i=0; i<nStartTerminals; i++){
-            System.out.println("Starting heuristic from terminal node " + Integer.toString(Integer.valueOf(terminals[i].id)+1));
-        	resetNodes(nodes);
+            resetNodes(nodes);
             SteinerTreeHeuristic steinerTreeHeuristic = new SteinerTreeHeuristic(nodes, isTerminal);
-        	currentObjectiveValue = steinerTreeHeuristic.calcSteinerTree(terminals[i]);
-        	if(lowestObjectiveValue > currentObjectiveValue){
-                if(!steinerTreeHeuristic.buildAndCheckSteinerTree(terminals[i])){
-                    System.out.println("WARNING: NOT A VALID STEINER TREE");
-                }
-        		lowestObjectiveValue = currentObjectiveValue;
-        		treeEdges = steinerTreeHeuristic.treeEdges;
-        	}
+            currentObjectiveValue = steinerTreeHeuristic.calcSteinerTree(terminals[i]);
+            if(!steinerTreeHeuristic.buildAndCheckSteinerTree(terminals[i])){
+                System.out.println("WARNING: NOT A VALID STEINER TREE");
+            }
+            if(lowestObjectiveValue > currentObjectiveValue){
+                lowestObjectiveValue = currentObjectiveValue;
+                treeEdges = steinerTreeHeuristic.treeEdges;
+            }
         }       
         
         /** Get Wall-clock time and user time */
@@ -89,11 +91,11 @@ public class ex10 {
         String userTime = "TIME: " + round(taskUserTimeNano/1000000000.0);
         String wallClockTime = "WALL: " + round(taskWallClockTimeNano/1000000000.0);
         
-        String[] results = {fileName, resultValue, treeString, userTime, wallClockTime};
+        String[] results = {resultValue, treeString, userTime, wallClockTime};
         if(args.length != 3){
+             results[1] = results[2];
              results[2] = results[3];
-             results[3] = results[4];
-             results = Arrays.copyOf(results, 4);
+             results = Arrays.copyOf(results, 3);
         }
         
         /** Print results */
@@ -101,31 +103,34 @@ public class ex10 {
             System.out.println(results[i]);
         }
         
-        /** Save results to file */
+        /** Save results to file 
         String path = "";
         String[] pathSplit = args[0].split("/");
         for(int i=0; i<pathSplit.length-1; i++){
             path = path + pathSplit[i] + "/";
         }
         path = path + "ex10_results/";
-        Writer.write(results, path, fileName);
+        Writer.write(results, path, fileName);*/
     }
     
-    /** Round to three decimal places */
+    /**
+     * Round to three decimal places
+     * @param x Value to be rounded
+     * @return Rounded value
+     */
     public static double round(double x){
         return Math.round(x*1000)/1000.0;
     }
      
-    /** Get user time in nanoseconds. */
+    /** Get the user time in nanoseconds. */
     public static long getUserTime(){
         ThreadMXBean bean = ManagementFactory.getThreadMXBean();
         return bean.isCurrentThreadCpuTimeSupported() ?
             bean.getCurrentThreadUserTime() : 0L;
     }
     
-    
     /**
-     * Checks whether a certain number is prime.
+     * Check whether a certain number is prime.
      * @param n The number to check
      * @return True if number is prime. False if not.
      */
@@ -146,10 +151,15 @@ public class ex10 {
         return true;
     }
     
+    /**
+     * Resets the nodes for a new run from a different terminal
+     * @param nodes Nodes to be reset
+     */
     private static void resetNodes(Node[] nodes){
     	for(int i=0; i<nodes.length; i++){
     		nodes[i].distance = Integer.MAX_VALUE;
     		nodes[i].predecessor = null;
+    		nodes[i].predecessorEdge = null;
     	}
     }
 }
