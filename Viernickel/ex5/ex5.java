@@ -1,5 +1,6 @@
 import datastructure.*;
-import algorithm.*;
+import algorithm.Dijkstra;
+import algorithm.JGraphTDijkstra;
 import io.*;
 import java.lang.management.*;
 
