@@ -1,13 +1,5 @@
 #include "m2alg.h"
 
-/* Boost Bimap Container includes for own algorithm. */
-#include <boost/bimap.hpp>
-#include <boost/bimap/multiset_of.hpp>
-#include <boost/bimap/support/lambda.hpp> /* for bimap::_data and bimap::_key */
-
-namespace bm = boost::bimaps;
-using bimap = bm::bimap<int, boost::bimaps::multiset_of<int,std::less<int>>>;
-
 bimap m2alg::build_unvisited(int& n, int& startTerminal, std::vector<std::pair<int,int>>& edges) {
   /* start initializing unvisited set */
   bimap Unvisited; /// define unvisited set as a boost::bimap container.

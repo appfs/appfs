@@ -11,7 +11,7 @@
  * \section Description
  * 
  * * compile: `g++ -std=c++14 utils.cxx checker.cxx boost_dijkstra.cxx m2alg.cxx ex8.cxx -o ex8 -lboost_timer -Wall`<br>
- * * run: `./ex8 filepath/graph.gph [-m1/-m2]`<br>
+ * * run: `./ex8 filepath/graph.gph [-m1/-m2] [source node]`<br>
  * * flags: `-m1` for boost dijkstra algorithm for shortest path, `-m2` for self-implemented algorithm.
  */
 
@@ -22,7 +22,7 @@
 
 int main(int argc, char* argv[]) {
   
-  int startTerminal = 2;
+  int startTerminal = std::atoi(argv[3]);
   
   if (argc < 3) { // must have filename of graph and a flag of some sort...
     std::cerr << "No file or flag (-m1 or -m2)!!!" << std::endl;
@@ -31,7 +31,6 @@ int main(int argc, char* argv[]) {
   
   std::ifstream file(argv[1]);  // read graph file.
   std::string str; /// read graph file line by line.
-  
   
   /* start get number of edges */
   getline(file, str);
@@ -74,6 +73,7 @@ int main(int argc, char* argv[]) {
       std::cout << "calculating steiner-tree..." << std::endl;
       
       for(auto j = 0lu, end = primes.size(); j<end; j++) { // Assumption: All prime nodes (terminals) are connected.
+
 	if (j%500==0) {
 	  if (j+500-1 > primes.size()) {
 	    std::cout << "processing terminals number: " << j << " to " << primes.size() << std::endl;
@@ -170,8 +170,9 @@ int main(int argc, char* argv[]) {
 	int pred = parents[currentNode];
 	
 	while(currentWeight != 0) {
+	  //std::cout << "currentNode: " << currentNode << " pred: " << pred << std::endl;
 	  Edge edge = std::make_pair(pred,currentNode);
-	  pred = parents[currentNode];
+
 	  int predIdx;
 	  int currentNodeIdx;
 	  

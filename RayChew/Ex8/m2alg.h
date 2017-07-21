@@ -6,7 +6,6 @@
 #include <boost/bimap/support/lambda.hpp> /* for bimap::_data and bimap::_key */
 //#include <boost/bind.hpp> /* for boost::bind in sorting of vector<pair<int,int>> */
 
-
 #ifndef M2ALG_H
 #define M2ALG_H
 

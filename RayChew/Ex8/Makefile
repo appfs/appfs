@@ -11,7 +11,7 @@ OBJ = utils.o checker.o boost_dijkstra.o m2alg.o
 TARGET = ex8
 
 # graph data file to read:
-DATA = big8.gph
+DATA = b15.gph
 
 # path of cppcheck:
 #CPPCHECKPATH = ./
@@ -37,12 +37,12 @@ ex8: $(OBJ) $(TARGET).cxx
 # 	$(CXX) $(CXXFLAGS) -c m2alg.cxx -o m2alg.o
 
 %.o: %.cxx
-	$(CXX) $(INCLUDES) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
    
 doc: 
 	doxygen -g
 	doxygen Doxyfile
-	sed -i 's/PROJECT_NAME.*=.*/$/PROJECT_NAME = "Exercise 7"/' Doxyfile
+	sed -i 's/PROJECT_NAME.*=.*/$/PROJECT_NAME = "Exercise 8"/' Doxyfile
 	sed -i 's/EXTRACT_ALL.*=.*/$/EXTRACT_ALL = NO/' Doxyfile
 	sed -i 's/EXTRACT_PRIVATE.*=.*/$/EXTRACT_PRIVATE = NO/' Doxyfile
 	# if more than one doxygen-readable file is present in directory:
@@ -53,8 +53,8 @@ doc:
 coverage:
 	$(CXX) $(CXXFLAGS) --coverage $(TARGET).cxx -o $(TARGET) $(LIBS)
 	mkdir -p gcov
-	./$(TARGET) $(DATA) -m1
-	./$(TARGET) $(DATA) -m2 
+	./$(TARGET) $(DATA) -m1 2
+	./$(TARGET) $(DATA) -m2 2
 	mv $(TARGET).gcno $(TARGET).gcda gcov
 	lcov -t "result" -o result.info -c -d gcov
 	genhtml -o result result.info
