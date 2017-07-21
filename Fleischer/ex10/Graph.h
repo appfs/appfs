@@ -15,23 +15,29 @@
 
 #include "heap.h"
 
-//#include <cstdio>
 
 #define MAX_LINE_LEN 512
-
+/**
+* The graph data structure, with the amount of nodes, the amount of edges per node and a structure, which represents the graph.
+*/
 struct Graphs{
 	size_t graphSize;
 	size_t* vertexNo;
 	size_t** graph;
 };
 
-
+/**
+* The steiner tree struct, with and array with all the edges, the weight of the tree and the number of edges.
+*/
 struct SteinerTree{
 	double value;
 	size_t* tree;
 	size_t noOfEdges;
 };
 
+/**
+* Dijkstra data structure, which has of course the distance array and a marker to the first terminal reached.
+*/
 struct Dijkstra{
 	double** dist;
 	size_t firstNewTerminal;
@@ -50,15 +56,15 @@ struct Graphs buildGraph(FILE *fp){
 	char *ptr;
     	char *bla;
     	size_t len = 0;
-    	char *line = (char*) malloc(MAX_LINE_LEN * sizeof(char));
+    	char *line = malloc(MAX_LINE_LEN * sizeof(char));
     	getline(&line, &len, fp);
     	gra.graphSize = strtol(line, &bla, 10);
     	int temp1 = 0;
     	int temp2 = 0;
     	long int temp3 = 0;
 
-    	gra.vertexNo =(size_t*) malloc(gra.graphSize*sizeof(size_t));
-    	gra.graph = (size_t**) malloc(gra.graphSize*sizeof(size_t*));
+    	gra.vertexNo = malloc(gra.graphSize*sizeof(size_t));
+    	gra.graph = malloc(gra.graphSize*sizeof(size_t*));
     	
     	#pragma omp for
     	for (i = 0; i < gra.graphSize; ++i){
@@ -111,7 +117,7 @@ struct Graphs buildGraph(FILE *fp){
 */
 struct Dijkstra dijkstra(char* inTree, struct Graphs gra, size_t* isTerminal){
 	struct BinaryHeap heap;
-	char* visited =(char*) malloc(sizeof(char)*gra.graphSize);
+	char* visited = malloc(sizeof(char)*gra.graphSize);
 	size_t minVal;
 	struct Dijkstra dij;
 	dij.dist = malloc(sizeof(double*)*gra.graphSize);
