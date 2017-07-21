@@ -1,3 +1,7 @@
+run: ex9.cpp
+	g++ -fopenmp -std=c++14 ex9.cpp -o ex9 -lboost_timer -lboost_system
+  ./ex9 $(THREADS) $(FILE)
+
 doc: ex9.cpp
 	doxygen -g ex9.doxygen.conf
 	doxygen ex9.doxygen.conf
@@ -13,7 +17,3 @@ check: ex9.cpp
 	
 build: ex9.cpp
 	g++ -fopenmp -std=c++14 ex9.cpp -o ex6 -lboost_timer -lboost_system
-	
-run: ex9.cpp
-	g++ -fopenmp -std=c++14 ex9.cpp -o ex9 -lboost_timer -lboost_system
-  ./ex9 world666.gph
