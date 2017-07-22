@@ -7,15 +7,24 @@
 #include <argp.h>
 #include <assert.h>
 #include <limits.h>
-#include <omp.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include "../library/graph.h"
 #include "../library/misc.h"
+
+#define NDEBUG
+
+// TODO ersetzen
+// using Weight = unsigned long;
+// using Vertex = unsigned int;
 
 /** @brief Solves Exercise 10
  *
@@ -53,7 +62,9 @@ int main(int argc, char **argv) {
 
     // ############### init from file
     Graph *g = malloc(sizeof(Graph));
+    printf("start reading from file\n");
     init_from_graph_file(g, file);
+    printf("done reading from file\n");
 
 
     // ############### find upper bound on startvertices
@@ -92,7 +103,9 @@ int main(int argc, char **argv) {
         // prepare the vertex masks
 	    vertex_mask[i] = malloc(sizeof(*vertex_mask[i]) * g->n_verts);
 		memcpy(vertex_mask[i], mask, sizeof(*vertex_mask[i]) * g->n_verts);
+        printf("start steiner\n");
 		prev[i] = steiner_modified(g, i+1, vertex_mask[i]);
+        printf("done steiner\n");
 	}
     // stop the clocks
     clock_t cpuend = clock();
@@ -100,14 +113,22 @@ int main(int argc, char **argv) {
 
 
     // ############### find and print result
+    unsigned long *obj = malloc(sizeof(*obj) * g->n_verts);
+	# pragma omp parallel for 
+    for(int i = 0; i < upperbound; i++) {
+        if(mask[i]==0) {
+            obj[i] = ULONG_MAX;
+        } else {
+            printf("start weight\n");
+            obj[i] = weight_of_tree(g, vertex_mask[i], prev[i]); 
+            printf("end weight\n");
+        }
+    }
 	unsigned int min = 0;
     unsigned long minobjective = ULONG_MAX;
 	for(int i = 0; i < upperbound; i++) {
-        if (mask[i]==0) {
-            continue;
-        }
 		// calculate the objective
-        unsigned long objective = weight_of_tree(g, vertex_mask[i], prev[i]); 
+        unsigned long objective = obj[i];
 		if (objective < minobjective) {
             minobjective = objective;
 			min = i;	
@@ -116,7 +137,9 @@ int main(int argc, char **argv) {
 	// check result
 	unsigned int *terminal_mask = malloc(sizeof(*terminal_mask) * g->n_verts);
 	memcpy(terminal_mask, mask, sizeof(*terminal_mask) * g->n_verts);
+    printf("Start check\n");
     assert(check_steiner(g, terminal_mask, vertex_mask[min], prev[min]));
+    printf("end check\n");
     free(terminal_mask);
 	
     // print result
@@ -138,6 +161,7 @@ int main(int argc, char **argv) {
     	    free(vertex_mask[i]);
         }
 	}
+    free(obj);
     free(prev);
     free(vertex_mask);
     free(g);
