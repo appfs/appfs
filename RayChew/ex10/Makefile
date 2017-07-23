@@ -2,26 +2,24 @@
 CXX = g++
 
 # compiler flags:
-CXXFLAGS = -std=c++14 -O3 -Wall -fopenmp
-LIBS = -lboost_timer -lboost_program_options
+CXXFLAGS = -std=c++14 -O3 -march=native -pedantic -Wall
 
+# libraries to use:
+LIBS = -lboost_timer -lboost_program_options -fopenmp
+
+# find source and object files.
 SRCS = $(wildcard src/*.cxx)
 OBJS = $(subst .cxx,.o,$(SRCS))
 
 # target executable to build:
 TARGET = ex10
 
-# number of threads to use:
-ifndef THREADS
-	THREADS = 4
-endif
-
 # graph data file to read:
 ifndef FILE
 	FILE = SP/b15.gph
 endif
 
-# variables that are coverage-test specific:
+# files that are coverage-test specific:
 COVERAGEOBJS = $(subst .cxx,.cover,$(SRCS))
 GCNOS = $(subst .cxx,.cover.gcno,$(SRCS))
 GCDAS = $(subst .cxx,.cover.gcda,$(SRCS))
@@ -32,18 +30,23 @@ CPPCHECKFLAGS = --enable=all --inconclusive --std=posix
 .PHONY: all doc test coverage check clean 
 
 all:
-	$(MAKE) -j$(THREADS) $(OBJS)
+	$(MAKE) -j$(THREADS) $(OBJS) # use number of threads specified also in this make file - faster when compiling the object-files.
 	$(MAKE) $(TARGET)
-	
+
+# if threads is not defined, then compile without passing the threads number as a compiler 
+ifndef THREADS
 $(TARGET): $(OBJS) $(TARGET).cxx
 	$(CXX) $(CXXFLAGS) $(OBJS) $(TARGET).cxx -o $(TARGET) $(LIBS)
+else
+$(TARGET): $(OBJS) $(TARGET).cxx
+	$(CXX) -DTHREADS=$(THREADS) $(CXXFLAGS) $(OBJS) $(TARGET).cxx -o $(TARGET) $(LIBS)
+endif
 
-#%.o: %.cxx
-#	$(CXX) $(CXXFLAGS) -c $< -o $@
-
+# compile the objects but do not link them.
 $(OBJS): src/%.o:src/%.cxx
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 	
+# compile the objects for coverage test without linking them...
 $(COVERAGEOBJS): src/%.cover:src/%.cxx
 	$(CXX) $(CXXFLAGS) --coverage -c $< -o $@
    
@@ -62,7 +65,8 @@ doc:
 	# otherwise:
 	# doxygen Doxyfile
 	
-coverage:	
+# coverage test
+coverage:
 	$(MAKE) $(COVERAGEOBJS)
 	$(CXX) $(CXXFLAGS) --coverage $(COVERAGEOBJS) $(TARGET).cxx -o $(TARGET) $(LIBS)
 	mkdir -p gcov
@@ -71,8 +75,9 @@ coverage:
 	mv $(TARGET).gcno $(TARGET).gcda gcov
 	lcov -t "result" -o result.info -c -d gcov
 	genhtml -o result result.info
-	rm -f $(GCNOS) $(GCDAS) $(COVERAGEOBJS) result.info
+	#rm -f $(GCNOS) $(GCDAS) $(COVERAGEOBJS) result.info
 
+# static checker
 check:
 	# if cppcheck binary is in the same folder as source file:
 	# ./cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
@@ -80,4 +85,4 @@ check:
 	cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
 
 clean:
-	rm -f $(OBJS) $(GCNOS) $(GCDAS) $(COVERAGEOBJS)
+	rm -f $(OBJS) $(GCNOS) $(GCDAS) $(COVERAGEOBJS) result.info

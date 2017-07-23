@@ -5,9 +5,9 @@
 #define CHECKER_H
 
 namespace checker {
-bool isConnected(std::vector<Edge>& edges, int& startTerminal);
+bool isTree(std::vector<Edge>& edges, const int& startTerminal);
 
 bool isFeasible(std::vector<Edge>& edges, std::vector<int>& primes);
-};
+}
 
 #endif
