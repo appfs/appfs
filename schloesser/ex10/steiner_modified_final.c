@@ -7,15 +7,24 @@
 #include <argp.h>
 #include <assert.h>
 #include <limits.h>
-#include <omp.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include "../library/graph.h"
 #include "../library/misc.h"
+
+#define NDEBUG
+
+// TODO ersetzen
+// using Weight = unsigned long;
+// using Vertex = unsigned int;
 
 /** @brief Solves Exercise 10
  *
@@ -100,14 +109,20 @@ int main(int argc, char **argv) {
 
 
     // ############### find and print result
+    unsigned long *obj = malloc(sizeof(*obj) * g->n_verts);
+	# pragma omp parallel for 
+    for(int i = 0; i < upperbound; i++) {
+        if(mask[i]==0) {
+            obj[i] = ULONG_MAX;
+        } else {
+            obj[i] = weight_of_tree(g, vertex_mask[i], prev[i]); 
+        }
+    }
 	unsigned int min = 0;
     unsigned long minobjective = ULONG_MAX;
 	for(int i = 0; i < upperbound; i++) {
-        if (mask[i]==0) {
-            continue;
-        }
 		// calculate the objective
-        unsigned long objective = weight_of_tree(g, vertex_mask[i], prev[i]); 
+        unsigned long objective = obj[i];
 		if (objective < minobjective) {
             minobjective = objective;
 			min = i;	
@@ -138,6 +153,7 @@ int main(int argc, char **argv) {
     	    free(vertex_mask[i]);
         }
 	}
+    free(obj);
     free(prev);
     free(vertex_mask);
     free(g);
