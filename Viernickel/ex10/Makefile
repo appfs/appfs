@@ -13,7 +13,8 @@ JMEM=2g
 
 default: sources
 
-sources: $(CLASSES:.java=.class)
+.PHONY: sources
+sources: $(CLASSES)
  
 .PHONY: clean
 clean:
