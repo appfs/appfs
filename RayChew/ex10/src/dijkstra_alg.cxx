@@ -2,18 +2,35 @@
 
 using namespace std;
 
-pair<vector<int>,vector<int>> dijkstra_alg::alg (int& n, myHeap& Unvisited, vector<vector<Vertex>>& adjList, int& startTerminal) { // the main Dijkstra algorithm.
+/** 
+ *   @brief  Main Dijkstra algorithm. Returns vectors containing the distances and the parents of each of the node on a graph.
+ *  
+ *   @param  n is an int of the number of nodes in the graph.
+ *   @param  Unvisited is a binary heap object of the class myHeap.
+ *   @param  adjList is a vector<vector<Vertex>> of adjacency list with (index,weight).
+ *   @param  startTerminal is the index of the starting node for the Dijkstra algorithm.
+ *   @return pair<vector<int>,vector<int>>
+ */  
+pair<vector<int>,vector<int>> dijkstra_alg::alg (int& n, myHeap& Unvisited, vector<vector<Vertex>>& adjList, const int& startTerminal, vector<bool>& inSubgraph) { // the main Dijkstra algorithm.
   // initialize vectors to store the final calculate weights and parents(predecessors) for each node.
   vector<int> finalWeights(n, numeric_limits<int>::max());
   vector<int> finalParents(n);
   finalWeights[startTerminal] = 0; // the start terminal has 0 weight and the parent as itself.
   finalParents[startTerminal] = startTerminal;
   
+  for (int i=0,end=inSubgraph.size(); i<end; i++) { // all nodes in subgraph should have zero weight.
+    if (inSubgraph[i] == true) {
+      finalWeights[i] = 0;
+      finalParents[i] = startTerminal;
+    }
+  }
+  
   /* start calculating and updating distances */
-  while(Unvisited.size()>0) { // while the unvisited priority queue is not empty...
+  while (Unvisited.size()>0) { // while the unvisited priority queue is not empty...
     Vertex minPair = Unvisited.get_min(); // get the node with the minimum weight on the queue
     int minIdx = minPair.second; // get its index,
     int minDist = minPair.first; // and get its distance to the start terminal.
+    assert(minDist != numeric_limits<int>::max()); // since all non-subgraph nodes are initialised with infinite distance, each minimum distance on the heap must be "updated" first before it is accessed.
     
     vector<pair<int,int>> *neighboursOfMinIdx = &adjList[minIdx]; // then get the neighbours of this "minimum" node from the adjacency list.
     int neighboursOfMinIdxSize = neighboursOfMinIdx->size();
@@ -25,10 +42,13 @@ pair<vector<int>,vector<int>> dijkstra_alg::alg (int& n, myHeap& Unvisited, vect
       int newDist = minDist + dist; // find the new distance of this neighbouring node to the start terminal.
       int currentDist = finalWeights[neighbour]; // get the old distance of this neighbouring node to the start terminal.
       
+      assert(newDist >= 0); // distances should be larger than zero. Negative distances are most likely due to int overflow.
+      assert(newDist != numeric_limits<int>::max()); // want to make sure that all distances were "touched".
+      
       if (newDist < currentDist) { // if the new distance is smaller,
 
-	int toBeInserted = Unvisited.get_neighbourPosition(neighbour); // get the index of the neighbour node on the priority queue,
-	if (toBeInserted != numeric_limits<int>::min()) { // and if the neighbour is still in the queue,
+	int *toBeInserted = Unvisited.get_neighbourPosition(neighbour); // get the index of the neighbour node on the priority queue,
+	if (*toBeInserted != numeric_limits<int>::min()) { // and if the neighbour is still in the queue,
 	  Unvisited.update_weight(toBeInserted,newDist); // update its weight (distance to the start terminal) to be the newly calculated distance.
 	}
 
@@ -40,17 +60,4 @@ pair<vector<int>,vector<int>> dijkstra_alg::alg (int& n, myHeap& Unvisited, vect
   }
   return make_pair(finalWeights,finalParents);
   /* end calculating and updating distances */
-}
-
-int dijkstra_alg::get_NeighbourIndex(int& currentNode, int& neighbour, vector<vector<Vertex>>& adjList) {
-  vector<Vertex> neighboursOfCurrentNode = adjList[currentNode]; // get list of neighbours of the current input node.
-  int possibleNeighbourIdx = 0;
-  int weight = numeric_limits<int>::max();
-  for (int i=0, end=neighboursOfCurrentNode.size(); i<end; i++){ // for each neighbour,
-    if ((neighboursOfCurrentNode[i].first == neighbour) && (neighboursOfCurrentNode[i].second < weight)) { // find the edge with the least weight (for directed graphs or graphs with overlapping edges)
-      possibleNeighbourIdx = i;
-      weight = neighboursOfCurrentNode[i].second;
-    }
-  }
-  return (possibleNeighbourIdx); // find the position/index of the returned iterator pos.
 }

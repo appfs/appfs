@@ -1,7 +1,12 @@
 #include "utils.h"
 
 using namespace std;
-
+/** 
+ *   @brief  Given a collection of edges, return a vector<int> of nodes that are present in the edges without repetition.
+ *  
+ *   @param  edges is a vector<Edge> that contains the list of edges for which their nodes should be extracted.
+ *   @return vector<int>
+ */  
 vector<int> utils::get_Nodes(vector<Edge>& edges) { // function to get all the nodes present in a collection of edges, without repetition.
   set<int> nodes;
   
@@ -17,30 +22,41 @@ vector<int> utils::get_Nodes(vector<Edge>& edges) { // function to get all the n
   return nodesAsVector;
 }
 
+
+/** 
+ *   @brief  Given a graph file, read it and return a pair<vector<Edge>,vector<int>> of edges and their respective weights.
+ *  
+ *   @param  n is an int that is the number of nodes in the graph file.
+ *   @param  file is an ifstream that is the address to a opened graph file.
+ *   @return pair<vector<Edge>,vector<int>>
+ */  
 pair<vector<Edge>,vector<int>> utils::get_EdgesWeights (int& n, ifstream& file) { // read file to get edges and weights.
-  /* start get list of edges and weights */
   vector<Edge> Edges; // vector to store edges as pair<int,int>
   vector<int> Weights; // vector to store weights as integers.
   string str; // string to store line of graph file.
   
-  while (getline(file,str)) { /// get graph line-by-line.
+  while (getline(file,str)) { // get graph line-by-line.
     int Vert1;
     int Vert2;
     int Weight;
     
-    auto it = str.begin(); /// initializes iterator for qi::parse. 
+    auto it = str.begin(); // initializes iterator for qi::parse. 
     
     parse(it, str.end(), int_[([&Vert1](int i){Vert1 = i;})] >> qi::space >> int_[([&Vert2](int i){Vert2 = i;})] >> qi::space >> double_[([&Weight](int i){Weight = i;})]);  
     
-    Edge edge = make_pair(Vert1, Vert2);  /// make edge-pair out of vertices.
+    Edge edge = make_pair(Vert1, Vert2);  // make edge-pair out of vertices.
     Edges.push_back(edge);
     Weights.push_back(Weight);
   }
-  /* end get list of edges and weights */
   return make_pair(Edges,Weights);
 }
 
-
+/** 
+ *   @brief  Given the number of nodes in a graph, find how many primes are contained within this limit, and return them as vector<int>.
+ *  
+ *   @param  n is an int that is the number of nodes in the graph file.
+ *   @return vector<int>
+ */  
 vector<int> utils::gen_Primes(int& n) { // ref: https://stackoverflow.com/questions/5200879/printing-prime-numbers-from-1-through-100/
   vector<int> primes; // vector to store primes numbers
   primes.push_back(2); // 2 is a prime. add this.
@@ -59,23 +75,39 @@ vector<int> utils::gen_Primes(int& n) { // ref: https://stackoverflow.com/questi
   return primes;
 }
 
-vector<int> utils::get_PrimeDists(vector<int>& dists, vector<int>& primes) { // from a list of distances, get the distances of the prime nodes.
+/** 
+ *   @brief  Given a list of distances of all nodes from a start terminal, a list of primes, and the nodes in the steiner subgraph, find the prime with the minimum distance that is not in the subgraph.
+ *  
+ *   @param  dists that is a vector<int> of shortest distances for each node on the graph.
+ *   @param  primes that is a vector<int> of the primes present in the graph.
+ *   @param  inSubgraph that is a vector<bool> with nodes in the steiner subgraph marked as true and false otherwise.
+ *   @return int
+ */
+int utils::get_Min(vector<int>& dists, vector<int>& primes, vector<bool>& inSubgraph) { // If two prime vertices have the minimum weight, the one with the smaller index is chosen.
+  int minPrimeDist = numeric_limits<int>::max();
+  int minPrime = numeric_limits<int>::max();
   int j = 0;
-  vector<int> primeDists(primes.size());
   for(auto i=primes.begin(), end=primes.end(); i!=end; i++) { // for each prime,
-    primeDists[j] = dists[*i]; // get the distance by index and put it into the primeDists list.
+    if ((dists[*i] < minPrimeDist) && (inSubgraph[primes[j]]==false)) {
+      minPrimeDist = dists[*i];
+      minPrime = primes[j];
+    }
     j++;
   }
-  return primeDists;
+  if (minPrime == numeric_limits<int>::max()) {
+    minPrime = 2;
+  }
+  return minPrime;
 }
 
-pair<int,int> utils::get_Min(vector<int>& primeDists, vector<int>& primes) { // If two prime vertices have the minimum weight, the one with the smaller index is chosen.
-  vector<int>::iterator minDistAddr = min_element(primeDists.begin(), primeDists.end(),[](const int& i, const int& j) {return i > 0 && (j<=0 || i<j);}); // minimum weight larger than zero.
-  int minDistIdx = distance(primeDists.begin(),minDistAddr); // get the index of the prime with the minimum distance > 0.
-  int minDist = *minDistAddr; // and its distance.
-  return make_pair(minDistIdx, minDist);
-}
-  
+/** 
+ *   @brief  Build an adjacency list of a weighted graph given their edges and weights. Return this adjacency list as a vector<vector<Vertex>>.
+ *  
+ *   @param  n is an int that is the number of nodes in the graph file.
+ *   @param  edges is a vector<Edge> that contains the list of edges of a graph.
+ *   @param  weights is an vector<int> that contains the weights of the respective wedges.
+ *   @return vector<vector<Vertex>>
+ */  
 vector<vector<Vertex>> utils::build_adjList(int& n, vector<Edge>& edges, vector<int>& weights) { // build the adjacency list from list of edges and weights.
   vector<vector<Vertex>> adjList(n); // initialize adjList.
   int j = 0;
@@ -90,6 +122,13 @@ vector<vector<Vertex>> utils::build_adjList(int& n, vector<Edge>& edges, vector<
   return adjList;
 }
 
+/** 
+ *   @brief  Build an adjacency list of an unweighted graph given their edges. Return this adjacency list as a vector<vector<int>>.
+ *  
+ *   @param  n is an int that is the number of nodes in the graph file.
+ *   @param  edges is a vector<Edge> that contains the list of edges of a graph.
+ *   @return vector<vector<int>>
+ */  
 vector<vector<int>> utils::build_adjList(int& n,vector<Edge>& edges) { // overloaded function for adjacency list without weight. Used for building graph structure for the Steiner subgraph.
   vector<vector<int>> adjList(n);
   for (auto i=edges.begin(), end=edges.end(); i!=end; i++) {
