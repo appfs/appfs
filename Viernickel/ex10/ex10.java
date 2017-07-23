@@ -28,13 +28,14 @@ import io.Writer;
  */
 public class ex10 {
 
+    static final int DEFAULT_THREAD_NUMBER = 4;
     static int nStartTerminals;
+    static int nThreads = DEFAULT_THREAD_NUMBER;
     
     /**
      * Main method
      */
     public static void main(String[] args){
-
         Node[] nodes;
         Node[] terminals;
         boolean[] isTerminal;
@@ -42,7 +43,7 @@ public class ex10 {
         long lowestObjectiveValue = Long.MAX_VALUE;
         ArrayList<Edge> treeEdges = new ArrayList<>();
         int nTerminals = 0;
-        int nThreads = 4;
+        boolean printTree = false;
 
         /** Read and save nodes and terminals */
         nodes = Reader.readFile(args[0]);
@@ -56,7 +57,8 @@ public class ex10 {
 
         /** Initialize Wall-clock time and user time */
         long startWallClockTimeNano = System.nanoTime();
-        long startUserTimeNano   = getUserTime();
+        long startUserTimeNano = getUserTime();
+        long threadTimeNano = 0;
 
         /** Calculate first n prime numbers and set them as terminals */
         terminals = new Node[nTerminals];
@@ -68,8 +70,19 @@ public class ex10 {
         	}
         }
 
-        /** Calculate Steiner tree and objective value for every starting terminal */
         nStartTerminals = Math.min(Integer.valueOf(args[1]), terminals.length);
+        if(args.length > 2){
+            if(args[2].equals("-s")){
+                printTree = true;
+                if(args.length == 4){
+                    nThreads = Integer.valueOf(args[3]);
+                }
+            }else{
+                nThreads = Integer.valueOf(args[2]);
+            }
+        }
+        
+        /** Calculate Steiner tree and objective value for every starting terminal */
         SteinerThread[] threads = new SteinerThread[nThreads];
         SteinerTreeHeuristic[] sths = new SteinerTreeHeuristic[nThreads];
         for(int i=0; i<nStartTerminals; i=i+nThreads){
@@ -77,16 +90,22 @@ public class ex10 {
                 sths[j] = new SteinerTreeHeuristic(nodes, isTerminal);
                 threads[j] = new SteinerThread("Thread "+Integer.toString(Integer.valueOf(i)+Integer.valueOf(j)), sths[j], terminals[i+j]);
                 threads[j].start();
-
             }
-            while(isRunning(threads))
-                ;
 
-            for(int k=0; k<nThreads && i+k<nStartTerminals; k++){
-                currentObjectiveValue = sths[k].objectiveValue;
+            for(int j=0; j<nThreads && i+j<nStartTerminals; j++){
+                try {
+                    threads[j].t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for(int j=0; j<nThreads && i+j<nStartTerminals; j++){
+                threadTimeNano += threads[j].getThreadTime();
+                currentObjectiveValue = sths[j].objectiveValue;
                 if(lowestObjectiveValue > currentObjectiveValue){
                     lowestObjectiveValue = currentObjectiveValue;
-                    treeEdges = sths[k].treeEdges;
+                    treeEdges = sths[j].treeEdges;
                 }
             }
         }
@@ -99,11 +118,11 @@ public class ex10 {
         String fileName = args[0].split("/")[args[0].split("/").length-1];
         String resultValue = "TLEN: " + (lowestObjectiveValue);
         String treeString = "TREE: " + treeEdges.toString().replaceAll("[\\[\\]]", "").replaceAll(", ", " ");
-        String userTime = "TIME: " + round(taskUserTimeNano/1000000000.0);
+        String userTime = "TIME: " + round((taskUserTimeNano+threadTimeNano)/1000000000.0);
         String wallClockTime = "WALL: " + round(taskWallClockTimeNano/1000000000.0);
 
         String[] results = {resultValue, treeString, userTime, wallClockTime};
-        if(args.length != 3){
+        if(!printTree){
              results[1] = results[2];
              results[2] = results[3];
              results = Arrays.copyOf(results, 3);
@@ -122,14 +141,6 @@ public class ex10 {
         }
         path = path + "ex10_results/";
         Writer.write(results, path, fileName);
-    }
-
-    private static boolean isRunning(SteinerThread[] threads){
-        for(int i=0; i<threads.length && i<nStartTerminals; i++){
-            if(threads[i].isAlive())
-                return true;
-        }
-        return false;
     }
 
     /**

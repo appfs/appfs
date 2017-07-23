@@ -1,8 +1,11 @@
 package io;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
+
 import datastructure.*;
 
 /**
@@ -29,6 +32,7 @@ public class Reader{
         FileReader fr = null;
         BufferedReader br;
         String line;
+        Scanner scanner;
         String[] split;
         int nNodes;
         int nEdges;
@@ -41,13 +45,15 @@ public class Reader{
         
         
         try {
-            fr = new FileReader(path);
-            br = new BufferedReader(fr);
+            //fr = new FileReader(path);
+            //br = new BufferedReader(fr);
+            scanner = new Scanner(new File(path));
             
             /** Read first line */
-            line = br.readLine();
-            nNodes = Integer.valueOf(line.split(" ")[0]);
-            nEdges = Integer.valueOf(line.split(" ")[1]);
+            scanner.nextInt();
+            //line = br.readLine();
+            nNodes = scanner.nextInt();
+            nEdges = scanner.nextInt();
             
             /** Initialize node array */
             nodes = new Node[nNodes];
@@ -57,19 +63,20 @@ public class Reader{
             
             /** Read and save edges */
             for(j=0; j<nEdges; j++){
-                line = br.readLine();
-                split = line.split(" ");
-                headId = Integer.valueOf(split[0])-1;
-                tailId = Integer.valueOf(split[1])-1;
-                weight = Integer.valueOf(split[2]);
+                //line = br.readLine();
+                //split = line.split(" ");
+                headId = scanner.nextInt();
+                tailId = scanner.nextInt();
+                weight = scanner.nextInt();
                 
-                Edge edge = new Edge(nodes[headId], nodes[tailId], weight);
+                //Edge edge = new Edge(nodes[headId], nodes[tailId], weight);
                 
-                nodes[headId].edges.add(edge);
-                nodes[tailId].edges.add(edge);
+                //nodes[headId].edges.add(edge);
+                //nodes[tailId].edges.add(edge);
+                System.out.println(headId + " " + tailId + " " + weight);
             }
-            
-            br.close();
+            System.out.println("finished reading");
+            //br.close();
             } catch (IOException e) {
             e.printStackTrace();
         }

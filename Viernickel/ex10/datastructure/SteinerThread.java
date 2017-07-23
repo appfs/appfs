@@ -1,9 +1,13 @@
 package datastructure;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
+
 import algorithm.SteinerTreeHeuristic;
 
 public class SteinerThread implements Runnable {
-    private Thread t;
+    public Thread t;
+    private long threadTime;
     private String threadName;
     private SteinerTreeHeuristic sth;
     private Node startTerminal;
@@ -12,27 +16,33 @@ public class SteinerThread implements Runnable {
        this.threadName = threadName;
        this.sth = sth;
        this.startTerminal = startTerminal;
-       System.out.println("Creating " +  threadName );
     }
     
     public void run() {
-       System.out.println("Running " +  threadName );
-       
        sth.calcSteinerTree(startTerminal);
        sth.buildAndCheckSteinerTree(startTerminal);
-       
-       System.out.println("Thread " +  threadName + " exiting.");
-    }
-    
-    public boolean isAlive(){
-        return t.isAlive();
+       this.threadTime = getUserTime();
     }
     
     public void start () {
-       System.out.println("Starting " +  threadName );
        if (t == null) {
           t = new Thread (this, threadName);
           t.start ();
        }
+    }
+    
+    /** Get the user time in nanoseconds. */
+    public static long getUserTime(){
+        ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+        return bean.isCurrentThreadCpuTimeSupported() ?
+            bean.getCurrentThreadUserTime() : 0L;
+    }
+    
+    public long getThreadTime(){
+        return this.threadTime;
+    }
+    
+    public boolean isAlive(){
+        return t.isAlive();
     }
  }

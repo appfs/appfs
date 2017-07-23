@@ -1,8 +1,12 @@
 JFLAGS = -g -d .
 JC = javac
-CLASSES=$(shell find . -maxdepth 1 -type f -name "*.java")
+SOURCES=$(shell find . -maxdepth 2 -type f -name "*.java")
 DOCDIR=doc
- 
+FILE=/home/merlin/APPFS/files/ex10/i640-345.gph
+TERMINALS=100
+THREADS=1
+JMEM=2g
+
 %.class: %.java
 	$(JC) $(JFLAGS) $<
 
@@ -18,11 +22,8 @@ clean:
 doc:
 	mkdir -p $(DOCDIR)
 	doxygen Doxyfile
+	
 
 .PHONY: test
 test :
-	java ex5 test/input.txt > test/output.txt
-	bash -c "diff <(head -n 2 test/correct.txt) <(head -n 2 test/output.txt)"
-	@echo "--------------------------"
-	@echo "Success, all tests passed."
-	@echo "--------------------------"
+	java -Xmx$(JMEM) ex10 $(FILE) $(TERMINALS) $(THREADS)
