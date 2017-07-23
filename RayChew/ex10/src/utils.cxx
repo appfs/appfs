@@ -83,19 +83,19 @@ vector<int> utils::gen_Primes(int& n) { // ref: https://stackoverflow.com/questi
  *   @param  inSubgraph that is a vector<bool> with nodes in the steiner subgraph marked as true and false otherwise.
  *   @return int
  */
-int utils::get_Min(vector<int>& dists, vector<int>& primes, vector<bool>& inSubgraph) { // If two prime vertices have the minimum weight, the one with the smaller index is chosen.
+int utils::get_Min(vector<int>& dists, vector<int>& primes, vector<bool>& inSubgraph) {
   int minPrimeDist = numeric_limits<int>::max();
   int minPrime = numeric_limits<int>::max();
   int j = 0;
   for(auto i=primes.begin(), end=primes.end(); i!=end; i++) { // for each prime,
-    if ((dists[*i] < minPrimeDist) && (inSubgraph[primes[j]]==false)) {
-      minPrimeDist = dists[*i];
-      minPrime = primes[j];
+    if ((dists[*i] < minPrimeDist) && (!inSubgraph[primes[j]])) { // if the prime is less than the currently stored minimum prime distance and is not in the subgraph,
+      minPrimeDist = dists[*i]; // update the mininimum prime distance and
+      minPrime = primes[j]; // update the minimum prime.
     }
     j++;
   }
-  if (minPrime == numeric_limits<int>::max()) {
-    minPrime = 2;
+  if (minPrime == numeric_limits<int>::max()) { // if all the primes are already in the subgraph, which is possible if two primes are joined by an edge with 0 weight.
+    minPrime = 2; // then just return 2, which is an arbitrary prime, but the heuristic should take care of primes already visited without issues.
   }
   return minPrime;
 }

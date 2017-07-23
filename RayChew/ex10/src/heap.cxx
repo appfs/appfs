@@ -97,7 +97,7 @@ void myHeap::checkUp(int idx) { // the bubbleUp method.
 void myHeap::mkHeap() { // make the heap by bubbling downwards for each node in binary heap after it is added.
   int length = tree.size();
   
-  for(int i=length-1; i>0;--i) {
+  for(int i=length-1; i>0; --i) {
     checkDown(i);
   }
 }
@@ -112,7 +112,7 @@ void myHeap::mkHeap() { // make the heap by bubbling downwards for each node in 
  */  
 myHeap::myHeap(int& n, const int& startTerminal, vector<bool>& inSubgraph) : tree(n) {
   positions.reserve(n);
-  for (int i=1;i<n;i++) {
+  for (int i=1; i<n; i++) {
     if (!inSubgraph[i]) {
       tree[i] = make_pair(numeric_limits<int>::max(),i); // initialise binary heap as infinity weight for all nodes except the start node of the graph,
     }
@@ -167,7 +167,7 @@ Vertex myHeap::get_min() { // get the minimum (root node) of the binary heap.
 void myHeap::update_weight(int* neighbourIdx, int& newWeight) { // given a new weight and the position of the neighbouring node on the binary heap, update the weight of this neighbouring node.
  int oldWeight = tree[*neighbourIdx].first; // store the old weight.
  tree[*neighbourIdx].first = newWeight; // replace with the new weight.
- if (oldWeight<=newWeight) { // base on the old/new weight, decide if should bubble up or down.
+ if (oldWeight <= newWeight) { // base on the old/new weight, decide if should bubble up or down.
     checkDown(*neighbourIdx);
  }
  else {

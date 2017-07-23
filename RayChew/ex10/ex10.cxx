@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
 	Edge edge = make_pair(pred,currentNode); // make an edge out of current node and its parent.
 	
 	currentWeight = dists[currentNode] - dists[pred]; // distance of the current node to its parent (the edge weight) is the shortest distance to the start terminal of the current node, minus that of the parent node.
-	// something is wrong if the parent of the current node is a prime, and has non-zero weight. Assert this.
+	// something is very wrong if the parent of the current node is a prime, is not yet in the steiner subgraph, and has non-zero weight. Assert this.
 	assert(!((inSubgraph[pred]==false) && (find(primes.begin(), primes.end(), pred)!=primes.end()) && (currentWeight!=0)));
 	
 	// add the edge and its weight to the steiner-subgraph.

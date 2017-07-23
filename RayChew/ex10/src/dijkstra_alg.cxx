@@ -26,7 +26,7 @@ pair<vector<int>,vector<int>> dijkstra_alg::alg (int& n, myHeap& Unvisited, vect
   }
   
   /* start calculating and updating distances */
-  while (Unvisited.size()>0) { // while the unvisited priority queue is not empty...
+  while (Unvisited.size() > 0) { // while the unvisited priority queue is not empty...
     Vertex minPair = Unvisited.get_min(); // get the node with the minimum weight on the queue
     int minIdx = minPair.second; // get its index,
     int minDist = minPair.first; // and get its distance to the start terminal.
