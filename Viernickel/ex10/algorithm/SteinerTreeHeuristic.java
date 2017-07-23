@@ -22,6 +22,8 @@ public class SteinerTreeHeuristic {
     private boolean[] isNodeInSteinerTree;
     private boolean[] visited;
     public ArrayList<Edge> treeEdges;
+    public long objectiveValue;
+    public boolean isFeasible = true;
 
     /**
      * Constructor
@@ -46,7 +48,7 @@ public class SteinerTreeHeuristic {
     /**
      * Calculates a Steiner tree using the Dijkstra algorithm heuristic method.
      */
-    public long calcSteinerTree(Node startTerminal){
+    public void calcSteinerTree(Node startTerminal){
         Node currNode = startTerminal;
         Node neighbourNode = null;
         Node currPathNode;
@@ -110,10 +112,10 @@ public class SteinerTreeHeuristic {
             }
             visited[currNode.id] = true;
         }
-        return objectiveValue;
+        this.objectiveValue = objectiveValue;
     }
 
-    public boolean buildAndCheckSteinerTree(Node startTerminal){
+    public void buildAndCheckSteinerTree(Node startTerminal){
         LinkedList<Node> queue = new LinkedList<>();
         boolean[] dfsVisited = new boolean[this.nodes.length];
         Node currNode;
@@ -123,8 +125,10 @@ public class SteinerTreeHeuristic {
         while(!queue.isEmpty()){
             currNode = queue.pop();
 
-            if(dfsVisited[currNode.id])
-                return false;
+            if(dfsVisited[currNode.id]){
+                this.isFeasible = false;
+                return;
+            }
             dfsVisited[currNode.id] = true;
 
             for(int i=0; i<currNode.edges.size(); i++){
@@ -139,9 +143,10 @@ public class SteinerTreeHeuristic {
         }
 
         for(int i=0; i<this.nodes.length; i++){
-            if(isTerminal[i] && !dfsVisited[i])
-                return false;
+            if(isTerminal[i] && !dfsVisited[i]){
+                this.isFeasible = false;
+                return;
+            }
         }
-        return true;
     }
 }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import datastructure.Edge;
 import datastructure.Node;
+import datastructure.SteinerThread;
 import algorithm.SteinerTreeHeuristic;
 import io.Reader;
 import io.Writer;
@@ -40,6 +41,7 @@ public class ex10 {
         ArrayList<Edge> treeEdges = new ArrayList<>();
         int nTerminals = 0;
         int nStartTerminals;
+        int nThreads = 4;
 
         /** Read and save nodes and terminals */
         nodes = Reader.readFile(args[0]);
@@ -67,15 +69,24 @@ public class ex10 {
 
         /** Calculate Steiner tree and objective value for every starting terminal */
         nStartTerminals = Math.min(Integer.valueOf(args[1]), terminals.length);
-        for(int i=0; i<nStartTerminals; i++){
-            SteinerTreeHeuristic steinerTreeHeuristic = new SteinerTreeHeuristic(nodes, isTerminal);
-            currentObjectiveValue = steinerTreeHeuristic.calcSteinerTree(terminals[i]);
-            if(!steinerTreeHeuristic.buildAndCheckSteinerTree(terminals[i])){
-                System.out.println("WARNING: NOT A VALID STEINER TREE");
+        SteinerThread[] threads = new SteinerThread[nThreads];
+        SteinerTreeHeuristic[] sths = new SteinerTreeHeuristic[nThreads];
+        for(int i=0; i<nStartTerminals; i=i+nThreads){
+            for(int j=0; j<nThreads && i+j<nStartTerminals; j++){
+                sths[j] = new SteinerTreeHeuristic(nodes, isTerminal);
+                threads[j] = new SteinerThread("Tread "+Integer.toString(Integer.valueOf(i)+Integer.valueOf(j)), sths[j], terminals[i+j]);
+                threads[j].start();
+
             }
-            if(lowestObjectiveValue > currentObjectiveValue){
-                lowestObjectiveValue = currentObjectiveValue;
-                treeEdges = steinerTreeHeuristic.treeEdges;
+            while(isRunning(threads))
+                ;
+
+            for(int k=0; k<nThreads && i+k<nStartTerminals; k++){
+                currentObjectiveValue = sths[k].objectiveValue;
+                if(lowestObjectiveValue > currentObjectiveValue){
+                    lowestObjectiveValue = currentObjectiveValue;
+                    treeEdges = sths[k].treeEdges;
+                }
             }
         }
 
@@ -110,6 +121,14 @@ public class ex10 {
         }
         path = path + "ex10_results/";
         Writer.write(results, path, fileName);
+    }
+
+    private static boolean isRunning(SteinerThread[] threads){
+        for(int i=0; i<threads.length; i++){
+            if(threads[i].isAlive())
+                return true;
+        }
+        return false;
     }
 
     /**
