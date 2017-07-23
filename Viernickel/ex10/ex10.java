@@ -68,7 +68,6 @@ public class ex10 {
         /** Calculate Steiner tree and objective value for every starting terminal */
         nStartTerminals = Math.min(Integer.valueOf(args[1]), terminals.length);
         for(int i=0; i<nStartTerminals; i++){
-            resetNodes(nodes);
             SteinerTreeHeuristic steinerTreeHeuristic = new SteinerTreeHeuristic(nodes, isTerminal);
             currentObjectiveValue = steinerTreeHeuristic.calcSteinerTree(terminals[i]);
             if(!steinerTreeHeuristic.buildAndCheckSteinerTree(terminals[i])){
@@ -149,17 +148,5 @@ public class ex10 {
             }
         }
         return true;
-    }
-
-    /**
-     * Resets the nodes for a new run from a different terminal
-     * @param nodes Nodes to be reset
-     */
-    private static void resetNodes(Node[] nodes){
-    	for(int i=0; i<nodes.length; i++){
-    		nodes[i].distance = Integer.MAX_VALUE;
-    		nodes[i].predecessor = null;
-    		nodes[i].predecessorEdge = null;
-    	}
     }
 }

@@ -15,6 +15,9 @@ import java.util.Stack;
 public class SteinerTreeHeuristic {
 
     private Node[] nodes;
+    private int[] distances;
+    private Node[] predecessors;
+    private Edge[] predecessorEdges;
     private boolean[] isTerminal;
     private boolean[] isNodeInSteinerTree;
     private boolean[] visited;
@@ -31,10 +34,13 @@ public class SteinerTreeHeuristic {
         assert(nodes.length == isTerminal.length);
 
         this.nodes = nodes;
+        this.distances = new int[nodes.length];
+        this.predecessors = new Node[nodes.length];
+        this.predecessorEdges = new Edge[nodes.length];
         this.isTerminal = isTerminal;
-        this.treeEdges = new ArrayList<Edge>();
         this.isNodeInSteinerTree = new boolean[nodes.length];
         this.visited = new boolean[nodes.length];
+        this.treeEdges = new ArrayList<Edge>();
     }
 
     /**
@@ -51,14 +57,15 @@ public class SteinerTreeHeuristic {
         int neighbourId = 0;
         int newDistance;
 
+        Arrays.fill(this.distances, Integer.MAX_VALUE);
+        Arrays.fill(this.predecessors, null);
+        Arrays.fill(this.predecessorEdges, null);
         Arrays.fill(this.visited, false);
         Arrays.fill(this.isNodeInSteinerTree, false);
 
-        startTerminal.distance = 0;
-        startTerminal.predecessor = null;
-        startTerminal.predecessorEdge = null;
+        distances[startTerminal.id] = 0;
         isNodeInSteinerTree[startTerminal.id] = true;
-        heap.add(new BinaryHeapNode(currNode));
+        heap.add(new BinaryHeapNode(currNode.id, distances[currNode.id]));
 
         while(!heap.isEmpty()){
             /** Update currNode */
@@ -74,12 +81,12 @@ public class SteinerTreeHeuristic {
                 /** Find shortest path from predecessors and save nodes in Steiner tree */
                 while(!isNodeInSteinerTree[currPathNode.id]){
                     isNodeInSteinerTree[currPathNode.id] = true;
-                    objectiveValue += currPathNode.predecessorEdge.weight;
+                    objectiveValue += predecessorEdges[currPathNode.id].weight;
 
                     /** Update currPathNode while also resetting distance and predecessor */
                     prevPathNode = currPathNode;
-                    currPathNode = currPathNode.predecessor;
-                    prevPathNode.distance = 0;
+                    currPathNode = predecessors[currPathNode.id];
+                    distances[prevPathNode.id] = 0;
                 }
             }
             /** Touch all neighboring nodes */
@@ -93,12 +100,12 @@ public class SteinerTreeHeuristic {
                 }
 
                 /** Update distance and add to heap */
-                newDistance = currNode.distance + currNode.getDistanceToNeighbour(i);
-                if(newDistance < neighbourNode.distance){
-                    neighbourNode.distance = newDistance;
-                    neighbourNode.predecessor = currNode;
-                    neighbourNode.predecessorEdge = currNode.edges.get(i);
-                    heap.add(new BinaryHeapNode(neighbourNode));
+                newDistance = distances[currNode.id] + currNode.getDistanceToNeighbour(i);
+                if(newDistance < distances[neighbourNode.id]){
+                    distances[neighbourNode.id] = newDistance;
+                    predecessors[neighbourNode.id] = currNode;
+                    predecessorEdges[neighbourNode.id] = currNode.edges.get(i);
+                    heap.add(new BinaryHeapNode(neighbourNode.id, distances[neighbourNode.id]));
                 }
             }
             visited[currNode.id] = true;
@@ -122,11 +129,11 @@ public class SteinerTreeHeuristic {
 
             for(int i=0; i<currNode.edges.size(); i++){
                 neighbourNode = currNode.getNeighbour(i);
-                if(isNodeInSteinerTree[neighbourNode.id] && currNode.edges.get(i) == neighbourNode.predecessorEdge){
-                    assert(neighbourNode.predecessorEdge.head == currNode || neighbourNode.predecessorEdge.tail == currNode);
+                if(isNodeInSteinerTree[neighbourNode.id] && currNode.edges.get(i) == predecessorEdges[neighbourNode.id]){
+                    assert(predecessorEdges[neighbourNode.id].head == currNode || predecessorEdges[neighbourNode.id].tail == currNode);
                     assert(!dfsVisited[neighbourNode.id]);
                     queue.add(neighbourNode);
-                    this.treeEdges.add(neighbourNode.predecessorEdge);
+                    this.treeEdges.add(predecessorEdges[neighbourNode.id]);
                 }
             }
         }

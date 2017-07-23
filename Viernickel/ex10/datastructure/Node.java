@@ -7,34 +7,20 @@ import java.util.ArrayList;
  * @author Merlin Viernickel
  * @date June 08 2017
  */
-public class Node implements Comparable<Node>{
-    
+public class Node {
+
     public int id;
-    public int distance;
-    public Node predecessor;
-    public Edge predecessorEdge;
     public ArrayList<Edge> edges;
-    
+
     /**
      * Constructor
      * @param id Id of constructed node
      */
     public Node(int id){
         this.id = id;
-        this.distance = Integer.MAX_VALUE;
-        this.predecessor = null;
         this.edges = new ArrayList<Edge>();
     }
 
-    /**
-     * Compares nodes based on their distance
-     * Function used by priority queue
-     */
-    @Override
-    public int compareTo(Node otherNode) {
-        return Integer.compare(this.distance, otherNode.distance);
-    }
-    
     /**
      * Returns the i-th neighbour node
      * @param i i-th neighbour
@@ -47,7 +33,7 @@ public class Node implements Comparable<Node>{
         else
             return edge.head;
     }
-    
+
     /**
      * Get the distance to the i-th neighbour node
      * @param i i-th neighbour
@@ -56,7 +42,7 @@ public class Node implements Comparable<Node>{
     public int getDistanceToNeighbour(int i){
         return this.edges.get(i).weight;
     }
-    
+
     public String toString(){
         return Integer.toString(this.id);
     }

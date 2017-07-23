@@ -10,11 +10,6 @@ public class BinaryHeapNode implements Comparable<BinaryHeapNode> {
 		this.distance = distance;
 	}
 
-	public BinaryHeapNode(Node node){
-		this.id = node.id;
-		this.distance = node.distance;
-	}
-
     /**
      * Compares nodes based on their distance
      * Function used by priority queue
