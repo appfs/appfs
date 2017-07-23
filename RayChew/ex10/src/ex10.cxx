@@ -21,10 +21,10 @@
  * * run: `./ex10 filepath/graph.gph [first N terminals] [-s]`<br>
  */
 
-#include "src/utils.h"
-#include "src/checker.h"
-#include "src/heap.h"
-#include "src/dijkstra_alg.h"
+#include "utils.h"
+#include "checker.h"
+#include "heap.h"
+#include "steiner.h"
 
 using namespace std;
 
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
   string str; /// read graph file line by line.
   
   getline(file, str);
-  int n; /// store n as int for number of edges.
+  int n; /// store n as int for number of edges in graph.
   
   auto it = str.begin();
   parse(it, str.end(), int_[([&n](int i){n = i;})] >> int_);
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
   cout << endl;
   cout << "Getting edges and weights from file..." << endl;
   pair<vector<Edge>,vector<int>> edgesWeights = utils::get_EdgesWeights(n, file);
-  file.close();
+  file.close(); // graph file contents no longer needed - close the graph file.
   /* end read edges and weights from file */
   
   
@@ -97,9 +97,10 @@ int main(int argc, char* argv[]) {
   
   
   /* start building graph and initalising needed stuff for Steiner subgraph. */
-  vector<Edge> bestSteinerEdges;
-  int bestObjVal = numeric_limits<int>::max();
-  int bestStartTerminal = numeric_limits<int>::max();
+  boost::timer::cpu_timer timer; // start timer
+  vector<Edge> bestSteinerEdges; // to store the best steiner subgraph edges.
+  int bestObjVal = numeric_limits<int>::max(); // to store the best objective value.
+  int bestStartTerminal = numeric_limits<int>::max(); // to store the best start terminal that yielded the above objective value.
   
   cout << "Building graph..." << endl;
   vector<vector<Vertex>> originalAdjList = utils::build_adjList(n, edgesWeights.first, edgesWeights.second); // build the original adjacency list. Each thread will get a copy of this adjList.
@@ -107,9 +108,7 @@ int main(int argc, char* argv[]) {
   
   
   /* start calculating steiner trees. */
-  cout << "Calculating steiner-trees..." << endl;
-  
-  boost::timer::cpu_timer timer; // start timer
+  cout << "Calculating steiner trees..." << endl;
   
   // if openMP is defined,
   #ifdef _OPENMP
@@ -125,66 +124,16 @@ int main(int argc, char* argv[]) {
   #endif
   for (int i=0;i<firstNTerminals;i++) { // for the number of terminals to be looped over,
     vector<vector<Vertex>> adjList =  originalAdjList; // make a copy of the adjacency list.
-    const int startTerminal = primes[i]; // get the terminal index that is the current start terminal.
+    const int startTerminal = primes[i]; // get the node index that is the current start terminal.
+    vector<bool> isPrimes = utils::isPrime(n, primes); // generate a boolean array to check against which index is a prime.
     
-    vector<Edge> subgraphEdges; // edge vector to store edges of the Steiner-subgraph.
-    vector<bool> inSubgraph(n,false); // boolean vector where node numbers in steiner subgraph are true, else false.
-    inSubgraph[startTerminal] = true; // the start terminal should always be in subgraph...
-    vector<int> subgraphWeights; // weight vector to store the weights of the edges of the Steiner-subgraph.
-    vector<int> dists; // dist and parents to store the distances and parents/predecessors of the calculated shortest-paths from start node.
-    vector<int> parents; 
+    myHeap Unvisited(n, startTerminal); // initialise the priority queue for the steiner heuristic.
     
-    // steiner-tree heuristic looks through each terminal while building the steiner-subgraph. The first terminal is the start terminal.
-    int currentPrime = startTerminal; // each terminal to be looped over is the "currentPrime".
+    pair<vector<Edge>,vector<int>> subgraphEdgesWeights = steiner::alg(n, Unvisited, adjList, startTerminal, isPrimes); // calculate the steiner tree using the steiner heuristic.
+    vector<Edge> subgraphEdges = subgraphEdgesWeights.first; // get the steiner subgraph edges,
+    vector<int> subgraphWeights = subgraphEdgesWeights.second; // and their respective weights.
     
-    for (int j = 0; j<primesSize; j++) { // for each prime/terminal, 
-      if (j%500==0){
-	if (j+500-1 > primesSize){ // print the group of 500 terminals that are being checked,
-	  cout << "Processing terminals number: " << j << " to " << primesSize << endl;
-	}
-	else{
-	  cout << "Processing terminals number: " << j << " to " << j + (500-1) << endl;
-	}
-      }
-      
-      myHeap Unvisited(n, currentPrime, inSubgraph); // and initialise the priority queue for the dijkstra algorithm.
-      
-      pair<vector<int>,vector<int>> shortestDists = dijkstra_alg::alg(n, Unvisited, adjList, currentPrime, inSubgraph); // calculate the shortest distances using dijkstra algorithm.
-      dists = shortestDists.first; // get the distances of all the nodes from the current prime, 
-      parents = shortestDists.second; // and their parents/predecessors.
-      
-      int minPrime = utils::get_Min(dists, primes, inSubgraph); // get the minimum of all the prime distances.
-      
-      int currentWeight = numeric_limits<int>::max(); // initialise current weight of the edge under consideration, for the steiner-heuristic.
-      int currentNode = minPrime; // start node for the steiner-heuristic is the current minimum prime-value.
-      int pred = parents[currentNode]; // trace the next node on the edge by looking up the parents list.
-      
-      
-      while (!inSubgraph[currentNode]) { // so long as the current node is not in the Steiner-subgraph...
-	Edge edge = make_pair(pred,currentNode); // make an edge out of current node and its parent.
-	
-	currentWeight = dists[currentNode] - dists[pred]; // distance of the current node to its parent (the edge weight) is the shortest distance to the start terminal of the current node, minus that of the parent node.
-	// something is very wrong if the parent of the current node is a prime, is not yet in the steiner subgraph, and has non-zero weight. Assert this.
-	assert(!((inSubgraph[pred]==false) && (find(primes.begin(), primes.end(), pred)!=primes.end()) && (currentWeight!=0)));
-	
-	// add the edge and its weight to the steiner-subgraph.
-	subgraphEdges.push_back(edge);
-	subgraphWeights.push_back(currentWeight);
-	inSubgraph[currentNode] = true; // add current node to reflect that it is in the steiner-subgraph.
-	
-	
-	// update to the next edge.
-	currentNode = pred;
-	pred = parents[currentNode];
-	
-	// check if the edge has been traced to the start terminal, if yes, then break.
-	if (pred == currentNode) {
-	  break;
-	}
-      }
-      assert(checker::isTree(subgraphEdges,currentPrime)); // every of these steiner trees found must be a tree...
-      currentPrime = minPrime; // in the next iteration, find shortest distances in graph from the terminal that was just added to the Steiner subgraph.
-    }
+    assert(checker::isTree(subgraphEdges,startTerminal)); // every of these steiner trees found must be a tree...
     
     int objVal = 0;
     for_each (subgraphWeights.begin(), subgraphWeights.end(), [&] (int n) { // objective value is the sum of the edge weights.

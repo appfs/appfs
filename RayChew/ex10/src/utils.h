@@ -6,7 +6,6 @@
 #include <vector> /* for std::vector */
 #include <iterator> /* for std::distance */
 #include <set> /* for std::set */
-#include <map> /* for std::map */
 #include <iomanip> /* for std::setprecision */
 #include <assert.h> /* for asserts */ 
 
@@ -38,11 +37,11 @@ namespace utils {
   std::pair<std::vector<Edge>,std::vector<int>> get_EdgesWeights (int& n, std::ifstream& file);
   
   std::vector<int> gen_Primes(int& n);
-
-  int get_Min(std::vector<int>& dists, std::vector<int>& primes, std::vector<bool>& inSubgraph);
+  
+  std::vector<bool> isPrime(int& n, std::vector<int>& primes);
   
   std::vector<std::vector<Vertex>> build_adjList(int& n, std::vector<Edge>& edges, std::vector<int>& weights);
-
+  
   std::vector<std::vector<int>> build_adjList(int& n,std::vector<Edge>& edges);
 }
 

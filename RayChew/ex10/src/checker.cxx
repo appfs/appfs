@@ -2,7 +2,6 @@
 
 using namespace std;
 
-
 /** 
  *   @brief  Checks if graph is a tree (acyclic). Return true if is tree and false otherwise.
  *  
