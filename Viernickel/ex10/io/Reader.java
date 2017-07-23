@@ -50,7 +50,6 @@ public class Reader{
             scanner = new Scanner(new File(path));
             
             /** Read first line */
-            scanner.nextInt();
             //line = br.readLine();
             nNodes = scanner.nextInt();
             nEdges = scanner.nextInt();
@@ -65,15 +64,14 @@ public class Reader{
             for(j=0; j<nEdges; j++){
                 //line = br.readLine();
                 //split = line.split(" ");
-                headId = scanner.nextInt();
-                tailId = scanner.nextInt();
+                headId = scanner.nextInt()-1;
+                tailId = scanner.nextInt()-1;
                 weight = scanner.nextInt();
                 
-                //Edge edge = new Edge(nodes[headId], nodes[tailId], weight);
+                Edge edge = new Edge(nodes[headId], nodes[tailId], weight);
                 
-                //nodes[headId].edges.add(edge);
-                //nodes[tailId].edges.add(edge);
-                System.out.println(headId + " " + tailId + " " + weight);
+                nodes[headId].edges.add(edge);
+                nodes[tailId].edges.add(edge);
             }
             System.out.println("finished reading");
             //br.close();
