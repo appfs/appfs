@@ -28,6 +28,8 @@ import io.Writer;
  */
 public class ex10 {
 
+    static int nStartTerminals;
+    
     /**
      * Main method
      */
@@ -40,7 +42,6 @@ public class ex10 {
         long lowestObjectiveValue = Long.MAX_VALUE;
         ArrayList<Edge> treeEdges = new ArrayList<>();
         int nTerminals = 0;
-        int nStartTerminals;
         int nThreads = 4;
 
         /** Read and save nodes and terminals */
@@ -74,7 +75,7 @@ public class ex10 {
         for(int i=0; i<nStartTerminals; i=i+nThreads){
             for(int j=0; j<nThreads && i+j<nStartTerminals; j++){
                 sths[j] = new SteinerTreeHeuristic(nodes, isTerminal);
-                threads[j] = new SteinerThread("Tread "+Integer.toString(Integer.valueOf(i)+Integer.valueOf(j)), sths[j], terminals[i+j]);
+                threads[j] = new SteinerThread("Thread "+Integer.toString(Integer.valueOf(i)+Integer.valueOf(j)), sths[j], terminals[i+j]);
                 threads[j].start();
 
             }
@@ -95,7 +96,7 @@ public class ex10 {
         long taskUserTimeNano    = getUserTime( ) - startUserTimeNano;
 
         /** Get results */
-        String fileName = args[0].split("\\\\")[args[0].split("\\\\").length-1];
+        String fileName = args[0].split("/")[args[0].split("/").length-1];
         String resultValue = "TLEN: " + (lowestObjectiveValue);
         String treeString = "TREE: " + treeEdges.toString().replaceAll("[\\[\\]]", "").replaceAll(", ", " ");
         String userTime = "TIME: " + round(taskUserTimeNano/1000000000.0);
@@ -115,16 +116,16 @@ public class ex10 {
 
         /** Save results to file */
         String path = "";
-        String[] pathSplit = args[0].split("\\\\");
+        String[] pathSplit = args[0].split("/");
         for(int i=0; i<pathSplit.length-1; i++){
-            path = path + pathSplit[i] + "\\";
+            path = path + pathSplit[i] + "/";
         }
         path = path + "ex10_results/";
         Writer.write(results, path, fileName);
     }
 
     private static boolean isRunning(SteinerThread[] threads){
-        for(int i=0; i<threads.length; i++){
+        for(int i=0; i<threads.length && i<nStartTerminals; i++){
             if(threads[i].isAlive())
                 return true;
         }
