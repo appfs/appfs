@@ -3,7 +3,7 @@ JC = javac
 SOURCES=$(shell find . -maxdepth 2 -type f -name "*.java")
 CLASSES=$(SOURCES:.java=.class)
 DOCDIR=doc
-FILE=/home/merlin/APPFS/files/ex10/i640-345.gph
+FILE=/home/SP/i640-345.gph
 TERMINALS=100
 THREADS=1
 JMEM=3g
