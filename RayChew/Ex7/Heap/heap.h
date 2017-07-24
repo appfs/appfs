@@ -7,7 +7,7 @@
 class myHeap {
 private:
   std::vector<vertex> tree;
-  std::map<int,int> positions;
+  std::vector<int> positions;
   
   void checkDown(int idx);
   
@@ -24,9 +24,9 @@ public:
   
   void insert(vertex& newVal);
   
-  void update_weight(int& neighbourIdx, int& newWeight);
+  void update_weight(int& neighbour, int& newWeight);
 
-  int get_neighbourPosition(int& neighbour);
+  int* get_neighbourPosition(int& neighbour);
   
   int size();
   

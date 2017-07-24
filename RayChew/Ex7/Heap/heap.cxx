@@ -4,64 +4,111 @@ using namespace std;
 
 void myHeap::checkDown(int idx) { // the bubble down method.
   int length = tree.size();
-  int lChildIdx = 2*idx+1; // get index of left and right child of the current index.
-  int rChildIdx = 2*idx+2;
-  
-  if (lChildIdx >= length) { // if the left child is outside of the tree, return since it's a leaf node.
+  int lChildIdx = 2*idx; // get index of left and right child of the current index.
+
+  if (lChildIdx >= length) { // if the left child is outside of the tree, return since current-index node a leaf node.
     return;
   }
+  
+  int rChildIdx = 2*idx+1;
   int lChildWeight = tree[lChildIdx].first; // otherwise, get the indices.
-  int rChildWeight = tree[rChildIdx].first;
+
   int currentIdxWeight = tree[idx].first;
-  
   int minIdx = idx;
-  int childWeight = numeric_limits<int>::max();
-  int childIdx = numeric_limits<int>::max();
   
-  if ((lChildWeight > rChildWeight) && (rChildIdx < length)) { // deterministical always choose to switch with the left child if values are the same.
-    childWeight = rChildWeight;
-    childIdx = rChildIdx;
+  int childWeight = lChildWeight;
+  int childIdx = lChildIdx;
+  
+  if (rChildIdx < length) { // if there is a right-child of current index node, then compare its weight to the left child.
+    int rChildWeight = tree[rChildIdx].first;
+    
+    if (lChildWeight > rChildWeight) { // deterministical always choose to switch with the left child if values are the same.
+      childWeight = rChildWeight;
+      childIdx = rChildIdx;
+    }
   }
-  else if (lChildWeight <= rChildWeight) {
-    childWeight = lChildWeight;
-    childIdx = lChildIdx;
-  }
+//   else { // otherwise, the only child weight is that of the left child.
+//     childWeight = lChildWeight;
+//     childIdx = lChildIdx;
+//   }
   
   if (currentIdxWeight > childWeight) { // check if there's a need to switch by comparing weight at the current index to the weight at the chosen child.
     minIdx = childIdx;
-  }
+  }  
+//   if (lChildIdx >= length) { // if the left child is outside of the tree, return since current-index node a leaf node.
+//     return;
+//   }
+//   
+//   int lChildWeight = tree[lChildIdx].first; // otherwise, get the indices.
+//   int rChildWeight = tree[rChildIdx].first;
+//     
+//   int currentIdxWeight = tree[idx].first;
+//   int minIdx = idx;
+//   int childWeight = lChildWeight;
+//   int childIdx = rChildWeight;
+//   
+//   //if (rChildIdx < length) { // if there is a right-child of current index node, then compare its weight to the left child.
+//   //int rChildWeight = tree[rChildIdx].first;
+//   
+//   if (lChildWeight > rChildWeight) { // deterministical always choose to switch with the left child if values are the same.
+//     childWeight = rChildWeight;
+//     childIdx = rChildIdx;
+//   }
+// //   else if (lChildWeight <= rChildWeight) {
+// //     childWeight = lChildWeight;
+// //     childIdx = lChildIdx;
+// //   }
+//   //}
+// //   else { // otherwise, the only child weight is that of the left child.
+// //     childWeight = lChildWeight;
+// //     childIdx = lChildIdx;
+// //   }
+//   
+//   if (currentIdxWeight > childWeight) { // check if there's a need to switch by comparing weight at the current index to the weight at the chosen child.
+//     minIdx = childIdx;
+//   }
   
   if (minIdx != idx) { // if there is a need to switch nodes... switch the weights and update the positions array.
-    pair<int,int> tmp = tree[idx];
-    tree[idx] = tree[minIdx];
-    tree[minIdx] = tmp;
     
-    auto tmp1 = positions[tree[idx].second];
-    positions[tree[idx].second] = positions[tree[minIdx].second];
-    positions[tree[minIdx].second] = tmp1;
+//     pair<int,int> tmp = tree[idx];
+//     pair<int,int> *treeIdx = &tree[idx];
+//     pair<int,int> *treeMinIdx = tree[minIdx];
+//     *treeIdx = *treeMinIdx;
+//     *treeMinIdx = tmp;
+    
+    iter_swap(tree.begin() + idx, tree.begin() + minIdx);
+    iter_swap(positions.begin() + tree[idx].second, positions.begin() + tree[minIdx].second);
+//     auto tmp1 = positions[treeIdx->second];
+//     positions[treeIdx->second] = positions[treeMinIdx->second];
+//     positions[treeMinIdx->second] = tmp1;
     checkDown(minIdx);
   }
 }
 
 void myHeap::checkUp(int idx) { // the bubbleUp method.
-  if (idx == 0) { // if current index is the root node, return since there's no bubbling up left to do.
+  if (idx == 1) { // if current index is the root node, return since there's no bubbling up left to do.
     return;
   }
   
-  int parentIdx = (idx-1)/2;
+  int parentIdx = (idx)/2;
   
   int parentWeight = tree[parentIdx].first;
   int currentIdxWeight = tree[idx].first;
   
   if (parentWeight > currentIdxWeight) { // otherwise, check if the weight at parent node is larger than the weight at current node...
     
-    pair<int,int> tmp = tree[parentIdx]; // if yes, switch them, and update the positions array.
-    tree[parentIdx] = tree[idx];
-    tree[idx] = tmp;
+//     pair<int,int> tmp = tree[parentIdx]; // if yes, switch them, and update the positions array.
+//     pair<int,int> *treeIdx = &tree[idx];
+//     pair<int,int> *treeParentIdx = &tree[parentIdx];
+//     *treeParentIdx = *treeIdx;
+//     *treeIdx = tmp;
+//     
+//     int tmpPos = positions[treeParentIdx->second];
+//     positions[treeParentIdx->second] = positions[treeIdx->second];
+//     positions[treeIdx->second] = tmpPos;
     
-    int tmpPos = positions[tree[parentIdx].second];
-    positions[tree[parentIdx].second] = positions[tree[idx].second];
-    positions[tree[idx].second] = tmpPos;
+    iter_swap(tree.begin() + idx, tree.begin() + parentIdx);
+    iter_swap(positions.begin() + tree[idx].second, positions.begin() + tree[parentIdx].second);
     
     checkUp(parentIdx);
   }
@@ -70,13 +117,14 @@ void myHeap::checkUp(int idx) { // the bubbleUp method.
 void myHeap::mkHeap() { // make the heap by bubbling downwards for each node in binary heap after it is added.
   int length = tree.size();
   
-  for(int i=length-1; i>=0;--i) {
+  for(int i=length-1; i>0;--i) {
     checkDown(i);
   }
 }
 
 myHeap::myHeap(int& n, int& startTerminal, std::vector<Edge>& edges) : tree(n) {
-  for (int i=0;i<n;i++) {
+  positions.reserve(n);
+  for (int i=1;i<n;i++) {
     tree[i] = make_pair(numeric_limits<int>::max(),i); // initialise binary heap as infinity weight for all nodes except the start node of the graph.
     positions[i] = i; // initialise a positions array to "search" the binary heap by indices of the nodes.
   }
@@ -92,18 +140,20 @@ void myHeap::pop_top() { // remove the minimum (root node) of the binary heap.
   {
     return;
   }
+  pair<int,int> *treeFirst = &tree[1];
+  pair<int,int> *treeLast = &tree[length-1];
   
-  tree[0] = tree[length-1]; // otherwise, switch last node with the root and bubble down.
+  positions[treeLast->second] = positions[treeFirst->second]; // update the positions array.
+  positions[treeFirst->second] = numeric_limits<int>::min(); // nodes that are no longer in the heap have positions of -inf.
+  
+  *treeFirst = *treeLast; // otherwise, switch last node with the root and bubble down.
   tree.pop_back(); // and pop the last node, which is now the root.
   
-  positions[tree[length-1].second] = positions[tree[0].second]; // update the positions array.
-  positions[tree[0].second] = numeric_limits<int>::min();
-  
-  checkDown(0);
+  checkDown(1);
 }
 
 pair<int,int> myHeap::get_min() { // get the minimum (root node) of the binary heap.
-  return tree[0];
+  return tree[1];
 }
 
 void myHeap::insert(pair<int,int>& newVal) { // unnecessary method to insert new elements into the heap, and keep sorted structure.
@@ -112,19 +162,32 @@ void myHeap::insert(pair<int,int>& newVal) { // unnecessary method to insert new
   checkUp(length);
 }
 
-void myHeap::update_weight(int& neighbourIdx, int& newWeight) { // given a new weight and the position of the neighbouring node on the binary heap, update the weight of this neighbouring node.
+void myHeap::update_weight(int& neighbour, int& newWeight) {// given a new weight and the position of the neighbouring node on the binary heap, update the weight of this neighbouring node.
+  //int *treeNeighbourWeightAddr = &tree[*neighbourIdx].first;
+  int neighbourIdx = positions[neighbour];
+  if (neighbourIdx != numeric_limits<int>::min()) {
   int oldWeight = tree[neighbourIdx].first;
-  tree[neighbourIdx].first = newWeight;
+  tree[neighbourIdx].first = newWeight;  
   if (oldWeight<=newWeight){
     checkDown(neighbourIdx);
   }
-  if (newWeight<oldWeight){
+  else {
     checkUp(neighbourIdx);
   }
+  }
+  //if (*treeNeighbourWeightAddr<=newWeight){
+//   if (tree[*neighbourIdx].first<=newWeight){
+//     checkDown(*neighbourIdx);
+//   }
+//   else {
+//     checkUp(*neighbourIdx);
+//   }
+//   //*treeNeighbourWeightAddr = newWeight;
+//   tree[*neighbourIdx].first = newWeight;
 }
 
-int myHeap::get_neighbourPosition(int& neighbour) { // given the index of the neighbouring node on the graph, return the position/index of the neighbouring node on the binary heap.
-  return positions[neighbour];
+int* myHeap::get_neighbourPosition(int& neighbour) { // given the index of the neighbouring node on the graph, return the position/index of the neighbouring node on the binary heap.
+  return &positions[neighbour];
 }
 
 int myHeap::size() { // get the size of the binary heap.

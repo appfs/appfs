@@ -2,8 +2,8 @@
 CC = g++
 
 # compiler flags:
-CFLAGS = -std=c++14 -O3 -g
-LIBS = -lboost_timer -Wall
+CFLAGS = -std=c++14 -march=native -O3 -Wall
+LIBS = -lboost_timer
 
 # target executable to build:
 TARGET = ex7
@@ -52,6 +52,6 @@ check:
 	cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
 
 clean:
-	$(RM) $(TARGET)
+	$(RM) $(TARGET) *.o
 	
 .PHONY: all doc coverage check clean 

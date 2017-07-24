@@ -6,7 +6,7 @@
 
 namespace dijkstra_alg {
 
-  vertex alg (int& n, myHeap& Unvisited, std::vector<std::vector<vertex>>& adjList, int& startTerminal, std::vector<Edge>& subgraphEdges);
+  vertex alg (int& n, std::vector<std::vector<vertex>>& adjList, int& startTerminal, std::vector<Edge> subgraphEdges);
 
   int get_NeighbourIndex(int& currentNode, int& neighbour, std::vector<std::vector<vertex>>& adjList);
 };

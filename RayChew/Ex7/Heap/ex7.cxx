@@ -49,24 +49,27 @@ int main(int argc, char*argv[]){
   
   std::pair<std::vector<Edge>,std::vector<int>> edgesWeights = utils::get_EdgesWeights(n, file);
   
-  boost::timer::cpu_timer timer;
+  std::cout << "building adjacency list..." << std::endl;
   std::vector<std::vector<std::pair<int,int>>> adjList = utils::build_adjList(n, edgesWeights.first, edgesWeights.second);
   
-  myHeap Unvisited(n, startNode, subgraphEdges); // build prioritiy queue using heap structure.
-  
-  f = dijkstra_alg::alg(n, Unvisited, adjList, startNode, subgraphEdges);
+  boost::timer::cpu_timer timer;
+  std::cout << "populating priority queue..." << std::endl;
+  //boost::timer::cpu_times times0 = timer.elapsed();
+  std::cout << "calculating distances..." << std::endl;
+  f = dijkstra_alg::alg(n, adjList, startNode, subgraphEdges);
   boost::timer::cpu_times times = timer.elapsed();
   /* end dijkstra algorithm according to flag */
   
   /// output vertex and distance of the longest-shortest path.
   std::cout << "RESULT VERTEX " << f.first << std::endl;
   std::cout << "RESULT DIST " << f.second <<  std::endl;
-  
-  /// print CPU- and Wall-Time. 
-  // boost::timer::cpu_times returns tuple of wall, system and user times in nanoseconds.
   std::cout << std::endl;
-  std::cout << "WALL-CLOCK " << times.wall / 1e9 << "s" << std::endl;
-  std::cout << "USER TIME " << times.user / 1e9 << "s" << std::endl;
+  
+    /// print CPU- and Wall-Time. 
+  // boost::timer::cpu_times returns tuple of wall, system and user times in nanoseconds.
+//   std::cout << "WALL-CLOCK " << times.wall / 1e9 << "s" << std::endl;
+//   std::cout << "USER TIME " << times.user / 1e9 << "s" << std::endl;
+
   
   file.close();  
   return 0;
