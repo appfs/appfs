@@ -296,7 +296,7 @@ int main(int argc, char *argv[])
 		    std::pair<int, std::list<std::pair<int, int>>> currentRun = steinerTree(numberOfNodes, edges, terminalIds[i], primes);
 			lengths[i] = currentRun.first;
 			edgelists[i] = currentRun.second;
-			std::cout << "Length starting from " << i << ": " << lengths[i] << std::endl;
+			//std::cout << "Length starting from " << i << ": " << lengths[i] << std::endl;
 		}
 
 	int minlength = INT32_MAX;
