@@ -18,7 +18,7 @@ vector<int> utils::get_Nodes(vector<Edge>& edges) { // function to get all the n
   copy(nodes.begin(), nodes.end(), back_inserter(nodesAsVector)); // convert set to vector.
   
   assert(nodes.size() <= 2*edges.size()); // the numbers of nodes in the graph cannot be less than the twice the size of the graph.
-    
+  
   return nodesAsVector;
 }
 
@@ -52,7 +52,7 @@ pair<vector<Edge>,vector<int>> utils::get_EdgesWeights (int& n, ifstream& file) 
 }
 
 /** 
- *   @brief  Given the number of nodes in a graph, find how many primes are contained within this limit, and return them as vector<int>.
+ *   @brief  Given the number of nodes in a graph, generate the primes that are contained within this limit, and return them as vector<int>.
  *  
  *   @param  n is an int that is the number of nodes in the graph file.
  *   @return vector<int>
@@ -76,28 +76,18 @@ vector<int> utils::gen_Primes(int& n) { // ref: https://stackoverflow.com/questi
 }
 
 /** 
- *   @brief  Given a list of distances of all nodes from a start terminal, a list of primes, and the nodes in the steiner subgraph, find the prime with the minimum distance that is not in the subgraph.
+ *   @brief  Given the number of nodes in a graph and the list of primes present in the graph, return a boolean vector where prime indices are indicated by true, and false otherwise.
  *  
- *   @param  dists that is a vector<int> of shortest distances for each node on the graph.
+ *   @param  n is an int that is the number of nodes in the graph file.
  *   @param  primes that is a vector<int> of the primes present in the graph.
- *   @param  inSubgraph that is a vector<bool> with nodes in the steiner subgraph marked as true and false otherwise.
- *   @return int
+ *   @return vector<bool>
  */
-int utils::get_Min(vector<int>& dists, vector<int>& primes, vector<bool>& inSubgraph) {
-  int minPrimeDist = numeric_limits<int>::max();
-  int minPrime = numeric_limits<int>::max();
-  int j = 0;
-  for(auto i=primes.begin(), end=primes.end(); i!=end; i++) { // for each prime,
-    if ((dists[*i] < minPrimeDist) && (!inSubgraph[primes[j]])) { // if the prime is less than the currently stored minimum prime distance and is not in the subgraph,
-      minPrimeDist = dists[*i]; // update the mininimum prime distance and
-      minPrime = primes[j]; // update the minimum prime.
-    }
-    j++;
+vector<bool> utils::isPrime(int& n, vector<int>& primes) {
+  vector<bool> isPrimes(n,false);
+  for (auto prime=primes.begin(),end=primes.end(); prime!=end; prime++) {
+    isPrimes[*prime]=true;
   }
-  if (minPrime == numeric_limits<int>::max()) { // if all the primes are already in the subgraph, which is possible if two primes are joined by an edge with 0 weight.
-    minPrime = 2; // then just return 2, which is an arbitrary prime, but the heuristic should take care of primes already visited without issues.
-  }
-  return minPrime;
+  return isPrimes;
 }
 
 /** 
@@ -129,7 +119,7 @@ vector<vector<Vertex>> utils::build_adjList(int& n, vector<Edge>& edges, vector<
  *   @param  edges is a vector<Edge> that contains the list of edges of a graph.
  *   @return vector<vector<int>>
  */  
-vector<vector<int>> utils::build_adjList(int& n,vector<Edge>& edges) { // overloaded function for adjacency list without weight. Used for building graph structure for the Steiner subgraph.
+vector<vector<int>> utils::build_adjList(int& n,vector<Edge>& edges) { // overloaded function for adjacency list without weight. Used for building graph structure for the Steiner subgraph in the checker.
   vector<vector<int>> adjList(n);
   for (auto i=edges.begin(), end=edges.end(); i!=end; i++) {
     int vert1 = i->first;
