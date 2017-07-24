@@ -6,7 +6,7 @@ DOCDIR=doc
 FILE=/home/merlin/APPFS/files/ex10/i640-345.gph
 TERMINALS=100
 THREADS=1
-JMEM=2g
+JMEM=3g
 
 %.class: %.java
 	$(JC) $(JFLAGS) $<

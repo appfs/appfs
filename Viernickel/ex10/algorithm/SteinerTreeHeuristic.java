@@ -6,17 +6,16 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
- * Main algorithm class representing the Dijkstra algorithm.
- * Assumes first entry of the nodes array as starting node.
+ * Algorithm class representing the Steiner tree heuristic.
  * @author Merlin Viernickel
- * @date June 08 2017
+ * @date June 23 2017
  */
 public class SteinerTreeHeuristic {
 
     private Node[] nodes;
-    private int[] distances;
     private Node[] predecessors;
     private Edge[] predecessorEdges;
+    private int[] distances;
     private boolean[] isTerminal;
     private boolean[] isNodeInSteinerTree;
     private boolean[] visited;
@@ -46,6 +45,7 @@ public class SteinerTreeHeuristic {
 
     /**
      * Calculates a Steiner tree using the Dijkstra algorithm heuristic method.
+     * @param startTerminal The starting terminal
      */
     public void calcSteinerTree(Node startTerminal){
         Node currNode = startTerminal;
@@ -114,35 +114,43 @@ public class SteinerTreeHeuristic {
         this.objectiveValue = objectiveValue;
     }
 
+    /**
+     * Checks the Steiner tree for validity and saves the edges in treeEdges
+     * @param startTerminal
+     */
     public void buildAndCheckSteinerTree(Node startTerminal){
         LinkedList<Node> queue = new LinkedList<>();
-        boolean[] dfsVisited = new boolean[this.nodes.length];
+        boolean[] bfsVisited = new boolean[this.nodes.length];
         Node currNode;
         Node neighbourNode;
 
+        /** Runs through the tree using breadth first search, only using Steiner tree edges */
         queue.add(startTerminal);
         while(!queue.isEmpty()){
             currNode = queue.pop();
 
-            if(dfsVisited[currNode.id]){
+            /** If we find a cycle it is not a tree and therefore not valid */
+            if(bfsVisited[currNode.id]){
                 this.isFeasible = false;
                 return;
             }
-            dfsVisited[currNode.id] = true;
+            bfsVisited[currNode.id] = true;
 
+            /** Throw all adjacent nodes that are connected by Steiner tree edges into the queue */
             for(int i=0; i<currNode.edges.size(); i++){
                 neighbourNode = currNode.getNeighbour(i);
                 if(isNodeInSteinerTree[neighbourNode.id] && currNode.edges.get(i) == predecessorEdges[neighbourNode.id]){
                     assert(predecessorEdges[neighbourNode.id].head == currNode || predecessorEdges[neighbourNode.id].tail == currNode);
-                    assert(!dfsVisited[neighbourNode.id]);
+                    assert(!bfsVisited[neighbourNode.id]);
                     queue.add(neighbourNode);
                     this.treeEdges.add(predecessorEdges[neighbourNode.id]);
                 }
             }
         }
 
+        /** Check whether all terminals were reached */
         for(int i=0; i<this.nodes.length; i++){
-            if(isTerminal[i] && !dfsVisited[i]){
+            if(isTerminal[i] && !bfsVisited[i]){
                 this.isFeasible = false;
                 return;
             }

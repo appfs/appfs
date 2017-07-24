@@ -43,6 +43,9 @@ public class Node {
         return this.edges.get(i).weight;
     }
 
+    /**
+     * String representation of the object.
+     */
     public String toString(){
         return Integer.toString(this.id);
     }

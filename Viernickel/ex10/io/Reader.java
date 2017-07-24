@@ -1,8 +1,6 @@
 package io;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -29,14 +27,10 @@ public class Reader{
      * @return Array of nodes read
      */
     public static Node[] readFile(String path){
-        FileReader fr = null;
-        BufferedReader br;
-        String line;
         Scanner scanner;
-        String[] split;
+        Node[] nodes = null;
         int nNodes;
         int nEdges;
-        Node[] nodes = null;
         int headId;
         int tailId;
         int weight;
@@ -45,12 +39,9 @@ public class Reader{
         
         
         try {
-            //fr = new FileReader(path);
-            //br = new BufferedReader(fr);
             scanner = new Scanner(new File(path));
             
             /** Read first line */
-            //line = br.readLine();
             nNodes = scanner.nextInt();
             nEdges = scanner.nextInt();
             
@@ -62,8 +53,6 @@ public class Reader{
             
             /** Read and save edges */
             for(j=0; j<nEdges; j++){
-                //line = br.readLine();
-                //split = line.split(" ");
                 headId = scanner.nextInt()-1;
                 tailId = scanner.nextInt()-1;
                 weight = scanner.nextInt();
@@ -73,9 +62,7 @@ public class Reader{
                 nodes[headId].edges.add(edge);
                 nodes[tailId].edges.add(edge);
             }
-            System.out.println("finished reading");
-            //br.close();
-            } catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return nodes;
