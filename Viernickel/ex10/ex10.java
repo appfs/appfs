@@ -120,6 +120,10 @@ public class ex10 {
             /** After termination, update objective value and treeEdges pointer if new optimum was found */
             for(int j=0; j<nThreads && i+j<nStartTerminals; j++){
                 threadTimeNano += threads[j].getThreadTime();
+                if(!sths[j].isFeasible){
+                    System.out.println("UNFEASIBLE SOLUTION FOUND - TERMINATING THE PROGRAM");
+                    return;
+                }
                 currentObjectiveValue = sths[j].objectiveValue;
                 if(lowestObjectiveValue > currentObjectiveValue){
                     lowestObjectiveValue = currentObjectiveValue;
