@@ -8,7 +8,8 @@ CXXFLAGS = -std=c++14 -O3 -march=native -pedantic -Wall
 LIBS = -lboost_timer -lboost_program_options -fopenmp
 
 # find source and object files.
-SRCS = $(wildcard src/*.cxx)
+#SRCS = $(wildcard src/*.cxx)
+SRCS = src/utils.cxx src/heap.cxx src/steiner.cxx src/checker.cxx
 OBJS = $(subst .cxx,.o,$(SRCS))
 
 # target executable to build:
@@ -16,7 +17,7 @@ TARGET = ex10
 
 # graph data file to read:
 ifndef FILE
-	FILE = SP/b15.gph
+	FILE = SP/big8.gph
 endif
 
 # files that are coverage-test specific:
@@ -29,17 +30,19 @@ CPPCHECKFLAGS = --enable=all --inconclusive --std=posix
 
 .PHONY: all doc test coverage check clean 
 
+# use number of threads specified also in this make file - faster when compiling the object-files.
 all:
-	$(MAKE) -j$(THREADS) $(OBJS) # use number of threads specified also in this make file - faster when compiling the object-files.
+	$(MAKE) -j$(THREADS) $(OBJS)
 	$(MAKE) $(TARGET)
 
-# if threads is not defined, then compile without passing the threads number as a compiler 
+# if threads is not defined, then compile without passing the threads number as a compiler option.
 ifndef THREADS
-$(TARGET): $(OBJS) $(TARGET).cxx
-	$(CXX) $(CXXFLAGS) $(OBJS) $(TARGET).cxx -o $(TARGET) $(LIBS)
+$(TARGET): $(OBJS) src/$(TARGET).cxx
+	$(CXX) $(CXXFLAGS) $(OBJS) src/$(TARGET).cxx -o $(TARGET) $(LIBS)
 else
-$(TARGET): $(OBJS) $(TARGET).cxx
-	$(CXX) -DTHREADS=$(THREADS) $(CXXFLAGS) $(OBJS) $(TARGET).cxx -o $(TARGET) $(LIBS)
+# else compile it with the custom option that THREADS = number of threads specified.
+$(TARGET): $(OBJS) src/$(TARGET).cxx
+	$(CXX) -DTHREADS=$(THREADS) $(CXXFLAGS) $(OBJS) src/$(TARGET).cxx -o $(TARGET) $(LIBS)
 endif
 
 # compile the objects but do not link them.
@@ -49,10 +52,6 @@ $(OBJS): src/%.o:src/%.cxx
 # compile the objects for coverage test without linking them...
 $(COVERAGEOBJS): src/%.cover:src/%.cxx
 	$(CXX) $(CXXFLAGS) --coverage -c $< -o $@
-   
-test:
-	$(MAKE) all
-	./$(TARGET) $(FILE) --THREADS=$(THREADS)
 	
 doc: 
 	doxygen -g
@@ -68,21 +67,21 @@ doc:
 # coverage test
 coverage:
 	$(MAKE) $(COVERAGEOBJS)
-	$(CXX) $(CXXFLAGS) --coverage $(COVERAGEOBJS) $(TARGET).cxx -o $(TARGET) $(LIBS)
+	$(CXX) $(CXXFLAGS) --coverage $(COVERAGEOBJS) $(PATH)$(TARGET).cxx -o $(TARGET) $(LIBS)
 	mkdir -p gcov
 	./$(TARGET) $(FILE) 1 --help
 	./$(TARGET) $(FILE) 100 -s
 	mv $(TARGET).gcno $(TARGET).gcda gcov
 	lcov -t "result" -o result.info -c -d gcov
 	genhtml -o result result.info
-	#rm -f $(GCNOS) $(GCDAS) $(COVERAGEOBJS) result.info
+	rm -f $(GCNOS) $(GCDAS) $(COVERAGEOBJS) result.info
 
 # static checker
 check:
 	# if cppcheck binary is in the same folder as source file:
 	# ./cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
 	# otherwise, if cppcheck is an installed library:
-	cppcheck $(CPPCHECKFLAGS) $(TARGET).cxx
+	cppcheck $(CPPCHECKFLAGS) src/$(TARGET).cxx
 
 clean:
 	rm -f $(OBJS) $(GCNOS) $(GCDAS) $(COVERAGEOBJS) result.info

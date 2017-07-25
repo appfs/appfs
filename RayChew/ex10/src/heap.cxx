@@ -160,6 +160,7 @@ Vertex myHeap::get_min() { // get the minimum (root node) of the binary heap.
  */  
 void myHeap::insert(Vertex newNode) {
   int length = tree.size();
+  
   tree.push_back(newNode);
   positions[newNode.second] = length;
   checkUp(length);
@@ -168,22 +169,25 @@ void myHeap::insert(Vertex newNode) {
 /** 
  *   @brief  Updates the value of a given node.
  * 
- *   @param  neighbourIdx is an int that is the index of the node on heap for which its value should be replaced.
- *   @param  newWeight is an int that replaces the old value of a node.
+ *   @param  neighbour is an int that is the index of the node on graph for which its index on the heap should be returned.
+ *   @param  newDist is an int that replaces the old value of a node.
  *   @return void
  */  
-void myHeap::update_weight(int& neighbour, int& newWeight) { // given a new weight and the position of the neighbouring node on the binary heap, update the weight of this neighbouring node.
+void myHeap::update_weight(int& neighbour, int& newDist) { // given a new weight and the position of the neighbouring node on the binary heap, update the weight of this neighbouring node.
   int neighbourIdx = positions[neighbour];
   if (neighbourIdx != numeric_limits<int>::min()) {
     int oldWeight = tree[neighbourIdx].first;
-    tree[neighbourIdx].first = newWeight;  
-    if (oldWeight<=newWeight){
+    tree[neighbourIdx].first = newDist;  
+    if (oldWeight <= newDist){
       checkDown(neighbourIdx);
     }
     else {
       checkUp(neighbourIdx);
     }
   }
+//   else {
+//     insert(make_pair(newDist,neighbour));
+//   }
 }
 
 /** 

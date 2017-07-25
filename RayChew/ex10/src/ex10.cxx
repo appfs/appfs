@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
     vector<vector<Vertex>> adjList =  originalAdjList; // make a copy of the adjacency list.
     const int startTerminal = primes[i]; // get the node index that is the current start terminal.
     vector<bool> isPrimes = utils::isPrime(n, primes); // generate a boolean array to check against which index is a prime.
-    
+
     myHeap Unvisited(n, startTerminal); // initialise the priority queue for the steiner heuristic.
     
     pair<vector<Edge>,vector<int>> subgraphEdgesWeights = steiner::alg(n, Unvisited, adjList, startTerminal, isPrimes); // calculate the steiner tree using the steiner heuristic.
