@@ -13,23 +13,21 @@
 *   Take #n random source nodes from parameter input and start the heurisitic parallely from these sources
 */
 
-#include <string>
+
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
-#include <stdio.h>
 #include <cstdio>
 #include <ctime>
 #include <chrono>
+#include <string>
 #include <vector>
 #include <climits>
 #include <utility>                          // for std::pair
 #include <random>
-#include <boost/config.hpp>
-#include <boost/utility.hpp>                // for boost::tie
+
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/property_map/property_map.hpp>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
