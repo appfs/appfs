@@ -3,13 +3,14 @@ JC = javac
 SOURCES=$(shell find . -maxdepth 2 -type f -name "*.java")
 CLASSES=$(SOURCES:.java=.class)
 DOCDIR=doc
-FILE=./check/i640-345.gph
-TEST1=./check/i640-345.gph
-TEST2=./check/es10kaz.gph
-TEST3=./check/world666.gph
-TEST4=./check/big8.gph
+FILE=$(HOME)/SP/world666.gph
+TEST1=$(HOME)/SP/b15.gph
+TEST1=$(HOME)/SP/i640-345.gph
+TEST2=$(HOME)/SP/es10kaz.gph
+TEST3=$(HOME)/SP/world666.gph
+TEST4=$(HOME)/SP/big8.gph
 TERMINALS=100
-THREADS=1
+THREADS=4
 JMEM=3g
 
 %.class: %.java
