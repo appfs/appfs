@@ -7,7 +7,7 @@
  *
  *  @section Description
  *  
- *  An attempt at a binary heap structure. Stores <index,value> pair of nodes which represents index on graph and distance from a certain node in the graph.
+ *  An attempt at a binary heap structure. Stores <value,index> pair of nodes which represents index on graph and distance from a certain node in the graph.
  *  * Comes with `checkUp` and `checkDown` methods, which bubbles up and down the heap to sort the heap structure.
  *  * `update_weight` allows for the changing of weights based on a index on the heap.
  *  * The index on the heap can be obtained by the method `get_neighbourPosition`.
@@ -28,14 +28,14 @@ using namespace std;
 void myHeap::checkDown(int idx) { // the bubble down method.
   int length = tree.size();
   int lChildIdx = 2*idx; // get index of left and right child of the current index.
-
+  
   if (lChildIdx >= length) { // if the left child is outside of the tree, return since current-index node a leaf node.
     return;
   }
-
+  
   int rChildIdx = 2*idx+1;
   int lChildWeight = tree[lChildIdx].first; // otherwise, get the index of the left child.
-
+  
   pair<int,int> *treeIdx = &tree[idx];
   int currentIdxWeight = treeIdx->first;
   int minIdx = idx;
@@ -110,15 +110,10 @@ void myHeap::mkHeap() { // make the heap by bubbling downwards for each node in 
  *   @param  inSubgraph is a vector<bool> where true corresponds to nodes in the steiner subgraph and false otherwise.
  *
  */  
-myHeap::myHeap(int& n, const int& startTerminal, vector<bool>& inSubgraph) : tree(n) {
+myHeap::myHeap(int& n, const int& startTerminal) : tree(n) {
   positions.reserve(n);
-  for (int i=1; i<n; i++) {
-    if (!inSubgraph[i]) {
-      tree[i] = make_pair(numeric_limits<int>::max(),i); // initialise binary heap as infinity weight for all nodes except the start node of the graph,
-    }
-    else {
-      tree[i] = make_pair(0,i); // and the nodes in the subgraph should have 0 weights (to the start node).
-    }
+  for (int i=0; i<n; i++) {
+    tree[i] = make_pair(numeric_limits<int>::max(),i);
     positions[i] = i; // initialise a positions array to "search" the binary heap by indices of the nodes.
   }
   tree[startTerminal]=make_pair(0,startTerminal); // the start node should have a weight of 0. "terminal" is used here for eventual steiner tree implementation.
@@ -132,20 +127,18 @@ myHeap::myHeap(int& n, const int& startTerminal, vector<bool>& inSubgraph) : tre
  *   @return void
  */  
 void myHeap::pop_top() { // remove the minimum (root node) of the binary heap.
-  int length = tree.size();
-  
-  if(length == 0) // if there is nothing left in tree, return.
-  {
+  if (tree.size() == 1) { // if there is nothing left in tree, return.
     return;
   }
   
-  positions[(tree.end()-1)->second] = positions[tree.begin()->second]; // update the positions array.
-  positions[tree.begin()->second] = numeric_limits<int>::min(); // nodes that are no longer in the heap have positions of -inf.
+  // not sure if it's better practice to use begin()/end() or to use the square brackets []...
+  positions[(tree.end()-1)->second] = positions[(tree.begin()+1)->second]; // update the positions array.
+  positions[(tree.begin()+1)->second] = numeric_limits<int>::min(); // nodes that are no longer in the heap have positions of -inf.
   
-  *tree.begin() = *(tree.end()-1); // otherwise, switch last node with the root and bubble down.
+  *(tree.begin()+1) = *(tree.end()-1); // otherwise, switch last node with the root and bubble down.
   tree.pop_back(); // and pop the last node, which is now the root.
   
-  checkDown(0);
+  checkDown(1);
 }
 
 /** 
@@ -154,24 +147,44 @@ void myHeap::pop_top() { // remove the minimum (root node) of the binary heap.
  *   @return Vertex
  */  
 Vertex myHeap::get_min() { // get the minimum (root node) of the binary heap.
-  return tree[0];
+  return tree[1];
+}
+
+/** 
+ *   @brief  Inserts a new node into the heap and sort according to value.
+ *
+ *   @param  newNode as a Vertex with (weight,index).
+ *   @return void
+ */  
+void myHeap::insert(Vertex newNode) {
+  int length = tree.size();
+  
+  tree.push_back(newNode);
+  positions[newNode.second] = length;
+  checkUp(length);
 }
 
 /** 
  *   @brief  Updates the value of a given node.
  * 
- *   @param  neighbourIdx is an int that is the index of the node on heap for which its value should be replaced.
- *   @param  newWeight is an int that replaces the old value of a node.
+ *   @param  neighbour is an int that is the index of the node on graph for which its index on the heap should be found.
+ *   @param  newDist is an int that replaces the old value of a node.
  *   @return void
  */  
-void myHeap::update_weight(int* neighbourIdx, int& newWeight) { // given a new weight and the position of the neighbouring node on the binary heap, update the weight of this neighbouring node.
- int oldWeight = tree[*neighbourIdx].first; // store the old weight.
- tree[*neighbourIdx].first = newWeight; // replace with the new weight.
- if (oldWeight <= newWeight) { // base on the old/new weight, decide if should bubble up or down.
-    checkDown(*neighbourIdx);
- }
- else {
-    checkUp(*neighbourIdx);
+void myHeap::update_weight(int& neighbour, int& newDist) {
+  int neighbourIdx = positions[neighbour];
+  if (neighbourIdx != numeric_limits<int>::min()) {
+    int oldWeight = tree[neighbourIdx].first;
+    tree[neighbourIdx].first = newDist;  
+    if (oldWeight <= newDist){
+      checkDown(neighbourIdx);
+    }
+    else {
+      checkUp(neighbourIdx);
+    }
+  }
+  else {
+    insert(make_pair(newDist,neighbour));
   }
 }
 

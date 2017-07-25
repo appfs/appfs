@@ -15,16 +15,16 @@ private:
   void mkHeap();
   
 public:
-  myHeap(int& n, const int& startTerminal, std::vector<bool>& inSubgraph);
+  myHeap(int& n, const int& startTerminal);
   
   void pop_top();
   
   Vertex get_min();
   
-  void insert(Vertex& newVal);
+  void insert(Vertex newVal);
   
-  void update_weight(int* neighbourIdx, int& newWeight);
-
+  void update_weight(int& neighbour, int& newWeight);
+  
   int* get_neighbourPosition(int& neighbour);
   
   int size();

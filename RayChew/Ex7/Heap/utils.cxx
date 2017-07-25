@@ -31,9 +31,9 @@ std::pair<std::vector<Edge>,std::vector<int>> utils::get_EdgesWeights (int& n, s
     
     Edge edge = std::make_pair(Vert1, Vert2);  /// make edge-pair out of vertices.
     Edges.push_back(edge);
-    if (Weight == 0){
-      Weight = std::numeric_limits<int>::max();
-    }
+//     if (Weight == 0){
+//       Weight = std::numeric_limits<int>::max();
+//     }
     Weights.push_back(Weight);
   }
   /* end get list of edges and weights */
@@ -90,14 +90,14 @@ std::vector<std::vector<vertex>> utils::build_adjList(int& n, std::vector<Edge>&
   return adjList;
 }
 
-std::vector<std::vector<int>> utils::build_adjList(int& n,std::vector<Edge>& edges) { // build an adjacency list without weights, needed for the steiner subgraph.
-  std::vector<std::vector<int>> adjList(n);
-  for (auto i=edges.begin(), end=edges.end(); i!=end; i++) {
-    int vert1 = i->first;
-    int vert2 = i->second;
-    
-    adjList[vert1].push_back(vert2);
-    adjList[vert2].push_back(vert1);
-  }
-  return adjList;
-}
+// std::vector<std::vector<int>> utils::build_adjList(int& n,std::vector<Edge>& edges) { // build an adjacency list without weights, needed for the steiner subgraph.
+//   std::vector<std::vector<int>> adjList(n);
+//   for (auto i=edges.begin(), end=edges.end(); i!=end; i++) {
+//     int vert1 = i->first;
+//     int vert2 = i->second;
+//     
+//     adjList[vert1].push_back(vert2);
+//     adjList[vert2].push_back(vert1);
+//   }
+//   return adjList;
+// }
