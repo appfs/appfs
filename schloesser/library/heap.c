@@ -11,6 +11,8 @@
 #include "misc.h"
 #include "heap.h"
 
+#define NDEBUG
+
 void construct_heap(
         Heap *h,
         unsigned int max) {
@@ -64,6 +66,17 @@ unsigned int pop(
     
     bubble_down(h, 0);
     return root;
+}
+
+void try_push(
+        Heap *h,
+        unsigned int vert,
+        unsigned long value) {
+	
+    // element is not in heap if its position is exceeding the size of the heap
+    if(h->pos[vert] >= h->n) {
+        push(h, vert, value);
+    }
 }
 
 void decrease_value(

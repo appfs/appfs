@@ -156,6 +156,7 @@ int main(int argc, char **argv) {
     free(obj);
     free(prev);
     free(vertex_mask);
+    delete_graph(g);
     free(g);
 	free(mask);
 

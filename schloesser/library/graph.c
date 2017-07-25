@@ -37,6 +37,31 @@ void update_neighbor_info(
     }
 }
 
+void update_neighbor_info_naive(
+        unsigned int *vertex_mask,
+        GraphSearch *gs,
+        unsigned int curr) {
+
+    for (int i = 0; i < gs->g->n_neighbors[curr]; i++) {
+        // n is index of neighbor vertex
+        unsigned int n = gs->g->neighbors[curr][2*i] - 1; 
+        // w is weight of edge from curr to n
+        unsigned int w = gs->g->neighbors[curr][(2*i)+1]; 
+        // if a neighbor is not in the subgraph yet then observe it
+        if (vertex_mask[n] < 2) {
+            unsigned long newdist = gs->distances[curr] + w;
+            unsigned long olddist = gs->distances[n];
+            if (newdist < olddist) {
+                try_push(gs->to_visit, n, gs->distances[n]);
+                // we have found a shorter path
+                gs->distances[n] = newdist;
+                gs->prev[n] = curr;
+                decrease_value(gs->to_visit, n, gs->distances[n]);
+            }
+        }
+    }
+}
+
 void run_dijkstra(
         GraphSearch *gs) {
 
@@ -70,8 +95,7 @@ void run_steiner_dijkstra(
                 push(gs->to_visit, walker, 0);
             }
         }
-        gs->visited[curr] = true;
-        update_neighbor_info(gs, curr);
+        update_neighbor_info_naive(vertex_mask, gs, curr);
     }
 }
 
@@ -176,8 +200,6 @@ unsigned int* steiner_modified(
     unsigned long *distances = malloc(sizeof(*distances) * g->n_verts);
     Heap *to_visit = malloc(sizeof(*to_visit));
     construct_heap(to_visit, g->n_verts);
-    bool *visited = malloc(sizeof(*visited) * g->n_verts);
-    memset(visited, 0, sizeof(*visited) * g->n_verts);
     for (int i = 0; i < g->n_verts; i++) {
         distances[i] = ULONG_MAX;
         push(to_visit, i, distances[i]);
@@ -187,7 +209,6 @@ unsigned int* steiner_modified(
     GraphSearch *gs = malloc(sizeof(*gs));
     gs->g = g;
     gs->distances = distances;
-    gs->visited = visited;
     gs->to_visit = to_visit;; 
     gs->prev = prev;
 
@@ -200,21 +221,10 @@ unsigned int* steiner_modified(
     // postpare
     delete_heap(gs->to_visit);
     free(gs->to_visit);
-    free(visited);
     free(gs);
     free(distances);
 
     return prev;
-}
-
-void free_graph(
-        Graph *g) {
-        
-    for (int i = 0; i < g->n_verts; i++) {
-        free(g->neighbors[i]);
-    }
-    free(g->neighbors);
-    free(g->n_neighbors);
 }
 
 void read_numbers(
@@ -507,4 +517,14 @@ bool check_steiner(
         }
     }
     return true;
+}
+
+void delete_graph(
+        Graph *g) {
+
+    free(g->n_neighbors);
+    for (int i = 0; i < g->n_verts; i++) {
+        free(g->neighbors[i]);
+    }
+    free(g->neighbors);
 }

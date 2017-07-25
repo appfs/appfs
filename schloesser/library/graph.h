@@ -50,6 +50,18 @@ void update_neighbor_info(
         GraphSearch *gs,
         unsigned int curr);
 
+/** @brief Updating the distances and to_visit list via a vertex without paying attention to visited information.
+ *
+ * @param vertex_mask mask indicating which vertices of the graph are in subgraph
+ * @param gs the graphsearch
+ * @param curr the current vertex
+ * @return the graphstructure is being updated
+ */
+void update_neighbor_info_naive(
+        unsigned int *vertex_mask,
+        GraphSearch *gs,
+        unsigned int curr);
+
 /** @brief Run the dijkstra algorithm.
  *
  * While still having vertices to visit, perform dijkstra steps.
@@ -124,13 +136,6 @@ unsigned int* steiner_modified(
         Graph *g, 
 		unsigned int start,
         unsigned int *vertex_mask);
-
-/** @brief Free the memory allocated in graph.
- *
- * @param g the graph to be freed
- */
-void free_graph(
-        Graph *g);
 
 /** @brief Read numbers from chararry.
  *
@@ -267,4 +272,12 @@ bool check_steiner(
 		unsigned int *terminal_mask,
 		unsigned int *tree_mask,
 		unsigned int *prev);
+
+/** frees memory of graph.
+ *
+ * @param g graph
+ */
+void delete_graph(
+        Graph *g);
+
 #endif
