@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
     vector<Edge> subgraphEdges = subgraphEdgesWeights.first; // get the steiner subgraph edges,
     vector<int> subgraphWeights = subgraphEdgesWeights.second; // and their respective weights.
     
-    assert(checker::isTree(subgraphEdges,startTerminal)); // every of these steiner trees found must be a tree...
+    //assert(checker::isTree(subgraphEdges,startTerminal)); // every of these steiner trees found must be a tree...
     
     int objVal = 0;
     for_each (subgraphWeights.begin(), subgraphWeights.end(), [&] (int n) { // objective value is the sum of the edge weights.

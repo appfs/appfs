@@ -14,13 +14,13 @@ using namespace std;
 pair<vector<Edge>,vector<int>> steiner::alg (int& n, myHeap& Unvisited, vector<vector<Vertex>>& adjList, const int& startTerminal, vector<bool>& isPrimes) { // the main Dijkstra algorithm.
   // initialize vectors to store the final calculate weights and parents(predecessors) for each node.
   vector<bool> inSubgraph(n,false); // boolean vector where node numbers in steiner subgraph are true, else false.
-  inSubgraph[startTerminal] = true; // the start terminal should always be in subgraph...
+  //inSubgraph[startTerminal] = true; // the start terminal should always be in subgraph...
   vector<Edge> subgraphEdges; // edge vector to store edges of the Steiner-subgraph.
   vector<int> subgraphWeights; // weight vector to store the weights of the edges of the Steiner-subgraph.
   vector<int> dists(n, numeric_limits<int>::max());
   vector<int> parents(n);
   dists[startTerminal] = 0; // the start terminal has 0 weight
-  //parents[startTerminal] = startTerminal;
+  parents[startTerminal] = startTerminal;
   
   /* start dijkstra part */
   while (Unvisited.size() > 0) { // while the unvisited priority queue is not empty...
@@ -28,6 +28,7 @@ pair<vector<Edge>,vector<int>> steiner::alg (int& n, myHeap& Unvisited, vector<v
     Unvisited.pop_top(); // remove the minimum value (at the top) of the priority queue.
     int minIdx = minPair.second;
     int minDist = minPair.first;
+    cout << "MINIDX, MINDIST: " << minIdx << "," << minDist << endl;
     assert((minDist == numeric_limits<int>::max()) || (minIdx > 0)); // since all non-subgraph nodes are initialised with infinite distance, each minimum distance on the heap must be "updated" first before it is accessed. Only node with infinity distance should be zero.
     
     vector<pair<int,int>> *neighboursOfMinIdx = &adjList[minIdx]; // then get the neighbours of this "minimum" node from the adjacency list.
@@ -48,7 +49,10 @@ pair<vector<Edge>,vector<int>> steiner::alg (int& n, myHeap& Unvisited, vector<v
 	parents[neighbour] = minIdx; // and note that its parent is the current "minimum" node.
       }  
     }
-    
+    for (int i=0,end=dists.size();i<end;i++) {
+      cout << i << ", " << dists[i] << ", " << parents[i] << endl;
+    }
+    Unvisited.print();
     /* start steiner heuristic */
     // add each terminal and the edges connecting it to the steiner subgraph onto the subgraph and insert the nodes back to the priority queue.
     if (isPrimes[minIdx]) { // if the current node is a terminal/prime,
@@ -58,11 +62,11 @@ pair<vector<Edge>,vector<int>> steiner::alg (int& n, myHeap& Unvisited, vector<v
       while (!inSubgraph[currentNode]) { // So long as the current node is not in the Steiner-subgraph...
 	Edge edge = make_pair(pred,currentNode); // make an edge out of current node and its parent.
 	currentWeight = dists[currentNode] - dists[pred]; // distance of the current node to its parent (the edge weight) is the shortest distance to the start terminal of the current node, minus that of the parent node.
-// 	for (auto it =adjList[currentNode].begin(), end=adjList[currentNode].end(); it!=end; it++) {
-// 	  if (it->first == pred) {
-// 	    currentWeight = it->second;
-// 	  }
-// 	}
+	// 	for (auto it =adjList[currentNode].begin(), end=adjList[currentNode].end(); it!=end; it++) {
+	// 	  if (it->first == pred) {
+	// 	    currentWeight = it->second;
+	// 	  }
+	// 	}
 	
 	// something is very wrong if the parent of the current node is a prime, is not yet in the steiner subgraph, and has non-zero weight. Assert this.
 	assert(!((inSubgraph[pred]==false) && (isPrimes[pred]) && (currentWeight!=0)));
@@ -82,12 +86,13 @@ pair<vector<Edge>,vector<int>> steiner::alg (int& n, myHeap& Unvisited, vector<v
 	pred = parents[currentNode];
 	
 	// check if the edge has been traced to the start terminal, if yes, then break.
-// 	if (pred == currentNode) {
-// 	  break;
-// 	}
+	// 	if (pred == currentNode) {
+	// 	  break;
+	// 	}
       }
     }
-    /* end steiner heuristic */
+    /* end steiner heuristic */        
+    
   }
   return make_pair(subgraphEdges,subgraphWeights);
 }
