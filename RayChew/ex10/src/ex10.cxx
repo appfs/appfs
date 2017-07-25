@@ -139,9 +139,6 @@ int main(int argc, char* argv[]) {
     long objVal = 0;
     for_each (subgraphWeights.begin(), subgraphWeights.end(), [&] (int n) { // objective value is the sum of the edge weights.
       objVal += n;
-      if (objVal < 0) {
-	cout << "overflowed" << endl;
-      }
       }
     );
     
