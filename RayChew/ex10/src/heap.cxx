@@ -112,7 +112,7 @@ void myHeap::mkHeap() { // make the heap by bubbling downwards for each node in 
  */  
 myHeap::myHeap(int& n, const int& startTerminal) : tree(n) {
   positions.reserve(n);
-  for (int i=1; i<n; i++) {
+  for (int i=0; i<n; i++) {
     tree[i] = make_pair(numeric_limits<int>::max(),i);
     positions[i] = i; // initialise a positions array to "search" the binary heap by indices of the nodes.
   }
@@ -127,13 +127,11 @@ myHeap::myHeap(int& n, const int& startTerminal) : tree(n) {
  *   @return void
  */  
 void myHeap::pop_top() { // remove the minimum (root node) of the binary heap.
-  //int length = ;
-  
-  if(tree.size() == 0) // if there is nothing left in tree, return.
-  {
+  if (tree.size() == 1) { // if there is nothing left in tree, return.
     return;
   }
   
+  // not sure if it's better practice to use begin()/end() or to use the square brackets []...
   positions[(tree.end()-1)->second] = positions[(tree.begin()+1)->second]; // update the positions array.
   positions[(tree.begin()+1)->second] = numeric_limits<int>::min(); // nodes that are no longer in the heap have positions of -inf.
   
@@ -169,11 +167,11 @@ void myHeap::insert(Vertex newNode) {
 /** 
  *   @brief  Updates the value of a given node.
  * 
- *   @param  neighbour is an int that is the index of the node on graph for which its index on the heap should be returned.
+ *   @param  neighbour is an int that is the index of the node on graph for which its index on the heap should be found.
  *   @param  newDist is an int that replaces the old value of a node.
  *   @return void
  */  
-void myHeap::update_weight(int& neighbour, int& newDist) { // given a new weight and the position of the neighbouring node on the binary heap, update the weight of this neighbouring node.
+void myHeap::update_weight(int& neighbour, int& newDist) {
   int neighbourIdx = positions[neighbour];
   if (neighbourIdx != numeric_limits<int>::min()) {
     int oldWeight = tree[neighbourIdx].first;
@@ -185,9 +183,9 @@ void myHeap::update_weight(int& neighbour, int& newDist) { // given a new weight
       checkUp(neighbourIdx);
     }
   }
-//   else {
-//     insert(make_pair(newDist,neighbour));
-//   }
+  else {
+    insert(make_pair(newDist,neighbour));
+  }
 }
 
 /** 

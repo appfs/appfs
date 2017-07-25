@@ -26,6 +26,7 @@ using qi::parse;
 
 #ifndef UTILS_H
 #define UTILS_H
+#define NDEBUG
 
 using Edge = std::pair<int, int>; // vector to store std::pair of two vertex indices.
 using Vertex = std::pair<int,int>; // vector to store std::pair of vertex index and weight.

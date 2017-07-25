@@ -9,8 +9,8 @@ using namespace std;
  *   @param  startTerminal is a vertex index on the graph.
  *   @return bool
  */  
-bool checker::isTree(vector<Edge>& edges, const int& startTerminal) { // function to check if graph is a tree.
-  // reference usd: https://stackoverflow.com/questions/16411038/bfs-and-dfs-on-adjacency-list
+bool checker::isTree(vector<Edge>& edges, const int& startTerminal) {
+  // ref: https://stackoverflow.com/questions/16411038/bfs-and-dfs-on-adjacency-list
   int n = utils::get_Nodes(edges).back(); 
   n++;
   vector<vector<int>> graph = utils::build_adjList(n, edges);
@@ -33,13 +33,11 @@ bool checker::isTree(vector<Edge>& edges, const int& startTerminal) { // functio
 	queue.push(make_pair(edge.second,neighbour)); // then add this edge of "(target node, neighbour node)" onto the queue to be checked next.
       }
       else if(neighbour != edge.first) { // otherwise, neighbour has been visited. In this case, it MUST be the source node. If not, it is not a tree.
-	//cout << "Solution is NOT a tree." << endl;
 	return false;
-	break; // so, break and return false.
+	break;
       }
     }
   }
-  //cout << "Solution is a tree." << endl;
   return true; // otherwise, if all the checks pass, the graph is a tree.
 }
 
@@ -50,7 +48,7 @@ bool checker::isTree(vector<Edge>& edges, const int& startTerminal) { // functio
  *   @param  primes is the list of terminals for the graph.
  *   @return bool
  */  
-bool checker::isFeasible(vector<Edge>& edges, vector<int>& primes) { // function to check if all the primes/terminals are present in a list of edges.
+bool checker::isFeasible(vector<Edge>& edges, vector<int>& primes) {
   vector<int> nodes = utils::get_Nodes(edges);
   if (includes(nodes.begin(), nodes.end(), primes.begin(), primes.end())) {
     cout << "Solution is feasible." << endl;

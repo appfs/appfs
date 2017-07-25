@@ -17,7 +17,7 @@ TARGET = ex10
 
 # graph data file to read:
 ifndef FILE
-	FILE = SP/big8.gph
+	FILE = big8.gph
 endif
 
 # files that are coverage-test specific:
@@ -34,6 +34,7 @@ CPPCHECKFLAGS = --enable=all --inconclusive --std=posix
 all:
 	$(MAKE) -j$(THREADS) $(OBJS)
 	$(MAKE) $(TARGET)
+	./$(TARGET) $(HOME)/SP/$(FILE)
 
 # if threads is not defined, then compile without passing the threads number as a compiler option.
 ifndef THREADS
@@ -67,7 +68,7 @@ doc:
 # coverage test
 coverage:
 	$(MAKE) $(COVERAGEOBJS)
-	$(CXX) $(CXXFLAGS) --coverage $(COVERAGEOBJS) $(PATH)$(TARGET).cxx -o $(TARGET) $(LIBS)
+	$(CXX) $(CXXFLAGS) --coverage $(COVERAGEOBJS) src/$(TARGET).cxx -o $(TARGET) $(LIBS)
 	mkdir -p gcov
 	./$(TARGET) $(FILE) 1 --help
 	./$(TARGET) $(FILE) 100 -s
