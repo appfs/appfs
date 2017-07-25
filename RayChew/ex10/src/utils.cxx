@@ -7,10 +7,10 @@ using namespace std;
  *   @param  edges is a vector<Edge> that contains the list of edges for which their nodes should be extracted.
  *   @return vector<int>
  */  
-vector<int> utils::get_Nodes(vector<Edge>& edges) { // function to get all the nodes present in a collection of edges, without repetition.
+vector<int> utils::get_Nodes(vector<Edge>& edges) {
   set<int> nodes;
   
-  for (auto i = edges.begin(), end = edges.end(); i != end; i++){ // put the nodes into a set, which removes duplicates.
+  for (auto i = edges.begin(), end = edges.end(); i != end; i++){ // use set to remove duplicates
     nodes.insert(i->first);
     nodes.insert(i->second);
   }
@@ -30,7 +30,7 @@ vector<int> utils::get_Nodes(vector<Edge>& edges) { // function to get all the n
  *   @param  file is an ifstream that is the address to a opened graph file.
  *   @return pair<vector<Edge>,vector<int>>
  */  
-pair<vector<Edge>,vector<int>> utils::get_EdgesWeights (int& n, ifstream& file) { // read file to get edges and weights.
+pair<vector<Edge>,vector<int>> utils::get_EdgesWeights (int& n, ifstream& file) {
   vector<Edge> Edges; // vector to store edges as pair<int,int>
   vector<int> Weights; // vector to store weights as integers.
   string str; // string to store line of graph file.
@@ -40,7 +40,7 @@ pair<vector<Edge>,vector<int>> utils::get_EdgesWeights (int& n, ifstream& file) 
     int Vert2;
     int Weight;
     
-    auto it = str.begin(); // initializes iterator for qi::parse. 
+    auto it = str.begin();
     
     parse(it, str.end(), int_[([&Vert1](int i){Vert1 = i;})] >> qi::space >> int_[([&Vert2](int i){Vert2 = i;})] >> qi::space >> double_[([&Weight](int i){Weight = i;})]);  
     
@@ -57,7 +57,8 @@ pair<vector<Edge>,vector<int>> utils::get_EdgesWeights (int& n, ifstream& file) 
  *   @param  n is an int that is the number of nodes in the graph file.
  *   @return vector<int>
  */  
-vector<int> utils::gen_Primes(int& n) { // ref: https://stackoverflow.com/questions/5200879/printing-prime-numbers-from-1-through-100/
+vector<int> utils::gen_Primes(int& n) {
+  // ref: https://stackoverflow.com/questions/5200879/printing-prime-numbers-from-1-through-100/
   vector<int> primes; // vector to store primes numbers
   primes.push_back(2); // 2 is a prime. add this.
   for(int i=3; i < n; i=i+2) { // then for all odd numbers,
@@ -69,7 +70,7 @@ vector<int> utils::gen_Primes(int& n) { // ref: https://stackoverflow.com/questi
       }
     }
     if(isPrime){
-      primes.push_back(i); // push back to vector if value is prime.
+      primes.push_back(i); // if prime, push back.
     }
   }
   return primes;
@@ -98,14 +99,14 @@ vector<bool> utils::isPrime(int& n, vector<int>& primes) {
  *   @param  weights is an vector<int> that contains the weights of the respective wedges.
  *   @return vector<vector<Vertex>>
  */  
-vector<vector<Vertex>> utils::build_adjList(int& n, vector<Edge>& edges, vector<int>& weights) { // build the adjacency list from list of edges and weights.
+vector<vector<Vertex>> utils::build_adjList(int& n, vector<Edge>& edges, vector<int>& weights) {
   vector<vector<Vertex>> adjList(n); // initialize adjList.
   int j = 0;
   for (auto i=edges.begin(), end=edges.end(); i!=end; i++) {
-    int vert1 = i->first; // for each vertex,
+    int vert1 = i->first;
     int vert2 = i->second;
     
-    adjList[vert1].push_back(make_pair(vert2,weights[j])); // add it's neighbour and the weight from the vertex to the neighbour.
+    adjList[vert1].push_back(make_pair(vert2,weights[j])); // for each vertex, add it's neighbour and the weight from the vertex to the neighbour.
     adjList[vert2].push_back(make_pair(vert1,weights[j])); // do the same from the perspective of the neighbour.
     j++;
   }
@@ -119,7 +120,8 @@ vector<vector<Vertex>> utils::build_adjList(int& n, vector<Edge>& edges, vector<
  *   @param  edges is a vector<Edge> that contains the list of edges of a graph.
  *   @return vector<vector<int>>
  */  
-vector<vector<int>> utils::build_adjList(int& n,vector<Edge>& edges) { // overloaded function for adjacency list without weight. Used for building graph structure for the Steiner subgraph in the checker.
+vector<vector<int>> utils::build_adjList(int& n,vector<Edge>& edges) {
+  // overloaded function for adjacency list without weight. Used for building graph structure for the Steiner subgraph in the checker.
   vector<vector<int>> adjList(n);
   for (auto i=edges.begin(), end=edges.end(); i!=end; i++) {
     int vert1 = i->first;

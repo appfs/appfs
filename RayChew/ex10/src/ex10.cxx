@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
   ("help", "This algorithm finds the Steiner Tree for a given graph. Nodes with prime indices are terminals.") // help message.
   ("FILE", po::value<string>(&fileName), "Input file path and name.") // takes the graph file name.
   ("firstNTerminals", po::value<int>(&firstNTerminals)->default_value(100),"First N terminals to check.") // the first N terminals to check. If none specified, default is 100 terminals.
-  ("showEdges,s", po::value<string>()->implicit_value(""),"Show best Steiner-Graph edges."); // and whether or not to print Steiner tree edges.
+  ("showEdges,s", po::value<string>()->implicit_value(""),"Show best Steiner-Graph edges."); // -s flag: whether or not to print Steiner tree edges.
   
   po::positional_options_description p;
   p.add("FILE", 1); // fix position as per assignment requirement: graph filename as position 1.
@@ -56,19 +56,19 @@ int main(int argc, char* argv[]) {
     return 0;
   }
   
-  if (!vm.count("FILE")) { // if no filename...
+  if (!vm.count("FILE")) { // if no filename, return error.
     cout << "No graph file." << endl;
-    return -1; // return error.
+    return -1;
   }
   /* end getting command line arguments */
   
   
   /* start get number of nodes */
-  ifstream file(fileName);  // read graph file.
-  string str; /// read graph file line by line.
+  ifstream file(fileName);
+  string str;
   
   getline(file, str);
-  int n; /// store n as int for number of edges in graph.
+  int n; // n for number of edges in graph.
   
   auto it = str.begin();
   parse(it, str.end(), int_[([&n](int i){n = i;})] >> int_);
@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
   cout << endl;
   cout << "Getting edges and weights from file..." << endl;
   pair<vector<Edge>,vector<int>> edgesWeights = utils::get_EdgesWeights(n, file);
-  file.close(); // graph file contents no longer needed - close the graph file.
+  file.close();
   /* end read edges and weights from file */
   
   
@@ -97,13 +97,14 @@ int main(int argc, char* argv[]) {
   
   
   /* start building graph and initalising needed stuff for Steiner subgraph. */
-  boost::timer::cpu_timer timer; // start timer
+  boost::timer::cpu_timer timer;
   vector<Edge> bestSteinerEdges; // to store the best steiner subgraph edges.
   int bestObjVal = numeric_limits<int>::max(); // to store the best objective value.
   int bestStartTerminal = numeric_limits<int>::max(); // to store the best start terminal that yielded the above objective value.
   
   cout << "Building graph..." << endl;
-  vector<vector<Vertex>> originalAdjList = utils::build_adjList(n, edgesWeights.first, edgesWeights.second); // build the original adjacency list. Each thread will get a copy of this adjList.
+  // build the original adjacency list. Each thread will get a copy of this adjList.
+  vector<vector<Vertex>> originalAdjList = utils::build_adjList(n, edgesWeights.first, edgesWeights.second);
   /* end building graph and initalising needed stuff for Steiner subgraph. */
   
   
@@ -126,19 +127,20 @@ int main(int argc, char* argv[]) {
     vector<vector<Vertex>> adjList =  originalAdjList; // make a copy of the adjacency list.
     const int startTerminal = primes[i]; // get the node index that is the current start terminal.
     vector<bool> isPrimes = utils::isPrime(n, primes); // generate a boolean array to check against which index is a prime.
-    
+
     myHeap Unvisited(n, startTerminal); // initialise the priority queue for the steiner heuristic.
     
     pair<vector<Edge>,vector<int>> subgraphEdgesWeights = steiner::alg(n, Unvisited, adjList, startTerminal, isPrimes); // calculate the steiner tree using the steiner heuristic.
-    vector<Edge> subgraphEdges = subgraphEdgesWeights.first; // get the steiner subgraph edges,
-    vector<int> subgraphWeights = subgraphEdgesWeights.second; // and their respective weights.
+    vector<Edge> subgraphEdges = subgraphEdgesWeights.first; // get the steiner subgraph edges, and their respective weights.
+    vector<int> subgraphWeights = subgraphEdgesWeights.second;
     
     assert(checker::isTree(subgraphEdges,startTerminal)); // every of these steiner trees found must be a tree...
     
     int objVal = 0;
     for_each (subgraphWeights.begin(), subgraphWeights.end(), [&] (int n) { // objective value is the sum of the edge weights.
       objVal += n;
-    });
+      }
+    );
     
     // if openMP is defined.
     #ifdef _OPENMP
@@ -148,26 +150,28 @@ int main(int argc, char* argv[]) {
     // use only one thread to update objVals.
     #pragma omp critical
     #endif
-    if (objVal<bestObjVal) { // update the best objective value if it is less than before.
+    // update the best objective value, steiner subgraph and start terminal if it is less than before.
+    if (objVal<bestObjVal) {
       bestObjVal = objVal;
-      bestSteinerEdges = subgraphEdges; // update the best Steiner subgraph as well,
-      bestStartTerminal = startTerminal; // and the best StartTerminal that allowed this to happen...
+      bestSteinerEdges = subgraphEdges;
+      bestStartTerminal = startTerminal;
     }
   }
-  boost::timer::cpu_times times = timer.elapsed(); // once done, stop recording time.
+  boost::timer::cpu_times times = timer.elapsed();
   /* end calculating steiner trees. */
   
   
   /* start checking the best tree. */
   cout << "Checking steiner tree..." << endl;
   
-  if (checker::isTree(bestSteinerEdges, bestStartTerminal)) { // check if graph is a tree,
+  if (checker::isTree(bestSteinerEdges, bestStartTerminal)) {
     cout << "Solution is a tree." << endl;
   }
   else {
     cout << "Solution is NOT a tree." << endl;
   }
-  checker::isFeasible(bestSteinerEdges,primes); // and contains all terminals.
+  
+  checker::isFeasible(bestSteinerEdges,primes);
   #ifdef _OPENMP
   cout << "Number of threads used: " << nThreadsUsed << endl;
   #endif
@@ -176,7 +180,7 @@ int main(int argc, char* argv[]) {
   
   
   /* start printing values. */
-  cout << "TLEN: " << bestObjVal << endl; // print best objective value.
+  cout << "TLEN: " << bestObjVal << endl;
   
   if (vm.count("showEdges")) { // print the edges of the subgraph if -s is present.
     cout << "TREE: ";
@@ -185,7 +189,7 @@ int main(int argc, char* argv[]) {
     }
     cout << endl;
   }
-  /// print CPU- and Wall-Time. 
+  // print CPU- and Wall-Time. 
   cout << "TIME: " << setprecision(4) << times.user / 1e9 << "s" << endl;
   cout << "WALL: " << setprecision(4) << times.wall / 1e9 << "s" << endl;
   cout << endl;

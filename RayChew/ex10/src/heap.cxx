@@ -127,20 +127,18 @@ myHeap::myHeap(int& n, const int& startTerminal) : tree(n) {
  *   @return void
  */  
 void myHeap::pop_top() { // remove the minimum (root node) of the binary heap.
-  int length = tree.size();
-  
-  if(length == 0) // if there is nothing left in tree, return.
-  {
+  if (tree.size() == 1) { // if there is nothing left in tree, return.
     return;
   }
   
-  positions[(tree.end()-1)->second] = positions[tree.begin()->second]; // update the positions array.
-  positions[tree.begin()->second] = numeric_limits<int>::min(); // nodes that are no longer in the heap have positions of -inf.
+  // not sure if it's better practice to use begin()/end() or to use the square brackets []...
+  positions[(tree.end()-1)->second] = positions[(tree.begin()+1)->second]; // update the positions array.
+  positions[(tree.begin()+1)->second] = numeric_limits<int>::min(); // nodes that are no longer in the heap have positions of -inf.
   
-  *tree.begin() = *(tree.end()-1); // otherwise, switch last node with the root and bubble down.
+  *(tree.begin()+1) = *(tree.end()-1); // otherwise, switch last node with the root and bubble down.
   tree.pop_back(); // and pop the last node, which is now the root.
   
-  checkDown(0);
+  checkDown(1);
 }
 
 /** 
@@ -149,7 +147,7 @@ void myHeap::pop_top() { // remove the minimum (root node) of the binary heap.
  *   @return Vertex
  */  
 Vertex myHeap::get_min() { // get the minimum (root node) of the binary heap.
-  return tree[0];
+  return tree[1];
 }
 
 /** 
@@ -160,6 +158,7 @@ Vertex myHeap::get_min() { // get the minimum (root node) of the binary heap.
  */  
 void myHeap::insert(Vertex newNode) {
   int length = tree.size();
+  
   tree.push_back(newNode);
   positions[newNode.second] = length;
   checkUp(length);
@@ -168,21 +167,24 @@ void myHeap::insert(Vertex newNode) {
 /** 
  *   @brief  Updates the value of a given node.
  * 
- *   @param  neighbourIdx is an int that is the index of the node on heap for which its value should be replaced.
- *   @param  newWeight is an int that replaces the old value of a node.
+ *   @param  neighbour is an int that is the index of the node on graph for which its index on the heap should be found.
+ *   @param  newDist is an int that replaces the old value of a node.
  *   @return void
  */  
-void myHeap::update_weight(int& neighbour, int& newWeight) { // given a new weight and the position of the neighbouring node on the binary heap, update the weight of this neighbouring node.
+void myHeap::update_weight(int& neighbour, int& newDist) {
   int neighbourIdx = positions[neighbour];
   if (neighbourIdx != numeric_limits<int>::min()) {
     int oldWeight = tree[neighbourIdx].first;
-    tree[neighbourIdx].first = newWeight;  
-    if (oldWeight<=newWeight){
+    tree[neighbourIdx].first = newDist;  
+    if (oldWeight <= newDist){
       checkDown(neighbourIdx);
     }
     else {
       checkUp(neighbourIdx);
     }
+  }
+  else {
+    insert(make_pair(newDist,neighbour));
   }
 }
 
