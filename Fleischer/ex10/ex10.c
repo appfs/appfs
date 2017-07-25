@@ -101,12 +101,27 @@ int main(int argc, char *argv[]){
 	binary.index66 = malloc(sizeof(size_t)*howFar);
 	binary.reversedIndex = malloc(sizeof(size_t)*howFar);
 	
-	#pragma omp parallel for ordered schedule(runtime)
-	for(size_t i = 0; i < howFar; ++i){
-		stein[i] = steinerTree(terminal, noOfTerminal, i, gra, isTerminal);
+	stein[0] = steinerTree(terminal, noOfTerminal, 0, gra, isTerminal, INFINITY);
+	binary.heapVal[0] = stein[0].value;
+	binary.index66[0] = 0;
+	binary.reversedIndex[0] = 0;
+	double bestStein = stein[0].value;
+	size_t temp = 0;
+	
+	#pragma omp parallel for ordered schedule(runtime) //firstprivate(bestStein, temp)
+	for(size_t i = 1; i < howFar; ++i){
+		stein[i] = steinerTree(terminal, noOfTerminal, i, gra, isTerminal, bestStein);
+
 		binary.heapVal[i] = stein[i].value;
 		binary.index66[i] = i;
 		binary.reversedIndex[i] = i;
+		if(bestStein > stein[i].value){
+			bestStein = stein[i].value;
+			binary.heapVal[temp] = INFINITY;
+			free(stein[temp].tree);
+			temp = i;	
+		}
+		
 	}
 	binary = buildMinHeap(binary, howFar);
 	double minValue = stein[binary.index66[0]].value;
@@ -137,4 +152,3 @@ int main(int argc, char *argv[]){
 
         printf("\nWALL: %fs\n", wall);
 }
-
