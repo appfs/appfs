@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
   /* start building graph and initalising needed stuff for Steiner subgraph. */
   boost::timer::cpu_timer timer;
   vector<Edge> bestSteinerEdges; // to store the best steiner subgraph edges.
-  int bestObjVal = numeric_limits<int>::max(); // to store the best objective value.
+  long bestObjVal = numeric_limits<long>::max(); // to store the best objective value.
   int bestStartTerminal = numeric_limits<int>::max(); // to store the best start terminal that yielded the above objective value.
   
   cout << "Building graph..." << endl;
@@ -136,9 +136,12 @@ int main(int argc, char* argv[]) {
     
     assert(checker::isTree(subgraphEdges,startTerminal)); // every of these steiner trees found must be a tree...
     
-    int objVal = 0;
+    long objVal = 0;
     for_each (subgraphWeights.begin(), subgraphWeights.end(), [&] (int n) { // objective value is the sum of the edge weights.
       objVal += n;
+      if (objVal < 0) {
+	cout << "overflowed" << endl;
+      }
       }
     );
     
