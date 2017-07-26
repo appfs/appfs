@@ -6,4 +6,4 @@ ex10 <graph.gph> <number_of_starting_nodes>
 
 
 
-Please not that this is only a prototype and not propper modern C++. In particular, you should not use raw dynamic arrays but rather C++ vectors. You can switch between a sequence heap from Peter Sanders and and a self-implemented binary heap by (un)defining SEQHEAP in ex10.cpp.
+Please not that this is only a prototype and not proper modern C++. In particular, you should not use raw dynamic arrays but rather C++ vectors. You can switch between a sequence heap from Peter Sanders and and a self-implemented binary heap by (un)defining SEQHEAP in ex10.cpp.
