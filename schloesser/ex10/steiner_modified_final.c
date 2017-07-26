@@ -20,12 +20,6 @@
 #include "../library/graph.h"
 #include "../library/misc.h"
 
-#define NDEBUG
-
-// TODO ersetzen
-// using Weight = unsigned long;
-// using Vertex = unsigned int;
-
 /** @brief Solves Exercise 10
  *
  * Reads in a graph from a file and calculates an approximation to a steiner tree on the prime nodes
@@ -63,7 +57,6 @@ int main(int argc, char **argv) {
     // ############### init from file
     Graph *g = malloc(sizeof(Graph));
     init_from_graph_file(g, file);
-
 
     // ############### find upper bound on startvertices
     // steiner tree connecting prime nodes

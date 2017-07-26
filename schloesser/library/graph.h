@@ -52,13 +52,11 @@ void update_neighbor_info(
 
 /** @brief Updating the distances and to_visit list via a vertex without paying attention to visited information.
  *
- * @param vertex_mask mask indicating which vertices of the graph are in subgraph
  * @param gs the graphsearch
  * @param curr the current vertex
  * @return the graphstructure is being updated
  */
 void update_neighbor_info_naive(
-        unsigned int *vertex_mask,
         GraphSearch *gs,
         unsigned int curr);
 
@@ -182,7 +180,7 @@ unsigned int read_graph_file(
 void fill_neighbors(
         Graph *g, 
         unsigned int **edges, 
-        unsigned int n_edges);
+        unsigned long n_edges);
 
 /** @brief Get shortest distances from all vertices to one destination
  *
