@@ -7,8 +7,11 @@
 #include "PrimeNumbers.h"
 
 
-
-vector<int> PrimeNumbers::findPrimes(int n) {
+/*
+ * An implementation of find_primes which uses the fact that if a natural number
+ * has a divisor it also has at least one prime divisor.
+ */
+vector<int> PrimeNumbers::find_primes(int n) {
 
 	vector<int> primes;
 	if (n >= 2) primes.push_back(2);
@@ -26,6 +29,7 @@ vector<int> PrimeNumbers::findPrimes(int n) {
 		}
 	}
 
+	//primes are decreased by one to fit the purpose of this program
 	for (unsigned int i = 0; i < primes.size(); ++i) {
 		primes[i]--;
 	}
