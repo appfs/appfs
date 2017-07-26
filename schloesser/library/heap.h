@@ -69,6 +69,18 @@ void push(
 unsigned int pop(
         Heap *h);
 
+/** @brief Adds an element to the heap if it is not present yet.
+ *
+ * @param h a heap
+ * @param vert the element which should be added
+ * @param value the new value of element. should be smaller than the current one.
+ * @return modifies the heap h 
+ */
+void try_push(
+        Heap *h,
+        unsigned int vert,
+        unsigned long value);
+
 /** @brief Decreases the value of an element.
  *
  * @param h a heap

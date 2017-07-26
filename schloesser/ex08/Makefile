@@ -30,4 +30,4 @@ coverage: run
 	genhtml coverage.info --output-directory coverage
 
 clean:
-	rm -f *.o ex8 *.gcno *.gcda coverage*
+	rm -rf *.o ex8 *.gcno *.gcda coverage*

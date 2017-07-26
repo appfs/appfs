@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 	unsigned long objective = weight_of_tree(g, vertex_mask, prev);
 
     // ############### free memory
-    free_graph(g);
+    delete_graph(g);
     free(g);
     free(prev);
     free(vertex_mask);
