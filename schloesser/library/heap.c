@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
 #include "misc.h"
 #include "heap.h"
@@ -18,6 +19,9 @@ void construct_heap(
     h->max = max;
     h->heap = malloc(sizeof(h->heap) * max);
     h->pos = malloc(sizeof(h->pos) * max);
+    for(int i = 0; i < max; i++) {
+        h->pos[i] = max;
+    }
     h->val = malloc(sizeof(h->val) * max);
 }
 
@@ -49,20 +53,32 @@ unsigned int pop(
         Heap *h) {
 
     assert(h->n > 0);
+
     unsigned int root = h->heap[0];
-    if(h->n == 1) {
-        h->n = 0;
+    h->pos[root] = h->max;
+    h->n = h->n-1;
+
+    if(h->n == 0) {
         return root;
     }
 
-    unsigned int last_elem = h->heap[h->n - 1];
+    unsigned int last_elem = h->heap[h->n];
     h->heap[0] = last_elem;
     h->pos[last_elem] = 0;
 
-    h->n = h->n - 1;
-    
     bubble_down(h, 0);
     return root;
+}
+
+void try_push(
+        Heap *h,
+        unsigned int vert,
+        unsigned long value) {
+	
+    // element is not in heap if its position is exceeding the size of the heap
+    if(h->pos[vert] == h->max) {
+        push(h, vert, value);
+    }
 }
 
 void decrease_value(
@@ -150,5 +166,5 @@ void print_heap(
                 h->heap[i]+1, 
                 h->val[h->heap[i]] ); 
     }
-
 }
+

@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 	// get number of nodes
 	char delimiter = ' ';
 	getline(file, currentLine, delimiter);
-	const int numberOfNodes = stoi(currentLine);
+	const int numberOfNodes = std::stoi(currentLine);
 	getline(file, currentLine);
 	int constSub = 1;
 
@@ -157,9 +157,7 @@ int main(int argc, char *argv[])
 	}
 
 	file.close();
-
-	dijkstra(numberOfNodes, edges);
-
+	
 	std::pair<int, int> solution = dijkstra(numberOfNodes, edges);
 	int vertex = solution.first, distance = solution.second;
 

@@ -50,6 +50,16 @@ void update_neighbor_info(
         GraphSearch *gs,
         unsigned int curr);
 
+/** @brief Updating the distances and to_visit list via a vertex without paying attention to visited information.
+ *
+ * @param gs the graphsearch
+ * @param curr the current vertex
+ * @return the graphstructure is being updated
+ */
+void update_neighbor_info_naive(
+        GraphSearch *gs,
+        unsigned int curr);
+
 /** @brief Run the dijkstra algorithm.
  *
  * While still having vertices to visit, perform dijkstra steps.
@@ -125,13 +135,6 @@ unsigned int* steiner_modified(
 		unsigned int start,
         unsigned int *vertex_mask);
 
-/** @brief Free the memory allocated in graph.
- *
- * @param g the graph to be freed
- */
-void free_graph(
-        Graph *g);
-
 /** @brief Read numbers from chararry.
  *
  * @param n number of numbers
@@ -142,6 +145,16 @@ void read_numbers(
         unsigned int *res, 
         int n, 
         char *line);
+
+/** @brief Initialize a graph from file.
+ *
+ * @param g a graph
+ * @param file Read graph from file with this filename
+ * @return modifies g
+ */
+void init_from_graph_file(
+        Graph *g, 
+        char *file); 
 
 /** @brief Read in a graph from file.
  *
@@ -167,7 +180,7 @@ unsigned int read_graph_file(
 void fill_neighbors(
         Graph *g, 
         unsigned int **edges, 
-        unsigned int n_edges);
+        unsigned long n_edges);
 
 /** @brief Get shortest distances from all vertices to one destination
  *
@@ -207,9 +220,20 @@ void join_closest_terminal(
         unsigned int *vertex_mask,
         unsigned int *prev);
 
+/** @brief print the edges of the tree
+ *
+ * @param g the underlying graph
+ * @param vertex_mask the mask indicating the subgraph via values > 1
+ * @param prev the list of predecessors in the tree
+ */
+void print_tree(
+        Graph *g,
+        unsigned int *vertex_mask,
+        unsigned int *prev);
+
 /** @brief Calculate the weight of a spanning tree.
  *
- * @param g a graph
+ * @param g the underlying graph
  * @param vertex_mask the mask indicating the subgraph via values > 1
  * @param prev the list of predecessors in the tree
  * @return the total weight
@@ -246,4 +270,12 @@ bool check_steiner(
 		unsigned int *terminal_mask,
 		unsigned int *tree_mask,
 		unsigned int *prev);
+
+/** frees memory of graph.
+ *
+ * @param g graph
+ */
+void delete_graph(
+        Graph *g);
+
 #endif

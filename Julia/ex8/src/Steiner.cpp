@@ -16,9 +16,8 @@
  * \fn Constructor
  * \brief Construct a Steiner instance by initializing numberOfVertices, edges and weights. Computes also the terminals of the graph.
  */
-Steiner::Steiner(int numberOfVertices, Edges edges, WeightMap weights):
-	numberOfVertices(numberOfVertices), edges(edges), weights(weights){
-	terminals = computePrimes();
+Steiner::Steiner(int numberOfVertices, Edges edges, WeightMap weights, std::vector<int> terminals):
+	numberOfVertices(numberOfVertices), edges(edges), weights(weights), terminals(terminals){
 	objectiveValue = 0;
 }
 
@@ -27,7 +26,7 @@ Steiner::Steiner(int numberOfVertices, Edges edges, WeightMap weights):
  * \brief Solves the Steiner problem for a given start node
  * \return Edges of the minimal spanning tree
  */
-Edges Steiner::solve(unsigned int startNode){
+Edges Steiner::solveSteiner(unsigned int startNode){
 	Edges result;
 	VisitedMap alreadyAdded(numberOfVertices, false);
 
@@ -78,35 +77,6 @@ int Steiner::findNearestTerminal(WeightMap weightMap){
 		}
 	}
 	return nearestVertex;
-}
-
-/*
- * \fn bool hasDivisor(std::vector<int>, int)
- * \brief computes if an int has a divisor in a list of ints
- * \return true, if it has a divisor, otherwise false
- */
-bool Steiner::hasDivisor(const std::vector<int>& result, int i) {
-	for (int prime : result) {
-		if ((i % prime) == 0 || prime/2 >= i) {
-			return true;
-		}
-	}return false;
-}
-
-/*
- * \fn std::vector<int> computePrimes()
- * \brief computes all primes in range from 2 to numberOfVertices
- * \return vector of all primes
- */
-std::vector<int> Steiner::computePrimes(){
-	std::vector<int> result;
-	result.push_back(2);
-	for(int i = 3; i<numberOfVertices; i++){
-		if(!hasDivisor(result, i)){
-			result.push_back(i);
-		}
-	}
-	return result;
 }
 
 
