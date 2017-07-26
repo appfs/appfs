@@ -5,13 +5,14 @@ import java.util.Arrays;
 
 import datastructure.Edge;
 import datastructure.Node;
+import datastructure.SteinerThread;
 import algorithm.SteinerTreeHeuristic;
 import io.Reader;
-import io.Writer;
 
 
 /** Main class that reads in a file of the specified format and calculates a
  *  Steiner tree using all prime IDs as terminals.
+ *  
  * Reads a file of the format:
  * nVertices nEdges
  * headId tailId weight
@@ -19,28 +20,43 @@ import io.Writer;
  *          .
  *          .
  *          .
- * 
- * Prints the objective value of the resulting Steiner tree.
- * 
+ *
+ * Prints the objective value of the resulting Steiner tree, CPU and wall-clock time needed for the calculation
+ * and optionally the edges of the Steiner tree.
+ *
  * @author Merlin Viernickel
  * @date July 19 2017
  */
 public class ex10 {
-        
+
+    static final int DEFAULT_THREAD_NUMBER = 4;
+    static int nThreads = DEFAULT_THREAD_NUMBER;
+    static int nStartTerminals;
+    
     /**
      * Main method
+     * @param args ex10 file.gph n_start_points (-s) (nThreads)
      */
     public static void main(String[] args){
-        
         Node[] nodes;
         Node[] terminals;
-        boolean[] isTerminal;
-        long currentObjectiveValue;
-        long lowestObjectiveValue = Long.MAX_VALUE;
+        SteinerThread[] threads;
+        SteinerTreeHeuristic[] sths;
         ArrayList<Edge> treeEdges = new ArrayList<>();
+        boolean[] isTerminal;
+        boolean printTree = false;
         int nTerminals = 0;
-        int nStartTerminals;
-        
+        long startWallClockTimeNano;
+        long startUserTimeNano;
+        long threadTimeNano;
+        long currentObjectiveValue;
+        long lowestObjectiveValue;
+        String resultValue;
+        String treeString;
+        String userTime;
+        String wallClockTime;
+
+
         /** Read and save nodes and terminals */
         nodes = Reader.readFile(args[0]);
         isTerminal = new boolean[nodes.length];
@@ -50,11 +66,12 @@ public class ex10 {
                 nTerminals++;
             }
         }
-        
+
         /** Initialize Wall-clock time and user time */
-        long startWallClockTimeNano = System.nanoTime();
-        long startUserTimeNano   = getUserTime();
-        
+        startWallClockTimeNano = System.nanoTime();
+        startUserTimeNano = getUserTime();
+        threadTimeNano = 0;
+
         /** Calculate first n prime numbers and set them as terminals */
         terminals = new Node[nTerminals];
         int termCounter=0;
@@ -64,55 +81,80 @@ public class ex10 {
         		termCounter++;
         	}
         }
-        
-        /** Calculate Steiner tree and objective value for every starting terminal */
+
         nStartTerminals = Math.min(Integer.valueOf(args[1]), terminals.length);
-        for(int i=0; i<nStartTerminals; i++){
-            resetNodes(nodes);
-            SteinerTreeHeuristic steinerTreeHeuristic = new SteinerTreeHeuristic(nodes, isTerminal);
-            currentObjectiveValue = steinerTreeHeuristic.calcSteinerTree(terminals[i]);
-            if(!steinerTreeHeuristic.buildAndCheckSteinerTree(terminals[i])){
-                System.out.println("WARNING: NOT A VALID STEINER TREE");
+        /** Interpret arguments for number of threads and whether or not to print the Steiner tree edges */
+        if(args.length > 2){
+            if(args[2].equals("-s")){
+                printTree = true;
+                if(args.length == 4){
+                    nThreads = Integer.valueOf(args[3]);
+                }
+            }else{
+                nThreads = Integer.valueOf(args[2]);
             }
-            if(lowestObjectiveValue > currentObjectiveValue){
-                lowestObjectiveValue = currentObjectiveValue;
-                treeEdges = steinerTreeHeuristic.treeEdges;
-            }
-        }       
+        }
         
+        /** Run the heuristic from every starting terminal and keep the lowest objective value */
+        lowestObjectiveValue = Long.MAX_VALUE;
+        threads = new SteinerThread[nThreads];
+        sths = new SteinerTreeHeuristic[nThreads];
+        /** Loop over starting terminals */
+        for(int i=0; i<nStartTerminals; i=i+nThreads){
+            /** Create nThreads new threads and run the heuristic from a new terminal in each one of them */
+            for(int j=0; j<nThreads && i+j<nStartTerminals; j++){
+                sths[j] = new SteinerTreeHeuristic(nodes, isTerminal);
+                threads[j] = new SteinerThread("Thread "+Integer.toString(Integer.valueOf(i)+Integer.valueOf(j)), sths[j], terminals[i+j]);
+                threads[j].start();
+            }
+
+            /** Join all threads with this one */
+            for(int j=0; j<nThreads && i+j<nStartTerminals; j++){
+                try {
+                    threads[j].t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            /** After termination, update objective value and treeEdges pointer if new optimum was found */
+            for(int j=0; j<nThreads && i+j<nStartTerminals; j++){
+                threadTimeNano += threads[j].getThreadTime();
+                if(!sths[j].isFeasible){
+                    System.out.println("UNFEASIBLE SOLUTION FOUND - TERMINATING THE PROGRAM");
+                    return;
+                }
+                currentObjectiveValue = sths[j].objectiveValue;
+                if(lowestObjectiveValue > currentObjectiveValue){
+                    lowestObjectiveValue = currentObjectiveValue;
+                    treeEdges = sths[j].treeEdges;
+                }
+            }
+        }
+
         /** Get Wall-clock time and user time */
         long taskWallClockTimeNano  = System.nanoTime() - startWallClockTimeNano;
         long taskUserTimeNano    = getUserTime( ) - startUserTimeNano;
-        
+
         /** Get results */
-        String fileName = args[0].split("/")[args[0].split("/").length-1];
-        String resultValue = "TLEN: " + (lowestObjectiveValue);
-        String treeString = "TREE: " + treeEdges.toString().replaceAll("[\\[\\]]", "").replaceAll(", ", " ");
-        String userTime = "TIME: " + round(taskUserTimeNano/1000000000.0);
-        String wallClockTime = "WALL: " + round(taskWallClockTimeNano/1000000000.0);
-        
+        resultValue = "TLEN: " + (lowestObjectiveValue);
+        treeString = "TREE: " + treeEdges.toString().replaceAll("[\\[\\]]", "").replaceAll(", ", " ");
+        userTime = "TIME: " + round((taskUserTimeNano+threadTimeNano)/1000000000.0);
+        wallClockTime = "WALL: " + round(taskWallClockTimeNano/1000000000.0);
+
         String[] results = {resultValue, treeString, userTime, wallClockTime};
-        if(args.length != 3){
+        if(!printTree){
              results[1] = results[2];
              results[2] = results[3];
              results = Arrays.copyOf(results, 3);
         }
-        
+
         /** Print results */
         for(int i=0; i<results.length; i++){
             System.out.println(results[i]);
         }
-        
-        /** Save results to file 
-        String path = "";
-        String[] pathSplit = args[0].split("/");
-        for(int i=0; i<pathSplit.length-1; i++){
-            path = path + pathSplit[i] + "/";
-        }
-        path = path + "ex10_results/";
-        Writer.write(results, path, fileName);*/
     }
-    
+
     /**
      * Round to three decimal places
      * @param x Value to be rounded
@@ -121,14 +163,17 @@ public class ex10 {
     public static double round(double x){
         return Math.round(x*1000)/1000.0;
     }
-     
-    /** Get the user time in nanoseconds. */
+
+    /**
+     * Gets the user time in nanoseconds
+     * @return User time in nanoseconds
+     */
     public static long getUserTime(){
         ThreadMXBean bean = ManagementFactory.getThreadMXBean();
         return bean.isCurrentThreadCpuTimeSupported() ?
             bean.getCurrentThreadUserTime() : 0L;
     }
-    
+
     /**
      * Check whether a certain number is prime.
      * @param n The number to check
@@ -136,7 +181,7 @@ public class ex10 {
      */
     public static boolean isPrime(int n){
         assert(n>0);
-        
+
         if(n<2){
             return false;
         }
@@ -149,17 +194,5 @@ public class ex10 {
             }
         }
         return true;
-    }
-    
-    /**
-     * Resets the nodes for a new run from a different terminal
-     * @param nodes Nodes to be reset
-     */
-    private static void resetNodes(Node[] nodes){
-    	for(int i=0; i<nodes.length; i++){
-    		nodes[i].distance = Integer.MAX_VALUE;
-    		nodes[i].predecessor = null;
-    		nodes[i].predecessorEdge = null;
-    	}
     }
 }

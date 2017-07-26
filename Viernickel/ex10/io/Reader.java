@@ -1,8 +1,9 @@
 package io;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
+
 import datastructure.*;
 
 /**
@@ -26,13 +27,10 @@ public class Reader{
      * @return Array of nodes read
      */
     public static Node[] readFile(String path){
-        FileReader fr = null;
-        BufferedReader br;
-        String line;
-        String[] split;
+        Scanner scanner;
+        Node[] nodes = null;
         int nNodes;
         int nEdges;
-        Node[] nodes = null;
         int headId;
         int tailId;
         int weight;
@@ -41,13 +39,11 @@ public class Reader{
         
         
         try {
-            fr = new FileReader(path);
-            br = new BufferedReader(fr);
+            scanner = new Scanner(new File(path));
             
             /** Read first line */
-            line = br.readLine();
-            nNodes = Integer.valueOf(line.split(" ")[0]);
-            nEdges = Integer.valueOf(line.split(" ")[1]);
+            nNodes = scanner.nextInt();
+            nEdges = scanner.nextInt();
             
             /** Initialize node array */
             nodes = new Node[nNodes];
@@ -57,20 +53,16 @@ public class Reader{
             
             /** Read and save edges */
             for(j=0; j<nEdges; j++){
-                line = br.readLine();
-                split = line.split(" ");
-                headId = Integer.valueOf(split[0])-1;
-                tailId = Integer.valueOf(split[1])-1;
-                weight = Integer.valueOf(split[2]);
+                headId = scanner.nextInt()-1;
+                tailId = scanner.nextInt()-1;
+                weight = scanner.nextInt();
                 
                 Edge edge = new Edge(nodes[headId], nodes[tailId], weight);
                 
                 nodes[headId].edges.add(edge);
                 nodes[tailId].edges.add(edge);
             }
-            
-            br.close();
-            } catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return nodes;

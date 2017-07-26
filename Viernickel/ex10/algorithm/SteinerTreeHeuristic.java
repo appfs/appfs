@@ -3,23 +3,26 @@ package algorithm;
 import datastructure.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Stack;
+import java.util.LinkedList;
 
 /**
- * Main algorithm class representing the Dijkstra algorithm.
- * Assumes first entry of the nodes array as starting node.
+ * Algorithm class representing the Steiner tree heuristic.
  * @author Merlin Viernickel
- * @date June 08 2017
+ * @date June 23 2017
  */
 public class SteinerTreeHeuristic {
-    
+
     private Node[] nodes;
+    private Node[] predecessors;
+    private Edge[] predecessorEdges;
+    private int[] distances;
     private boolean[] isTerminal;
     private boolean[] isNodeInSteinerTree;
-    private boolean[] touched;
     private boolean[] visited;
     public ArrayList<Edge> treeEdges;
-    
+    public long objectiveValue;
+    public boolean isFeasible = true;
+
     /**
      * Constructor
      * @param nodes Array of nodes to calculate distance from
@@ -29,19 +32,22 @@ public class SteinerTreeHeuristic {
         assert(null != isTerminal);
         assert(1 <= nodes.length);
         assert(nodes.length == isTerminal.length);
-        
+
         this.nodes = nodes;
+        this.distances = new int[nodes.length];
+        this.predecessors = new Node[nodes.length];
+        this.predecessorEdges = new Edge[nodes.length];
         this.isTerminal = isTerminal;
-        this.treeEdges = new ArrayList<Edge>();
         this.isNodeInSteinerTree = new boolean[nodes.length];
-        this.touched = new boolean[nodes.length];
         this.visited = new boolean[nodes.length];
+        this.treeEdges = new ArrayList<Edge>();
     }
-    
+
     /**
      * Calculates a Steiner tree using the Dijkstra algorithm heuristic method.
+     * @param startTerminal The starting terminal
      */
-    public long calcSteinerTree(Node startTerminal){
+    public void calcSteinerTree(Node startTerminal){
         Node currNode = startTerminal;
         Node neighbourNode = null;
         Node currPathNode;
@@ -51,90 +57,103 @@ public class SteinerTreeHeuristic {
         long objectiveValue = 0;
         int neighbourId = 0;
         int newDistance;
-        
-        Arrays.fill(this.touched, false);
+
+        Arrays.fill(this.distances, Integer.MAX_VALUE);
+        Arrays.fill(this.predecessors, null);
+        Arrays.fill(this.predecessorEdges, null);
         Arrays.fill(this.visited, false);
         Arrays.fill(this.isNodeInSteinerTree, false);
-        
-        startTerminal.distance = 0;
+
+        distances[startTerminal.id] = 0;
         isNodeInSteinerTree[startTerminal.id] = true;
-        heap.add(new BinaryHeapNode(currNode));
-        
+        heap.add(new BinaryHeapNode(currNode.id, distances[currNode.id]));
+
         while(!heap.isEmpty()){
             /** Update currNode */
             lowestHeapNode = heap.remove();
             if(visited[lowestHeapNode.id])
                 continue;
             currNode = nodes[lowestHeapNode.id];
-            
+
             /** If we found a terminal, add its path to the Steiner tree */
             if(isTerminal[currNode.id]){
                 currPathNode = currNode;
-                
+
                 /** Find shortest path from predecessors and save nodes in Steiner tree */
                 while(!isNodeInSteinerTree[currPathNode.id]){
-                    objectiveValue += currPathNode.distance;
                     isNodeInSteinerTree[currPathNode.id] = true;
-                    
+                    objectiveValue += predecessorEdges[currPathNode.id].weight;
+
                     /** Update currPathNode while also resetting distance and predecessor */
                     prevPathNode = currPathNode;
-                    currPathNode = currPathNode.predecessor;
-                    prevPathNode.distance = 0;
+                    currPathNode = predecessors[currPathNode.id];
+                    distances[prevPathNode.id] = 0;
                 }
             }
             /** Touch all neighboring nodes */
             for(int i=0; i<currNode.edges.size(); i++){
                 neighbourNode = currNode.getNeighbour(i);
                 neighbourId = neighbourNode.id;
-                
+
                 /** Skip already visited nodes */
                 if(visited[neighbourId]){
                     continue;
                 }
-                
+
                 /** Update distance and add to heap */
-                newDistance = currNode.distance + currNode.getDistanceToNeighbour(i);
-                if(newDistance < neighbourNode.distance){
-                    neighbourNode.distance = newDistance;
-                    neighbourNode.predecessor = currNode;
-                    neighbourNode.predecessorEdge = currNode.edges.get(i);
-                    heap.add(new BinaryHeapNode(neighbourNode));
+                newDistance = distances[currNode.id] + currNode.getDistanceToNeighbour(i);
+                if(newDistance < distances[neighbourNode.id]){
+                    distances[neighbourNode.id] = newDistance;
+                    predecessors[neighbourNode.id] = currNode;
+                    predecessorEdges[neighbourNode.id] = currNode.edges.get(i);
+                    heap.add(new BinaryHeapNode(neighbourNode.id, distances[neighbourNode.id]));
                 }
-                
-                touched[neighbourId] = true;
             }
             visited[currNode.id] = true;
         }
-        return objectiveValue;
+        this.objectiveValue = objectiveValue;
     }
-    
-    public boolean buildAndCheckSteinerTree(Node startTerminal){
-        Stack<Node> stack = new Stack<>();
-        boolean[] dfsVisited = new boolean[this.nodes.length];
+
+    /**
+     * Checks the Steiner tree for validity and saves the edges in treeEdges
+     * @param startTerminal
+     */
+    public void buildAndCheckSteinerTree(Node startTerminal){
+        LinkedList<Node> queue = new LinkedList<>();
+        boolean[] bfsVisited = new boolean[this.nodes.length];
         Node currNode;
         Node neighbourNode;
-        
-        stack.push(startTerminal);
-        while(!stack.isEmpty()){
-            currNode = stack.pop();
-            
-            if(dfsVisited[currNode.id])
-                return false;
-            dfsVisited[currNode.id] = true;
-            
+
+        /** Runs through the tree using breadth first search, only using Steiner tree edges */
+        queue.add(startTerminal);
+        while(!queue.isEmpty()){
+            currNode = queue.pop();
+
+            /** If we find a cycle it is not a tree and therefore not valid */
+            if(bfsVisited[currNode.id]){
+                this.isFeasible = false;
+                return;
+            }
+            bfsVisited[currNode.id] = true;
+
+            /** Throw all adjacent nodes that are connected by Steiner tree edges into the queue */
             for(int i=0; i<currNode.edges.size(); i++){
                 neighbourNode = currNode.getNeighbour(i);
-                if(isNodeInSteinerTree[neighbourNode.id] && (currNode == neighbourNode.predecessor)){
-                    stack.push(neighbourNode);
-                    this.treeEdges.add(neighbourNode.predecessorEdge);
+                if(isNodeInSteinerTree[neighbourNode.id] && currNode.edges.get(i) == predecessorEdges[neighbourNode.id]){
+                    assert(predecessorEdges[neighbourNode.id].head == currNode || predecessorEdges[neighbourNode.id].tail == currNode);
+                    assert(!bfsVisited[neighbourNode.id]);
+                    queue.add(neighbourNode);
+                    this.treeEdges.add(predecessorEdges[neighbourNode.id]);
                 }
             }
         }
-        
+
+        /** Check whether all terminals were reached */
         for(int i=0; i<this.nodes.length; i++){
-            if(isTerminal[i] && !dfsVisited[i])
-                return false;
+            if(isTerminal[i] && !bfsVisited[i]){
+                this.isFeasible = false;
+                return;
+            }
         }
-        return true;
     }
 }
