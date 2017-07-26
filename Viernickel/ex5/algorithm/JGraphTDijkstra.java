@@ -15,9 +15,10 @@ import datastructure.Node;
  * @date 24.06.2017
  */
 public class JGraphTDijkstra {
-	
+
 	private Node[] nodes;
-	
+	public int[] distances;
+
 	/**
 	 * Constructor
 	 * @param nodes Array of nodes to calculate distance from
@@ -25,20 +26,20 @@ public class JGraphTDijkstra {
 	public JGraphTDijkstra(Node[] nodes){
 		this.nodes = nodes;
 	}
-	
+
 	/**
      * Dijkstra algorithm that calculates the distance for all nodes and returns the furthest one
      * @return Node furthest from the starting node
 	 */
-	public Node findFurthestNode(Node startNode){
+	public int findFurthestNode(Node startNode){
         ListenableGraph<Node, DefaultWeightedEdge> graph = new ListenableUndirectedWeightedGraph<Node, DefaultWeightedEdge>(DefaultWeightedEdge.class);
         Node furthestNode = nodes[0];
-        
+
         /** Add vertices */
         for(int i=0; i<nodes.length; i++){
             graph.addVertex(nodes[i]);
         }
-        
+
         /** Add edges */
         for(int i=0; i<nodes.length; i++){
             Node node = nodes[i];
@@ -50,19 +51,19 @@ public class JGraphTDijkstra {
                 }
             }
         }
-        
+
         /** Calculate distances and find furthest Node */
         for(int i=1; i<nodes.length; i++){
             DijkstraShortestPath<Node, DefaultWeightedEdge> shortestPath =
             		new DijkstraShortestPath<Node, DefaultWeightedEdge>(graph, startNode, nodes[i]);
-            
-            nodes[i].distance = (int) shortestPath.getPathLength();
-            if(furthestNode.distance < nodes[i].distance){
+
+            distances[nodes[i].id]= (int) shortestPath.getPathLength();
+            if(distances[furthestNode.id] < distances[nodes[i].id]){
             	furthestNode = nodes[i];
             }
         }
-        
-        return furthestNode;
+
+        return furthestNode.id;
 	}
 
 }

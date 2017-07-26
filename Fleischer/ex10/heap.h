@@ -32,6 +32,22 @@ struct BinaryHeap{
 *
 */
 
+struct BinaryHeap{
+//	double* dist;
+	double* heapVal;
+	size_t lastFirst;
+	size_t* index66;
+	size_t* reversedIndex;
+};
+
+
+/**
+* Makes shure everything is still a heap.
+*@param The point where to start, the heap-array and the size of the heap
+*@return The heap-array
+*
+*/
+
 struct BinaryHeap minHeapify(size_t i, struct BinaryHeap heap, size_t size){
     size_t left;
     size_t right;

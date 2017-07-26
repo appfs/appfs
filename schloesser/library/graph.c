@@ -37,6 +37,28 @@ void update_neighbor_info(
     }
 }
 
+void update_neighbor_info_naive(
+        GraphSearch *gs,
+        unsigned int curr) {
+
+    for (int i = 0; i < gs->g->n_neighbors[curr]; i++) {
+        // n is index of neighbor vertex
+        unsigned int n = gs->g->neighbors[curr][2*i] - 1; 
+        // w is weight of edge from curr to n
+        unsigned int w = gs->g->neighbors[curr][(2*i)+1]; 
+        // if a neighbor is not in the subgraph yet then observe it
+        unsigned long newdist = gs->distances[curr] + w;
+        unsigned long olddist = gs->distances[n];
+        if (newdist < olddist) {
+            // we have found a shorter path
+            gs->distances[n] = newdist;
+            gs->prev[n] = curr;
+            try_push(gs->to_visit, n, olddist);
+            decrease_value(gs->to_visit, n, gs->distances[n]);
+        }
+    }
+}
+
 void run_dijkstra(
         GraphSearch *gs) {
 
@@ -63,6 +85,7 @@ void run_steiner_dijkstra(
             unsigned int walker = curr;
             gs->distances[walker] = 0;
             vertex_mask[walker] = vertex_mask[walker]+2;
+            assert(prev[walker] != UINT_MAX);
             while (vertex_mask[prev[walker]] < 2) {
                 walker = prev[walker];
                 gs->distances[walker] = 0;
@@ -70,8 +93,7 @@ void run_steiner_dijkstra(
                 push(gs->to_visit, walker, 0);
             }
         }
-        gs->visited[curr] = true;
-        update_neighbor_info(gs, curr);
+        update_neighbor_info_naive(gs, curr);
     }
 }
 
@@ -176,45 +198,30 @@ unsigned int* steiner_modified(
     unsigned long *distances = malloc(sizeof(*distances) * g->n_verts);
     Heap *to_visit = malloc(sizeof(*to_visit));
     construct_heap(to_visit, g->n_verts);
-    bool *visited = malloc(sizeof(*visited) * g->n_verts);
-    memset(visited, 0, sizeof(*visited) * g->n_verts);
     for (int i = 0; i < g->n_verts; i++) {
         distances[i] = ULONG_MAX;
-        push(to_visit, i, distances[i]);
         prev[i] = UINT_MAX;
     }
 
     GraphSearch *gs = malloc(sizeof(*gs));
     gs->g = g;
     gs->distances = distances;
-    gs->visited = visited;
-    gs->to_visit = to_visit;; 
+    gs->to_visit = to_visit;
     gs->prev = prev;
 
     // main call
     distances[start-1] = 0;
-    decrease_value(gs->to_visit, start-1, 0);
+    push(gs->to_visit, start-1, 0);
 
     run_steiner_dijkstra(vertex_mask, prev, gs);
     
     // postpare
     delete_heap(gs->to_visit);
     free(gs->to_visit);
-    free(visited);
     free(gs);
     free(distances);
 
     return prev;
-}
-
-void free_graph(
-        Graph *g) {
-        
-    for (int i = 0; i < g->n_verts; i++) {
-        free(g->neighbors[i]);
-    }
-    free(g->neighbors);
-    free(g->n_neighbors);
 }
 
 void read_numbers(
@@ -244,8 +251,8 @@ void init_from_graph_file(
         char *file) {
     
     unsigned int **edges;
-    unsigned int n_edges = read_graph_file(g, file, &edges);
-    
+    unsigned long n_edges = read_graph_file(g, file, &edges);
+
     // sort edges to neighbors
     fill_neighbors(g, edges, n_edges);
     
@@ -306,7 +313,7 @@ unsigned int read_graph_file(
 void fill_neighbors(
         Graph *g, 
         unsigned int** edges, 
-        unsigned int n_edges) {
+        unsigned long n_edges) {
 
     // prepare
     g->neighbors = malloc(sizeof(*(g->neighbors)) * g->n_verts);
@@ -319,7 +326,6 @@ void fill_neighbors(
     // loop through the edges
     for (int i = 0; i < n_edges; i++) {
         unsigned int v[2];
-        memset(v, 0, sizeof(*v) * 2);
         v[0] = edges[i][0];
         v[1] = edges[i][1];
         unsigned int weight = edges[i][2];
@@ -456,13 +462,17 @@ unsigned long edgeweight(
         bool directed) {
 
     if (true == directed) {
+        unsigned long weight = ULONG_MAX;
         // find directed edgeweight
         for (int i = 0; i < g->n_neighbors[v1]; i++) {
             if (g->neighbors[v1][2*i] == v2 + 1) {
-                return g->neighbors[v1][(2*i)+1];
+                unsigned long w = g->neighbors[v1][(2*i)+1];
+                if (w < weight) {
+                    weight = w;
+            }
             }
         }
-        return ULONG_MAX;
+        return weight;
     } else {
         // for undirected weights find minimum directed weight
         unsigned long w1 = edgeweight(g, v1, v2, true);
@@ -484,6 +494,7 @@ bool check_steiner(
         // attains all terminals
         if (terminal_mask[i]%2 == 1) {
             if( tree_mask[i] != 3 ) {
+                printf("Not all terminals attained. Missing at least %d.\n", i+1);
                 return false;
             }
         }
@@ -497,6 +508,7 @@ bool check_steiner(
                 count++;
             }
             if (count >= g->n_verts) {
+                printf("Too many vertices in tree graph.\n"); 
                 return false;
             }
             walker = i;
@@ -507,4 +519,14 @@ bool check_steiner(
         }
     }
     return true;
+}
+
+void delete_graph(
+        Graph *g) {
+
+    free(g->n_neighbors);
+    for (int i = 0; i < g->n_verts; i++) {
+        free(g->neighbors[i]);
+    }
+    free(g->neighbors);
 }

@@ -56,15 +56,16 @@ struct Graphs buildGraph(FILE *fp){
 	char *ptr;
     	char *bla;
     	size_t len = 0;
-    	char *line = malloc(MAX_LINE_LEN * sizeof(char));
+    	char *line = (char*) malloc(MAX_LINE_LEN * sizeof(char));
     	getline(&line, &len, fp);
     	gra.graphSize = strtol(line, &bla, 10);
+    	gra.edgeNo = strtol(bla, &bla, 10);
     	int temp1 = 0;
     	int temp2 = 0;
     	long int temp3 = 0;
 
-    	gra.vertexNo = malloc(gra.graphSize*sizeof(size_t));
-    	gra.graph = malloc(gra.graphSize*sizeof(size_t*));
+    	gra.vertexNo =(size_t*) malloc(gra.graphSize*sizeof(size_t));
+    	gra.graph = (size_t**) malloc(gra.graphSize*sizeof(size_t*));
     	
     	#pragma omp for
     	for (i = 0; i < gra.graphSize; ++i){
@@ -100,6 +101,7 @@ struct Graphs buildGraph(FILE *fp){
 			gra.graph[temp2-1][gra.vertexNo[temp2-1]*2+0] = temp1;
 			gra.graph[temp2-1][gra.vertexNo[temp2-1]*2+1] = temp3;   
 			++gra.vertexNo[temp2-1];
+
 		
 		
 				
@@ -115,77 +117,52 @@ struct Graphs buildGraph(FILE *fp){
 * @return shortest paths distance from the current steiner tree as a source at [0] and [1] the previus node
 *
 */
-struct Dijkstra dijkstra(char* inTree, struct Graphs gra, size_t* isTerminal){
-	struct BinaryHeap heap;
-	char* visited = malloc(sizeof(char)*gra.graphSize);
+struct Dijkstra dijkstra(struct Graphs gra, size_t* isTerminal, struct Dijkstra dij, char* inTree){
+	//struct BinaryHeap heap;
+
 	size_t minVal;
-	struct Dijkstra dij;
-	dij.dist = malloc(sizeof(double*)*gra.graphSize);
+
 	
-	heap.heapVal = malloc(sizeof(double)*gra.graphSize);
-	heap.index66 = malloc(sizeof(size_t)*gra.graphSize);
-	heap.reversedIndex = malloc(sizeof(size_t)*gra.graphSize);
-	dij.firstNewTerminal = 21;
-	
-	//fitting the necesary vectors
-	for (size_t i = 0; i < gra.graphSize; ++i){
-		dij.dist[i] = malloc(sizeof(double)*2);
-		visited[i] = 0;
-		heap.heapVal[i] = INFINITY;
-		heap.index66[i] = i;
-		heap.reversedIndex[i] = i;
-		if(inTree[i] == 0){
-			dij.dist[i][0] = INFINITY;
-			heap.heapVal[i] = INFINITY;
-			dij.dist[i][1] = -2;
-		}
-		else{
-			heap.heapVal[i] = 0;
-			dij.dist[i][0] = 0;
-			dij.dist[i][1] = -1;
-		}
-	}
-	//build the heap
-	heap = buildMinHeap(heap, gra.graphSize);
+
 	//the dijkstra algo
 	for(size_t j = 0; j < gra.graphSize; ++j)
-	{
-		minVal = heap.index66[0];
-		if (minVal == INFINITY){
-			free(visited);
-			return dij;
-		}
-		if(dij.dist[minVal][0] > 0 && (isTerminal[minVal+1] || minVal == 1)){
+	{	
+		minVal = dij.heap.index66[0];
+		if(!inTree[minVal] && (isTerminal[minVal+1] || minVal == 1)){
 			dij.firstNewTerminal = minVal;
-			free(visited);
 			return dij;
 		}
-		heap.lastFirst = 0;
-		visited[minVal] = 1;
+		dij.heap.lastFirst = 0;
+		dij.visited[minVal] = 1;
 		for (size_t n= 0; n < gra.vertexNo[minVal]; n++){
-			if(!visited[gra.graph[minVal][2*n + 0]-1] && dij.dist[minVal][0] != INFINITY){
-				if(dij.dist[minVal][0] + (double)gra.graph[minVal][2*n+1] < dij.dist[gra.graph[minVal][2*n+0]-1][0]){
-					dij.dist[gra.graph[minVal][2*n+0]-1][0] = dij.dist[minVal][0] + (double)gra.graph[minVal][2*n+1];
+			if(!dij.visited[gra.graph[minVal][2*n + 0]-1] && dij.dist[minVal] != INFINITY){
+				if(dij.dist[minVal] + (double)gra.graph[minVal][2*n+1] < dij.dist[gra.graph[minVal][2*n+0]-1]){
+					dij.dist[gra.graph[minVal][2*n+0]-1] = dij.dist[minVal] + (double)gra.graph[minVal][2*n+1];
 					assert(!fetestexcept(FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW));
-					dij.dist[gra.graph[minVal][2*n +0]-1][1] = minVal;	
-					heap.heapVal[gra.graph[minVal][2*n+0]-1] = dij.dist[gra.graph[minVal][2*n + 0]-1][0];
+					dij.prev[2*(gra.graph[minVal][2*n +0]-1)] = minVal;	
+					dij.prev[2*(gra.graph[minVal][2*n +0]-1)+1] = gra.graph[minVal][2*n+1];
+					dij.heap.heapVal[gra.graph[minVal][2*n+0]-1] = dij.dist[gra.graph[minVal][2*n + 0]-1];
 					//update heap
-					heap = update(heap.reversedIndex[gra.graph[minVal][2*n+0]-1], heap);
+					dij.heap = update(dij.heap.reversedIndex[gra.graph[minVal][2*n+0]-1], dij.heap);
 
 				}
 			}
 		}
-		heap = popHeap(heap, gra.graphSize);
+		dij.heap = popHeap(dij.heap, gra.graphSize);
 		
 	}
-	free(heap.index66);
-	free(heap.heapVal);
-	free(heap.reversedIndex);
-	free(visited);
 	return dij;
 }
 
+char terminalsLeft(char* marker, size_t numberOfTerminal){
 
+	for(size_t j= 0; j < numberOfTerminal; ++j){
+		if(!marker[j]){
+			return 1;
+		}
+	}
+	return 0;
+}
 
 /**
 * Finds a steiner tree.
@@ -193,7 +170,8 @@ struct Dijkstra dijkstra(char* inTree, struct Graphs gra, size_t* isTerminal){
 * @param All the terminal nodes, the number of terminal nodes, the current start terminal, the graph, and an array which says if this current node is a terminal
 * @return The steiner tree with the objective value
 */
-struct SteinerTree steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTerminal, struct Graphs gra, size_t* isTerminal){
+struct SteinerTree steinerTree(size_t* terminal, size_t numberOfTerminal, size_t startTerminal, struct Graphs gra, size_t* isTerminal, double bestStein){
+
 	char* marker = malloc(numberOfTerminal*sizeof(char));
 	char* inTree = malloc(gra.graphSize*sizeof(char));
 	size_t counter = 2;
@@ -201,64 +179,134 @@ struct SteinerTree steinerTree(size_t* terminal, size_t numberOfTerminal, size_t
 	stein.tree = malloc(sizeof(double));
 	size_t nodesInTree = 1;
 	stein.noOfEdges = 1;
-
 	stein.value = 0;
+	stein.tree = realloc(stein.tree, sizeof(double)* gra.edgeNo*2);
 	
-	stein.tree = realloc(stein.tree, sizeof(double));
 
+	struct Dijkstra dij;
+	dij.dist = malloc(sizeof(double)*gra.graphSize);
+	dij.prev = malloc(sizeof(long int)*gra.graphSize*2);
+	dij.visited =(char*) malloc(sizeof(char)*gra.graphSize);
+	dij.heap.heapVal = malloc(sizeof(double)*gra.graphSize);
+	dij.heap.index66 = malloc(sizeof(size_t)*gra.graphSize);
+	dij.heap.reversedIndex = malloc(sizeof(size_t)*gra.graphSize);
+	dij.firstNewTerminal = 0;
+	
+		//fitting the necesary vectors
+	for (size_t i = 0; i < gra.graphSize; ++i){
+		dij.visited[i] = 0;
+		dij.heap.heapVal[i] = INFINITY;
+		dij.heap.index66[i] = i;
+		dij.heap.reversedIndex[i] = i;
+		inTree[i] = 0;
+			dij.dist[i] = INFINITY;
+			dij.heap.heapVal[i] = INFINITY;
+			dij.prev[2*i] = -2;
+			dij.prev[2*i+1] = 0;
+
+	}
+	
+	dij.heap.heapVal[terminal[startTerminal]] = 0;
+	dij.dist[terminal[startTerminal]] = 0;
+	dij.prev[2*terminal[startTerminal]] = -1;
+	dij.prev[2*terminal[startTerminal]+1] = 0;
+	//build the heap
+	dij.heap = buildMinHeap(dij.heap, gra.graphSize);
+	
 	
 	for(size_t i = 0; i<numberOfTerminal; ++i){
 		marker[i] = 0;
-		inTree[i] = 0;
 	}
-	for(size_t i = numberOfTerminal; i < gra.graphSize; ++i){
-		inTree[i] = 0;
-	}
+
 	
 	inTree[terminal[startTerminal]] = 1;
-	struct Dijkstra dij = dijkstra(inTree, gra, isTerminal);
+	
+	dij = dijkstra(gra, isTerminal, dij, inTree);
 	marker[startTerminal] = 1;
 
 	marker[isTerminal[dij.firstNewTerminal+1]] = 1;
-	stein.value = dij.dist[dij.firstNewTerminal][0];
-	size_t iter = dij.firstNewTerminal;
+	stein.value = 0;
+	long int iter = dij.firstNewTerminal;
+	size_t overload = iter;
 	//adding a path to the new terminal to the tree
-	while(dij.dist[iter][1] != -1){
+	while(dij.prev[2*iter] != -1){
 		inTree[iter] = 1;
-		stein.tree = realloc(stein.tree, sizeof(double)* stein.noOfEdges*2);
-		stein.tree[2*(stein.noOfEdges-1)] = (double) iter;
-		iter = (size_t) dij.dist[iter][1]; 
-		stein.tree[2*(stein.noOfEdges-1)+1] = (double) iter;
+		overload = iter;
+		stein.value += dij.prev[2*iter+1];
+		if(bestStein <= stein.value){
+			stein.value = INFINITY;
+			free(stein.tree);
+			free(dij.heap.index66);
+			free(dij.heap.reversedIndex);
+			free(dij.visited);
+			free(dij.dist);
+			free(dij.heap.heapVal);
+			free(inTree);
+			free(marker);
+			return stein;
+		}
+		dij.heap.heapVal[iter] = 0;
+		dij.dist[iter] = 0;
+		dij.visited[iter] = 0;
+		dij.heap = update(dij.heap.reversedIndex[iter], dij.heap);
+		stein.tree[2*(stein.noOfEdges-1)] =  (size_t) iter;
+		iter = dij.prev[2*iter]; 
+		dij.prev[2*overload] = -1;		
+		stein.tree[2*(stein.noOfEdges-1)+1] = (size_t) iter;
 		++stein.noOfEdges;
 		++nodesInTree;
 	}
-	while ( counter < numberOfTerminal){
-			
-		dij = dijkstra(inTree, gra, isTerminal);
-
+	//dij.prev[2*overload] = -1;		
+	for( ;counter < numberOfTerminal; ++counter){
+		//printf("hi\n");	
+		dij = dijkstra(gra, isTerminal, dij, inTree);
 		marker[isTerminal[dij.firstNewTerminal+1]] = 1;
-		++counter;
+		//++counter;
 
 		iter = dij.firstNewTerminal;
-		
+		overload = iter;
 		//adding a path to the new terminal to the tree
-		while(dij.dist[iter][1] != -1){
-
+		while(dij.prev[2*iter] != -1){
 			inTree[iter] = 1;
-			stein.tree = realloc(stein.tree, sizeof(double)* stein.noOfEdges*2);
-			stein.tree[2*(stein.noOfEdges-1)] = (double) iter;
-			iter = (size_t) dij.dist[iter][1]; 
-			stein.tree[2*(stein.noOfEdges-1)+1] = (double) iter;
+			overload = iter;
+			stein.value += dij.prev[2*iter+1];
+			if(bestStein <= stein.value){
+					stein.value = INFINITY;
+					free(stein.tree);
+					free(dij.heap.index66);
+					free(dij.heap.reversedIndex);
+					free(dij.visited);
+					free(dij.dist);
+					free(dij.heap.heapVal);
+					free(inTree);
+					free(marker);
+					return stein;
+			}
+			dij.heap.heapVal[iter] = 0;
+			dij.dist[iter] = 0;
+
+			dij.visited[iter] = 0;
+			dij.heap = update(dij.heap.reversedIndex[iter], dij.heap);
+			stein.tree[2*(stein.noOfEdges-1)] =  (size_t) iter;
+			iter = dij.prev[2*iter]; 
+			dij.prev[2*overload] = -1;		
+			stein.tree[2*(stein.noOfEdges-1)+1] = (size_t) iter;
 			++stein.noOfEdges;
 			++nodesInTree;
 		}		
 		//adding objective value which gets added through the new node
-		stein.value += dij.dist[dij.firstNewTerminal][0];	
+	
 	}
 	
-
+	free(dij.heap.index66);
+	free(dij.heap.reversedIndex);
+	free(dij.visited);
+	free(dij.dist);
+	free(dij.heap.heapVal);
 	free(inTree);
 	free(marker);
+
+
 	return stein;
 }
 
@@ -340,7 +388,18 @@ char solChecker(struct SteinerTree stein, struct Graphs gra, size_t* terminal, s
 	
 	//checks if every terminal is beeing visited
 	for(size_t i = 0; i < noOfTerminal; ++i){
-		if(!visited[terminal[i]]) return 0;
+		
+		if(!visited[terminal[i]])
+		{ 	
+			
+			printf("Terminal not connected! %ld, should be connected, %ld\n", terminal[i]+1, gra.vertexNo[terminal[i]]);
+			for(size_t j = 0; j< 2*stein.noOfEdges; ++j){
+			if(stein.tree[j] == terminal[i])
+				printf("been here!\n");
+			}
+			
+			return 0;
+		}
 	}
 	return 1;
 }

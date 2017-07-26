@@ -26,6 +26,9 @@ public class Edge {
         this.isSteinerEdge = false;
     }
     
+    /**
+     * String representation of the object.
+     */
     public String toString(){
         return "(" + Integer.toString((Integer.valueOf(head.id)+1)) + "," + Integer.toString((Integer.valueOf(tail.id)+1)) + ")";
     }

@@ -1,0 +1,19 @@
+run: ex10.cpp
+	g++ -fopenmp -std=c++14 ex10.cpp -o ex10 -lboost_timer -lboost_system
+  ./ex10 $(THREADS) $(FILE)
+
+doc: ex10.cpp
+	doxygen -g ex10.doxygen.conf
+	doxygen ex10.doxygen.conf
+	
+coverage: ex10.cpp
+	g++ -fopenmp -std=c++14 ex10.cpp -o ex10 -lm --coverage
+	./ex10 world666.gph
+	lcov --capture --directory ex10.gcno --output-file ex10.coverage.info
+	genhtml ex10.coverage.info --output-directory coverage
+	
+check: ex10.cpp
+	cppcheck --enable=all ex10.cpp
+	
+build: ex10.cpp
+g++ -fopenmp -std=c++14 ex10.cpp -o ex6 -lboost_timer -lboost_system

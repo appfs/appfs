@@ -1,8 +1,8 @@
 /*
-*  @file 		ex9.cpp
+*  @file 		ex10.cpp
 *  @details  	This file is the solution to exercise 9.
 *  @author    	Alexander Rettkowski
-*  @date      	12.07.2017
+*  @date      	20.07.2017
 */
 #include <boost/config/warning_disable.hpp>
 #include <boost/spirit/include/qi.hpp>
@@ -89,7 +89,7 @@ bool isPrime(int number) {
 * @param startNode The id of the node where the search starts.
 * @returns The weight of the Steiner Tree and the edge list of the tree coupled as a std::pair
 */
-std::pair<int, std::list<std::pair<int, int>>>  steinerTree(int numberOfNodes, std::vector< std::vector< std::pair<int, int> > > graph, int startNode)
+std::pair<int, std::list<std::pair<int, int>>>  steinerTree(int numberOfNodes, std::vector< std::vector< std::pair<int, int> > > graph, int startNode, std::vector<bool> primes)
 {
 	std::vector<int> connectedVertices;
 	connectedVertices.push_back(startNode);
@@ -112,11 +112,12 @@ std::pair<int, std::list<std::pair<int, int>>>  steinerTree(int numberOfNodes, s
 
 		if (distanceTo[currentNode] < currentNodeDistance) continue;
 
+		// TODO: Kann hier parallelisiert werden?
 		for (int i = 0; i < graph[currentNode].size(); i++) {
 			compareNode = graph[currentNode][i].first;
 			compareNodeDistance = graph[currentNode][i].second;
 			if (distanceTo[compareNode] > distanceTo[currentNode] + compareNodeDistance) {
-				if (isPrime(compareNode))
+				if (primes[compareNode])
 				{
 					predecessors[compareNode] = currentNode;
 
@@ -153,6 +154,57 @@ std::pair<int, std::list<std::pair<int, int>>>  steinerTree(int numberOfNodes, s
 }
 
 /**
+* A recursively implemented check if a graph (given as an edge list) contains a cycle
+* @param edgeList The edge list representing the graph
+* @param startPoint ID of the node where the traversal starts
+* @param visisted a vector of already visited edge ID's
+* @returns True, if the graph contains a cycle; false otherwise.
+*/
+bool hasCycle(std::list<std::pair<int,int> > edgeList, int startPoint, std::vector<int> visited)
+{
+	std::vector<int> soFar = visited;
+
+	if (std::find(visited.begin(), visited.end(), startPoint) != visited.end())
+		return true;
+
+	soFar.push_back(startPoint);
+
+	for (std::pair<int, int> edge : edgeList)
+	{
+		if (edge.first == startPoint)
+			if (hasCycle(edgeList, edge.second, soFar))
+				return true;
+	}
+
+	return false;
+}
+
+/**
+* A simple method that checks if a graph contains all nodes with prime ID's.
+* @param edgeList The edge list representing the graph
+* @param primes The list of primes the graph should contain
+* @returns True, if the graph contains all primes; false otherwise.
+*/
+bool containsAllPrimes(std::list<std::pair<int, int> > edgeList, std::vector<bool> primes)
+{
+	std::vector<bool> isIncluded(primes.size(), false);
+	
+	for (std::pair<int, int> edge : edgeList)
+	{
+		isIncluded[edge.first] = true;
+		isIncluded[edge.second] = true;
+	}
+
+	for (int i = 0; i < isIncluded.size(); i++)
+	{
+		if (primes[i] && !isIncluded[i])
+			return false;
+	}
+
+	return true;
+}
+
+/**
 * The main function that reads in a file and processes it.
 * @param argc Number of command line arguments.
 * @param *argv a pointer to the array of command line arguments.
@@ -174,6 +226,15 @@ int main(int argc, char *argv[])
 	const int numberOfNodes = stoi(currentLine);
 	getline(file, currentLine);
 	int constSub = 1;
+
+	std::vector<bool> primes(numberOfNodes, false);
+	for (int i = 0; i < numberOfNodes; i++)
+	{
+		if (isPrime(i))
+		{
+			primes[i] = true;
+		}
+	}
 
 	std::vector<std::vector<std::pair<int, int>>> edges(numberOfNodes);
 	while (getline(file, currentLine))
@@ -201,46 +262,82 @@ int main(int argc, char *argv[])
 
 	timer::cpu_timer runTimer;
 	omp_set_dynamic(0);
-	omp_set_num_threads(std::stoi(argv[2]));
+	if (argc >= 5)
+	{
+		omp_set_num_threads(std::stoi(argv[4]));
+	}
+	else
+	{
+		omp_set_num_threads(4);
+	}
+
+	bool printTree = false;
+	if (argc >= 4)
+	{
+		std::string test = argv[3];
+		if (0 == test.compare("-s"))
+			printTree = true;
+	}
+
 	std::vector<int> terminalIds;
 	for (int i = 0; i < numberOfNodes; i++)
 	{
-		if (isPrime(i))
+		if (primes[i])
 			terminalIds.push_back(i);
 	}
-	std::vector<int> lengths(terminalIds.size());
+
+	int numberOfStartingPoints = std::stoi(argv[2]);
+	std::vector<int> lengths(numberOfStartingPoints);
+	std::vector<std::list<std::pair<int, int>>> edgelists(numberOfStartingPoints);
 
 #pragma omp parallel for
-	for (int i = 0; i < terminalIds.size(); i++)
+	for (int i = 0; i < numberOfStartingPoints; i++)
 		{
-		    std::pair<int, std::list<std::pair<int, int>>> currentRun = steinerTree(numberOfNodes, edges, terminalIds[i]);
+		    std::pair<int, std::list<std::pair<int, int>>> currentRun = steinerTree(numberOfNodes, edges, terminalIds[i], primes);
 			lengths[i] = currentRun.first;
-			std::cout << "Length starting from " << i << ": " << lengths[i] << std::endl;
+			edgelists[i] = currentRun.second;
+			//std::cout << "Length starting from " << i << ": " << lengths[i] << std::endl;
 		}
 
 	int minlength = INT32_MAX;
 	int minId = -1;
-	for (int i = 0; i < terminalIds.size(); i++)
+	std::list<std::pair<int, int>> minList;
+	for (int i = 0; i < numberOfStartingPoints; i++)
 	{
 		if (lengths[i] < minlength)
 		{
 			minlength = lengths[i];
 			minId = i;
+			minList = edgelists[i];
 		}
 	}
 
 	timer::cpu_times runtime = boostTimer.elapsed();
-	std::list<std::pair<int, int>> edgelist = steinerTree(numberOfNodes, edges, minId).second;
+	//std::list<std::pair<int, int>> edgelist = steinerTree(numberOfNodes, edges, minId, primes).second;
 
 
 	std::cout << "TLEN: " << minlength << std::endl;
-	std::cout << "TREE: ";
-
-	for (std::pair<int, int> edge : edgelist)
+	if (printTree)
 	{
-		std::cout << "(" << edge.first << ", " << edge.second << ") ";
+		std::cout << "TREE: ";
+
+		for (std::pair<int, int> edge : minList)
+		{
+			std::cout << "(" << edge.first << ", " << edge.second << ") ";
+		}
+		std::cout << std::endl;
 	}
-	std::cout << std::endl;
+
+	std::vector<int> visited(numberOfNodes);
+	//assert(!hasCycle(edgelist, 1, visited) && containsAllPrimes(edgelist, primes));
+
+	std::list<std::pair<int, int>> invalidList(3);
+	invalidList.push_back(std::pair<int, int>(1, 2));
+	invalidList.push_back(std::pair<int, int>(2, 3));
+	invalidList.push_back(std::pair<int, int>(3, 1));
+	bool noChance1 = hasCycle(invalidList, 1, visited);
+	bool noChance2 = containsAllPrimes(invalidList, primes);
+
 
 	timer::cpu_times time = boostTimer.elapsed();
 	std::cout << "TIME: " << (time.user + time.system) / 1e9 << "s\n";
