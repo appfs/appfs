@@ -1,10 +1,10 @@
 /*
  * ex5.cpp
  *
- * 	\brief     5. Aufgabe
+ * 	\brief     5. und 7. Aufgabe
  *  \details   Liesst eine .gph Datei ein und berechnet den laengsten kuerzesten pfad von jeder Ecke zum Root des Graphen.
  *  \author    Christopher Wyczisk
- *  \date      08.06.2017
+ *  \date      20.07.2017
  */
 
 #include <fstream>
@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include "dijkstra.h"
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -132,6 +133,15 @@ void berechneLongesteShortesWeigth(graph graph, int& anzahlEcken, int& laegsterK
 	}
 }
 
+string konsolenabfrageWelcheMethode() {
+	string eingabe = "";
+	while(eingabe.compare("a") && eingabe.compare("b")) {
+		cout << "Geben Sie ein, welcher Algorithmus verwendet werden soll (a=Boots, b=eigene Impelementierung):" << endl;
+		cin >> eingabe;
+	}
+	return eingabe;
+}
+
 /**
  * Main.
  */
@@ -139,24 +149,49 @@ int main(int argc, char* argv[]) {
 	ifstream file;
 	bool fileEingelesen = graphEinlesen(argc, argv, file);
 	
+	string eingabe = konsolenabfrageWelcheMethode();
+	
 	boost::timer::cpu_timer t;
 	if(fileEingelesen) {
 		//erstelle den Graph
 		bool erstellt = graphErstellen(file);
-		if(erstellt) {
+		if(erstellt && !eingabe.compare("a")) {
 			graph graph{kanten.begin(), kanten.end(), gewichte.begin(), anzahlEckenGlobal};
 		
 			// berechnen des gewichts des longesten shortesten pfad
 			int laegsterKuerzesterPfadGewicht = -1;
 			int anzahlEcken = -1;
 			berechneLongesteShortesWeigth(graph, anzahlEcken, laegsterKuerzesterPfadGewicht);
-		
-			boost::timer::cpu_times zeit = t.elapsed();
 			
 			ergebnisAusgabe(anzahlEcken, laegsterKuerzesterPfadGewicht);
-			std::cout << "WALL-CLOCK " << zeit.wall / 1e9 << "s" << std::endl;
-			std::cout << "USER TIME " << zeit.user / 1e9 << "s" << std::endl;
+		}
+		else if(erstellt) {
+			vector<int> mapGewichte(anzahlEckenGlobal);
+	    	dijkstra dijkstra(gewichte, kanten, anzahlEckenGlobal);
+			mapGewichte = dijkstra.berechneKuerzestenPfad(1);
+			
+			// berechnen des gewichts des longesten shortesten pfad
+			int laegsterKuerzesterPfadGewicht = -1;
+			int anzahlEcken = -1;
+			int absGewichte;
+			for(unsigned int i = 2; i < anzahlEckenGlobal; i++) {
+				absGewichte = mapGewichte[i];
+				if (absGewichte > laegsterKuerzesterPfadGewicht) {
+					laegsterKuerzesterPfadGewicht = absGewichte;
+					anzahlEcken = i;
+				}
+			}
+		
+			ergebnisAusgabe(anzahlEcken, laegsterKuerzesterPfadGewicht);
 		}
 	}
+	
+	boost::timer::cpu_times zeit = t.elapsed();
+	std::cout << "WALL-CLOCK " << zeit.wall / 1e9 << "s" << std::endl;
+	std::cout << "USER TIME " << zeit.user / 1e9 << "s" << std::endl;
 	return 0;
 }
+
+
+
+
