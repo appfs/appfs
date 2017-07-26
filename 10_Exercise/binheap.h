@@ -13,27 +13,6 @@
  *
  
  */
-#if 0
-class IntInt
-{
-
-   public:
-      int val1 = -1;
-      int val2 = -1;
-
-      IntInt(int value1 = -1, int value2 = -1) {
-
-         val1 = value1;
-         val2 = value2;
-      };
-};
-#endif
-
-struct IntInt
-{
-      int val1;
-      int val2;
-};
 
 template <typename Key, typename Value>
 struct HeapEntry
