@@ -8,16 +8,17 @@ using namespace std;
  *   @return vector<int>
  */  
 vector<int> utils::get_Nodes(vector<Edge>& edges) {
-  set<int> nodes;
+  set<int> nodes; // use set to remove duplicates.
   
-  for (auto i = edges.begin(), end = edges.end(); i != end; i++){ // use set to remove duplicates
+  for (auto i = edges.begin(), end = edges.end(); i != end; i++){
     nodes.insert(i->first);
     nodes.insert(i->second);
   }
   vector<int> nodesAsVector;
   copy(nodes.begin(), nodes.end(), back_inserter(nodesAsVector)); // convert set to vector.
   
-  assert(nodes.size() <= 2*edges.size()); // the numbers of nodes in the graph cannot be less than the twice the size of the graph.
+  // the numbers of nodes in the graph cannot be less than the twice the size of the graph.
+  assert(nodes.size() <= 2*edges.size());
   
   return nodesAsVector;
 }
@@ -35,7 +36,8 @@ pair<vector<Edge>,vector<int>> utils::get_EdgesWeights (int& n, ifstream& file) 
   vector<int> Weights; // vector to store weights as integers.
   string str; // string to store line of graph file.
   
-  while (getline(file,str)) { // get graph line-by-line.
+  // get graph line-by-line.
+  while (getline(file,str)) {
     int Vert1;
     int Vert2;
     int Weight;
@@ -44,7 +46,8 @@ pair<vector<Edge>,vector<int>> utils::get_EdgesWeights (int& n, ifstream& file) 
     
     parse(it, str.end(), int_[([&Vert1](int i){Vert1 = i;})] >> qi::space >> int_[([&Vert2](int i){Vert2 = i;})] >> qi::space >> double_[([&Weight](int i){Weight = i;})]);  
     
-    Edge edge = make_pair(Vert1, Vert2);  // make edge-pair out of vertices.
+    // make edge-pair out of vertices.
+    Edge edge = make_pair(Vert1, Vert2);
     Edges.push_back(edge);
     Weights.push_back(Weight);
   }
@@ -106,8 +109,11 @@ vector<vector<Vertex>> utils::build_adjList(int& n, vector<Edge>& edges, vector<
     int vert1 = i->first;
     int vert2 = i->second;
     
-    adjList[vert1].push_back(make_pair(vert2,weights[j])); // for each vertex, add it's neighbour and the weight from the vertex to the neighbour.
-    adjList[vert2].push_back(make_pair(vert1,weights[j])); // do the same from the perspective of the neighbour.
+    // for each vertex, add it's neighbour and the weight from the vertex to the neighbour.
+    adjList[vert1].push_back(make_pair(vert2,weights[j]));
+    
+    // do the same from the perspective of the neighbour.
+    adjList[vert2].push_back(make_pair(vert1,weights[j]));
     j++;
   }
   return adjList;

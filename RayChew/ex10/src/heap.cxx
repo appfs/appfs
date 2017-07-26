@@ -25,38 +25,47 @@ using namespace std;
  *   @param  idx is an int that is the index of the node that should be sorted downwards.
  *   @return void
  */  
-void myHeap::checkDown(int idx) { // the bubble down method.
+void myHeap::checkDown(int idx) {
   int length = tree.size();
-  int lChildIdx = 2*idx; // get index of left and right child of the current index.
+  // get index of left child of the current index.
+  int lChildIdx = 2*idx;
   
-  if (lChildIdx >= length) { // if the left child is outside of the tree, return since current-index node a leaf node.
+  // if the left child is outside of the tree, return since current-index node a leaf node.
+  if (lChildIdx >= length) { 
     return;
   }
   
+  // get index of right child of the current index.
   int rChildIdx = 2*idx+1;
-  int lChildWeight = tree[lChildIdx].first; // otherwise, get the index of the left child.
+  // get the value of the left child.
+  int lChildWeight = tree[lChildIdx].first; 
   
   pair<int,int> *treeIdx = &tree[idx];
   int currentIdxWeight = treeIdx->first;
   int minIdx = idx;
   
-  int childWeight = lChildWeight; // initialise childWeight and childIdx to store lower child value of the left and right children.
+  // initialise childWeight and childIdx to store lower child value of the left and right children.
+  int childWeight = lChildWeight;
   int childIdx = lChildIdx;
   
-  if (rChildIdx < length) { // if there is a right-child of current index node, then compare its value to the left child.
-    int rChildWeight = tree[rChildIdx].first; // by first getting the index of the right child.
+  // if there is a right-child of current index node, then compare its value to the left child.
+  if (rChildIdx < length) {
+    int rChildWeight = tree[rChildIdx].first;
     
-    if (lChildWeight > rChildWeight) { // deterministical always choose to switch with the left child their values are the same.
+    // deterministical always choose to switch with the left child their values are the same.
+    if (lChildWeight > rChildWeight) {
       childWeight = rChildWeight;
       childIdx = rChildIdx;
     }
   }
   
-  if (currentIdxWeight > childWeight) { // check if there's a need to switch by comparing value at the current index to the value at the chosen child.
+  // check if there's a need to switch by comparing value at the current index to the value at the chosen child.
+  if (currentIdxWeight > childWeight) {
     minIdx = childIdx;
   }
   
-  if (minIdx != idx) { // if there is a need to switch nodes... switch the weights and update the positions array.
+  // if there is a need to switch nodes... switch the weights and update the positions array.
+  if (minIdx != idx) {
     iter_swap(tree.begin() + idx, tree.begin() + minIdx);
     iter_swap(positions.begin() + treeIdx->second, positions.begin() + tree[minIdx].second);
     
@@ -65,13 +74,14 @@ void myHeap::checkDown(int idx) { // the bubble down method.
 }
 
 /** 
- *   @brief  Bubble down method of the myHeap class. Sorta heap at a given index downwards.
+ *   @brief  Bubble up method of the myHeap class. Sorta heap at a given index upwards.
  *  
- *   @param  idx is an int that is the index of the node that should be sorted downwards.
+ *   @param  idx is an int that is the index of the node that should be sorted upwards.
  *   @return void
  */  
-void myHeap::checkUp(int idx) { // the bubbleUp method.
-  if (idx == 1) { // if current index is the root node, return since there's no bubbling up left to do.
+void myHeap::checkUp(int idx) {
+  // if current index is the root node, return since there's no bubbling up left to do.
+  if (idx == 1) { 
     return;
   }
   
@@ -80,7 +90,8 @@ void myHeap::checkUp(int idx) { // the bubbleUp method.
   int parentWeight = tree[parentIdx].first;
   int currentIdxWeight = tree[idx].first;
   
-  if (parentWeight > currentIdxWeight) { // otherwise, check if the weight at parent node is larger than the weight at current node...
+  // otherwise, check if the weight at parent node is larger than the weight at current node...
+  if (parentWeight > currentIdxWeight) {
     
     iter_swap(tree.begin() + idx, tree.begin() + parentIdx);
     iter_swap(positions.begin() + tree[idx].second, positions.begin() + tree[parentIdx].second);
@@ -94,7 +105,7 @@ void myHeap::checkUp(int idx) { // the bubbleUp method.
  *
  *   @return void
  */  
-void myHeap::mkHeap() { // make the heap by bubbling downwards for each node in binary heap after it is added.
+void myHeap::mkHeap() {
   int length = tree.size();
   
   for(int i=length-1; i>0; --i) {
@@ -111,12 +122,13 @@ void myHeap::mkHeap() { // make the heap by bubbling downwards for each node in 
  *
  */  
 myHeap::myHeap(int& n, const int& startTerminal) : tree(n) {
-  positions.reserve(n);
+  positions.reserve(n); // initialise a positions array to "search" the binary heap by indices of the nodes.
   for (int i=0; i<n; i++) {
     tree[i] = make_pair(numeric_limits<int>::max(),i);
-    positions[i] = i; // initialise a positions array to "search" the binary heap by indices of the nodes.
+    positions[i] = i;
   }
-  tree[startTerminal]=make_pair(0,startTerminal); // the start node should have a weight of 0. "terminal" is used here for eventual steiner tree implementation.
+  // the start node should have a weight of 0. "terminal" is used here for eventual steiner tree implementation.
+  tree[startTerminal]=make_pair(0,startTerminal);
   
   mkHeap();
 }
@@ -126,17 +138,20 @@ myHeap::myHeap(int& n, const int& startTerminal) : tree(n) {
  *
  *   @return void
  */  
-void myHeap::pop_top() { // remove the minimum (root node) of the binary heap.
-  if (tree.size() == 1) { // if there is nothing left in tree, return.
+void myHeap::pop_top() {
+  // if there is nothing left in tree, return.
+  if (tree.size() == 1) { 
     return;
   }
   
   // not sure if it's better practice to use begin()/end() or to use the square brackets []...
-  positions[(tree.end()-1)->second] = positions[(tree.begin()+1)->second]; // update the positions array.
-  positions[(tree.begin()+1)->second] = numeric_limits<int>::min(); // nodes that are no longer in the heap have positions of -inf.
+  // update the positions array. Nodes that are no longer in the heap have positions of -inf.
+  positions[(tree.end()-1)->second] = positions[(tree.begin()+1)->second]; 
+  positions[(tree.begin()+1)->second] = numeric_limits<int>::min(); 
   
-  *(tree.begin()+1) = *(tree.end()-1); // otherwise, switch last node with the root and bubble down.
-  tree.pop_back(); // and pop the last node, which is now the root.
+  // otherwise, switch last node with the root, bubble down and pop the last node, which is now the root.
+  *(tree.begin()+1) = *(tree.end()-1);
+  tree.pop_back();
   
   checkDown(1);
 }
@@ -173,9 +188,11 @@ void myHeap::insert(Vertex newNode) {
  */  
 void myHeap::update_weight(int& neighbour, int& newDist) {
   int neighbourIdx = positions[neighbour];
-  if (neighbourIdx != numeric_limits<int>::min()) {
+  
+  if (neighbourIdx != numeric_limits<int>::min()) { // if the neighbour is still in the heap, update.
     int oldWeight = tree[neighbourIdx].first;
     tree[neighbourIdx].first = newDist;  
+    
     if (oldWeight <= newDist){
       checkDown(neighbourIdx);
     }
@@ -183,7 +200,7 @@ void myHeap::update_weight(int& neighbour, int& newDist) {
       checkUp(neighbourIdx);
     }
   }
-  else {
+  else { // if neighbour is no longer in heap, insert it back.
     insert(make_pair(newDist,neighbour));
   }
 }
@@ -194,7 +211,7 @@ void myHeap::update_weight(int& neighbour, int& newDist) {
  *   @param  neighbour is an int that is the index of the node on graph for which its index on the heap should be returned.
  *   @return void
  */  
-int* myHeap::get_neighbourPosition(int& neighbour) { // given the index of the neighbouring node on the graph, return the position/index of the neighbouring node on the binary heap.
+int* myHeap::get_neighbourPosition(int& neighbour) {
   return &positions[neighbour];
 }
 
@@ -203,7 +220,7 @@ int* myHeap::get_neighbourPosition(int& neighbour) { // given the index of the n
  * 
  *   @return int
  */  
-int myHeap::size() { // get the size of the binary heap.
+int myHeap::size() {
   return tree.size();
 }
 
@@ -212,7 +229,7 @@ int myHeap::size() { // get the size of the binary heap.
  * 
  *   @return void
  */  
-void myHeap::print() { // print the binary heap and the positions array. For debugging purposes.
+void myHeap::print() {
   for(int i=0, end=tree.size(); i<end; ++i)
     cout << "(idx" << i << ": " << tree[i].first << "," << tree[i].second << ")" << ' ';
   cout << endl;
