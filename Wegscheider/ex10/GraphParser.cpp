@@ -16,14 +16,15 @@ using ascii::space;
 
 
 GraphParser::GraphParser(string file) {
-	inputFile.open(file);
-	openedSuccessfully = !inputFile.fail();
+	input_file.open(file);
+	opened_successfully = !input_file.fail();
 }
 
-bool GraphParser::readFirstLine(int& numVertices, int& numEdges) {
+
+bool GraphParser::read_first_line(int& num_vertices, int& num_edges) {
 
 	string line;
-	getline(inputFile, line);	//first line is read
+	getline(input_file, line);	//first line is read
 
 	auto it = line.begin();
 	int n, m;
@@ -32,8 +33,8 @@ bool GraphParser::readFirstLine(int& numVertices, int& numEdges) {
 				 >> int_[([&m](int j){ m = j; })], space);
 
 	if (!success || it != line.end()) return false;
-	numVertices = n;
-	numEdges = m;
+	num_vertices = n;
+	num_edges = 2*m;
 
 	return true;
 }
@@ -42,20 +43,18 @@ bool GraphParser::readFirstLine(int& numVertices, int& numEdges) {
 /*
  * Implementation of the graph parser read method by means of boost::spirit
  */
-bool GraphParser::readEdgeData(Edge edges[], double weights[]) {
-
+bool GraphParser::read_edge_data(Edge edges[], weight_type weights[]) {
 
 	assert(NULL != edges);
 	assert(NULL != weights);
 
-
-	// we use boost::spirit to parse each line //
+	//we use boost::spirit to parse each line
 	string line;
 
 	int i = 0;
 
 	//read line by line
-	while (getline(inputFile, line)) {
+	while (getline(input_file, line)) {
 
 		auto it = line.begin();
 		int start;
@@ -64,16 +63,18 @@ bool GraphParser::readEdgeData(Edge edges[], double weights[]) {
 		bool success = phrase_parse(it, line.end(),
 				int_[([&start](int j){ start = j; })]
 					 >> int_[([&end](int j){ end = j; })]
-							 >> double_[([&weight](double j){ weight = j; })], space);
+							 >> double_[([&weight](weight_type j){ weight = j; })], space);
 		if (success && it == line.end()) {
-			edges[i] = Edge(start-1, end-1);
-			weights[i] = weight;
+			//since graph is undirected we add both directions for each edge
+			edges[2*i] = Edge(start-1, end-1);
+			edges[2*i+1] = Edge(end-1, start-1);
+			weights[2*i] = weight;
+			weights[2*i+1] = weight;
 		} else {
 			return false;
 		}
 		++i;
 	}
-
 
 	return true;
 }

@@ -13,18 +13,14 @@ using std::vector;
 
 namespace PrimeNumbers {
 
-
 	/**
-	 * Finds all primes in {2,...,n} using the fact that if a natural number
-	 * has a divisor it also has at least one prime divisor. the resulting vector
-	 * contains the numbers -1.
+	 * Computes all prime numbers in {2,...,n}. The numbers in the resulting
+	 * vector are one lower than the actual prime number.
 	 * @param n the natural number up to which primes are generated
 	 * @return a vector containing the prime numbers -1
 	 */
-	vector<int> findPrimes(int n);
-
+	vector<int> find_primes(int n);
 
 }
-
 
 #endif /* SRC_PRIMENUMBERS_H_ */
