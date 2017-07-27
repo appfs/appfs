@@ -46,17 +46,20 @@ int main(int argc, char* argv[]) {
   p.add("FILE", 1); // fix position as per assignment requirement: graph filename as position 1.
   p.add("firstNTerminals", 2); // and first N terminals to check at position 2.
   
-  po::variables_map vm; // intialise variable map to capture command line inputs.
+  // intialise variable map to capture command line inputs.
+  po::variables_map vm;
   po::store(po::command_line_parser(argc, argv).
   options(desc).positional(p).run(), vm);
   po::notify(vm);
   
-  if (vm.count("help")) { // display help message and end program.
+  // display help message and end program.
+  if (vm.count("help")) {
     cout << desc << endl;
     return 0;
   }
   
-  if (!vm.count("FILE")) { // if no filename, return error.
+  // if no filename, return error.
+  if (!vm.count("FILE")) {
     cout << "No graph file." << endl;
     return -1;
   }
@@ -90,7 +93,8 @@ int main(int argc, char* argv[]) {
   
   cout << "There are " << primesSize << " terminals." << endl; // print total number of terminals in graph.
   
-  if (firstNTerminals > primesSize) { // if the number of terminals to go through is larger than there are terminals, then use the number of terminals.
+  // if the number of terminals to go through is larger than there are terminals, then use the number of terminals.
+  if (firstNTerminals > primesSize) {
     firstNTerminals = primesSize;
   }
   /* end generating primes and get number of primes */
@@ -123,35 +127,43 @@ int main(int argc, char* argv[]) {
   #pragma omp parallel for firstprivate(originalAdjList)
   #endif
   #endif
-  for (int i=0;i<firstNTerminals;i++) { // for the number of terminals to be looped over,
-    vector<vector<Vertex>> adjList =  originalAdjList; // make a copy of the adjacency list.
+  // for the number of terminals to be looped over, make a copy of the adjacency list.
+  for (int i=0;i<firstNTerminals;i++) {
+    vector<vector<Vertex>> adjList =  originalAdjList;
     const int startTerminal = primes[i]; // get the node index that is the current start terminal.
     vector<bool> isPrimes = utils::isPrime(n, primes); // generate a boolean array to check against which index is a prime.
 
-    myHeap Unvisited(n, startTerminal); // initialise the priority queue for the steiner heuristic.
+    // initialise the priority queue for the steiner heuristic.
+    myHeap Unvisited(n, startTerminal);
     
-    pair<vector<Edge>,vector<int>> subgraphEdgesWeights = steiner::alg(n, Unvisited, adjList, startTerminal, isPrimes); // calculate the steiner tree using the steiner heuristic.
-    vector<Edge> subgraphEdges = subgraphEdgesWeights.first; // get the steiner subgraph edges, and their respective weights.
+    // calculate the steiner tree.
+    pair<vector<Edge>,vector<int>> subgraphEdgesWeights = steiner::alg(n, Unvisited, adjList, startTerminal, isPrimes); 
+    
+    // get the steiner subgraph edges and their respective weights.
+    vector<Edge> subgraphEdges = subgraphEdgesWeights.first;
     vector<int> subgraphWeights = subgraphEdgesWeights.second;
     
     assert(checker::isTree(subgraphEdges,startTerminal)); // every of these steiner trees found must be a tree...
     
     long objVal = 0;
-    for_each (subgraphWeights.begin(), subgraphWeights.end(), [&] (int n) { // objective value is the sum of the edge weights.
+    // objective value is the sum of the edge weights.
+    for_each (subgraphWeights.begin(), subgraphWeights.end(), [&] (int n) { 
       objVal += n;
+      assert(objVal >= 0); // objective value musn't overflow.
       }
     );
     
     // if openMP is defined.
     #ifdef _OPENMP
-    if (omp_get_num_threads() < nThreadsUsed) { // get the lowest number of threads used in the parallel region.
+    // get the lowest number of threads used in the parallel region.
+    if (omp_get_num_threads() < nThreadsUsed) {
       nThreadsUsed = omp_get_num_threads();
     }
     // use only one thread to update objVals.
     #pragma omp critical
     #endif
     // update the best objective value, steiner subgraph and start terminal if it is less than before.
-    if (objVal<bestObjVal) {
+    if (objVal < bestObjVal) {
       bestObjVal = objVal;
       bestSteinerEdges = subgraphEdges;
       bestStartTerminal = startTerminal;
@@ -182,7 +194,8 @@ int main(int argc, char* argv[]) {
   /* start printing values. */
   cout << "TLEN: " << bestObjVal << endl;
   
-  if (vm.count("showEdges")) { // print the edges of the subgraph if -s is present.
+  // print the edges of the subgraph if -s is present.
+  if (vm.count("showEdges")) {
     cout << "TREE: ";
     for (auto edge=bestSteinerEdges.begin(),end=bestSteinerEdges.end(); edge!=end; edge++) {
       cout << "("<<edge->first<<","<<edge->second<<") ";

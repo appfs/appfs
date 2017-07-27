@@ -27,8 +27,9 @@ pair<vector<Edge>,vector<int>> steiner::alg (int& n, myHeap& Unvisited, vector<v
   
   /* start dijkstra part */
   while (Unvisited.size() > 1) { // while the unvisited priority queue is not empty...
-    Vertex minPair = Unvisited.get_min(); // get the node (index,dist) with the minimum distance on the queue.
-    Unvisited.pop_top(); // remove the minimum value (at the top) of the priority queue.
+    // get the node (index,dist) with the minimum distance on the queue and remove the minimum value (at the top) of the priority queue.
+    Vertex minPair = Unvisited.get_min(); 
+    Unvisited.pop_top();
     int minIdx = minPair.second;
     int minDist = minPair.first;
 
@@ -38,12 +39,15 @@ pair<vector<Edge>,vector<int>> steiner::alg (int& n, myHeap& Unvisited, vector<v
     vector<pair<int,int>> *neighboursOfMinIdx = &adjList[minIdx]; // then get the neighbours of this "minimum" node from the adjacency list.
     
     for(auto currentNeighbour = neighboursOfMinIdx->begin(), end = neighboursOfMinIdx->end(); currentNeighbour!=end; currentNeighbour++) {
-      int neighbour = currentNeighbour->first; // get the node index and edge weight of each neighbour.
+      // get the node index and edge weight of each neighbour.
+      int neighbour = currentNeighbour->first; 
       int dist = currentNeighbour->second;
       
       int newDist = minDist + dist;
-      assert(newDist >= 0); // distances should be larger than zero. Negative distances are most likely due to int overflow.
-      assert(newDist != numeric_limits<int>::max()); // want to make sure that all distances were "touched".
+      // distances should be larger than zero. Negative distances are most likely due to int overflow.
+      assert(newDist >= 0); 
+      // want to make sure that all distances were "touched".
+      assert(newDist != numeric_limits<int>::max()); 
       
       if (newDist < dists[neighbour]) {
 	Unvisited.update_weight(neighbour,newDist); // update its distance to the start terminal to be the newly calculated distance.
@@ -55,14 +59,17 @@ pair<vector<Edge>,vector<int>> steiner::alg (int& n, myHeap& Unvisited, vector<v
 
     /* start steiner heuristic */
     // add each terminal and the edges connecting it to the steiner subgraph onto the subgraph and insert the nodes back to the priority queue.
-    if ((isPrimes[minIdx]) && (minIdx != startTerminal)) { // if the current node is a terminal/prime, and is not the start terminal,
+    if ((isPrimes[minIdx]) && (minIdx != startTerminal)) { // if the current node is a terminal/prime, and is not the start terminal...
       int currentNode = minIdx;
       int pred = parents[currentNode];
       int currentWeight;
       
-      while (!inSubgraph[currentNode]) { // So long as the current node is not in the Steiner-subgraph...
-	Edge edge = make_pair(pred,currentNode); // make an edge out of current node and its parent.
-	currentWeight = dists[currentNode] - dists[pred]; // distance of the current node to its parent (the edge weight) is the shortest distance to the start terminal of the current node, minus that of the parent node.
+      // So long as the current node is not in the Steiner-subgraph...
+      while (!inSubgraph[currentNode]) {
+	// make an edge out of current node and its parent.
+	Edge edge = make_pair(pred,currentNode); 
+	// distance of the current node to its parent (the edge weight) is the shortest distance to the start terminal of the current node, minus that of the parent node.
+	currentWeight = dists[currentNode] - dists[pred]; 
 	
 	// something is very wrong if the parent of the current node is a prime, is not yet in the steiner subgraph, and has non-zero weight. Assert this.
 	assert(!((inSubgraph[pred]==false) && (isPrimes[pred]) && (currentWeight!=0)));
@@ -70,8 +77,10 @@ pair<vector<Edge>,vector<int>> steiner::alg (int& n, myHeap& Unvisited, vector<v
 	// add the edge and its weight to the steiner-subgraph.
 	subgraphEdges.push_back(edge);
 	subgraphWeights.push_back(currentWeight);
-	inSubgraph[currentNode] = true; // add current node to reflect that it is in the steiner-subgraph.
-	dists[currentNode] = 0; // update the distances of the dijkstra algorithm to zero since the current node now belongs to the subgraph.
+	// add current node to reflect that it is in the steiner-subgraph.
+	inSubgraph[currentNode] = true;
+	// update the distances of the dijkstra algorithm to zero since the current node now belongs to the subgraph.
+	dists[currentNode] = 0;
 	
 	Unvisited.insert(make_pair(0,currentNode)); // insert the current node back into the priority queue.
 	

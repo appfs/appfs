@@ -5,7 +5,7 @@ CXX = g++
 CXXFLAGS = -std=c++14 -O3 -march=native -pedantic -Wall
 
 # libraries to use:
-LIBS = -lboost_timer -lboost_program_options -fopenmp
+LIBS = -lboost_timer -lboost_program_options -lboost_system -fopenmp
 
 # find source and object files.
 #SRCS = $(wildcard src/*.cxx)

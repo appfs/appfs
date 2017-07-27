@@ -23,22 +23,28 @@ bool checker::isTree(vector<Edge>& edges, const int& startTerminal) {
   Edge edge;
   int neighbour;
   while(!queue.empty()) {
+    // get this start edge and search the neighbours of the target node...
     edge = queue.front();
-    queue.pop(); // get this start edge and...
-    vector<int> neighbours = graph[edge.second]; // search the neighbours of the target node...
-    for (auto i=neighbours.begin(), end=neighbours.end(); i!=end ; i++) { // for each neighbour of the target node,
+    queue.pop(); 
+    vector<int> neighbours = graph[edge.second];
+    
+    // for each neighbour of the target node, if the neighbour has not been visited, then mark it as visited.
+    for (auto i=neighbours.begin(), end=neighbours.end(); i!=end ; i++) {
       neighbour = *i;
-      if(visited[neighbour] == false) { // if the neighbour has not been visited,
-	visited[neighbour] = true; // then mark it as visited.
-	queue.push(make_pair(edge.second,neighbour)); // then add this edge of "(target node, neighbour node)" onto the queue to be checked next.
+      if(visited[neighbour] == false) {
+	visited[neighbour] = true;
+	// then add this edge of "(target node, neighbour node)" onto the queue to be checked next.
+	queue.push(make_pair(edge.second,neighbour));
       }
-      else if(neighbour != edge.first) { // otherwise, neighbour has been visited. In this case, it MUST be the source node. If not, it is not a tree.
+      // otherwise, neighbour has been visited. In this case, it MUST be the source node. If not, it is not a tree.
+      else if(neighbour != edge.first) {
 	return false;
 	break;
       }
     }
   }
-  return true; // otherwise, if all the checks pass, the graph is a tree.
+  // otherwise, if all the checks pass, the graph is a tree.
+  return true;
 }
 
 /** 
