@@ -1,4 +1,4 @@
-/*
+/**
  *	main.cpp
  *
  * 	\brief     8. und 9. Aufgabe
@@ -40,4 +40,3 @@ int main(int argc, char* argv[]) {
 
 	return EXIT_SUCCESS;
 }
-

@@ -94,7 +94,7 @@ int main(int argc, char* argv[]) {
 	kom -> starteZeitmessung();
 	int minKey = berechneMinimalenKnotenkey(kom, anzahlThreads, terminals, hundertTerminals);
 
-	/*graph g(ecken[minKey], kom -> anzahlEckenGlobal);
+	graph g(ecken[minKey], kom -> anzahlEckenGlobal);
 	if(!g.vollstaendig(hundertTerminals)) {
 		cout << "Einige Terminals fehlen" << endl;
 	}
@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
 	}
 	if(!g.zusammenhaengend()){
 		cout << "Nicht zusammenhaengend" << endl;
-	}*/
+	}
 
 	//ausgabe
 	kom -> ausgabe(ergebnisse[minKey], ecken[minKey]);

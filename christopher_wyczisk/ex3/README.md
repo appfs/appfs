@@ -7,3 +7,7 @@ gcc version 4.9-std=c++14
 # Installiere cppcheck und lcov
 sudo apt-get install cppcheck
 sudo apt-get install lcov 
+
+# Kompelieren und starten
+g++ -std=c++14 ex3.c -o ex3
+./ex3

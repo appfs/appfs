@@ -1,4 +1,4 @@
-/*
+/**
  *  kommunikator.h
  *
  * 	\brief     8. und 9. Aufgabe

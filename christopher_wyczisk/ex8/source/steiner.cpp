@@ -1,4 +1,4 @@
-/*
+/**
  * steiner.cpp
  *
  * 	\brief     8. und 9. Aufgabe
@@ -26,6 +26,10 @@ steiner::steiner(vector<int> gewichteIn, vector<pair<int, int>> eckenIn, unsigne
 
 /**
  * \brief Loest das Steinerproblem.
+ * 
+ * \param int startknoten
+ * 
+ * \return vector<pair<int, int>> ergebnisse
  */
 vector<pair<int, int>> steiner::loesen(unsigned int startknoten) {
 	vector<pair<int, int>> ergebnisse;
@@ -47,6 +51,14 @@ vector<pair<int, int>> steiner::loesen(unsigned int startknoten) {
 
 /**
  * \brief Helper fuer loesen.
+ * 
+ * \param dijkstra dijkstra
+ * \param unsigned int startknoten
+ * \param vector<bool> adj
+ * \param vector<int> lokaleGewichte
+ * \param vector<int> vorgaenger
+ * 
+ * \return vector<pair<int, int>> kanten
  */
 vector<pair<int, int>> steiner::berechneKanten(dijkstra dijkstra, unsigned int startknoten, vector<bool> adj, 	vector<int> lokaleGewichte, vector<int> vorgaenger) {
 	vector<pair<int, int>> kanten;
@@ -71,7 +83,11 @@ vector<pair<int, int>> steiner::berechneKanten(dijkstra dijkstra, unsigned int s
 }
 
 /**
- * \brief berechnet das Terminal mit geringsten Gewchten.
+ * \brief Berechnet das Terminal mit geringsten Gewchten.
+ * 
+ * \param vector<int> gewichte
+ * 
+ * \return int terminalEcke
  */
 int steiner::nextTerminal(vector<int> gewichte) {
 	int terminalEcke = 0;
@@ -92,6 +108,11 @@ int steiner::nextTerminal(vector<int> gewichte) {
 
 /**
  * \brief Helper von primzahlen().
+ * 
+ * \param const std::vector<int>& primzahlen
+ * \param int zahl
+ * 
+ * \return bool hatTeiler
  */
 bool steiner::hatTeiler(const std::vector<int>& primzahlen, int zahl) {
 	bool hatTeiler = false;
@@ -106,8 +127,10 @@ bool steiner::hatTeiler(const std::vector<int>& primzahlen, int zahl) {
 	return hatTeiler;
 }
 
-/*
- * \brief berechnet alle relevanten primzahlen bis AnzahlEkcneGlobal.
+/**
+ * \brief Berechnet alle relevanten primzahlen bis AnzahlEkcneGlobal.
+ * 
+ * \return vector<int> primzahlen
  */
 vector<int> steiner::primzahlen() {
 	vector<int> primzahlen;
@@ -123,6 +146,8 @@ vector<int> steiner::primzahlen() {
 
 /**
  * \brief Getter fuer den objektivenWert
+ * 
+ * \return objektiverWert
  */
 int steiner::gibObjektivenWert(){
 	return objektiverWert;
