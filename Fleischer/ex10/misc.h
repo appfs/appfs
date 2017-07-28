@@ -1,17 +1,6 @@
 #ifndef MISC_H
 #define MISC_H
 
-#define _GNU_SOURCE
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<math.h> 
-#include<assert.h>
-#include<ctype.h>
-#include <fenv.h>
-#include <time.h>
-#include <sys/time.h>
-#include<omp.h>
 
 /**
 * Findes every prime from 2 to a given number.
@@ -19,9 +8,9 @@
 *@return An array wich says if the index number is a prime or not.
 *
 */
-
-size_t* findPrimes(size_t n, int numProcessors){
-	omp_set_num_threads(numProcessors);
+size_t* findPrimes(size_t n, int numThreads){
+	
+	omp_set_num_threads(numThreads);
 	size_t* numbers = malloc(sizeof(size_t)*(n+1));
 	numbers[0] = 0;
 	numbers[1] = 0;
