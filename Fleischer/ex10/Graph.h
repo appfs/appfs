@@ -1,3 +1,9 @@
+/**
+*@file Graph.h
+*@author Sven Fleischer
+*There I've coded everything, which has to do anything with the graph
+*/
+
 #ifndef GRAPH_H
 #define GRAPH_H
 
