@@ -5,7 +5,7 @@
 
  *
  * @section DESCRIPTION
- *
+ * compile with:  gcc -std=c11 -O3 -Wall -Wextra -Wpedantic -LDFLAGS -fopenmp  ex10.c -o ex10 -lm
  * This program parses a graph and parses the longest shortest path from any edge to edge with the index 1.
  */
 
