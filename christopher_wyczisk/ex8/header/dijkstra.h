@@ -1,4 +1,4 @@
-/*
+/**
  * dijkstra.h
  *
  * 	\brief     5. und 7. Aufgabe

@@ -1,4 +1,4 @@
-/*
+/**
  * dijkstra.h
  *
  * 	\brief     5. und 7. Aufgabe
@@ -25,7 +25,7 @@ boost::heap::fibonacci_heap<pair<int, int>, boost::heap::compare<comparator>> he
 /**
  * \brief Konstruktor.
  * 
- * \param gewichteMap Vector of the weights for the given graph
+ * \param gewichte Vector
  * \param ecken
  * \param anzahlEckenGlobal
  */
@@ -40,7 +40,11 @@ dijkstra::dijkstra(vector<int> gewichtMap, vector<std::pair<int, int>> ecken, un
 
 /**
  * \brief Berechnet den Keurzesten laengsten Pfad vom Startknoten aus.
- * \param Startknoten
+ * \param int Startknoten
+ * \param vector<int>$ gewichte
+ * \param vector<int>& vorgaenger
+ * 
+ * \return vector<int> gewichte
  */
 vector<int> dijkstra::berechneKuerzestenPfad(int startKnoten, vector<int>& gewichte, vector<int>& vorgaenger) {
 	initialisiere(startKnoten, gewichte, vorgaenger);
@@ -69,8 +73,6 @@ vector<int> dijkstra::berechneKuerzestenPfad(int startKnoten, vector<int>& gewic
 
 void dijkstra::initialisiere(int startKnoten, vector<int>& gewichte, vector<int>& vorgaenger) {
 	for (unsigned int i = 0; i < anzahlEckenGlobal; i++) {
-		//gewichte.push_back(INT_MAX);
-		//vorgaenger.push_back(-1);
 		adjanzen.push_back(false);
 	}
 	gewichte[startKnoten] = 0;
@@ -79,6 +81,12 @@ void dijkstra::initialisiere(int startKnoten, vector<int>& gewichte, vector<int>
 
 /**
  * \brief Hier updaten wir die Gewichte.
+ * 
+ * \param vector<pair<int, int>> adjEcken
+ * \param int aktuelleDistanze
+ * \param int aktuelleEcke
+ * \param vector<int>& gewichte
+ * \param vector<int>& vorgaenger
  */
 void dijkstra::updateGewichte(vector<pair<int, int>> adjEcken, int aktuelleDistanze, int aktuelleEcke, vector<int>& gewichte, vector<int>& vorgaenger) {
 	for (const pair<int, int> ecke : adjEcken) {
@@ -99,6 +107,9 @@ void dijkstra::updateGewichte(vector<pair<int, int>> adjEcken, int aktuelleDista
 
 /**
  * \brief Setzt Ecken Gewicht auf Null und gibt das alte Gewicht zurueck.
+ * 
+ * \param int startEcke
+ * \param endEcke
  */
 int dijkstra::initialisierseEcken(int startEcke, int endEcke) {
 	std::vector<pair<int, int>> ecken = sortierteEcken[startEcke];

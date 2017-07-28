@@ -1,3 +1,12 @@
+/**
+ *  kommunikator.cpp
+ *
+ * 	\brief     8. und 9. Aufgabe
+ *  \details   Kuemmert sich um die Auswertung und wWitergabe der vom Anwender eingegebenen Daten.
+ *  \author    Christopher Wyczisk
+ *  \date      20.07.2017
+ */
+ 
 #include "../header/kommunikator.h"
 
 /**
@@ -6,6 +15,8 @@
  * \param argc
  * \param argv
  * \param infile input Graph-File
+ * 
+ * \return bool graphEinlesenWarErfolgreich
  */
 bool kommunikator::graphEinlesen(int argc, char** argv, ifstream& file) {
 	if(argc <= 1) {
@@ -27,6 +38,8 @@ bool kommunikator::graphEinlesen(int argc, char** argv, ifstream& file) {
  * Erstellt den Graphen.
  * 
  * \param file
+ * 
+ * \return warErfolgreich
  */
 bool kommunikator::graphErstellen(ifstream& file) {
 	stringstream str;
@@ -60,6 +73,8 @@ bool kommunikator::graphErstellen(ifstream& file) {
  * \brief Liesst die Startknoten ein die beim starten des Programs als Argumente
  * der Form --start 1 2 3 4 mitgegeben wurden und gibt diese zurueck. Sollte kein
  * Startknoten angegeben worden sein, so wird der Knoten 2 als Default zurueckgegeben.
+ * 
+ * \return vector<int> startknoten
  */
 vector<int> kommunikator::startknotenVonKonsole(int argc, char** argv) {
 	vector<int> startknoten;
@@ -84,7 +99,7 @@ vector<int> kommunikator::startknotenVonKonsole(int argc, char** argv) {
 		return startknoten;
 	}
 
-	if(vm.count("startknoten") == 0){ 
+	if(vm.count("startknoten") == 0) { 
 		cout << "Default Startknoten 2, erste Primzahl" << endl;
 		startknoten.push_back(2);
 	} else {
@@ -96,6 +111,10 @@ vector<int> kommunikator::startknotenVonKonsole(int argc, char** argv) {
 
 /**
  * \brief Schreibt die Ergebnisse in die Konsole.
+ * 
+ * \param vector<pair<int, int>> ergebnis
+ * \param int objektiverWert
+ * \param int startknoten
  */
 void kommunikator::ergebnisAusgabe(vector<pair<int, int>> ergebnis, int objektiverWert, int startknoten) {
 	cout << "Der Minimaler Spannbaum ergebnit sich mit folgendem Startknoten: " << startknoten << endl;
