@@ -145,7 +145,6 @@ int get_steiner_tree(
 	assert( source < num_nodes );
 
 	unsigned int i;
-	unsigned int j;
 
 	unsigned int* heap = NULL;
 	unsigned int* heap_index = NULL;
@@ -181,8 +180,6 @@ int get_steiner_tree(
 
 	unsigned int count = 0;
 	unsigned int current;
-	unsigned int h;
-	unsigned int p;
 	unsigned int tail;
 	unsigned int head;
 	unsigned int root;
