@@ -1,3 +1,9 @@
+/**
+*@file misc.h
+*@author Sven Fleischer
+*There I've coded a function, which finds prime numbers 
+*/
+
 #ifndef MISC_H
 #define MISC_H
 
