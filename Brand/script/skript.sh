@@ -1,22 +1,21 @@
 #!/bin/bash
-
-
-#for graph in "$graphDirdir"/*.gph ; do 
-#		  picname=$(basename "$graph")
-#		  echo "Bearbeite Bild:    $picname"
-#		  convert "$pic" -colorspace Gray "$outputdir/$picname"
-#	done
-
+# INFORMATION
+#Script creates output.txt in output folder
+#output.txt reads as follows: each line consist of follwing information:
+#name threads filename TLEN TIME WALL
+#
+#Python script to plot data is under construction
+# /INFORMATION
 
 # Variablendefinition
-gitDir=/home/michael/Dokumente/Studium/MA/Module/APfS/git/appfs
-graphDir=/home/michael/Dokumente/Studium/MA/Module/APfS/git/appfs/SP
-outputDir=/home/michael/Dokumente/Studium/MA/Module/APfS/extra/skript/out
+gitDir=/...pathTO/git/appfs
+graphDir=/...pathTO/git/appfs/SP
+outputDir=/pathTOoutputFOLDER/out
 
 no_threads=(1 2 4 8)
 
 #f.e. folder in appfs go into ~name/ex10
-echo -e "START \n"
+#echo -e "START \n"
 
 #echo "Graph_directory: $graphDir"
 #echo $gitDir
@@ -62,9 +61,9 @@ for member in $gitDir/*; do
         done # threads_i
     else
         #echo -e "ERROR NO EXECUTABLE WAS CREATED IN $gitDir/$member/ex10 \n"
-        echo -e "ERROR(no executable generated) in $member\n"
+        #echo -e "ERROR(no executable generated) in $member\n"
         continue
     fi
 done # member    
 
-echo -e "DONE \n"
+#echo -e "DONE \n"
