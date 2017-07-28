@@ -3,7 +3,14 @@ STARTS=100
 doc: ex10.c Graph.h misc.h dataStruct.h
 	doxygen -s -g ex10.docu
 	doxygen ex10.docu
-	
+
+coverage: ex10.1.c
+	gcc -std=c11 -O3 -Wall -g -Wextra -Wpedantic -LDFLAGS -fopenmp ex10.1.c -o ex10.1 -lm --coverage
+	./ex10.1 ../SP/world666.gph 100 
+	gcov -p -s source ex10.1.c
+	lcov --capture --directory ex10.1.gcno --output-file coverage.info 
+	genhtml coverage.info --output-directory coverage
+
 check: ex10.c
 	cppcheck --enable=all ex10.c
 	
