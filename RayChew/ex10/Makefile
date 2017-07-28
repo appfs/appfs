@@ -34,6 +34,11 @@ CPPCHECKFLAGS = --enable=all --inconclusive --std=posix
 all:
 	$(MAKE) -j$(THREADS) $(OBJS)
 	$(MAKE) $(TARGET)
+	
+# runs the test specified in the exercise requirement.
+test:
+	$(MAKE) -j$(THREADS) $(OBJS)
+	$(MAKE) $(TARGET)
 	./$(TARGET) $(HOME)/SP/$(FILE)
 
 # if threads is not defined, then compile without passing the threads number as a compiler option.
@@ -58,24 +63,25 @@ doc:
 	doxygen -g
 	doxygen Doxyfile
 	sed -i 's/PROJECT_NAME.*=.*/$/PROJECT_NAME = "Exercise 10"/' Doxyfile
-	sed -i 's/EXTRACT_ALL.*=.*/$/EXTRACT_ALL = NO/' Doxyfile
-	sed -i 's/EXTRACT_PRIVATE.*=.*/$/EXTRACT_PRIVATE = NO/' Doxyfile
+	sed -i 's/EXTRACT_ALL.*=.*/$/EXTRACT_ALL = YES/' Doxyfile
+	sed -i 's/EXTRACT_PRIVATE.*=.*/$/EXTRACT_PRIVATE = YES/' Doxyfile
+	sed -i 's/BUILTIN_STL_SUPPORT.*=.*/$/BUILTIN_STL_SUPPORT = YES/' Doxyfile
 	# if more than one doxygen-readable file is present in directory:
-	(cat Doxyfile; echo "INPUT = $(TARGET).cxx") | doxygen - 
+	(cat Doxyfile; echo "INPUT = src/") | doxygen - 
 	# otherwise:
 	# doxygen Doxyfile
 	
 # coverage test
 coverage:
-	$(MAKE) $(COVERAGEOBJS)
+	$(MAKE) -j4 $(COVERAGEOBJS)
 	$(CXX) $(CXXFLAGS) --coverage $(COVERAGEOBJS) src/$(TARGET).cxx -o $(TARGET) $(LIBS)
 	mkdir -p gcov
-	./$(TARGET) $(FILE) 1 --help
-	./$(TARGET) $(FILE) 100 -s
+	./$(TARGET) $(HOME)/SP/$(FILE) 1 --help
+	./$(TARGET) $(HOME)/SP/$(FILE) 10 -s
+	./$(TARGET) $(HOME)/SP/b15.gph
 	mv $(TARGET).gcno $(TARGET).gcda gcov
 	lcov -t "result" -o result.info -c -d gcov
 	genhtml -o result result.info
-	rm -f $(GCNOS) $(GCDAS) $(COVERAGEOBJS) result.info
 
 # static checker
 check:
@@ -84,5 +90,8 @@ check:
 	# otherwise, if cppcheck is an installed library:
 	cppcheck $(CPPCHECKFLAGS) src/$(TARGET).cxx
 
+cleancoverage:
+	rm -f $(GCNOS) $(GCDAS) $(COVERAGEOBJS) result.info
+	
 clean:
 	rm -f $(OBJS) $(GCNOS) $(GCDAS) $(COVERAGEOBJS) result.info

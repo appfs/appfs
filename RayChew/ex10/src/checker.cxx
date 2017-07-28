@@ -1,3 +1,12 @@
+/** 
+ *  @file    checker.cxx
+ *  @author  Ray Chew
+ *  @date    20 July 2017
+ *  
+ *  @brief checker namespace containing the functions to check solutions of steiner subgraph.
+ *
+ */
+
 #include "checker.h"
 
 using namespace std;
@@ -5,7 +14,7 @@ using namespace std;
 /** 
  *   @brief  Checks if graph is a tree (acyclic). Return true if is tree and false otherwise.
  *  
- *   @param  edges is a vector<pair<int,int>> of edges for a graph.
+ *   @param  edges is a vector<Edge> of edges for a graph.
  *   @param  startTerminal is a vertex index on the graph.
  *   @return bool
  */  
@@ -50,7 +59,7 @@ bool checker::isTree(vector<Edge>& edges, const int& startTerminal) {
 /** 
  *   @brief  Checks if graph contains all terminals. Return true if is all terminals are present and false otherwise.
  *  
- *   @param  edges is a vector<pair<int,int>> of edges for a graph.
+ *   @param  edges is a vector<Edge> of edges for a graph.
  *   @param  primes is the list of terminals for the graph.
  *   @return bool
  */  

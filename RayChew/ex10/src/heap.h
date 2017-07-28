@@ -1,12 +1,24 @@
+/** 
+ *  @file    heap.h
+ *  @author  Ray Chew
+ *  @date    20 July 2017
+ *  
+ *  @brief Header file for Binary Heap structure.
+ *
+ */
+
 #include "utils.h"
 
 #ifndef MYHEAP_H
 #define MYHEAP_H
 
+/**
+ * @brief myHeap class: initialises an instance of a binary heap with methods: pop_top(), get_min(), insert(), update_weight(), size().
+ */
 class myHeap {
 private:
-  std::vector<Vertex> tree;
-  std::vector<int> positions;
+  std::vector<Vertex> tree; ///< vector<Vertex> to store all nodes on the graph as std::pair of (weight,index).
+  std::vector<int> positions; ///< vector<int> to store the position in the heap of a node on the graph.
   
   void checkDown(int idx);
   
