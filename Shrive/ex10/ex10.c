@@ -8,21 +8,14 @@
 #include <ctype.h>
 #include <limits.h>
 #include <math.h>
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
-#include <omp.h>
 
 #include "ex10.h"
-
-#define EXT_SIZE	(1024*1024)
-#define MAX_LINE_LEN	512
-#define INTEGER		long long int
-#define INTEGER_MAX	LLONG_MAX
-#define error_exit(msg)	error_exit_fun(msg, __FILE__, __LINE__)
-
 
 /**
 	utility function that simplifies error handling
@@ -30,33 +23,33 @@
 void error_exit_fun(
 	const char* const msg,		/**< message to be displayed */
 	const char* const file,		/**< file name */
-	const INTEGER lineno	/**< line number */
+	const unsigned int lineno	/**< line number */
 	)
 {
-	assert(NULL != msg);
-	assert(NULL != file);
+	assert( NULL != msg );
+	assert( NULL != file );
 
-	fprintf(stderr, "%s(%lld) ", file, lineno);
-	perror(msg);
-	exit(EXIT_FAILURE);
+	fprintf( stderr, "%s(%u) ", file, lineno );
+	perror( msg );
+	exit( EXIT_FAILURE );
 }
 
 /**
 	sifts an entry up through binary heap
  */
 int sift_up(
-	INTEGER* heap,		/**< nodes in heap */
-	INTEGER* distance,		/**< distance of nodes in heap */
-	INTEGER* index,		/**< index of nodes in heap */
-	INTEGER current		/**< current position of node in heap */
+	unsigned int* heap,		/**< nodes in heap */
+	INTEGER* distance,	/**< distance of nodes in heap */
+	unsigned int* index,		/**< index of nodes in heap */
+	unsigned int current		/**< current position of node in heap */
 	)
 {
 	// store child node in temp variable
-	INTEGER temp_a = heap[current];
+	unsigned int temp_a = heap[current];
 	// store distance to child node in temp variable
 	INTEGER dist = distance[temp_a];
-	INTEGER parent;
-	INTEGER temp_b;
+	int parent;
+	unsigned int temp_b;
 
 	while( 0 < current )
 	{
@@ -90,17 +83,17 @@ int sift_up(
 	sifts an entry down through binary heap
  */
 int sift_down(
-	INTEGER* heap,		/**< nodes in heap */
-	INTEGER* distance,		/**< distance of nodes in heap */
-	INTEGER* index,		/**< index of nodes in heap */
-	INTEGER current,		/**< current position of node in heap */
-	const INTEGER size		/**< size of heap */
+	unsigned int* heap,		/**< nodes in heap */
+	INTEGER* distance,	/**< distance of nodes in heap */
+	unsigned int* index,		/**< index of nodes in heap */
+	unsigned int current,		/**< current position of node in heap */
+	const int size		/**< size of heap */
 	)
 {
 	INTEGER dist;
-	INTEGER child;
-	INTEGER temp_a;
-	INTEGER temp_b;
+	int child;
+	unsigned int temp_a;
+	unsigned int temp_b;
 
 	// calculate location of child in heap array
 	child = current + current + 1;
@@ -118,7 +111,7 @@ int sift_down(
 		if( child + 1 <= size )
 		{
 			// is the distance to the second child less than that of the first?
-			if( distance[heap[child + 1]] < distance[temp_b] )
+			if( distance[ heap[child + 1] ] < distance[temp_b] )
 			{
 				child++;
 				// replace first child node with second child node
@@ -146,23 +139,77 @@ int sift_down(
 	return 0;
 }
 
-#ifdef NDEBUG
+#ifndef NDEBUG
 /**
 	assesses validity of heap index
  */
-INTEGER is_heap_index_valid(
-	INTEGER* heap,		/**< nodes in heap */
-	INTEGER* index,		/**< index of nodes in heap */
-	const INTEGER size		/**< size of heap */
+int is_heap_index_valid(
+	unsigned int* heap,		/**< nodes in heap */
+	unsigned int* index,		/**< index of nodes in heap */
+	const int size			/**< size of heap */
 	)
 {
-	INTEGER sum = 0;
-	for( INTEGER i = 0; i <= size; i++ )
+	unsigned int sum = 0;
+	for( int i = 0; i <= size; i++ )
 	{
 		sum += ( heap[ index[heap[i]] ] != heap[i] );
 	}
+	return ( 0 == sum);
+}
 
-	return sum;
+int is_heap_order_valid(
+	unsigned int* heap,
+	INTEGER* distance,
+	const int size
+	)
+{
+	unsigned int sum = 0;
+	int current = 0;
+	int child = current + current + 1;
+	while( child <= size )
+	{
+		sum += ( distance[ heap[ current ] ] > distance[ heap [ child ] ] );
+		child++;
+		if( child <= size )
+		{
+			sum += ( distance[ heap[ current ] ] > distance[ heap [ child ] ] );
+		}
+		current++;
+		child= current + current + 1;
+	}
+	return ( 0 == sum );
+}
+
+int is_tree_valid(
+	unsigned int* predecessor,
+	unsigned int* terminal,
+	unsigned int* source,
+	const unsigned int n_nodes,
+	const unsigned int n_term
+	)
+{
+	int next;
+	int current;
+	for( unsigned int i = 0; i < n_term; i++ )
+	{
+		current = terminal[i];
+		next = predecessor[ current ];
+		while( INT_MAX > next )
+		{
+			current = next;
+			next = predecessor[ current ];
+			if( current == next )
+				return -1;
+		}
+		source[i] = current;		
+	}
+	// there should only be one source
+	unsigned int sum = 0;
+	for( unsigned int i = 1; i < n_term; i++ )
+	{
+		sum += ( source[0] != source[i] );
+	}
+	return ( 0 == sum );
 }
 #endif
 
@@ -172,8 +219,8 @@ INTEGER is_heap_index_valid(
 int steiner(
 	struct graph* G,	/**< static graph attributes */
 	struct graph* H,	/**< variable graph attributes */
-	INTEGER* is_prime,		/**< array where entries are 1 when index is prime */
-	INTEGER source		/**< source node */
+	unsigned int* is_prime,		/**< array where entries are 1 when index is prime */
+	unsigned int source		/**< source node */
 	)
 {
 	assert( G );
@@ -189,21 +236,21 @@ int steiner(
 	// datastructure used is a binary heap
 	// index 0 is highest priority
 	// if node not on heap it has lowest priority
-	INTEGER* heap = NULL;
-	heap = malloc( G->number_of_nodes * sizeof(INTEGER) );
-	INTEGER* index_on_heap = NULL;
-	index_on_heap = malloc( G->number_of_nodes * sizeof(INTEGER) );
+	unsigned int* heap = NULL;
+	heap = malloc( G->number_of_nodes * sizeof(unsigned int) );
+	unsigned int* index_on_heap = NULL;
+	index_on_heap = malloc( G->number_of_nodes * sizeof(unsigned int) );
 
-	for( INTEGER i = 0; i < G->number_of_nodes; i++ )
+	for( unsigned int i = 0; i < G->number_of_nodes; i++ )
 	{
 		// heap entry is initially empty
 		// meaning all vetrices have lowest priority
-		heap[i] = -1;
-		index_on_heap[i] = -1;
+		heap[i] = INT_MAX;
+		index_on_heap[i] = INT_MAX;
 		// the vetrex's predecessor in shortest path tree is unknown
-		H->predecessor[i] = -1;
+		H->predecessor[i] = INT_MAX;
 		// the vetre's predecessor in steiner tree is unknown
-		H->tree_pred[i] = -1;
+		H->tree_pred[i] = INT_MAX;
 		// the vetrex's distance from source is assumed to be infinite
 		H->distance[i] = INTEGER_MAX;
 	}
@@ -214,17 +261,17 @@ int steiner(
 	heap[0] = source;
 	index_on_heap[source] = 0;
 	// largest valid heap index is set to 0
-	INTEGER size_of_heap = 0;
+	int size_of_heap = 0;
 
 	// tempary variables for storing edge attributes 
-	INTEGER tail;
-	INTEGER head;
+	unsigned int tail;
+	unsigned int head;
 	INTEGER dist;
-	INTEGER index_of_neighbour;
-	INTEGER root;
+	unsigned int index_of_neighbour;
+	unsigned int root;
 
-	INTEGER close;
-	INTEGER next;
+	unsigned int close;
+	unsigned int next;
 
 	H->sum = 0;
 	H->count = 0;
@@ -244,64 +291,62 @@ int steiner(
 		size_of_heap--;
 		// sift the replacement vetrex down in the heap 
 		// until it is at it's correct place in the priority queue
-		#ifdef NDEBUG
-		assert( 0 == is_heap_index_valid(heap, index_on_heap, size_of_heap) );
-		#endif
 		sift_down( heap, H->distance, index_on_heap, 0, size_of_heap );
-		#ifdef NDEBUG
-		assert( 0 == is_heap_index_valid(heap, index_on_heap, size_of_heap) );
-		#endif
+		assert( is_heap_index_valid( heap, index_on_heap, size_of_heap ) );
+		assert( is_heap_order_valid( heap, H->distance, size_of_heap ) );
+
 		// if tail is terminal add all nodes on shortest path to source to subtree
 		// i.e. set distance to zero and then add to heap or decrease key
 		if( 1 == is_prime[tail] )
 		{
+			// increase count of terminals in subtree
 			H->count++;
-			close = tail;
-			next = H->predecessor[close];
-			H->sum += H->distance[close];
-
+			// add weights on path from subtree to terminal to objective value
+			H->sum += H->distance[tail];
+			// ensure we don't add this terminal twice 
 			is_prime[tail] = 0;
 
-			while( -1 != next )
+			// loop through nodes on shortest path to subtree
+			close = tail;
+			next = H->predecessor[close];
+			while( INT_MAX != next )
 			{
+				// record this node as child nodes' predecessor
 				H->tree_pred[close] = next;
-				if( -1 == index_on_heap[close] )
+				// is the node already on heap?
+				if( INT_MAX == index_on_heap[close] )
 				{
-					// add node
+					// add node with distance zero
 					size_of_heap++;
 					heap[size_of_heap] = close;
 					index_on_heap[close] = size_of_heap;
 					H->distance[close] = 0;
-					#ifdef NDEBUG
-					assert( 0 == is_heap_index_valid(heap, index_on_heap, size_of_heap) );
-					#endif
+
 					sift_up( heap, H->distance, index_on_heap, size_of_heap );
-					#ifdef NDEBUG
-					assert( 0 == is_heap_index_valid(heap, index_on_heap, size_of_heap) );
-					#endif
+					assert( is_heap_index_valid( heap, index_on_heap, size_of_heap ) );
+					assert( is_heap_order_valid( heap, H->distance, size_of_heap ) );
 				}
 				else
 				{
 					// node already on heap, set distance to zero and sift up from current possition
 					H->distance[close] = 0;
-					
-					#ifdef NDEBUG
-					assert( 0 == is_heap_index_valid(heap, index_on_heap, size_of_heap) );
-					#endif
-					sift_up( heap, H->distance, index_on_heap, index_on_heap[close] );
-					#ifdef NDEBUG
-					assert( 0 == is_heap_index_valid(heap, index_on_heap, size_of_heap) );
-					#endif
-				}
 
+					sift_up( heap, H->distance, index_on_heap, index_on_heap[close] );
+					assert( is_heap_index_valid( heap, index_on_heap, size_of_heap ) );
+					assert( is_heap_order_valid( heap, H->distance, size_of_heap ) );
+				}
+				// move along shortest path toward subtree
 				close = next;
 				next = H->predecessor[close];
 			}
+			// are all terminals connected?
+			if( H->count == G->number_of_terminals )
+				break;
 		}
-		
+
 
 		// for each of the tail's neighbours we do the following
-		for( INTEGER i = 0; i < G->number_of_neighbours[tail]; i++ )
+		for( unsigned int i = 0; i < G->number_of_neighbours[tail]; i++ )
 		{
 			index_of_neighbour = G->index_of_first_neighbour[tail]+i;
 			// set the current neighbour as the temporary head
@@ -316,7 +361,7 @@ int steiner(
 				// update the heads predecessor
 				H->predecessor[head] = tail;
 				// is the current head already on heap?
-				if( index_on_heap[head] == -1 )
+				if( index_on_heap[head] == INT_MAX )
 				{	
 					// add head at bottom of heap
 					size_of_heap++;
@@ -325,27 +370,20 @@ int steiner(
 					index_on_heap[head] = size_of_heap;
 					// sift head upwards in heap
 					// until at correct place in priority queue
-					#ifdef NDEBUG
-					assert( 0 == is_heap_index_valid(heap, index_on_heap, size_of_heap) );
-					#endif
 					sift_up( heap, H->distance, index_on_heap, size_of_heap );
-					#ifdef NDEBUG
-					assert( 0 == is_heap_index_valid(heap, index_on_heap, size_of_heap) );
-					#endif
+					assert( is_heap_index_valid( heap, index_on_heap, size_of_heap ) );
+					assert( is_heap_order_valid( heap, H->distance, size_of_heap ) );
 				}
 				else
 				{
 					// decrease key
-					#ifdef NDEBUG
-					assert( 0 == is_heap_index_valid(heap, index_on_heap, size_of_heap) );
-					#endif
 					sift_up( heap, H->distance, index_on_heap, index_on_heap[head] );
-					#ifdef NDEBUG
-					assert( 0 == is_heap_index_valid(heap, index_on_heap, size_of_heap) );
-					#endif
+					assert( is_heap_index_valid( heap, index_on_heap, size_of_heap ) );
+					assert( is_heap_order_valid( heap, H->distance, size_of_heap ) );
 				}
 			}					
-		}		
+		}
+
 	}
 	free( heap );
 	free( index_on_heap );
@@ -355,26 +393,26 @@ int steiner(
 /**
 	sets entry at index of prime numbers to 1
  */
-INTEGER get_primes(
-	INTEGER* is_prime,		/**< allocate memory for this array of size max and set the memory to zero */
-	INTEGER max 		/**< size of array is_prime, the largest number to be assessed for primality */
+int get_primes(
+	unsigned int* is_prime,		/**< allocate memory for this array of size max and set the memory to zero */
+	unsigned int max 		/**< size of array is_prime, the largest number to be assessed for primality */
 	)
 {
-	INTEGER rest;
+	unsigned int rest;
 
 	is_prime[2] = 1;
-	INTEGER count = 1;
-	INTEGER last_div;
-	INTEGER i;
-	INTEGER j;
-	#ifdef THREADS
-		#pragma omp parallel for default(none) shared(is_prime, max, count) private(i, j, last_div, rest) num_threads(THREADS)
-	#else
-		#pragma omp parallel for default(none) shared(is_prime, max, count) private(i, j, last_div, rest) 
-	#endif
-	for( i = 3; i <= max; i += 2 )
+	unsigned int count = 1;
+	unsigned int last_div;
+	unsigned int i;
+	unsigned int j;
+#ifdef THREADS
+	#pragma omp parallel for default(none) shared(is_prime, max, count) private(i, j, last_div, rest) num_threads(THREADS)
+#else
+	#pragma omp parallel for default(none) shared(is_prime, max, count) private(i, j, last_div, rest) 
+#endif
+	for( i = 3; i < max; i += 2 )
 	{
-		last_div = (INTEGER) ceil( sqrt(i) );
+		last_div = (unsigned int) ceil( sqrt(i) );
 		for( j = 2; j <= last_div ; j++ )
 		{
 			rest = i % j;
@@ -395,7 +433,10 @@ INTEGER get_primes(
 /**
 	reads data from file storing nodes and weights in graph structure. then calls dijkstra's algorithm and assesses longest shortes path
  */
-int main( int argc, const char* const* const argv )
+int main( 
+	int argc, 
+	const char* const* const argv 
+	)
 {
 	if( argc < 2 )
 	{
@@ -416,7 +457,6 @@ int main( int argc, const char* const* const argv )
 	G->head = NULL;
 	G->edge_weight = NULL;
 	G->predecessor = NULL;
-	G->distance = NULL;
 	G->sorted_heads = NULL;
 	G->sorted_weights = NULL;
 	G->number_of_neighbours = NULL;
@@ -425,8 +465,8 @@ int main( int argc, const char* const* const argv )
 	G->number_of_nodes = 0;
 	G->number_of_edges = 0;
 
-	G->tail = malloc( array_of_edges_length * sizeof(INTEGER) );
-	G->head = malloc( array_of_edges_length * sizeof(INTEGER) );
+	G->tail = malloc( array_of_edges_length * sizeof(unsigned int) );
+	G->head = malloc( array_of_edges_length * sizeof(unsigned int) );
 	G->edge_weight = malloc( array_of_edges_length * sizeof(INTEGER) );
 	if( NULL == G->tail || NULL == G->head || NULL == G->edge_weight )
 		error_exit( "malloc: " );
@@ -437,7 +477,7 @@ int main( int argc, const char* const* const argv )
 	if( NULL == fp )
 		error_exit( "fopen: " );
 
-	INTEGER lineno = 0;
+	unsigned int lineno = 0;
 	char line[MAX_LINE_LEN];
 
 	fgets( line, sizeof(line), fp );
@@ -455,7 +495,7 @@ int main( int argc, const char* const* const argv )
 
 	assert( '\0' != *s );
 	
-	int ret = sscanf( s, "%lld %lld", &G->number_of_nodes, &G->number_of_edges );
+	int ret = sscanf( s, "%u %u", &G->number_of_nodes, &G->number_of_edges );
 	assert( 2 == ret );
 
 	// undirected graph
@@ -463,8 +503,8 @@ int main( int argc, const char* const* const argv )
 	// unused node 0
 	G->number_of_nodes++;
 
-	G->number_of_neighbours = calloc( G->number_of_nodes, sizeof(INTEGER) );
-	G->index_of_first_neighbour = calloc( G->number_of_nodes, sizeof(INTEGER) );
+	G->number_of_neighbours = calloc( G->number_of_nodes, sizeof(unsigned int) );
+	G->index_of_first_neighbour = calloc( G->number_of_nodes, sizeof(unsigned int) );
 	if( NULL == G->number_of_neighbours || NULL == G->index_of_first_neighbour )
 		error_exit( "malloc: " );
 	
@@ -486,25 +526,25 @@ int main( int argc, const char* const* const argv )
 		if( '\0' == *s )
 			continue;
 
-		INTEGER temp_tail = 0;
-		INTEGER temp_head = 0;
+		unsigned int temp_tail = 0;
+		unsigned int temp_head = 0;
 		INTEGER temp_edge_weight = INTEGER_MAX;
 
-		ret = sscanf( s, "%lld %lld %lld", &temp_tail, &temp_head, &temp_edge_weight );
+		ret = sscanf( s, "%u %u %llu", &temp_tail, &temp_head, &temp_edge_weight );
 
 		if( 3 != ret )
 		{
-			fprintf( stderr, "\nWarning:  Line %lld, sscanf returned %d != 3\n", lineno, ret );
+			fprintf( stderr, "\nWarning:  Line %u, sscanf returned %u != 3\n", lineno, ret );
 			continue;
 		}
 		if( 0 > temp_tail || 0 > temp_head )
 		{
-			fprintf( stderr, "\nWarning: Line %lld, tail = %lld, head = %lld\n", lineno, temp_tail, temp_head );
+			fprintf( stderr, "\nWarning: Line %u, tail = %u, head = %u\n", lineno, temp_tail, temp_head );
 			continue;
 		}
-		if( 0 > temp_edge_weight )
+		if( 2000000000 <= temp_edge_weight )
 		{
-			fprintf( stderr, "\nWarning: Line %lld, edge_weight = %lld\n", lineno, temp_edge_weight ); 
+			fprintf( stderr, "\nWarning: Line %u, edge_weight = %llu\n", lineno, temp_edge_weight ); 
 			continue;
 		}
 
@@ -513,8 +553,8 @@ int main( int argc, const char* const* const argv )
 		{
 			array_of_edges_length += EXT_SIZE;
 
-			G->tail = realloc( G->tail, array_of_edges_length * sizeof(INTEGER) );
-			G->head = realloc( G->head, array_of_edges_length * sizeof(INTEGER) );
+			G->tail = realloc( G->tail, array_of_edges_length * sizeof(unsigned int) );
+			G->head = realloc( G->head, array_of_edges_length * sizeof(unsigned int) );
 			G->edge_weight = realloc( G->edge_weight, array_of_edges_length * sizeof(INTEGER) );
 			if( NULL == G->tail || NULL == G->head || NULL == G->edge_weight )
 				error_exit("realloc: ");
@@ -537,8 +577,8 @@ int main( int argc, const char* const* const argv )
 		{
 			array_of_edges_length += EXT_SIZE;
 
-			G->tail = realloc( G->tail, array_of_edges_length * sizeof(INTEGER) );
-			G->head = realloc( G->head, array_of_edges_length * sizeof(INTEGER) );
+			G->tail = realloc( G->tail, array_of_edges_length * sizeof(unsigned int) );
+			G->head = realloc( G->head, array_of_edges_length * sizeof(unsigned int) );
 			G->edge_weight = realloc( G->edge_weight, array_of_edges_length * sizeof(INTEGER) );
 			if ( NULL == G->tail || NULL == G->head || NULL == G->edge_weight )
 				error_exit( "realloc: " );
@@ -560,20 +600,20 @@ int main( int argc, const char* const* const argv )
 		error_exit("fclose: ");
 
 	// calculate index of first neighbour for sorted lists
-	for( INTEGER i = 1; i < G->number_of_nodes; i++ )
+	for( unsigned int i = 1; i < G->number_of_nodes; i++ )
 		G->index_of_first_neighbour[i] = G->index_of_first_neighbour[i - 1] + G->number_of_neighbours[i - 1];
 
-	INTEGER* neighbours_found = NULL;
-	neighbours_found = calloc( G->number_of_nodes, sizeof(INTEGER) );
-	G->sorted_heads = malloc( G->number_of_edges * sizeof(INTEGER) );
+	unsigned int* neighbours_found = NULL;
+	neighbours_found = calloc( G->number_of_nodes, sizeof(unsigned int) );
+	G->sorted_heads = malloc( G->number_of_edges * sizeof(unsigned int) );
 	G->sorted_weights = malloc( G->number_of_edges * sizeof(INTEGER) );
 	if( NULL == neighbours_found || NULL == G->sorted_heads || NULL == G->sorted_weights )
 		error_exit( "malloc/calloc: " );
 
-	INTEGER tail;
-	INTEGER index;
 	// sort edges by tails
-	for( INTEGER i = 0; i < G->number_of_edges; i++ )
+	unsigned int tail;
+	unsigned int index;
+	for( unsigned int i = 0; i < G->number_of_edges; i++ )
 	{
 		tail = G->tail[i];
 		index = G->index_of_first_neighbour[tail];
@@ -581,135 +621,157 @@ int main( int argc, const char* const* const argv )
 		G->sorted_weights[index + neighbours_found[tail]] = G->edge_weight[i];
 		neighbours_found[tail] += 1;
 	}
+
+#ifndef NDEBUG
+	unsigned int total_neighbours = 0;
+	for( unsigned int i = 0; i < G->number_of_nodes; i++ )
+		total_neighbours += neighbours_found[i];
+
+	assert( G->number_of_edges == total_neighbours );
+#endif
+
+
 	free(neighbours_found);
 	free( G->tail );
 	free( G->head );
 	free( G->edge_weight );
 
 	// calculate prime numbers
-	INTEGER* is_prime = NULL;
-	is_prime = calloc( G->number_of_nodes, sizeof(INTEGER) );
-
-	// G->number_of_nodes - 1 as not counting from 0
-	INTEGER number_of_terminals = get_primes( is_prime, G->number_of_nodes - 1 );
-	INTEGER* terminals = NULL;
-	terminals = malloc( number_of_terminals * sizeof(INTEGER) );
+	unsigned int* is_prime = NULL;
+	is_prime = calloc( G->number_of_nodes, sizeof(unsigned int) );
+	G->number_of_terminals = get_primes( is_prime, G->number_of_nodes );
+	// create array of terminal nodes
+	unsigned int* terminals = NULL;
+	terminals = malloc( G->number_of_terminals * sizeof(unsigned int) );
 	if( NULL == terminals || NULL == is_prime )
 		error_exit( "malloc: " );
 
-	INTEGER k = 0;
-	for( INTEGER i = 0; i < G->number_of_nodes; i++ )
+	unsigned int k = 0;
+	for( unsigned int i = 0; i < G->number_of_nodes; i++ )
 		if( 1 == is_prime[i] )
 		{
 			terminals[k] = i;
 			k++;
 		}
 
-	assert( k == number_of_terminals );
+	assert( k == G->number_of_terminals );
 
-	INTEGER n = 0;
-	INTEGER m = 1;
-	INTEGER s_flag = 0;
-	INTEGER max_t = INTEGER_MAX;
-	for( INTEGER i = 2; i < argc; i++ )
+	// process the argv[2] and if present the argv[3] 
+	unsigned int n = 0;
+	unsigned int m = 1;
+	unsigned int s_flag = 0;
+	unsigned int max_t = INT_MAX;
+	for( unsigned int i = 2; i < argc; i++ )
 	{
-		// optionally prINTEGER steiner tree
+		// optionally print steiner tree
 		m = strcmp( argv[i], "-s" );
 		if( 0 == m ) s_flag = 1;
 		// read in max number of terminals to use as source
 		else if( 2 == i )
 		{
-			n = sscanf( argv[i], "%lld", &max_t );
+			// the number of terminals to start from must be equal or less than the total number of terminals
+			// the default is 100 terminals if that is less than the total number of terminals
+			// otherwise the default is all terminals
+			n = sscanf( argv[i], "%u", &max_t );
 			if( max_t < k && 1 == n ) k = max_t;
 			else if( 100 < k && 1 != n ) k = 100;
 		}
 	}
 
+	// declare variables and allocate memory used in parallel for loop
+	unsigned int t;
+	unsigned int* prime = NULL;
 	INTEGER obj_val = INTEGER_MAX;
-	INTEGER t;
 	struct graph* H = NULL;
-
+	G->distance = NULL;
 	G->distance = calloc( G->number_of_nodes, sizeof(INTEGER) );
-
-	INTEGER* prime = NULL;
-	G->tree_pred = malloc( G->number_of_nodes * sizeof(INTEGER) );
+	G->tree_pred = NULL;
+	G->tree_pred = malloc( G->number_of_nodes * sizeof(unsigned int) );
 	if ( NULL == G->tree_pred || NULL == G->distance )
 		error_exit( "calloc: " );
 
+	// start wall clock
 	struct timeval start_wall;
-	INTEGER fail = gettimeofday( &start_wall, NULL );
+	unsigned int fail = gettimeofday( &start_wall, NULL );
 	assert( 0 == fail );
-
+	// start counting cpu clocks
 	double start_cpu = (double)clock() / (double)CLOCKS_PER_SEC;
 
-	#ifdef THREADS		
-		#pragma omp parallel for default(none) shared(is_prime, k, G, obj_val, terminals, number_of_terminals) private(t, H, prime) num_threads(THREADS)
-	#else
-		#pragma omp parallel for default(none) shared(is_prime, k, G, obj_val, terminals, number_of_terminals) private(t, H, prime)
-	#endif
+#ifdef THREADS		
+	#pragma omp parallel for default(none) shared(is_prime, k, G, obj_val, terminals) private(t, H, prime) num_threads(THREADS)
+#else
+	#pragma omp parallel for default(none) shared(is_prime, k, G, obj_val, terminals) private(t, H, prime)
+#endif
 		for( t = 0; t < k; t++ )
 		{
 			H = malloc(sizeof(struct graph));
 			if(NULL == H)
 				error_exit("malloc: ");
 
-			H->predecessor = malloc( G->number_of_nodes * sizeof(INTEGER) );
+			H->predecessor = malloc( G->number_of_nodes * sizeof(unsigned int) );
 			H->distance = malloc( G->number_of_nodes * sizeof(INTEGER) );
-			H->tree_pred = malloc( G->number_of_nodes * sizeof(INTEGER) );
+			H->tree_pred = malloc( G->number_of_nodes * sizeof(unsigned int) );
 			if ( NULL == H->predecessor || NULL == H->distance || NULL == H->tree_pred )
 				error_exit( "malloc: " );
 
-			prime = malloc( G->number_of_nodes * sizeof(INTEGER) );
+			prime = malloc( G->number_of_nodes * sizeof(unsigned int) );
 			if( NULL == prime )
 				error_exit("malloc: ");
 
-			memcpy( prime, is_prime, G->number_of_nodes * sizeof(INTEGER) );
+			memcpy( prime, is_prime, G->number_of_nodes * sizeof(unsigned int) );
 
 			steiner( G, H, prime,  terminals[t] );
-			#pragma omp critical ( objective_value )
-			{
-				// check tree contains all terminals
-				if( number_of_terminals == H->count )
-				{
-					if( obj_val > H->sum )
-					{
-						obj_val = H->sum;
-						memcpy( G->tree_pred, H->tree_pred, G->number_of_nodes * sizeof(INTEGER) );
-					}
-				}
-			}
-			free( prime );
 
-			free( H->number_of_neighbours );
-			free( H->index_of_first_neighbour );
-			free( H->sorted_heads );
-			free( H->sorted_weights );
 			free( H->predecessor );
 			free( H->distance );
+
+			for( int j = 0; j < G->number_of_terminals; j++ )
+				assert( 0 == prime[j] );
+
+			free( prime );
+			#pragma omp critical ( objective_value )
+			{
+				// can we best our current objective value
+				if( obj_val > H->sum )
+				{
+					obj_val = H->sum;
+					memcpy( G->tree_pred, H->tree_pred, G->number_of_nodes * sizeof(unsigned int) );
+				}
+			}
+
 			free( H->tree_pred );
 			free( H );
 		}
 
+	// stop the wall clock
 	struct timeval stop_wall;
 	fail = gettimeofday( &stop_wall, NULL );
 	assert( 0 == fail );
-
+	// stop counting cpu clocks
 	double stop_cpu = (double)clock() / (double)CLOCKS_PER_SEC;
-
+	// calculate durations of both
 	double duration_wall = ( stop_wall.tv_sec + stop_wall.tv_usec * 0.000001 ) -  ( start_wall.tv_sec + start_wall.tv_usec * 0.000001 );
 	double duration_cpu = stop_cpu - start_cpu;
 
+	unsigned int* source = NULL;
+	source = calloc( G->number_of_terminals, sizeof(unsigned int) );
+	if( NULL == source )
+		error_exit("calloc: ");
+
+	assert( is_tree_valid( G->tree_pred, terminals, source, G->number_of_nodes, G->number_of_terminals ) );
+
+	// print results
 	printf( "\n" );
-	printf( "TLEN:\t%lld\n", obj_val );
+	printf( "TLEN:\t%llu\n", obj_val );
 
 	if( s_flag )
 	{
 		printf( "TREE:\t" );
-		for( INTEGER i = 0; i < G->number_of_nodes; i++ )
-			if(  -1 != G->tree_pred[i] )
-				printf( "(%lld,%lld) ", i, G->tree_pred[i] );
+		for( unsigned int i = 0; i < G->number_of_nodes; i++ )
+			if(  INT_MAX != G->tree_pred[i] )
+				printf( "(%u,%u) ", i, G->tree_pred[i] );
 
-		printf( "\n" );
+		printf( "\n\n" );
 	}
 
 	printf( "TIME:\t%lf sec\n", duration_cpu );

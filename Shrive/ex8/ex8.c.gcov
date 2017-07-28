@@ -1,0 +1,775 @@
+        -:    0:Source:ex8.c
+        -:    0:Graph:ex8.gcno
+        -:    0:Data:ex8.gcda
+        -:    0:Runs:2
+        -:    0:Programs:1
+        -:    1:#include <assert.h>
+        -:    2:#include <ctype.h>
+        -:    3:#include <limits.h>
+        -:    4:#include <math.h>
+        -:    5:#include <stdio.h>
+        -:    6:#include <stdlib.h>
+        -:    7:#include <string.h>
+        -:    8:#include <sys/time.h>
+        -:    9:#include <time.h>
+        -:   10:
+        -:   11:#define EXT_SIZE     (1024*1024)
+        -:   12:#define MAX_LINE_LEN 512
+        -:   13:
+        -:   14:#define error_exit(msg)  error_exit_fun(msg, __FILE__, __LINE__)
+        -:   15:
+        -:   16:/**
+        -:   17:	\file
+        -:   18:	\brief  A program to calculate the longest shortest path of a graph using Dijkstra's algorithm
+        -:   19:	\author Tri-Peter Shrive
+        -:   20: */
+        -:   21:
+        -:   22:/**
+        -:   23:	the graphs attributes
+        -:   24: */
+        -:   25:struct graph
+        -:   26:{
+        -:   27:	int number_of_nodes;	/**< number of vertices in the graph */
+        -:   28:	int number_of_edges;	/**< number of edges in the graph */
+        -:   29:
+        -:   30:	int* number_of_neighbours;	/**< number of neighbours for each tail */
+        -:   31:	int* index_of_first_neighbour;	/**< index of first neighbour for each tail */
+        -:   32:	int* sorted_heads;		/**< heads of each edge sorded by tail */
+        -:   33:	int* sorted_weights;		/**< weights of each edge sorded by tail */
+        -:   34:
+        -:   35:	int* tail;		/**< the tail corresponding to each edge */
+        -:   36:	int* head;		/**< the head corresponding to each edge */
+        -:   37:	int* edge_weight;	/**< the weight corresponding to each edge */
+        -:   38:
+        -:   39:	int* predecessor;	/**< the predecessor of each vertex in shortest path tree */
+        -:   40:	int* distance;	/**< the distance of each vertex from source */
+        -:   41:};
+        -:   42:
+        -:   43:void error_exit_fun(
+        -:   44:	const char* const msg,	/**< message to be displayed */
+        -:   45:	const char* const file,	/**< file name */
+        -:   46:	const int lineno	/**< line number */
+        -:   47:	);
+        -:   48:
+        -:   49:int sift_up(
+        -:   50:	int* heap,		/**< nodes in heap */
+        -:   51:	int* distance,		/**< distance of nodes in heap */
+        -:   52:	int* index,		/**< index of nodes in heap */
+        -:   53:	int current		/**< current position of node in heap */
+        -:   54:	);
+        -:   55:
+        -:   56:
+        -:   57:int sift_down(
+        -:   58:	int* heap,		/**< nodes in heap */
+        -:   59:	int* distance,		/**< distance of nodes in heap */
+        -:   60:	int* index,		/**< index of nodes in heap */
+        -:   61:	int current,		/**< current position of node in heap */
+        -:   62:	const int size		/**< size of heap */
+        -:   63:	);
+        -:   64:
+        -:   65:/**
+        -:   66:	utility function that simplifies error handling
+        -:   67: */
+    #####:   68:void error_exit_fun(
+        -:   69:	const char* const msg,	/**< message to be displayed */
+        -:   70:	const char* const file,	/**< file name */
+        -:   71:	const int lineno	/**< line number */
+        -:   72:	)
+        -:   73:{
+    #####:   74:	assert(NULL != msg);
+    #####:   75:	assert(NULL != file);
+        -:   76:
+    #####:   77:	fprintf(stderr, "%s(%d) ", file, lineno);
+    #####:   78:	perror(msg);
+    #####:   79:	exit(EXIT_FAILURE);
+        -:   80:}
+        -:   81:
+        -:   82:int dijkstra(
+        -:   83:	struct graph* G,	/**< graph attributes */
+        -:   84:	int source		/**< source node */
+        -:   85:	);
+        -:   86:
+        -:   87:/**
+        -:   88:	sifts an entry up through binary heap
+        -:   89: */
+   130006:   90:int sift_up(
+        -:   91:	int* heap,		/**< nodes in heap */
+        -:   92:	int* distance,		/**< distance of nodes in heap */
+        -:   93:	int* index,		/**< index of nodes in heap */
+        -:   94:	int current		/**< current position of node in heap */
+        -:   95:	)
+        -:   96:{
+        -:   97:	// store child node in temp variable
+   130006:   98:	int temp_a = heap[current];
+        -:   99:	// store distance to child node in temp variable
+   130006:  100:	int dist = distance[temp_a];
+        -:  101:	int parent;
+        -:  102:	int temp_b;
+        -:  103:
+   324780:  104:	while ( 0 < current )
+        -:  105:	{
+        -:  106:		// calculate parents location in heap array
+   191765:  107:		parent = (current - 1) / 2;
+   191765:  108:		assert(0 <= parent);
+        -:  109:		// store parent in temp variable 
+   191765:  110:		temp_b = heap[parent];
+        -:  111:
+        -:  112:		// is the distance to parent node greater than the distance to child?
+        -:  113:		// if not break out of loop
+   191765:  114:		if ( distance[temp_b] <= dist )
+   126997:  115:			break;
+        -:  116:
+        -:  117:		// replace child node with parent node
+    64768:  118:		heap[current] = temp_b;
+        -:  119:		// update parent nodes heap index
+    64768:  120:		index[temp_b] = current;
+        -:  121:		// parent becomes next child
+    64768:  122:		current = parent;
+        -:  123:
+        -:  124:	}
+        -:  125:	// replace child with first child
+   130006:  126:	heap[current] = temp_a;
+        -:  127:	// update child nodes heap index
+   130006:  128:	index[temp_a] = current;
+   130006:  129:	return 0;
+        -:  130:}
+        -:  131:
+        -:  132:/**
+        -:  133:	sifts an entry down through binary heap
+        -:  134: */
+    73753:  135:int sift_down(
+        -:  136:	int* heap,		/**< nodes in heap */
+        -:  137:	int* distance,		/**< distance of nodes in heap */
+        -:  138:	int* index,		/**< index of nodes in heap */
+        -:  139:	int current,		/**< current position of node in heap */
+        -:  140:	const int size		/**< size of heap */
+        -:  141:	)
+        -:  142:{
+        -:  143:	int dist;
+        -:  144:	int child;
+        -:  145:	int temp_a;
+        -:  146:	int temp_b;
+        -:  147:
+        -:  148:	// calculate location of child in heap array
+    73753:  149:	child = current + current + 1;
+        -:  150:	// store parent node as temporary variable
+    73753:  151:	temp_a = heap[current];
+        -:  152:	// store distance of current node as temporary variable
+    73753:  153:	dist = distance[temp_a];
+        -:  154:
+        -:  155:	// while node has a child
+   636803:  156:	while ( child <= size )
+        -:  157:	{
+        -:  158:		// store first child node as temporary variable
+   503403:  159:		temp_b = heap[child];
+        -:  160:		// does a second child exist?
+   503403:  161:		if ( child + 1 <= size )
+        -:  162:		{
+        -:  163:			// is the distance to the second child less than that of the first?
+   502567:  164:			if ( distance[heap[child + 1]] < distance[temp_b] )
+        -:  165:			{
+   237487:  166:				child++;
+        -:  167:				// replace first child node with second child node
+   237487:  168:				temp_b = heap[child];
+        -:  169:			}
+        -:  170:		}
+        -:  171:		// is the distance to child node less than the distance to parent?
+        -:  172:		// if not break out of loop
+   503403:  173:		if ( distance[temp_b] >= dist )
+    14106:  174:			break;
+        -:  175:
+        -:  176:		// replace parent node with child node
+   489297:  177:		heap[current] = temp_b;
+        -:  178:		// update child nodes heap index
+   489297:  179:		index[temp_b] = current;
+        -:  180:		// child becomes parent
+   489297:  181:		current = child;
+        -:  182:		// calculate new child
+   489297:  183:		child = child + child + 1;
+        -:  184:	}
+        -:  185:	// replace current parent with first parent
+    73753:  186:	heap[current] = temp_a;
+        -:  187:	// update the parents heap index
+    73753:  188:	index[temp_a] = current;
+    73753:  189:	return 0;
+        -:  190:}
+        -:  191:
+        -:  192:/**
+        -:  193:	implementation of the dijkstra algorithm
+        -:  194: */
+      119:  195:int dijkstra(
+        -:  196:	struct graph* G,	/**< graph attributes */
+        -:  197:	int source		/**< source node */
+        -:  198:	)
+        -:  199:{
+      119:  200:	assert(G);
+      119:  201:	assert(G->predecessor);
+      119:  202:	assert(G->distance);
+      119:  203:	assert(G->sorted_heads);
+      119:  204:	assert(G->sorted_weights);
+      119:  205:	assert(G->number_of_neighbours);
+      119:  206:	assert(G->index_of_first_neighbour);
+        -:  207:
+        -:  208:	// create set containing all vetrices
+        -:  209:	// datastructure used is a binary heap
+        -:  210:	// index 0 is highest priority
+        -:  211:	// if node not on heap it has lowest priority
+      119:  212:	int* heap = NULL;
+      119:  213:	int* index_on_heap = NULL;
+      119:  214:	heap = malloc(G->number_of_nodes * sizeof(int));
+      119:  215:	index_on_heap = malloc(G->number_of_nodes * sizeof(int));
+    73874:  216:	for (int i = 0; i < G->number_of_nodes; i++)
+        -:  217:	{
+        -:  218:		// heap entry is initially empty
+        -:  219:		// meaning all vetrices have lowest priority
+    73755:  220:		heap[i] = -1;
+    73755:  221:		index_on_heap[i] = -1;
+        -:  222:		// the vetrex's predecessor in shortest path tree is unknown
+    73755:  223:		G->predecessor[i] = -1;
+        -:  224:		// the vetrex's distance from source is assumed to be infinite
+    73755:  225:		G->distance[i] = INT_MAX;
+        -:  226:	}
+      119:  227:	assert(source < G->number_of_nodes);
+        -:  228:	// distance to source is zero
+      119:  229:	G->distance[source] = 0;
+        -:  230:	// add source to heap
+      119:  231:	heap[0] = source;
+      119:  232:	index_on_heap[source] = 0;
+        -:  233:	// largest valid heap index is set to 0
+      119:  234:	int size_of_heap = 0;
+        -:  235:	// a count to keep track of the number of iterations
+      119:  236:	int count = 0;
+        -:  237:
+        -:  238:	// tempary variables for storing edge attributes 
+        -:  239:	int tail;
+        -:  240:	int head;
+        -:  241:	int dist;
+        -:  242:	int index_of_neighbour;
+        -:  243:	int root;
+        -:  244:
+        -:  245:	// loop while heap has entries
+    73874:  246:	while( 0 <= size_of_heap )
+        -:  247:	{
+    73636:  248:		count++;
+        -:  249:		// extract the vetrex with highest priority from heap
+        -:  250:		// and setting it as current tail
+    73636:  251:		tail = heap[0];
+        -:  252:		// replace the extracted vetrex with the vetrex of lowest priority
+    73636:  253:		root = heap[size_of_heap];
+    73636:  254:		heap[0] = root;
+    73636:  255:		index_on_heap[heap[0]] = 0;
+        -:  256:		// decrese the largest valid heap index
+    73636:  257:		size_of_heap--;
+        -:  258:		// sift the replacement vetrex down in the heap 
+        -:  259:		// until it is at it's correct place in the priority queue
+    73636:  260:		assert(heap[index_on_heap[root]] == root); 
+    73636:  261:		sift_down(heap, G->distance, index_on_heap, 0, size_of_heap);
+    73636:  262:		assert(heap[index_on_heap[root]] == root);	
+        -:  263:		
+        -:  264:
+        -:  265:		// for each of the tail's neighbours we do the following
+  9479828:  266:		for( int i = 0; i < G->number_of_neighbours[tail]; i++)
+        -:  267:		{
+  9406192:  268:			index_of_neighbour = G->index_of_first_neighbour[tail]+i;
+        -:  269:			// set the current neighbour as the temporary head
+  9406192:  270:			head = G->sorted_heads[index_of_neighbour];
+        -:  271:			// calculate the current distance
+  9406192:  272:			dist = G->distance[tail] + G->sorted_weights[index_of_neighbour];
+        -:  273:			// can we best the current shortest path?
+  9406192:  274:			if ( dist < G->distance[head] )
+        -:  275:			{
+        -:  276:				// update the distance to head
+   126749:  277:				G->distance[head] = dist;
+        -:  278:				// update the heads predecessor
+   126749:  279:				G->predecessor[head] = tail;
+        -:  280:				// is the current head already on heap?
+   126749:  281:				if( index_on_heap[head] == -1 )
+        -:  282:				{	
+        -:  283:					// add head at bottom of heap
+    73517:  284:					size_of_heap++;
+    73517:  285:					assert(size_of_heap < G->number_of_nodes + 1);
+    73517:  286:					heap[size_of_heap] = head;
+    73517:  287:					index_on_heap[head] = size_of_heap;
+        -:  288:					// sift head upwards in heap
+        -:  289:					// until at correct place in priority queue
+    73517:  290:					assert(heap[index_on_heap[head]] == head);
+    73517:  291:					sift_up(heap, G->distance, index_on_heap, size_of_heap);
+    73517:  292:					assert(heap[index_on_heap[head]] == head);
+        -:  293:				}
+        -:  294:				else
+        -:  295:				{
+        -:  296:					// decrease key
+    53232:  297:					assert(heap[index_on_heap[head]] == head);
+    53232:  298:					sift_up(heap, G->distance, index_on_heap, index_on_heap[head]);
+    53232:  299:					assert(heap[index_on_heap[head]] == head);
+        -:  300:				}
+        -:  301:			}					
+        -:  302:		}		
+        -:  303:	}
+      119:  304:	free(heap);
+      119:  305:	free(index_on_heap);
+      119:  306:	return count;
+        -:  307:}
+        -:  308:
+        -:  309:
+        -:  310:/**
+        -:  311:	sets entry at index of prime numbers to 1
+        -:  312: */
+        2:  313:int get_primes(
+        -:  314:	int* is_prime,		/**< allocate memory for this array of size max and set the memory to zero */
+        -:  315:	int max 		/**< size of array is_prime, the largest number to be assessed for primality */
+        -:  316:	)
+        -:  317:{
+        -:  318:	int rest;
+        -:  319:	int * prime;
+        -:  320:
+        2:  321:	is_prime[2] = 1;
+        2:  322:	int count = 1;
+        -:  323:	int last_div;
+      325:  324:	for ( int i = 3; i <= max; i += 2 )
+        -:  325:	{
+      323:  326:		last_div =  (int)ceil(sqrt(i));
+     2819:  327:		for ( int j = 2; j <= last_div ; j++ )
+        -:  328:		{
+     2702:  329:			rest = i % j;
+     2702:  330:			if ( 0 == rest )
+      206:  331:				break;
+        -:  332:
+     2496:  333:			if ( j == last_div )
+        -:  334:			{
+      117:  335:				count++;
+      117:  336:				is_prime[i] = 1;
+        -:  337:			}
+        -:  338:		}
+        -:  339:	}
+        2:  340:	return count;
+        -:  341:}
+        -:  342:
+    #####:  343:int print_distances(struct graph** G, int* terminals, int number_of_terminals)
+        -:  344:{
+    #####:  345:	printf("\n");
+        -:  346:	int count;
+    #####:  347:	for( int i = 0; i < number_of_terminals; i++ )
+        -:  348:	{
+    #####:  349:		count = 0;
+    #####:  350:		printf("\n\nTerminal: %d\n", terminals[i]);
+    #####:  351:		for( int j = 0 ; j < G[0]->number_of_nodes; j++ )
+        -:  352:		{
+    #####:  353:			if( 0 == (count % 3) )
+    #####:  354:				printf("\n");
+    #####:  355:			printf("Distance to node[%d]: %d\t\t", j, G[i]->distance[j]);
+    #####:  356:			count++;
+        -:  357:		}
+        -:  358:	}
+    #####:  359:	return 0;
+        -:  360:}
+        -:  361:
+    #####:  362:int print_predecessors(struct graph** G, int* terminals, int number_of_terminals)
+        -:  363:{
+    #####:  364:	printf("\n");
+        -:  365:	int count;
+    #####:  366:	for( int i = 0; i < number_of_terminals; i++ )
+        -:  367:	{
+    #####:  368:		count = 0;
+    #####:  369:		printf("\n\nTerminal: %d\n", terminals[i]);
+    #####:  370:		for( int j = 0 ; j < G[0]->number_of_nodes; j++ )
+        -:  371:		{
+    #####:  372:			if( 0 == (count % 3) )
+    #####:  373:				printf("\n");
+    #####:  374:			printf("Predecessor of node[%d]: %d\t", j, G[i]->predecessor[j]);
+    #####:  375:			count++;
+        -:  376:		}
+        -:  377:	}
+    #####:  378:	return 0;
+        -:  379:}
+        -:  380:
+        -:  381:
+        -:  382:/**
+        -:  383:	repeatedly finds terminal closest to current subtree and connects it
+        -:  384: */
+        -:  385:
+        2:  386:int get_tree(
+        -:  387:	struct graph** G,
+        -:  388:	int* terminals,
+        -:  389:	int number_of_terminals,
+        -:  390:	int source
+        -:  391:	)
+        -:  392:{
+        2:  393:	int* tree_pred = NULL;
+        2:  394:	tree_pred = malloc( G[0]->number_of_nodes * sizeof(int) );
+        -:  395:	
+      653:  396:	for (int i = 0; i < G[0]->number_of_nodes; i++)
+        -:  397:	{
+      651:  398:		tree_pred[i] = -1;
+        -:  399:	}
+        -:  400:
+        2:  401:	int* heap = NULL;
+        2:  402:	heap = calloc( number_of_terminals, sizeof(int) );
+        2:  403:	int* index_on_heap = NULL;
+        2:  404:	index_on_heap = calloc( number_of_terminals, sizeof(int) );
+        2:  405:	int* tree_dist = NULL;
+        2:  406:	tree_dist = malloc( number_of_terminals * sizeof(int) );
+        2:  407:	int* closest_node = NULL;
+        2:  408:	closest_node = malloc( number_of_terminals * sizeof(int) );
+        -:  409:
+      121:  410:	for (int i = 0; i < number_of_terminals; i++)
+        -:  411:	{
+      119:  412:		tree_dist[i] = INT_MAX;
+      119:  413:		closest_node[i] = -1;
+        -:  414:	}
+        -:  415:
+        -:  416:	// initialise heap by adding all terminals
+        -:  417:
+        2:  418:	int size_of_heap = -1;
+      121:  419:	for (int i = 0; i < number_of_terminals; i++)
+        -:  420:	{
+      119:  421:		if( terminals[i] != terminals[source] )
+        -:  422:		{
+      117:  423:			size_of_heap++;
+      117:  424:			heap[size_of_heap] = i;
+      117:  425:			index_on_heap[i] = size_of_heap;
+      117:  426:			tree_dist[i] = G[source]->distance[ terminals[i] ];
+      117:  427:			closest_node[i] = terminals[source];
+        -:  428:
+      117:  429:			sift_up( heap, tree_dist, index_on_heap, size_of_heap );
+        -:  430:		}
+        -:  431:
+        -:  432:	}
+        -:  433:
+        -:  434:	int t;
+        -:  435:	int dist;
+        -:  436:	int term;
+        -:  437:	int term_index;
+        -:  438:	int root;
+        -:  439:	int close;
+        -:  440:	int next;
+        2:  441:	int sum = 0;
+      121:  442:	while( 0 <= size_of_heap )
+        -:  443:	{
+        -:  444:		// extract terminal with highest priority
+      117:  445:		term_index = heap[0];
+      117:  446:		term = terminals[term_index];
+      117:  447:		root = heap[size_of_heap];
+      117:  448:		heap[0] = root;
+      117:  449:		index_on_heap[ heap[0] ] = 0;
+      117:  450:		size_of_heap--;
+      117:  451:		sift_down(heap, tree_dist, index_on_heap, 0, size_of_heap);
+        -:  452:
+        -:  453:		// add terminal and its predecessors to subtree
+      117:  454:		close = closest_node[ term_index ];
+      117:  455:		next = G[term_index]->predecessor[close];
+      117:  456:		sum += G[term_index]->distance[close];
+      413:  457:		while( -1 != next )
+        -:  458:		{			
+      179:  459:			tree_pred[next] = close;
+        -:  460:
+        -:  461:			// update heap entries
+     9712:  462:			for (int i = 0; i <= size_of_heap; i++)
+        -:  463:			{
+     9533:  464:				t = heap[i] ;
+     9533:  465:				dist = G[t]->distance[ close ];
+        -:  466:
+     9533:  467:				if( dist < tree_dist[t] )
+        -:  468:				{
+     3140:  469:					tree_dist[i] = dist;
+     3140:  470:					closest_node[t] = close;
+     3140:  471:					sift_up( heap, tree_dist, index_on_heap, index_on_heap[i] );
+        -:  472:				}
+        -:  473:			}
+      179:  474:			close = next;
+      179:  475:			next = G[term_index]->predecessor[close];
+        -:  476:		}
+        -:  477:	}
+        -:  478:
+        2:  479:	free(tree_pred);
+        2:  480:	free(heap);
+        2:  481:	free(index_on_heap);
+        2:  482:	free(tree_dist);
+        2:  483:	free(closest_node);
+        -:  484:
+        2:  485:	return sum;
+        -:  486:}
+        -:  487:
+        -:  488:/**
+        -:  489:	reads data from file storing nodes and weights in graph structure. then calls dijkstra's algorithm and assesses longest shortes path
+        -:  490: */
+        2:  491:int main(int argc, const char* const* const argv)
+        -:  492:{
+        -:  493:	struct timeval start_wall;
+        2:  494:	assert( gettimeofday(&start_wall, NULL) == 0 );
+        -:  495:
+        2:  496:	double start_cpu = (double)clock() / (double)CLOCKS_PER_SEC;
+        -:  497:
+        2:  498:	if ( argc < 2 )
+        -:  499:	{
+    #####:  500:		fprintf(stderr, "usage: %s filename\n", argv[1]);
+    #####:  501:		exit(EXIT_FAILURE);
+        -:  502:	}
+        -:  503:
+        2:  504:	size_t array_of_edges_next = 0;
+        2:  505:	size_t array_of_edges_length = EXT_SIZE;
+        -:  506:
+        2:  507:	struct graph** G = NULL;
+        -:  508:
+        2:  509:	G = malloc( sizeof(struct graph*) );
+        -:  510:
+        2:  511:	if ( NULL == G )
+    #####:  512:		error_exit("malloc: ");
+        -:  513:
+        2:  514:	G[0] = malloc( sizeof(struct graph) );
+        -:  515:
+        2:  516:	G[0]->tail = NULL;
+        2:  517:	G[0]->head = NULL;
+        2:  518:	G[0]->edge_weight = NULL;
+        2:  519:	G[0]->predecessor = NULL;
+        2:  520:	G[0]->distance = NULL;
+        2:  521:	G[0]->sorted_heads = NULL;
+        2:  522:	G[0]->sorted_weights = NULL;
+        2:  523:	G[0]->number_of_neighbours = NULL;
+        2:  524:	G[0]->index_of_first_neighbour = NULL;
+        -:  525:
+        2:  526:	G[0]->number_of_nodes = 0;
+        2:  527:	G[0]->number_of_edges = 0;
+        -:  528:
+        2:  529:	G[0]->tail = malloc(array_of_edges_length * sizeof(int));
+        2:  530:	G[0]->head = malloc(array_of_edges_length * sizeof(int));
+        2:  531:	G[0]->edge_weight = malloc(array_of_edges_length * sizeof(int));
+        2:  532:	if ( NULL == G[0]->tail || NULL == G[0]->head || NULL == G[0]->edge_weight )
+    #####:  533:		error_exit("malloc: ");
+        -:  534:
+        -:  535:	// Open file for reading
+        2:  536:	FILE* fp = fopen(argv[1], "r");
+        -:  537:
+        2:  538:	if (NULL == fp)
+    #####:  539:		error_exit("fopen: ");
+        -:  540:
+        2:  541:	int lineno = 0;
+        -:  542:	char line[MAX_LINE_LEN];
+        -:  543:
+        2:  544:	fgets(line, sizeof(line), fp);
+        -:  545:
+        2:  546:	lineno++;
+        -:  547:
+        -:  548:	// Remove comments and anything after newline
+        2:  549:	char* s = strpbrk(line, "#\n");
+        -:  550:
+        2:  551:	if (NULL != s)
+        2:  552:		*s = '\0';
+        -:  553:
+        -:  554:	// Skip initial spaces
+        2:  555:	for (s = &line[0]; isspace(*s); s++);
+        -:  556:
+        2:  557:	assert('\0' != *s);
+        -:  558:	
+        2:  559:	int ret = sscanf(s, "%d %d", &G[0]->number_of_nodes, &G[0]->number_of_edges);
+        2:  560:	assert(2 == ret);
+        -:  561:
+        -:  562:	// undirected graph
+        2:  563:	G[0]->number_of_edges *= 2;
+        -:  564:	// unused node 0
+        2:  565:	G[0]->number_of_nodes++;
+        -:  566:
+        2:  567:	G[0]->number_of_neighbours = calloc(G[0]->number_of_nodes, sizeof(int));
+        2:  568:	G[0]->index_of_first_neighbour = calloc(G[0]->number_of_nodes, sizeof(int));
+        2:  569:	if ( NULL == G[0]->number_of_neighbours || NULL == G[0]->index_of_first_neighbour )
+    #####:  570:		error_exit("malloc: ");
+        -:  571:	
+    40914:  572:	while (NULL != fgets(line, sizeof(line), fp))
+        -:  573:	{
+    40910:  574:		lineno++;
+        -:  575:
+        -:  576:		// Remove comments and anything after newline
+    40910:  577:		char* s = strpbrk(line, "#\n");
+        -:  578:
+    40910:  579:		if (NULL != s)
+    40910:  580:			*s = '\0';
+        -:  581:
+        -:  582:		// Skip initial spaces
+    40910:  583:		for (s = &line[0]; isspace(*s); s++)
+        -:  584:			;
+        -:  585:
+        -:  586:		// Skip line if empty
+    40910:  587:		if ('\0' == *s)
+    #####:  588:			continue;
+        -:  589:
+    40910:  590:		int temp_tail = 0, temp_head = 0;
+    40910:  591:		int temp_edge_weight = INT_MAX;
+        -:  592:
+    40910:  593:		ret = sscanf(s, "%d %d %d", &temp_tail, &temp_head, &temp_edge_weight);
+        -:  594:
+    40910:  595:		if (3 != ret)
+        -:  596:		{
+    #####:  597:			fprintf(stderr, "\nLine %d: ret = %d != 3\n", lineno, ret);
+    #####:  598:			continue;
+        -:  599:		}
+    40910:  600:		if (temp_tail < 0 || temp_head < 0)
+        -:  601:		{
+    #####:  602:			fprintf(stderr, "\nLine %d: tail = %d, head = %d\n", lineno, temp_tail, temp_head);
+    #####:  603:			continue;
+        -:  604:		}
+    40910:  605:		if (temp_edge_weight < 0)
+        -:  606:		{
+    #####:  607:			fprintf(stderr, "\nLine %d, edge_weight = %d\n", lineno, temp_edge_weight); 
+    #####:  608:			continue;
+        -:  609:		}
+        -:  610:
+        -:  611:		// check there's enought space in the array, if not enlarge the array
+    40910:  612:		if ( array_of_edges_next == array_of_edges_length )
+        -:  613:		{
+    #####:  614:			array_of_edges_length += EXT_SIZE;
+        -:  615:
+    #####:  616:			G[0]->tail = realloc(G[0]->tail, array_of_edges_length * sizeof(int));
+    #####:  617:			G[0]->head = realloc(G[0]->head, array_of_edges_length * sizeof(int));
+    #####:  618:			G[0]->edge_weight = realloc(G[0]->edge_weight, array_of_edges_length * sizeof(int));
+    #####:  619:			if (NULL == G[0]->tail || NULL == G[0]->head || NULL == G[0]->edge_weight)
+    #####:  620:				error_exit("realloc: ");
+        -:  621:		}
+        -:  622:
+    40910:  623:		assert( G[0]->number_of_nodes > temp_tail );
+    40910:  624:		assert( G[0]->number_of_nodes > temp_head );
+        -:  625:
+        -:  626:		// store the edge in memory
+    40910:  627:		G[0]->tail[array_of_edges_next] = temp_tail;
+    40910:  628:		G[0]->head[array_of_edges_next] = temp_head;
+    40910:  629:		G[0]->edge_weight[array_of_edges_next] = temp_edge_weight;
+        -:  630:
+    40910:  631:		G[0]->number_of_neighbours[temp_tail]++;
+        -:  632:	
+    40910:  633:		array_of_edges_next++;
+        -:  634:
+        -:  635:		// repeat with head and tail inverted for undirected graph
+    40910:  636:		if ( array_of_edges_next == array_of_edges_length )
+        -:  637:		{
+    #####:  638:			array_of_edges_length += EXT_SIZE;
+        -:  639:
+    #####:  640:			G[0]->tail = realloc(G[0]->tail, array_of_edges_length * sizeof(int));
+    #####:  641:			G[0]->head = realloc(G[0]->head, array_of_edges_length * sizeof(int));
+    #####:  642:			G[0]->edge_weight = realloc(G[0]->edge_weight, array_of_edges_length * sizeof(int));
+    #####:  643:			if (NULL == G[0]->tail || NULL == G[0]->head || NULL == G[0]->edge_weight)
+    #####:  644:				error_exit("realloc: ");
+        -:  645:		}
+        -:  646:
+    40910:  647:		assert( G[0]->number_of_nodes > temp_tail );
+    40910:  648:		assert( G[0]->number_of_nodes > temp_head );
+        -:  649:
+        -:  650:		// store reversed edge in memory
+    40910:  651:		G[0]->tail[array_of_edges_next] = temp_head;
+    40910:  652:		G[0]->head[array_of_edges_next] = temp_tail;
+    40910:  653:		G[0]->edge_weight[array_of_edges_next] = temp_edge_weight;
+        -:  654:
+    40910:  655:		G[0]->number_of_neighbours[temp_head]++;
+        -:  656:	
+    40910:  657:		array_of_edges_next++;
+        -:  658:	}
+        2:  659:	if (fclose(fp))
+    #####:  660:		error_exit("fclose: ");
+        -:  661:
+        -:  662:	// calculate index of first neighbour for sorted lists
+      651:  663:	for(int i = 1; i < G[0]->number_of_nodes; i++)
+      649:  664:		G[0]->index_of_first_neighbour[i] = G[0]->index_of_first_neighbour[i - 1] + G[0]->number_of_neighbours[i - 1];
+        -:  665:
+        2:  666:	int* neighbours_found = NULL;
+        2:  667:	neighbours_found = calloc(G[0]->number_of_nodes, sizeof(int));
+        2:  668:	G[0]->sorted_heads = malloc(G[0]->number_of_edges * sizeof(int));
+        2:  669:	G[0]->sorted_weights = malloc(G[0]->number_of_edges * sizeof(int));
+        2:  670:	if ( NULL == neighbours_found || NULL == G[0]->sorted_heads || NULL == G[0]->sorted_weights )
+    #####:  671:		error_exit("malloc: ");
+        -:  672:
+        -:  673:	// sort edges by tails
+        -:  674:	int tail;
+        -:  675:	int index;
+    81822:  676:	for(int i = 0; i < G[0]->number_of_edges; i++)
+        -:  677:	{
+    81820:  678:		tail = G[0]->tail[i];
+    81820:  679:		index = G[0]->index_of_first_neighbour[tail];
+    81820:  680:		G[0]->sorted_heads[index + neighbours_found[tail]] = G[0]->head[i];
+    81820:  681:		G[0]->sorted_weights[index + neighbours_found[tail]] = G[0]->edge_weight[i];
+    81820:  682:		neighbours_found[tail] += 1;
+        -:  683:	}
+        2:  684:	free(neighbours_found);
+        -:  685:
+        2:  686:	G[0]->predecessor = calloc(G[0]->number_of_nodes, sizeof(int));
+        2:  687:	G[0]->distance = calloc(G[0]->number_of_nodes, sizeof(int));
+        2:  688:	if ( NULL == G[0]->predecessor || NULL == G[0]->distance )
+    #####:  689:		error_exit("calloc: ");
+        -:  690:
+        -:  691:	// calculate prime numbers
+        2:  692:	int* is_prime = calloc(G[0]->number_of_nodes, sizeof(int));
+        -:  693:
+        -:  694:	// G[0]->number_of_nodes - 1 as not counting from 0
+        2:  695:	int number_of_terminals = get_primes( is_prime, G[0]->number_of_nodes - 1 );
+        2:  696:	printf("\nNUM TERMINALS\t%d\n", number_of_terminals); 
+        -:  697:
+        2:  698:	int* terminals = malloc( number_of_terminals * sizeof(int) );
+        2:  699:	int k = 0;
+      653:  700:	for (int i = 0; i < G[0]->number_of_nodes; i++)
+      651:  701:		if( 1 == is_prime[i] )
+        -:  702:		{
+      119:  703:			terminals[k] = i;
+      119:  704:			k++;
+        -:  705:		}
+        -:  706:
+        2:  707:	G = realloc( G, G[0]->number_of_nodes * sizeof(struct graph*) );
+        2:  708:	assert(G);
+        -:  709:
+      119:  710:	for ( int i = 1; i < number_of_terminals; i++)
+        -:  711:	{
+      117:  712:		G[i] = malloc( sizeof(struct graph) );
+      117:  713:		G[i]->number_of_nodes = G[0]->number_of_nodes;
+      117:  714:		G[i]->number_of_edges = G[0]->number_of_edges;
+      117:  715:		G[i]->number_of_neighbours = G[0]->number_of_neighbours;
+      117:  716:		G[i]->index_of_first_neighbour = G[0]->index_of_first_neighbour;
+      117:  717:		G[i]->sorted_heads = G[0]->sorted_heads;
+      117:  718:		G[i]->sorted_weights = G[0]->sorted_weights;
+      117:  719:		G[i]->tail = G[0]->tail;
+      117:  720:		G[i]->head = G[0]->head;
+      117:  721:		G[i]->edge_weight = G[0]->edge_weight;
+      117:  722:		G[i]->predecessor = calloc(G[0]->number_of_nodes, sizeof(int));
+      117:  723:		G[i]->distance = calloc(G[0]->number_of_nodes, sizeof(int));
+        -:  724:	}
+        -:  725:
+        -:  726:	// compute all shortest paths from terminals (nodes that are prime)
+      121:  727:	for( int i = 0; i < number_of_terminals; i++ )
+        -:  728:	{
+      119:  729:		dijkstra(G[i], terminals[i]);
+        -:  730:	}
+        -:  731://	print_distances(G, terminals, number_of_terminals);
+        -:  732://	print_predecessors(G, terminals, number_of_terminals);
+        -:  733:
+        -:  734:	// look for terminal closest to current subtree and connect it
+        2:  735:	printf("OBJ VALUE\t%d\n", get_tree( G, terminals, number_of_terminals, 0 ) );
+        -:  736:	
+        -:  737:
+        -:  738:	struct timeval stop_wall;
+        2:  739:	assert( gettimeofday(&stop_wall, NULL) == 0 );
+        -:  740:
+        2:  741:	double stop_cpu = (double)clock() / (double)CLOCKS_PER_SEC;
+        -:  742:
+        2:  743:	double duration_wall = ( stop_wall.tv_sec + stop_wall.tv_usec * 0.000001 ) -  ( start_wall.tv_sec + start_wall.tv_usec * 0.000001 );
+        2:  744:	double duration_cpu = stop_cpu - start_cpu;
+        -:  745:
+        2:  746:	printf("\nREAL TIME\t%lfs\nUSER TIME\t%lfs\n\n", duration_wall, duration_cpu);
+        -:  747:
+        2:  748:	free(is_prime);
+        2:  749:	free(terminals);
+        -:  750:	
+      119:  751:	for ( int i = 1; i < number_of_terminals; i++)
+        -:  752:	{
+      117:  753:		free(G[i]->predecessor);
+      117:  754:		free(G[i]->distance);
+      117:  755:		free(G[i]);
+        -:  756:	}
+        -:  757:
+        2:  758:	free(G[0]->tail);
+        2:  759:	free(G[0]->head);
+        2:  760:	free(G[0]->edge_weight);
+        2:  761:	free(G[0]->predecessor);
+        2:  762:	free(G[0]->distance);
+        2:  763:	free(G[0]->sorted_heads);
+        2:  764:	free(G[0]->sorted_weights);
+        2:  765:	free(G[0]->number_of_neighbours);
+        2:  766:	free(G[0]->index_of_first_neighbour);
+        2:  767:	free(G[0]);
+        2:  768:	free(G);
+        2:  769:	return 0;
+        -:  770:}	

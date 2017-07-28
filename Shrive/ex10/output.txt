@@ -1,0 +1,136 @@
+BEGIN: ex10 ../graphs/acycpos-1.gph 2
+
+TLEN:	117246
+TIME:	0.360248 sec
+WALL:	0.182201 sec
+
+END: ex10 ../graphs/acycpos-1.gph 2
+
+BEGIN: ex10 ../graphs/acycpos-x.gph 2
+
+TLEN:	524552
+TIME:	5.010409 sec
+WALL:	2.548108 sec
+
+END: ex10 ../graphs/acycpos-x.gph 2
+
+BEGIN: ex10 ../graphs/b15.gph 2
+
+TLEN:	256
+TIME:	0.000059 sec
+WALL:	0.000030 sec
+
+END: ex10 ../graphs/b15.gph 2
+
+BEGIN: ex10 ../graphs/big8.gph 2
+
+TLEN:	851065
+TIME:	0.079189 sec
+WALL:	0.040040 sec
+
+END: ex10 ../graphs/big8.gph 2
+
+BEGIN: ex10 ../graphs/es10kaz.gph 2
+
+TLEN:	561019459
+TIME:	0.074013 sec
+WALL:	0.041646 sec
+
+END: ex10 ../graphs/es10kaz.gph 2
+
+BEGIN: ex10 ../graphs/i640-345.gph 2
+
+TLEN:	14156
+TIME:	0.000687 sec
+WALL:	0.000357 sec
+
+END: ex10 ../graphs/i640-345.gph 2
+
+BEGIN: ex10 ../graphs/phard-1.gph 2
+
+TLEN:	11765553
+TIME:	19.936689 sec
+WALL:	9.974125 sec
+
+END: ex10 ../graphs/phard-1.gph 2
+
+BEGIN: ex10 ../graphs/phard-x.gph 2
+
+TLEN:	19383718
+TIME:	904.507222 sec
+WALL:	452.335155 sec
+
+END: ex10 ../graphs/phard-x.gph 2
+
+BEGIN: ex10 ../graphs/rand14-5.gph 2
+
+TLEN:	1726
+TIME:	0.043238 sec
+WALL:	0.021627 sec
+
+END: ex10 ../graphs/rand14-5.gph 2
+
+BEGIN: ex10 ../graphs/rand4-1.gph 2
+
+TLEN:	1007437
+TIME:	6.424086 sec
+WALL:	3.380873 sec
+
+END: ex10 ../graphs/rand4-1.gph 2
+
+BEGIN: ex10 ../graphs/rand4-x.gph 2
+
+TLEN:	11734
+TIME:	0.554569 sec
+WALL:	0.283411 sec
+
+END: ex10 ../graphs/rand4-x.gph 2
+
+BEGIN: ex10 ../graphs/ssquare-1.gph 2
+
+TLEN:	834568140
+TIME:	7.657421 sec
+WALL:	3.841926 sec
+
+END: ex10 ../graphs/ssquare-1.gph 2
+
+BEGIN: ex10 ../graphs/ssquare-s-5.gph 2
+
+TLEN:	834683500
+TIME:	9.163102 sec
+WALL:	4.592055 sec
+
+END: ex10 ../graphs/ssquare-s-5.gph 2
+
+BEGIN: ex10 ../graphs/ssquare-s-x.gph 2
+
+TLEN:	28540570985
+TIME:	1405.104529 sec
+WALL:	704.415265 sec
+
+END: ex10 ../graphs/ssquare-s-x.gph 2
+
+BEGIN: ex10 ../graphs/ssquare-x.gph 2
+
+TLEN:	28555524251
+TIME:	1378.609988 sec
+WALL:	695.202703 sec
+
+END: ex10 ../graphs/ssquare-x.gph 2
+
+BEGIN: ex10 ../graphs/test.gph 2
+
+TLEN:	14
+TIME:	0.000079 sec
+WALL:	0.000042 sec
+
+END: ex10 ../graphs/test.gph 2
+
+BEGIN: ex10 ../graphs/world666.gph 2
+
+TLEN:	117613
+TIME:	0.002470 sec
+WALL:	0.001244 sec
+
+END: ex10 ../graphs/world666.gph 2
+

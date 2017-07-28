@@ -1,0 +1,145 @@
+\hypertarget{ex5_8c}{\section{ex5.\+c File Reference}
+\label{ex5_8c}\index{ex5.\+c@{ex5.\+c}}
+}
+
+
+A program to calculate the longest shortest path of a graph using Dijkstra's algorithm.  
+
+
+{\ttfamily \#include $<$assert.\+h$>$}\\*
+{\ttfamily \#include $<$ctype.\+h$>$}\\*
+{\ttfamily \#include $<$limits.\+h$>$}\\*
+{\ttfamily \#include $<$math.\+h$>$}\\*
+{\ttfamily \#include $<$stdio.\+h$>$}\\*
+{\ttfamily \#include $<$stdlib.\+h$>$}\\*
+{\ttfamily \#include $<$string.\+h$>$}\\*
+{\ttfamily \#include $<$sys/time.\+h$>$}\\*
+{\ttfamily \#include $<$time.\+h$>$}\\*
+Include dependency graph for ex5.\+c\+:
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structgraph}{graph}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{ex5_8c_ab5466186dd6387fc1a80a05be5dff5a0}{\#define {\bfseries E\+X\+T\+\_\+\+S\+I\+Z\+E}~(1024$\ast$1024)}\label{ex5_8c_ab5466186dd6387fc1a80a05be5dff5a0}
+
+\item 
+\hypertarget{ex5_8c_a09a3b394b8602092d58347b791158062}{\#define {\bfseries M\+A\+X\+\_\+\+L\+I\+N\+E\+\_\+\+L\+E\+N}~512}\label{ex5_8c_a09a3b394b8602092d58347b791158062}
+
+\item 
+\hypertarget{ex5_8c_a3a6b987f353975b2f9743ec6cdff9ba3}{\#define {\bfseries error\+\_\+exit}(msg)~\hyperlink{ex5_8c_a5f23201dad7ca49698dda3a3a88a172b}{error\+\_\+exit\+\_\+fun}(msg, \+\_\+\+\_\+\+F\+I\+L\+E\+\_\+\+\_\+, \+\_\+\+\_\+\+L\+I\+N\+E\+\_\+\+\_\+)}\label{ex5_8c_a3a6b987f353975b2f9743ec6cdff9ba3}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{ex5_8c_a5f23201dad7ca49698dda3a3a88a172b}{error\+\_\+exit\+\_\+fun} (const char $\ast$const msg, const char $\ast$const file, const int lineno)
+\item 
+int \hyperlink{ex5_8c_adb3839c017dec95eab2870c051edde28}{sift\+\_\+up} (int $\ast$heap, int $\ast$distance, int $\ast$index, int current)
+\item 
+int \hyperlink{ex5_8c_a18db7cf0cae29bce825e1cd4c0ec97f5}{sift\+\_\+down} (int $\ast$heap, int $\ast$distance, int $\ast$index, int current, const int size)
+\item 
+int \hyperlink{ex5_8c_a0e79bb44fcfdb7e6751a68fd188944f1}{dijkstra} (struct \hyperlink{structgraph}{graph} $\ast$G, int source)
+\item 
+int \hyperlink{ex5_8c_a19459f9ab8ff8534d6ffae8d07256fb2}{main} (int argc, const char $\ast$const $\ast$const argv)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A program to calculate the longest shortest path of a graph using Dijkstra's algorithm. 
+
+\begin{DoxyAuthor}{Author}
+Tri-\/\+Peter Shrive 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{ex5_8c_a0e79bb44fcfdb7e6751a68fd188944f1}{\index{ex5.\+c@{ex5.\+c}!dijkstra@{dijkstra}}
+\index{dijkstra@{dijkstra}!ex5.\+c@{ex5.\+c}}
+\subsubsection[{dijkstra}]{\setlength{\rightskip}{0pt plus 5cm}int dijkstra (
+\begin{DoxyParamCaption}
+\item[{struct {\bf graph} $\ast$}]{G, }
+\item[{int}]{source}
+\end{DoxyParamCaption}
+)}}\label{ex5_8c_a0e79bb44fcfdb7e6751a68fd188944f1}
+implementation of the dijkstra algorithm 
+\begin{DoxyParams}{Parameters}
+{\em G} & graph attributes \\
+\hline
+{\em source} & source node \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex5_8c_a5f23201dad7ca49698dda3a3a88a172b}{\index{ex5.\+c@{ex5.\+c}!error\+\_\+exit\+\_\+fun@{error\+\_\+exit\+\_\+fun}}
+\index{error\+\_\+exit\+\_\+fun@{error\+\_\+exit\+\_\+fun}!ex5.\+c@{ex5.\+c}}
+\subsubsection[{error\+\_\+exit\+\_\+fun}]{\setlength{\rightskip}{0pt plus 5cm}void error\+\_\+exit\+\_\+fun (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$const}]{msg, }
+\item[{const char $\ast$const}]{file, }
+\item[{const int}]{lineno}
+\end{DoxyParamCaption}
+)}}\label{ex5_8c_a5f23201dad7ca49698dda3a3a88a172b}
+utility function that simplifies error handling 
+\begin{DoxyParams}{Parameters}
+{\em msg} & message to be displayed \\
+\hline
+{\em file} & file name \\
+\hline
+{\em lineno} & line number \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex5_8c_a19459f9ab8ff8534d6ffae8d07256fb2}{\index{ex5.\+c@{ex5.\+c}!main@{main}}
+\index{main@{main}!ex5.\+c@{ex5.\+c}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\begin{DoxyParamCaption}
+\item[{int}]{argc, }
+\item[{const char $\ast$const $\ast$const}]{argv}
+\end{DoxyParamCaption}
+)}}\label{ex5_8c_a19459f9ab8ff8534d6ffae8d07256fb2}
+reads data from file storing nodes and weights in graph structure. then calls dijkstra's algorithm and assesses longest shortes path \hypertarget{ex5_8c_a18db7cf0cae29bce825e1cd4c0ec97f5}{\index{ex5.\+c@{ex5.\+c}!sift\+\_\+down@{sift\+\_\+down}}
+\index{sift\+\_\+down@{sift\+\_\+down}!ex5.\+c@{ex5.\+c}}
+\subsubsection[{sift\+\_\+down}]{\setlength{\rightskip}{0pt plus 5cm}int sift\+\_\+down (
+\begin{DoxyParamCaption}
+\item[{int $\ast$}]{heap, }
+\item[{int $\ast$}]{distance, }
+\item[{int $\ast$}]{index, }
+\item[{int}]{current, }
+\item[{const int}]{size}
+\end{DoxyParamCaption}
+)}}\label{ex5_8c_a18db7cf0cae29bce825e1cd4c0ec97f5}
+sifts an entry down through binary heap 
+\begin{DoxyParams}{Parameters}
+{\em heap} & nodes in heap \\
+\hline
+{\em distance} & distance of nodes in heap \\
+\hline
+{\em index} & index of nodes in heap \\
+\hline
+{\em current} & current position of node in heap \\
+\hline
+{\em size} & size of heap \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex5_8c_adb3839c017dec95eab2870c051edde28}{\index{ex5.\+c@{ex5.\+c}!sift\+\_\+up@{sift\+\_\+up}}
+\index{sift\+\_\+up@{sift\+\_\+up}!ex5.\+c@{ex5.\+c}}
+\subsubsection[{sift\+\_\+up}]{\setlength{\rightskip}{0pt plus 5cm}int sift\+\_\+up (
+\begin{DoxyParamCaption}
+\item[{int $\ast$}]{heap, }
+\item[{int $\ast$}]{distance, }
+\item[{int $\ast$}]{index, }
+\item[{int}]{current}
+\end{DoxyParamCaption}
+)}}\label{ex5_8c_adb3839c017dec95eab2870c051edde28}
+sifts an entry up through binary heap 
+\begin{DoxyParams}{Parameters}
+{\em heap} & nodes in heap \\
+\hline
+{\em distance} & distance of nodes in heap \\
+\hline
+{\em index} & index of nodes in heap \\
+\hline
+{\em current} & current position of node in heap \\
+\hline
+\end{DoxyParams}

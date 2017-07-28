@@ -1,0 +1,171 @@
+\hypertarget{ex10_8c}{\section{ex10.\+c File Reference}
+\label{ex10_8c}\index{ex10.\+c@{ex10.\+c}}
+}
+
+
+A program for A\+P\+P\+F\+S ex10.  
+
+
+{\ttfamily \#include $<$assert.\+h$>$}\\*
+{\ttfamily \#include $<$ctype.\+h$>$}\\*
+{\ttfamily \#include $<$limits.\+h$>$}\\*
+{\ttfamily \#include $<$math.\+h$>$}\\*
+{\ttfamily \#include $<$stdio.\+h$>$}\\*
+{\ttfamily \#include $<$stdlib.\+h$>$}\\*
+{\ttfamily \#include $<$string.\+h$>$}\\*
+{\ttfamily \#include $<$sys/time.\+h$>$}\\*
+{\ttfamily \#include $<$time.\+h$>$}\\*
+{\ttfamily \#include $<$omp.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}ex10.\+h\char`\"{}}\\*
+Include dependency graph for ex10.\+c\+:
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{ex10_8c_ab5466186dd6387fc1a80a05be5dff5a0}{\#define {\bfseries E\+X\+T\+\_\+\+S\+I\+Z\+E}~(1024$\ast$1024)}\label{ex10_8c_ab5466186dd6387fc1a80a05be5dff5a0}
+
+\item 
+\hypertarget{ex10_8c_a09a3b394b8602092d58347b791158062}{\#define {\bfseries M\+A\+X\+\_\+\+L\+I\+N\+E\+\_\+\+L\+E\+N}~512}\label{ex10_8c_a09a3b394b8602092d58347b791158062}
+
+\item 
+\hypertarget{ex10_8c_a91d43eadec33c80149f92e5abf5df58c}{\#define {\bfseries I\+N\+T\+E\+G\+E\+R}~long long int}\label{ex10_8c_a91d43eadec33c80149f92e5abf5df58c}
+
+\item 
+\hypertarget{ex10_8c_af5c77c153dfccf711a284ed211477d2e}{\#define {\bfseries I\+N\+T\+E\+G\+E\+R\+\_\+\+M\+A\+X}~L\+L\+O\+N\+G\+\_\+\+M\+A\+X}\label{ex10_8c_af5c77c153dfccf711a284ed211477d2e}
+
+\item 
+\hypertarget{ex10_8c_a3a6b987f353975b2f9743ec6cdff9ba3}{\#define {\bfseries error\+\_\+exit}(msg)~\hyperlink{ex10_8h_a33ab8fdf42577e4c056561c5194300a8}{error\+\_\+exit\+\_\+fun}(msg, \+\_\+\+\_\+\+F\+I\+L\+E\+\_\+\+\_\+, \+\_\+\+\_\+\+L\+I\+N\+E\+\_\+\+\_\+)}\label{ex10_8c_a3a6b987f353975b2f9743ec6cdff9ba3}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{ex10_8c_acae9d6feb6c1d81af035d5caee98fa32}{error\+\_\+exit\+\_\+fun} (const char $\ast$const msg, const char $\ast$const file, const I\+N\+T\+E\+G\+E\+R lineno)
+\item 
+int \hyperlink{ex10_8c_a52e249082b84ffb93b8386e9e4655cf2}{sift\+\_\+up} (I\+N\+T\+E\+G\+E\+R $\ast$heap, I\+N\+T\+E\+G\+E\+R $\ast$distance, I\+N\+T\+E\+G\+E\+R $\ast$index, I\+N\+T\+E\+G\+E\+R current)
+\item 
+int \hyperlink{ex10_8c_a307b80a5a97b157ce00f82d50f5f914c}{sift\+\_\+down} (I\+N\+T\+E\+G\+E\+R $\ast$heap, I\+N\+T\+E\+G\+E\+R $\ast$distance, I\+N\+T\+E\+G\+E\+R $\ast$index, I\+N\+T\+E\+G\+E\+R current, const I\+N\+T\+E\+G\+E\+R size)
+\item 
+int \hyperlink{ex10_8c_a2c9140d4d1017c5e4ccc18392b827d61}{steiner} (struct \hyperlink{structgraph}{graph} $\ast$G, struct \hyperlink{structgraph}{graph} $\ast$H, I\+N\+T\+E\+G\+E\+R $\ast$is\+\_\+prime, I\+N\+T\+E\+G\+E\+R source)
+\item 
+I\+N\+T\+E\+G\+E\+R \hyperlink{ex10_8c_aea01035a4a34ae3e03abb67f4914843c}{get\+\_\+primes} (I\+N\+T\+E\+G\+E\+R $\ast$is\+\_\+prime, I\+N\+T\+E\+G\+E\+R max)
+\item 
+int \hyperlink{ex10_8c_a19459f9ab8ff8534d6ffae8d07256fb2}{main} (int argc, const char $\ast$const $\ast$const argv)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A program for A\+P\+P\+F\+S ex10. 
+
+\begin{DoxyAuthor}{Author}
+Tri-\/\+Peter Shrive 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{ex10_8c_acae9d6feb6c1d81af035d5caee98fa32}{\index{ex10.\+c@{ex10.\+c}!error\+\_\+exit\+\_\+fun@{error\+\_\+exit\+\_\+fun}}
+\index{error\+\_\+exit\+\_\+fun@{error\+\_\+exit\+\_\+fun}!ex10.\+c@{ex10.\+c}}
+\subsubsection[{error\+\_\+exit\+\_\+fun}]{\setlength{\rightskip}{0pt plus 5cm}void error\+\_\+exit\+\_\+fun (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$const}]{msg, }
+\item[{const char $\ast$const}]{file, }
+\item[{const I\+N\+T\+E\+G\+E\+R}]{lineno}
+\end{DoxyParamCaption}
+)}}\label{ex10_8c_acae9d6feb6c1d81af035d5caee98fa32}
+utility function that simplifies error handling 
+\begin{DoxyParams}{Parameters}
+{\em msg} & message to be displayed \\
+\hline
+{\em file} & file name \\
+\hline
+{\em lineno} & line number \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex10_8c_aea01035a4a34ae3e03abb67f4914843c}{\index{ex10.\+c@{ex10.\+c}!get\+\_\+primes@{get\+\_\+primes}}
+\index{get\+\_\+primes@{get\+\_\+primes}!ex10.\+c@{ex10.\+c}}
+\subsubsection[{get\+\_\+primes}]{\setlength{\rightskip}{0pt plus 5cm}I\+N\+T\+E\+G\+E\+R get\+\_\+primes (
+\begin{DoxyParamCaption}
+\item[{I\+N\+T\+E\+G\+E\+R $\ast$}]{is\+\_\+prime, }
+\item[{I\+N\+T\+E\+G\+E\+R}]{max}
+\end{DoxyParamCaption}
+)}}\label{ex10_8c_aea01035a4a34ae3e03abb67f4914843c}
+sets entry at index of prime numbers to 1 
+\begin{DoxyParams}{Parameters}
+{\em is\+\_\+prime} & allocate memory for this array of size max and set the memory to zero \\
+\hline
+{\em max} & size of array is\+\_\+prime, the largest number to be assessed for primality \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex10_8c_a19459f9ab8ff8534d6ffae8d07256fb2}{\index{ex10.\+c@{ex10.\+c}!main@{main}}
+\index{main@{main}!ex10.\+c@{ex10.\+c}}
+\subsubsection[{main}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\begin{DoxyParamCaption}
+\item[{int}]{argc, }
+\item[{const char $\ast$const $\ast$const}]{argv}
+\end{DoxyParamCaption}
+)}}\label{ex10_8c_a19459f9ab8ff8534d6ffae8d07256fb2}
+reads data from file storing nodes and weights in graph structure. then calls dijkstra's algorithm and assesses longest shortes path \hypertarget{ex10_8c_a307b80a5a97b157ce00f82d50f5f914c}{\index{ex10.\+c@{ex10.\+c}!sift\+\_\+down@{sift\+\_\+down}}
+\index{sift\+\_\+down@{sift\+\_\+down}!ex10.\+c@{ex10.\+c}}
+\subsubsection[{sift\+\_\+down}]{\setlength{\rightskip}{0pt plus 5cm}int sift\+\_\+down (
+\begin{DoxyParamCaption}
+\item[{I\+N\+T\+E\+G\+E\+R $\ast$}]{heap, }
+\item[{I\+N\+T\+E\+G\+E\+R $\ast$}]{distance, }
+\item[{I\+N\+T\+E\+G\+E\+R $\ast$}]{index, }
+\item[{I\+N\+T\+E\+G\+E\+R}]{current, }
+\item[{const I\+N\+T\+E\+G\+E\+R}]{size}
+\end{DoxyParamCaption}
+)}}\label{ex10_8c_a307b80a5a97b157ce00f82d50f5f914c}
+sifts an entry down through binary heap 
+\begin{DoxyParams}{Parameters}
+{\em heap} & nodes in heap \\
+\hline
+{\em distance} & distance of nodes in heap \\
+\hline
+{\em index} & index of nodes in heap \\
+\hline
+{\em current} & current position of node in heap \\
+\hline
+{\em size} & size of heap \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex10_8c_a52e249082b84ffb93b8386e9e4655cf2}{\index{ex10.\+c@{ex10.\+c}!sift\+\_\+up@{sift\+\_\+up}}
+\index{sift\+\_\+up@{sift\+\_\+up}!ex10.\+c@{ex10.\+c}}
+\subsubsection[{sift\+\_\+up}]{\setlength{\rightskip}{0pt plus 5cm}int sift\+\_\+up (
+\begin{DoxyParamCaption}
+\item[{I\+N\+T\+E\+G\+E\+R $\ast$}]{heap, }
+\item[{I\+N\+T\+E\+G\+E\+R $\ast$}]{distance, }
+\item[{I\+N\+T\+E\+G\+E\+R $\ast$}]{index, }
+\item[{I\+N\+T\+E\+G\+E\+R}]{current}
+\end{DoxyParamCaption}
+)}}\label{ex10_8c_a52e249082b84ffb93b8386e9e4655cf2}
+sifts an entry up through binary heap 
+\begin{DoxyParams}{Parameters}
+{\em heap} & nodes in heap \\
+\hline
+{\em distance} & distance of nodes in heap \\
+\hline
+{\em index} & index of nodes in heap \\
+\hline
+{\em current} & current position of node in heap \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex10_8c_a2c9140d4d1017c5e4ccc18392b827d61}{\index{ex10.\+c@{ex10.\+c}!steiner@{steiner}}
+\index{steiner@{steiner}!ex10.\+c@{ex10.\+c}}
+\subsubsection[{steiner}]{\setlength{\rightskip}{0pt plus 5cm}int steiner (
+\begin{DoxyParamCaption}
+\item[{struct {\bf graph} $\ast$}]{G, }
+\item[{struct {\bf graph} $\ast$}]{H, }
+\item[{I\+N\+T\+E\+G\+E\+R $\ast$}]{is\+\_\+prime, }
+\item[{I\+N\+T\+E\+G\+E\+R}]{source}
+\end{DoxyParamCaption}
+)}}\label{ex10_8c_a2c9140d4d1017c5e4ccc18392b827d61}
+calculates steiner tree for given graph and source terminal using dijkstra's algorithm 
+\begin{DoxyParams}{Parameters}
+{\em G} & static graph attributes \\
+\hline
+{\em H} & variable graph attributes \\
+\hline
+{\em is\+\_\+prime} & array where entries are 1 when index is prime \\
+\hline
+{\em source} & source node \\
+\hline
+\end{DoxyParams}

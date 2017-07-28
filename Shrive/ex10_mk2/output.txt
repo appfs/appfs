@@ -1,0 +1,187 @@
+BEGIN: ex10 ../graphs/acycpos-1.gph 2
+
+NODES: 131073
+EDGES: 2097152
+TERMINALS: 12251
+
+TLEN: 103739
+TIME: 0.371063 sec
+WALL: 0.188760 sec
+END: ex10 ../graphs/acycpos-1.gph 2
+
+BEGIN: ex10 ../graphs/acycpos-x.gph 2
+
+NODES: 655361
+EDGES: 20971520
+TERMINALS: 53228
+
+TLEN: 446797
+TIME: 5.074389 sec
+WALL: 2.573034 sec
+END: ex10 ../graphs/acycpos-x.gph 2
+
+BEGIN: ex10 ../graphs/b15.gph 2
+
+NODES: 101
+EDGES: 125
+TERMINALS: 25
+
+TLEN: 216
+TIME: 0.000070 sec
+WALL: 0.000038 sec
+END: ex10 ../graphs/b15.gph 2
+
+BEGIN: ex10 ../graphs/big8.gph 2
+
+NODES: 50001
+EDGES: 500000
+TERMINALS: 5133
+
+TLEN: 752577
+TIME: 0.079602 sec
+WALL: 0.039938 sec
+END: ex10 ../graphs/big8.gph 2
+
+BEGIN: ex10 ../graphs/es10kaz.gph 2
+
+NODES: 53366
+EDGES: 86730
+TERMINALS: 5442
+
+TLEN: 529962169
+TIME: 0.023636 sec
+WALL: 0.011945 sec
+END: ex10 ../graphs/es10kaz.gph 2
+
+BEGIN: ex10 ../graphs/i640-345.gph 2
+
+NODES: 641
+EDGES: 40896
+TERMINALS: 115
+
+TLEN: 14156
+TIME: 0.001360 sec
+WALL: 0.000704 sec
+END: ex10 ../graphs/i640-345.gph 2
+
+BEGIN: ex10 ../graphs/phard-1.gph 2
+
+NODES: 262146
+EDGES: 2095424
+TERMINALS: 23000
+
+TLEN: 11256338
+TIME: 0.202497 sec
+WALL: 0.103313 sec
+END: ex10 ../graphs/phard-1.gph 2
+
+BEGIN: ex10 ../graphs/phard-x.gph 2
+
+NODES: 2097154
+EDGES: 13624576
+TERMINALS: 155611
+
+TLEN: 19032481
+TIME: 1.510460 sec
+WALL: 0.778456 sec
+END: ex10 ../graphs/phard-x.gph 2
+
+BEGIN: ex10 ../graphs/rand14-5.gph 2
+
+NODES: 4097
+EDGES: 4194304
+TERMINALS: 564
+
+TLEN: 1473
+TIME: 0.098193 sec
+WALL: 0.054609 sec
+END: ex10 ../graphs/rand14-5.gph 2
+
+BEGIN: ex10 ../graphs/rand4-1.gph 2
+
+NODES: 1048577
+EDGES: 4194304
+TERMINALS: 82025
+
+TLEN: 931938
+TIME: 3.350679 sec
+WALL: 1.688974 sec
+END: ex10 ../graphs/rand4-1.gph 2
+
+BEGIN: ex10 ../graphs/rand4-x.gph 2
+
+NODES: 32769
+EDGES: 33554432
+TERMINALS: 3512
+
+TLEN: 9929
+TIME: 0.892665 sec
+WALL: 0.491850 sec
+END: ex10 ../graphs/rand4-x.gph 2
+
+BEGIN: ex10 ../graphs/ssquare-1.gph 2
+
+NODES: 1048578
+EDGES: 3145728
+TERMINALS: 82025
+
+TLEN: 775389475
+TIME: 0.719812 sec
+WALL: 0.364352 sec
+END: ex10 ../graphs/ssquare-1.gph 2
+
+BEGIN: ex10 ../graphs/ssquare-s-5.gph 2
+
+NODES: 1048579
+EDGES: 4194305
+TERMINALS: 82025
+
+TLEN: 776000226
+TIME: 1.570883 sec
+WALL: 0.792916 sec
+END: ex10 ../graphs/ssquare-s-5.gph 2
+
+BEGIN: ex10 ../graphs/ssquare-s-x.gph 2
+
+NODES: 16777219
+EDGES: 67108865
+TERMINALS: 1077871
+
+TLEN: 104744344
+TIME: 69.488302 sec
+WALL: 34.779787 sec
+END: ex10 ../graphs/ssquare-s-x.gph 2
+
+BEGIN: ex10 ../graphs/ssquare-x.gph 2
+
+NODES: 16777218
+EDGES: 50331648
+TERMINALS: 1077871
+
+TLEN: 111125597
+TIME: 21.803352 sec
+WALL: 10.995074 sec
+END: ex10 ../graphs/ssquare-x.gph 2
+
+BEGIN: ex10 ../graphs/test.gph 2
+
+NODES: 10
+EDGES: 14
+TERMINALS: 4
+
+TLEN: 14
+TIME: 0.000142 sec
+WALL: 0.000075 sec
+END: ex10 ../graphs/test.gph 2
+
+BEGIN: ex10 ../graphs/world666.gph 2
+
+NODES: 668
+EDGES: 221445
+TERMINALS: 121
+
+TLEN: 117613
+TIME: 0.005623 sec
+WALL: 0.002875 sec
+END: ex10 ../graphs/world666.gph 2
+
