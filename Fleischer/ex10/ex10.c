@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 	
 	size_t howFar = strtol(argv[2], NULL, 10);
 	
-	if(argc <= 4) 
+	if(argc > 3) 
 	{
 		if(*argv[3] !='-') 
 		{
