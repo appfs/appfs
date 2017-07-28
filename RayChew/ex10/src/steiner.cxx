@@ -1,3 +1,12 @@
+/** 
+ *  @file    steiner.cxx
+ *  @author  Ray Chew
+ *  @date    20 July 2017
+ *  
+ *  @brief steiner namespace containing function that runs the main Dijkstra algorithm and Steiner heuristics.
+ *
+ */
+
 #include "steiner.h"
 
 using namespace std;
@@ -9,7 +18,8 @@ using namespace std;
  *   @param  Unvisited is a binary heap object of the class myHeap.
  *   @param  adjList is a vector<vector<Vertex>> of adjacency list with (index,weight).
  *   @param  startTerminal is the index of the starting node for the Dijkstra algorithm.
- *   @return pair<vector<int>,vector<int>>
+ *   @param  isPrimes is a vector<bool> where prime indices are labelled true, and false otherwise.
+ *   @return pair<vector<Edge>,vector<int>>
  */  
 pair<vector<Edge>,vector<int>> steiner::alg (int& n, myHeap& Unvisited, vector<vector<Vertex>>& adjList, const int& startTerminal, vector<bool>& isPrimes) { // the main Dijkstra algorithm.
   vector<bool> inSubgraph(n,false); // boolean vector where node numbers in steiner subgraph are true, else false.

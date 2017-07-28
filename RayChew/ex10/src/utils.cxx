@@ -1,3 +1,12 @@
+/** 
+ *  @file    utils.cxx
+ *  @author  Ray Chew
+ *  @date    20 July 2017
+ *  
+ *  @brief utils namespace containing useful/helper functions that are required by ex10.cxx, e.g. generating primes, etc.
+ *
+ */
+
 #include "utils.h"
 
 using namespace std;

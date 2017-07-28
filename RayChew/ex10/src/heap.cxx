@@ -3,17 +3,14 @@
  *  @author  Ray Chew
  *  @date    20 July 2017
  *  
- *  @brief Binary Heap structure
- *
- *  @section Description
- *  
- *  An attempt at a binary heap structure. Stores <value,index> pair of nodes which represents index on graph and distance from a certain node in the graph.
- *  * Comes with `checkUp` and `checkDown` methods, which bubbles up and down the heap to sort the heap structure.
- *  * `update_weight` allows for the changing of weights based on a index on the heap.
- *  * The index on the heap can be obtained by the method `get_neighbourPosition`.
- *  * Also returns the minimum (the top-most node) of the heap with `get_min` and removes this minimum with `pop_top`.
+ *  @brief Binary Heap structure.
  *
  */
+// An attempt at a binary heap structure. Stores <value,index> pair of nodes which represents index on graph and distance from a certain node in the graph.
+// Comes with `checkUp` and `checkDown` methods, which bubbles up and down the heap to sort the heap structure.
+// `update_weight` allows for the changing of weights based on a index on the heap.
+// The index on the heap can be obtained by the method `get_neighbourPosition`.
+// Also returns the minimum (the top-most node) of the heap with `get_min` and removes this minimum with `pop_top`.
 
 #include "heap.h"
 
@@ -118,7 +115,6 @@ void myHeap::mkHeap() {
  * 
  *   @param  n as int is the number of nodes in the graph.
  *   @param  startTerminal as int is the index of the start terminal.
- *   @param  inSubgraph is a vector<bool> where true corresponds to nodes in the steiner subgraph and false otherwise.
  *
  */  
 myHeap::myHeap(int& n, const int& startTerminal) : tree(n) {

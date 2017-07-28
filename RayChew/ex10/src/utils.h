@@ -1,3 +1,12 @@
+/** 
+ *  @file    utils.h
+ *  @author  Ray Chew
+ *  @date    20 July 2017
+ *  
+ *  @brief utils namespace header containing useful/helper functions that are required by ex10.cxx, e.g. generating primes, etc.
+ *
+ */
+
 /* -- Includes -- */
 /* C++ includes. */
 #include <iostream> /* for std::cout, std::ofstream */
@@ -28,13 +37,18 @@ using qi::parse;
 #define UTILS_H
 #define NDEBUG
 
-using Edge = std::pair<int, int>; // vector to store std::pair of two vertex indices.
-using Vertex = std::pair<int,int>; // vector to store std::pair of vertex index and weight.
+/** vector to store std::pair of two vertex indices. */
+using Edge = std::pair<int, int>;
+/** vector to store std::pair of vertex index and weight. */
+using Vertex = std::pair<int,int>;
 
+/**
+ * @brief utils namespace: contains helper functions.
+ */
 namespace utils {
   std::vector<int> get_Nodes(std::vector<Edge>& edges);
   
-  std::pair<std::vector<Edge>,std::vector<int>> get_EdgesWeights (int& n, std::ifstream& file);
+  std::pair<std::vector<Edge>,std::vector<int>> get_EdgesWeights(int& n, std::ifstream& file);
   
   std::vector<int> gen_Primes(int& n);
   
