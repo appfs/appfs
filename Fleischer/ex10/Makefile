@@ -14,6 +14,14 @@ coverage: ex10.c
 check: ex10.c
 	cppcheck --enable=all ex10.c
 	
+debug: ex10.c	
+	gcc -std=c11 -O3 -g -Wall -Wextra -Wpedantic -LDFLAGS -fopenmp ex10.c -o ex10 -lm
+	gdb ex10	
+	
 test:	
 	gcc -std=c11 -O3 -Wall -Wextra -Wpedantic -LDFLAGS -fopenmp ex10.c -o ex10 -lm	
 	./ex10 ../$(SOURCES)/SP/${FILE} $(STARTS) ${THREADS} 
+
+valgrind: ex10.c
+	gcc -std=c11 -O3 -g -Wall -Wextra -Wpedantic -LDFLAGS -fopenmp ex10.c -o ex10 -lm
+	valgrind ./ex10 ../$(SOURCES)/SP/world666.gph 10 1
