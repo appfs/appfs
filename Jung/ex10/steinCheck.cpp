@@ -5,49 +5,15 @@ typedef std::pair<int,int> Edge;
 
 
 
-int countNodes(bool* steinTree, int length){
-
-
-	int count=0;
-	for(int i=0;i<length;i++){
-
-		if(steinTree[i]){
-			count++;
-		}
-	}
-
-	return count;
-}
-
-
-// deletes an edge
-void deleteEdge(std::vector<int>* edges, int from, int to){
-
-	std::vector<int>::iterator it=edges[from].begin();
-
-	for(; it != edges[from].end(); it++){
-
-		if((*it)==to){
-			edges[from].erase(it);
-			return;
-		}
-	}
-
-
-}
-
 
 // depth first search from vertInd as root
-bool dfs(std::vector<int>* edges, int vertInd, bool* check, bool* alr){
+bool dfs(std::vector<int>* edges, int &vertInd, bool* check, bool* alr){
 
 	std::vector<int>::iterator it=edges[vertInd].begin();
 
-	int j=0;
-
-	for(; it != edges[vertInd].end(); it++){
+	for(; it != edges[vertInd].end(); ++it){
 
 		int to=*it;
-
 
 		if(alr[to]){
 			
@@ -56,9 +22,7 @@ bool dfs(std::vector<int>* edges, int vertInd, bool* check, bool* alr){
 		}
 
 		alr[to]=true;
-
 		check[to]=true;
-
 
 		// remove edge
 		it=edges[vertInd].erase(it)-1;
@@ -68,64 +32,24 @@ bool dfs(std::vector<int>* edges, int vertInd, bool* check, bool* alr){
 		if( !dfs(edges, to, check, alr)){
 			return false;
 		}
-
-		if(vertInd ==1){
-
-			std::cout<<"";
-		}
-
-
-		// set iterator to the right index
-		//it=edges[vertInd].begin()+j-1;
-
-
-
-		j++;
-
-		
-
 	}
 	return true;
 
 }
 
-// checks if the arrays have the same entrys
-bool checkArrays(bool* first, bool* second,int length){
 
+/**
+* This function checks if a given Graph is a tree and if all terminals are included
+*
+*
+*
+* @param nodes: The Edges of the given graph
+* @param steinTree: the nodes of the graph
+* @param isPrime: The terminals of the given gaph
+* @return: True if its a tree and all terminals are included false if not
+**/
+bool steinCheck(std::vector<Edge> &steinEdges, bool* steinTree, bool* isPrime, int vertNumb){
 
-
-		for(int i = 0; i < length; i++){
-			if(first[i] != second[i]){
-
-				std::cout<<" check array :"<<i<< "  "<<first[i]<<std::endl;
-				return false;
-			}
-		}
-	
-
-	return true;
-}
-
-
-bool isEmpty(std::vector<int>* edges, int length){
-
-
-	for(int i = 0; i < length; i++){
-
-		if(edges[i].size()!=0){
-
-			std::cout<<"is Empty"<<std::endl;
-			return false;
-		}
-	}
-	return true;
-}
-
-
-bool steinCheck(std::vector<Edge> &steinEdges, bool* steinTree, int vertNumb){
-
-
-	#if BIG
 		bool* check=new bool[vertNumb]();	// checks if every node in the Steinertree is reached by edges
 
 		for(int i=0;i<vertNumb; i++){
@@ -139,22 +63,7 @@ bool steinCheck(std::vector<Edge> &steinEdges, bool* steinTree, int vertNumb){
 		for(int i=0;i<vertNumb; i++){
 			check[i]=false;
 		}	
-	
-	#else
 
-		bool check[vertNumb]={false};
-		std::vector<int> edges[vertNumb];
-		bool alr[vertNumb]={false};		//	checks if node was already visited
-	#endif
-
-
-
-
-
-
-	//int vertNumb2= countNodes(steinTree);
-
-	
 
 	////////////// fill in the edges
 
@@ -169,17 +78,25 @@ bool steinCheck(std::vector<Edge> &steinEdges, bool* steinTree, int vertNumb){
 
 	check[2]=true;
 	alr[2]=true;
-	bool noCyc=dfs(edges,2, check, alr);
+	int start=2;
+	bool noCyc=dfs(edges,start, check, alr);
+	bool arr=checkArrays(steinTree, check, vertNumb);
+	bool empty=isEmpty(edges, vertNumb);
+	bool contains=containsArr(steinTree, isPrime, vertNumb);
+
 
 	
+	delete[] alr;
+	delete[] edges;
+	delete[] check;
 
-	if(noCyc && checkArrays(steinTree, check, vertNumb) && isEmpty(edges, vertNumb)){
+	if(noCyc && arr && empty && contains){
+
 		return true;
-
 	}
 	else{
+
 		return false;
-		
 	}
 
 

@@ -1,148 +1,144 @@
 
+/*
+* This is a program for the Steiner Tree Heuristic from Takahashi, Matsuyama for the APPFS course at the TU Berlin
+*
+* @author Johannes Jung
+*
+* I just started C++ Programming this semester, so this program has probably not the best style
+*/
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <exception>
 #include <vector>
 #include <time.h>
-#include <ctime>
 #include <utility>
 #include <limits>
 #include <tuple>
-#include <list>
 #include <climits>
 #include <cmath>
 #include <omp.h>
 #include <sys/time.h>
 #include <algorithm> 
-#include "dijkstra.h"
-#include "findSteiner.h"
+#include "utils.h"
 #include "steinCheck.h"
+#include "dijkstra.h"
 
 
 
 
-//Edge with weight, first the node pointing to, second the weigth
-typedef std::pair<int,int> Edge_wW;
+typedef std::pair<int,int> Edge;
 
 
+/**
+*
+*
+* Steiner Tree Heuristic from Takahashi, Matsuyama on multiple threads
+*
+* writes the graph to the steinEdges and st array
+*
+* @param nodes: The Edges corresponding to the nodes
+* @param vertNumb: Number of verxes in the graph
+* @param arcNumb: Number of arcs in the graph
+* @param primeNumb: number of terminals
+* @param isPrime: True if a number is prime
+* @param threads: Number of Threads
+* @param starts: Number of how often the algorithm should run from distinct start nodes
+* @param primes: a vector of primes
+* @param steinerEdges: Edges-vector to write the steiner Edges in
+* @param st: The nodes in the Steiner Tree per thread
+* @param  m: The weight of the minimum steiner tree per thread
+*
+* @return The Thread with the best solution
+**/
 
-void copyVecArray(std::vector<Edge_wW>* copyTo,std::vector<Edge_wW>* copyFrom, int arrSize){
-	for(int i=0; i<arrSize; i++){
-	
-			copyTo[i]=copyFrom[i];
-		
-		
-	}
-}
+int findSteiner(Edg &edges,int vertNumb,int arcNumb, int primeNumb,  bool* isPrime, int threads, unsigned int starts, std::vector<int> &primes,
+						std::vector<Edge>* steinEdges, bool** st, long long* m){
 
 
-//find the prime vertexes
-int findPrimes(std::vector<int> &primes, int vertNumb){
+		bool** isPrimeCopy= new bool*[threads]();	// Primes for every thread
+		long long min= LONG_LONG_MAX;				// Overall found minimum Weight of the steiner Tree
+		int minThread=0;							// the number of the thread which found the minimum steiner tree
+		int loops;									// Set the loops how often the algorithmus should run
 
-		std::ifstream file;
-		file.open("primes1.txt");
-
-		if (!file.is_open()) {
-			std::cerr << "You need the primes1.txt in the same Directory as your ex10.cpp" << std::endl;
-			return 0;
+		// set the amount of loops
+		if(primes.size()<starts){
+			loops=primes.size();
+		}
+		else{
+			loops=starts;
 		}
 
-		int searchingPrimes=true;
+		// Initialize the arrays
+		for(int i = 0; i < threads; i++){
 
-		int primesNumb=0;
-
-		std::string str;
-		getline(file, str,'\r');
-
-
-	while(searchingPrimes){
-
-		int numsInLine=8;
-		getline(file, str,'\r');
-
-		for(int i=0;i<numsInLine;i++){
-			
-
-			
-			int nextPrime = std::stoi(str.substr(10*i,10+10*i));
-			
-			if(nextPrime<=vertNumb){
-				primes.push_back(nextPrime);
-				primesNumb++;
-			}
-			else{
-				searchingPrimes=false;
-				break;
-			}
-			
+		   	st[i] = new bool[vertNumb]();
+		   	isPrimeCopy[i]= new bool[vertNumb]();
+		   	m[i]= LONG_LONG_MAX;
 		}
-		getline(file, str,'\r');
-		
-	}
-	file.close();
-
-	return primesNumb;
-}
 
 
 
 
 
+		////// Find the minimum Steiner Tree for each Thread
+		#pragma omp parallel for //reduction(min:min)
+		for(int i=0; i<loops; i++){
+
+			int* pre=new int[vertNumb]();					// The predecessor map of steiner Tree
+			bool* steinTreeCopy= new bool[vertNumb]();		// Steiner tree copy for the step
+			std::vector<Edge> steinEdgs;					// The Edges in the Steiner tree
+			int start=primes[i];
+
+			copyArray(isPrimeCopy[omp_get_thread_num()],isPrime, vertNumb);
+			std::fill_n(steinTreeCopy, vertNumb, false);
+
+			// add the start node to the steiner Tree
+			steinTreeCopy[start]=true;
+			pre[start]=start;
+
+			//calculates the heapLeangth , vertNumb+1 because the zero entry
+			int heapLength=nextPower(arcNumb+1)*2;
 
 
 
-// reads in and initialize the Edges
-void initializeEdge(std::vector<Edge_wW>* nodes,std::vector<int> primes, int vertNumb,int arcNumb,int primeNumb,std::ifstream &file){
+			long long weightST=0;
+			dijkstra(edges,steinTreeCopy ,pre, vertNumb, start, steinEdgs, heapLength, isPrimeCopy[omp_get_thread_num()], primeNumb, weightST);
 
-	try {
+			// compare to furhter results
+			if(weightST<m[omp_get_thread_num()]){
 
-		int count=0;
-
-
-		std::string str;
-		
-		while (count<arcNumb-primeNumb) {
-
-			getline(file, str, ' ');
-			int from = std::stoi(str);
-
-			getline(file, str, ' ');
-			int to = std::stoi(str);
-
-			getline(file,str);
-			int dist=std::stoi(str);
-
-			if(from>to){
-				int help=from;
-				from = to;
-				to = help;
+				m[omp_get_thread_num()]=weightST;
+				steinEdges[omp_get_thread_num()]=steinEdgs;
+				copyArray(st[omp_get_thread_num()],steinTreeCopy, vertNumb);
 			}
 
-			nodes[from].push_back(Edge_wW(to,dist));
-			nodes[to].push_back(Edge_wW(from,dist));
-
-			count++;
+			delete[] pre;
+			delete[] steinTreeCopy;
 		}
 
 
-		//Edges from all primes except to the sink
-		for(int i=0;i<primeNumb;i++){
+		//////// compare thread results
 
-			int prime=primes[i];
+		for(int i =0; i< threads; i++){
 
-			nodes[prime].push_back(Edge_wW(vertNumb-1,0));
-			nodes[vertNumb-1].push_back(Edge_wW(prime,0));
+			if(m[i]<min){
+
+				minThread=i;
+				min=m[i];
+			}
 		}
-	}
-	catch (...) {
-	}
+
+
+		for(int i = 0; i < threads; i++){
+
+				delete[] isPrimeCopy[i];
+			}
+		delete[] isPrimeCopy;
+
+	return minThread;
 }
-
-
-
-
-
 
 
 
@@ -151,43 +147,61 @@ int main(int argc, char* argv[]){
 
 
 
-	clock_t cc=clock();
-	
-	// number of threads , default=1
-	int threads=1;
+	clock_t cc=clock();			// CPU-Time
+	double wcTime;				// Wall clock time
+	std::ifstream file;			// gph file to read from
+	bool print=false;			// If true the tree is printed out
+	unsigned int starts=100;	// number of terminals to start with (100 default)
+	long vertNumb;				//Number of vertexes
+	long arcNumb;				//Number of Edges
+	bool* isPrime;				//determines if a vertex is an prime or not
+	int primeNumb;				//Number of Primes(Terminals)
+	std::vector<int> primes;	//Vector of the Terminals
+	int threads=1;				// number of threads , default=1
 	omp_set_num_threads(1);
-	// number of terminals to start with (100 default)
-	unsigned int starts=100;
+
+
+
+	////////////////////////// read input arguments
+
+	std::string fileString;
+	std::string dir="SP/";
+	std::string lastArg=argv[argc-1];
+
+
+	if(lastArg=="-s"){
+		print=true;
+	}
+
+	if(argc<2){
+
+		std::cout<<"please enter a file name, check README.md for right input"<<std::endl;
+		return 0;
+	}
+
 	if(argc>2){
+
 		try{
 			starts=std::stoi(argv[2]);
 		}
 		catch(...){
-			std::cout<<"Wrong input for terminalNumber";
+
+			if(!print || argc>3){
+
+				std::cout<<"Wrong input for terminalNumber, check README.md";
+				return 0;
+			}
 		}
 	}
-	
 
-	
-
-	////////////////////////// read input arguments
-
-	if(argc<2){
-
-		std::cout<<"please enter a file name"<<std::endl;
-		return 0;
-	}
-
-	std::ifstream file;
-	std::string fileString(argv[1]);
-	std::string dir="SP/";
+	fileString=(argv[1]);
 	fileString=dir+fileString;
 	file.open(fileString);
-		
 
 	if (!file.is_open()) {
-			std::cerr << "there is no file of the name \"" << argv[1] << "\" in the directory" << std::endl;
-			return 0;
+
+		std::cerr << "there is no file of the name \"" << argv[1] << "\" in the directory" << std::endl;
+		return 0;
 	}
 	
 	if(argc>3){
@@ -200,11 +214,13 @@ int main(int argc, char* argv[]){
 		}
 		catch(...){
 
-			std::cout<<"wrong input for threads"<<std::endl;
+			if(!print || argc> 4){
+
+				std::cout<<"wrong input for threads, check README.md"<<std::endl;
+				return 0;
+			}
 		}
 	}
-
-
 
 
 
@@ -215,27 +231,26 @@ int main(int argc, char* argv[]){
 	// get the Number of vertexes
   	std::string str;
 	getline(file, str, ' ');
-	int vertNumb = std::stoi(str)+2;
+	vertNumb = std::stol(str)+2;		// The start and end node a imaginary nodes
 
 	// get the prime nodes
-	std::vector<int> primes;
-	int primeNumb=findPrimes(primes,vertNumb-2);
+	std::cout<<"Get terminals..."<<std::endl;
+	isPrime=new bool[vertNumb]();
+	primeNumb=findPrimes(primes,vertNumb-2,isPrime);
+	std::cout<<"done: There are "<< primeNumb<<" Terminals"<<std::endl;
 
-	//vector array , for each node the edges are stored here, node 0 is the (added) source and vertNumb-1 is the (added) sink
-
-	#if BIG
-		std::vector<Edge_wW>* nodes=new std::vector<Edge_wW>[vertNumb]();
-	#else
-		std::vector<Edge_wW> nodes[vertNumb];
-	#endif
 
 	// get the Number of arcs
 	getline(file, str);
-	int arcNumb=std::stoi(str)+primeNumb;
+	arcNumb=std::stol(str);
+
+	Edg edges(vertNumb,arcNumb);		// The edges from all the nodes TODO
 
 	// stores the Edges to the nodes array
-	initializeEdge(nodes,primes,vertNumb, arcNumb, primeNumb,file);
-
+	std::cout<<std::endl;
+	std::cout<<"Initialize Graph..."<<std::endl;
+	initializeEdge(edges,vertNumb, arcNumb, primeNumb,file);
+	std::cout<<"done"<<std::endl;
 
 
 
@@ -244,165 +259,86 @@ int main(int argc, char* argv[]){
 	/////////////////// Set the variables
 
 
-	// Set the loops how often the algorithmus should run
-	int loops;
-	if(primes.size()<starts){
-		loops=primes.size();
-	}
-	else{
-		loops=starts;
-	}
-	
-	#if BIG
-		bool* steinTree= new bool[vertNumb]();
-	#else
-		bool steinTree[vertNumb];
-	#endif
+	struct timeval start, end;					// Variables for time measurement
 
-	// the Weight of the Steiner tree
-	long long weightST=0;
+	std::vector<Edge> steinEdges[threads]; 	// The Edges which are finally in the Steiner Tree
+	bool** st = new bool*[threads]();			// Steiner Nodes of the minimum steiner Tree per thread
+	long long m[threads];						// Minimum weight steiner tree found per thread
 
 
-	// The Edges which are finally in the Steiner Tree, this is needed for checking if its a tree
-	std::vector<Edge_wW> steinEdges[loops];
-
-
-
-
-	////////////////////////// Run the algorithm
-
-
-	long long min= LONG_LONG_MAX;
-	int minPos=0;
-
-	#if BIG
-		bool** st = new bool*[threads];
-		for(int i = 0; i < threads; ++i){
-	   		st[i] = new bool[vertNumb];
-		}
-	#else
-		bool st[threads][vertNumb];
-	#endif
-
-
-	long long m[threads];
-
-	int mp[threads];
-
-	for(int i=0;i< threads;i++){
-
-		m[i]= LONG_LONG_MAX;
-	}
-
-
-
-	double delta;
-	struct timeval start, end;
+	// Start time
 	gettimeofday(&start, NULL);
-
-
-
-	#pragma omp parallel for //reduction(min:min)
-	for(int i=0; i<loops; i++){
-
-		#if BIG
-			bool* steinTreeCopy= new bool[vertNumb]();
-			std::fill_n(steinTreeCopy, vertNumb, false); 
-			std::vector<Edge_wW>* nodesCopy=new std::vector<Edge_wW>[vertNumb]();
-			copyVecArray(nodesCopy,nodes,vertNumb);
-		#else
-			bool steinTreeCopy[vertNumb]={false};
-			std::vector<Edge_wW> nodesCopy[vertNumb]=nodes;
-		#endif
-
-		
-
-		
-		
-
-		weightST=findSteiner(nodesCopy, vertNumb, primeNumb,steinEdges[i], steinTreeCopy, primes[i]);
-
-
-		if(weightST<m[omp_get_thread_num()]){
-
-			m[omp_get_thread_num()]=weightST;
-			mp[omp_get_thread_num()]=i;
-			copyArray(st[omp_get_thread_num()],steinTreeCopy, vertNumb);
-		}
-
-		#if BIG
-			delete[] steinTreeCopy;
-			delete[] nodesCopy;
-		#endif
-	}
-
-
-
-
-	//////// compare thread results
-
-	int j=0;
-		
-	for(int i =0; i< threads; i++){
-
-		if(m[i]<min){
-				
-			j=i;
-			min=m[i];
-		}
-	}
 	
+	//////////////////// Run the algorithm
 
-	
-	
+	std::cout<<std::endl;
+	std::cout<<"Run the Algorithm..."<<std::endl;
 
-	copyArray(steinTree,st[j],vertNumb);
-	minPos=mp[j];
+	int minThread=findSteiner(edges,vertNumb,arcNumb,primeNumb, isPrime, threads, starts, primes, steinEdges, st,m);
 
-
-
-	////// get the time
+	// get the time
 	gettimeofday(&end, NULL);
-	delta = ((end.tv_sec  - start.tv_sec) * 1000000u + 
+	wcTime = ((end.tv_sec  - start.tv_sec) * 1000000u +
          end.tv_usec - start.tv_usec) / 1.e6;
 	
 
+	std::cout<<"done"<<std::endl;
 
-	/////////////// Checking if its a Tree
 
-	std::cout << std::endl;
-	std::cout << std::endl;
-	std::cout<< "checking if its a Tree...";
 
-	if(steinCheck(steinEdges[minPos],steinTree, vertNumb)){
+	//////////////////// Checking if its a Tree
+
+	std::cout<<std::endl;
+	std::cout<< "checking if its a Tree..."<<std::endl;
+
+	// Erase the first Edge because its not a real Edge
+	std::vector<Edge>::iterator begin=steinEdges[minThread].begin();
+	steinEdges[minThread].erase(begin);
+
+
+	if(steinCheck(steinEdges[minThread],st[minThread], isPrime, vertNumb)){
 		std::cout<< "done"<<std::endl;
 	}
 	else{
 		std::cout<<std::endl;
 		std::cout<< "This is not a Tree!"<<std::endl;
 	}
-	std::cout << std::endl;
+
+
 	std::cout << std::endl;
 
 
 
 	////////////////////// Output
 
-	std::cout <<"TLEN: "<< min << std::endl;
-	std::cout << std::endl;
-	std::cout <<"TREE: "<< "  " ;		
+	std::cout <<"TLEN: "<< m[minThread] << std::endl;
 
-	int size=steinEdges[minPos].size();
-	for(int i=0;i<size;i++){
+	if(print){
 
-		std::cout <<"("<< steinEdges[minPos][i].first <<","<< steinEdges[minPos][i].second<< ") ";
+		int size=steinEdges[minThread].size();
+		std::cout << std::endl;
+		std::cout <<"TREE: ";
+		for(int i=0;i<size;i++){
 
+
+			std::cout <<"("<< steinEdges[minThread][i].first <<","<< steinEdges[minThread][i].second<< ") ";
+
+		}
 	}
-
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout <<"TIME: "<< (double)(clock() - cc) / CLOCKS_PER_SEC<< " seconds" << std::endl;
-	std::cout <<"WALL: "<<delta<< " seconds" << std::endl;
+	std::cout <<"WALL: "<<wcTime<< " seconds" << std::endl;
+
+
+	for(int i = 0; i < threads; i++){
+		delete[] st[i];
+	}
+	delete[] st;
+	delete[] isPrime;
+	delete[] edges.edges;
+	delete[] edges.weights;
+	delete[] edges.nodes;
 
 
  	return 0;	

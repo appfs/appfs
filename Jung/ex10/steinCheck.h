@@ -5,10 +5,10 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
+#include "utils.h"
 
-typedef std::pair<int,int> Edge;
 
-bool steinCheck(std::vector<Edge> &steinEdges, bool* steinTree, int vertNumb);
+bool steinCheck(std::vector<std::pair<int,int>> &steinEdges, bool* steinTree, bool* isPrime, int vertNumb);
 
 
 

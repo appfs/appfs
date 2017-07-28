@@ -1,11 +1,41 @@
-Program for Steiner Tree Problem Heuristic, i use the primes from primes.utm.edu
+For Big graphs(over 100000 Vertexes you need to use MAKE BIG)
 
-compile: run "make" in your console, 
-for bigger graphs run "make BIG" (with more than 100000 vertexes, you can run this also on smaller graphs but it will take more time)
+phard-1.gph
+checking if its a Tree...done
 
-run: run "make THREADS=XX FILE=file.gph test" or "make THREADS=XX STARTS=YY FILE=file.gph test" 
-for the algorithm with XX threads and the best solution from the first YY start points
-for bigger graphs run "make THREADS=XX STARTS=YY FILE=file.gph testBIG"
 
-you can also run it with /.ex10 file.gph YY XX  , 
-where int YY is the number of the start-terminals to test (default=100) and int XX the number of threads to use(default=1)
+TLEN: 10502349
+
+TREE: [...]
+
+TIME: 873.572 seconds
+WALL: 872.847 seconds
+
+
+./a rand4-1.gph 1 1
+
+checking if its a Tree...done
+
+
+TLEN: 899439
+
+
+TIME: 11815.5 seconds
+WALL: 11849.8 seconds
+
+
+
+./a acycpos-1.gph 1 1
+
+checking if its a Tree...done
+
+
+TLEN: 97790
+
+
+TIME: 367.388 seconds
+WALL: 366.225 seconds
+
+
+
+
