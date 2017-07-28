@@ -5,8 +5,8 @@
 
  *
  * @section DESCRIPTION
- *
- * This program parses a graph and build a steiner tree, with prime nodes (node index start at 1) as terminal.
+ * compile with:  gcc -std=c11 -O3 -Wall -Wextra -Wpedantic -LDFLAGS -fopenmp  ex10.c -o ex10 -lm
+ * This program parses a graph and parses the longest shortest path from any edge to edge with the index 1.
  */
 
 #define _GNU_SOURCE
@@ -22,7 +22,6 @@
 #include<omp.h>
 
 #include"Graph.h"
-#include"heap.h"
 #include"misc.h"
 
 
@@ -33,45 +32,57 @@
 * @return The most expensive shortest path. It's given out on the shell
 */
 
-int main(int argc, char *argv[]){
-  	clock_t cpu;
-  	double wall;
+int main(int argc, char *argv[]) {
+  	clock_t cpu; //cpu time
+  	double wall; //wall time of pc
   	struct timeval time;
    	assert(!gettimeofday(&time,NULL));
 	cpu = clock();
-	int numProcessors = omp_get_max_threads();
+	
+	int numThreads = omp_get_max_threads();
 	
 	FILE *fp;
-	int argcCheck = 1;
-	if (argc<=argcCheck+1){ 
+	
+	if (argc <= 2)
+	{
 		exit(EXIT_FAILURE);
 	}
-	fp = fopen(argv[argcCheck], "r");
-    	if (fp == NULL)	exit(EXIT_FAILURE);
-        ++argcCheck;
+		
+	fp = fopen(argv[1], "r");
+	
+    	if (fp == NULL)	
+    	{
+    		exit(EXIT_FAILURE);
+    	}
+    	
         size_t* terminal = malloc(sizeof(size_t)*(1));
         size_t noOfTerminal = 0;
         terminal[0] = 1;
 	
-	size_t howFar = strtol(argv[argcCheck], NULL, 10);
-	++argcCheck;
-	if(argc <= argcCheck+1){
-		if(*argv[3] =='-'){
-		numProcessors = strtol(argv[argcCheck], NULL, 10);
-		++argcCheck;	
-	}}
-	++argcCheck;
-	omp_set_num_threads(numProcessors);
+	size_t howFar = strtol(argv[2], NULL, 10);
 	
-	//graph generated
+	if(argc > 3) 
+	{
+		if(*argv[3] !='-') 
+		{
+			numThreads = strtol(argv[3], NULL, 10);
+		}
+	}
+	//set num of threads
+	omp_set_num_threads(numThreads);
+	
+	//generating graph
 	struct Graphs gra = buildGraph(fp);
 	assert(gra.graphSize > 1);
 	wall=(double)time.tv_sec + (double)time.tv_usec * .000001;
-	size_t* isTerminal = findPrimes(gra.graphSize, numProcessors);
+	size_t* isTerminal = findPrimes(gra.graphSize, numThreads);
+	
 	printf("primes found\n");
-
-	for(size_t i = 3; i < gra.graphSize; ++i){
-		if(isTerminal[i]){
+	
+	//fitting of the terminal vector
+	for(size_t i = 3; i <= gra.graphSize; ++i){
+		if(isTerminal[i])
+		{
 			++noOfTerminal;		
 			terminal = realloc(terminal, sizeof(size_t)*(noOfTerminal+1));
 			isTerminal[i] = noOfTerminal;
@@ -80,75 +91,76 @@ int main(int argc, char *argv[]){
 
 		
 	}
-	if(isTerminal[gra.graphSize]){
-			++noOfTerminal;		
-			terminal = realloc(terminal, sizeof(size_t)*(noOfTerminal+1));
-			isTerminal[gra.graphSize] = noOfTerminal;
-			terminal[noOfTerminal] = gra.graphSize -1;
-	}
+
 	isTerminal[2] = 0;
 	++noOfTerminal;	
 
 	printf("Terminal vectors fitted\n");
 
-	//check of numer of start terminals is not too large
-	if(noOfTerminal < howFar){
+	//check of numer of start terminals we should try is not too large and set it eventually to the number of terminals available
+	if(noOfTerminal < howFar)
+	{
 		howFar = noOfTerminal;
 	}
-	struct SteinerTree stein[howFar];
-	struct BinaryHeap binary;
-	binary.heapVal = malloc(sizeof(double)*howFar);
-	binary.index66 = malloc(sizeof(size_t)*howFar);
-	binary.reversedIndex = malloc(sizeof(size_t)*howFar);
 	
-	stein[0] = steinerTree(terminal, noOfTerminal, 0, gra, isTerminal, INFINITY);
-	binary.heapVal[0] = stein[0].value;
-	binary.index66[0] = 0;
-	binary.reversedIndex[0] = 0;
+	
+	struct SteinerTree stein[howFar];//steiner tree array
+
+
+	
+	//steiner tree for the first terminal, and set of the termination bound, which is the currently cheapest steiner tree
+	stein[0] = getSteinerTree(terminal, noOfTerminal, 0, gra, isTerminal, INFINITY);
 	double bestStein = stein[0].value;
 	size_t temp = 0;
 	
-	#pragma omp parallel for ordered schedule(runtime) //firstprivate(bestStein, temp)
-	for(size_t i = 1; i < howFar; ++i){
-		stein[i] = steinerTree(terminal, noOfTerminal, i, gra, isTerminal, bestStein);
-
-		binary.heapVal[i] = stein[i].value;
-		binary.index66[i] = i;
-		binary.reversedIndex[i] = i;
-		if(bestStein > stein[i].value){
+	//for the others parallelized
+	#pragma omp parallel for schedule(runtime)
+	for(size_t i = 1; i < howFar; ++i)
+	{
+		stein[i] = getSteinerTree(terminal, noOfTerminal, i, gra, isTerminal, bestStein);
+		//check if the current one, delete the previous cheapest one
+		if(bestStein > stein[i].value)
+		{
 			bestStein = stein[i].value;
-			binary.heapVal[temp] = INFINITY;
 			free(stein[temp].tree);
 			temp = i;	
 		}
 		
 	}
-	binary = buildMinHeap(binary, howFar);
-	double minValue = stein[binary.index66[0]].value;
 
-	printf("TLEN: %f\n", minValue);
-	cpu = clock() - cpu;
-	printf("TIME: %fs\n",((float)cpu)/CLOCKS_PER_SEC);
+
+	
+        //calculation of the final wall time
+        assert(!gettimeofday(&time,NULL));	
+	wall=(double)time.tv_sec + (double)time.tv_usec * .000001 -wall;
+	printf("TLEN: %f\n", stein[temp].value);
+
+
+
 	//checks if the given out tree is even a steiner tree
-	char decider = solChecker(stein[binary.index66[0]], gra, terminal, noOfTerminal);
+	char decider = solChecker(stein[temp], gra, terminal, noOfTerminal, numThreads);
 	if(decider){
+		//check if it is wanted, that the tree should be printed, and print the tree
 		if(*argv[argc-1] == '-'){
 			if(*(argv[argc-1]+1)=='s'){
 				printf("Tree: ");
-				#pragma omp for 
-				for(size_t i = 0; i< stein[binary.index66[0]].noOfEdges-1; ++i){
-					printf("(%ld,%ld)", stein[binary.index66[0]].tree[2*i]+1, stein[binary.index66[0]].tree[2*i+1]+1);
+				for(size_t i = 0; i< gra.graphSize; ++i){
+					if(stein[temp].tree[i] != -1)
+						printf("(%lu,%lu)", stein[temp].tree[i]+1, i+1);
 				}
+				printf("\n");
 			}	
 		}
 	}
-	else{
+	else
+	{
 		printf("Something went wrong. Solution is not a Steiner tree!");
 	}
 
 
-        assert(!gettimeofday(&time,NULL));
-	wall=(double)time.tv_sec + (double)time.tv_usec * .000001 -wall;
 
-        printf("\nWALL: %fs\n", wall);
+	//calculation of the final cpu time
+	cpu = clock() - cpu;
+	printf("TIME: %fs\n",((float)cpu)/CLOCKS_PER_SEC);
+        printf("WALL: %fs\n", wall);
 }
