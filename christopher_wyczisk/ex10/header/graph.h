@@ -1,4 +1,4 @@
-/*
+/**
  *	graph.h
  *
  * 	\brief     10. Aufgabe
@@ -21,6 +21,16 @@ class graph {
 		bool vollstaendig(std::vector<int>* hundertTerminals);
 		bool keineZykel();
 		bool zusammenhaengend();
+		
+	private:
+		void disjunkteVektorErweiterung(vector<int>& vektor, int neuerKandidat);
+		void setzeErreichbarkeitAufInit();
+		void iterationSuche(vector<int>& knotenErreichbar);
+		vector<int> anzahlErreichbareKnoten;
+		vector<vector<int>> kanten;
+		vector<bool> effizienteEcken;
+		vector<int> ecken;
+		void sucheEffizienteEcken();
 };
 
 #endif
