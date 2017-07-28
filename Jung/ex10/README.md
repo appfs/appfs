@@ -1,41 +1,17 @@
-For Big graphs(over 100000 Vertexes you need to use MAKE BIG)
+This is my program for the steiner tree Heuristic from Takahashi, Matsuyama
 
-phard-1.gph
-checking if its a Tree...done
+How to compile: run make in your console
 
-
-TLEN: 10502349
-
-TREE: [...]
-
-TIME: 873.572 seconds
-WALL: 872.847 seconds
-
-
-./a rand4-1.gph 1 1
-
-checking if its a Tree...done
-
-
-TLEN: 899439
-
-
-TIME: 11815.5 seconds
-WALL: 11849.8 seconds
-
-
-
-./a acycpos-1.gph 1 1
-
-checking if its a Tree...done
-
-
-TLEN: 97790
-
-
-TIME: 367.388 seconds
-WALL: 366.225 seconds
-
-
-
-
+How to run: run 'make FILE=X STARTS=Y THREADS=Z test' where STARTS are the number of terminals, 
+        or you just run ./ex10 <file.gph> <STARTS> <THREADS> (-s) 
+  
+  
+  note:
+  if you run with the file phard-x.gph you maybe need to unlimit your stack ( ulimit -s unlimited),
+  since the depth search recursion i use when i check if its a steiner tree leads to a stack overflow, 
+  unfortunenately i discovered that too late to fix it in a better way. 
+  
+  if you run 'make doc' you need to set in EXTRACT_ALL=YES in the Doxyfile and run 'doxygen Doxyfile' 
+  
+  if you run the program with valgrind with multiple threads, valgrind will detect an error caused by openmp, 
+  which from what i've read is normal
