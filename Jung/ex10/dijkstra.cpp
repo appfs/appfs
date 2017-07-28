@@ -147,11 +147,11 @@ void dijkstra(Edg &edges, bool* steinTree, int* pre, int &vertNumb,
 	dist[0]=-1;
 	dist[start]=0;
 
-	int count=2;		// points to the next free place in the heap
+	int count=2;				// points to the next free place in the heap
 
 	int node;
 	int toNode;				// node has edge to toNode
-	int toWeight;			// the weight of the edge from node to toNode	
+	int toWeight;				// the weight of the edge from node to toNode	
 	int pos;				// position in the edges array
 	int value;				// The distance of the first node in the Heap
 	int help;
@@ -209,7 +209,6 @@ void dijkstra(Edg &edges, bool* steinTree, int* pre, int &vertNumb,
 
 						dist[toNode]=toWeight+value;
 
-						// TODO maybe just omit this if and increase heapLength in the beginning? But why then i get worse results
 						if(whereInHeap[toNode]==0){
 
 							heap[count]=toNode;
