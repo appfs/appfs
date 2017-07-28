@@ -2,7 +2,7 @@
 Calculate the best Steiner Tree for a given number of starting terminals (default is 100) and a given graph file.
 
 * **Compile**: `make THREADS=XX`, where `THREADS=XX` specifies the number of threads to be used in the parallel section of the code.
-* To **compile and run**, use: `make THREADS=XX FILE=YY test`, where `FILE=YY` is the graph file to execute right after the target is compiled.
+* **compile and run**: `make THREADS=XX FILE=YY test`, where `FILE=YY` is the graph file to execute right after the target is compiled.
 * **Run**: `./ex10 <graph filepath> [# of terminals] [-s]`. `[# of terminals]` is the number of starting terminals to check through to obtain best objective value. Include `[-s]` flag to print edges of Steiner-subgraph.
 
 ***
