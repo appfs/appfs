@@ -1,3 +1,9 @@
+/**
+*@file dataStruct.h
+*@author Sven Fleischer
+*There I've coded a simple stack and a simple heap, with the functions to use them.
+*/
+
 #ifndef HEAP_H
 #define HEAP_H
 
