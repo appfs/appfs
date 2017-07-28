@@ -39,11 +39,11 @@ int main(int numargs, char* args[]) {
 	timer::cpu_timer overall_timer;
 
 
-	//default values for unspecified options
+	// default values for unspecified options
 	int N_THREADS = 1;
 	int N_TERMINALS = 100;
 
-	/*parsing command line options*/
+	/* parsing command line options */
 	string input;
 	bool print_tree_selected;
 
@@ -88,10 +88,10 @@ int main(int numargs, char* args[]) {
 		cerr << "run with -h to see information about options" << endl;
 		exit(EXIT_FAILURE);
 	}
-	/*end of parsing command line options*/
+	/* end of parsing command line options */
 
 
-	/*parsing .gph file*/
+	/* parsing .gph file */
 	int num_vertices;
 	int num_edges;
 
@@ -101,54 +101,56 @@ int main(int numargs, char* args[]) {
 		exit(EXIT_FAILURE);
 	}
 
-	//first line is read to get number of vertices and edges
+	// first line is read to get number of vertices and edges
 	if (!parser.read_first_line(num_vertices, num_edges)) {
 		cerr << "error while reading file, not the right format" << endl;
 		exit(EXIT_FAILURE);
 	}
 
-	//we use arrays for edges and weights so that we can use a boost graph
+	// we use arrays for edges and weights so that we can use a boost graph
 	Edge* edges = new Edge[num_edges];
 	weight_type* weights = new double[num_edges];
 
-	//rest of the file is read and parsed to a graph
+	// rest of the file is read and parsed to a graph
 	if (!parser.read_edge_data(edges, weights)) {
 		cerr << "error while reading file, not the right format" << endl;
 		exit(EXIT_FAILURE);
 	}
-	/*end of file parsing*/
+	/* end of file parsing */
 
 
-	/*initialization and computing*/
+	/* initialization and computing */
 
-	//here the graph is constructed using a CSR graph from boost
+	// here the graph is constructed using a CSR graph from boost
 	const CSR_Graph g(boost::edges_are_unsorted, &edges[0], &edges[0] + num_edges,
 			weights, num_vertices);
 
-	//all primes in {2,...,num_vertices} are considered to be terminals
+	// all primes in {2,...,num_vertices} are considered to be terminals
 	vector<int> terminals = PrimeNumbers::find_primes(num_vertices);
 
 	timer::cpu_timer algo_timer;
 
 	const int iterations = std::min((int) terminals.size(), N_TERMINALS);
 
-	//The tree is implicitly stored by remembering the predecessor of each
-	//vertex, a -1 means that the vertex is not in the tree
+	// The tree is implicitly stored by remembering the predecessor of each
+	// vertex, a -1 means that the vertex is not in the tree
 	vector<int> best_tree(num_vertices);
 
 	weight_type min_value = std::numeric_limits<weight_type>::infinity();
 	int min_root = -1;
 
-	//heuristic is called for the specified number of terminals and the best
-	//solution is kept. It is done in parallel if more than one thread is chosen
+	// heuristic is called for the specified number of terminals and the best
+	// solution is kept. It is done in parallel if more than one thread is chosen
 	#pragma omp parallel for schedule(dynamic) num_threads(N_THREADS)
 	for (int i = 0; i < iterations; ++i) {
-		vector<int> tree(num_vertices);
+
+		vector<int> tree(num_vertices, -1);
 		weight_type objective_value = SteinerTreeHeuristic::compute_steiner_tree(g,
 			num_vertices, terminals[i], tree, terminals);
 
 		#pragma omp critical
 		if (objective_value < min_value) {
+
 			min_value = objective_value;
 			min_root = i;
 			best_tree = tree;
@@ -156,13 +158,13 @@ int main(int numargs, char* args[]) {
 	}
 
 	string algo_time = algo_timer.format(3, "%w");
-	/*end of computation*/
+	/* end of computation */
 
 
 	assert(SteinerTreeHeuristic::test_tree(g, num_vertices, terminals[min_root],
 			best_tree, terminals));
 
-	//output is printed, with tree if option was chosen
+	// output is printed, with tree if option was chosen
 	cout << "TLEN: " << min_value << endl;
 	if (print_tree_selected) {
 		string edge_string = SteinerTreeHeuristic::print_tree(g,

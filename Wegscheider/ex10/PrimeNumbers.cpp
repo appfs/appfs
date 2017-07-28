@@ -29,7 +29,7 @@ vector<int> PrimeNumbers::find_primes(int n) {
 		}
 	}
 
-	//primes are decreased by one to fit the purpose of this program
+	// primes are decreased by one to fit the purpose of this program
 	for (unsigned int i = 0; i < primes.size(); ++i) {
 		primes[i]--;
 	}

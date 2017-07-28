@@ -10,12 +10,14 @@
 
 using std::pair;
 
+
 /*
  * Data that is stored in one node of the heap. Contains an integer and a double.
  * Comparisons are made by the double, smaller has higher priority. The int is
  * used for the vertex index and the double for its key during the algorithm
  */
 struct heap_data {
+
 	int index;
 	weight_type key;
 
@@ -34,11 +36,11 @@ struct heap_data {
  * whenever a better path is found. The resulting tree is stored implicitly
  */
 double SteinerTreeHeuristic::compute_steiner_tree(const CSR_Graph& g, int num_vertices,
-		int root, vector<int>& tree_predecessors, const vector<int>& terminals) {
+		int root, vector<int>& tree_preds, const vector<int>& terminals) {
 
-	assert((int) tree_predecessors.size() == num_vertices);
+	assert((int) tree_preds.size() == num_vertices);
 
-	//terminals are scanned
+	// terminals are scanned
 	int num_terminals = terminals.size();
 	vector<bool> is_terminal(num_vertices, false);
 	for (int i = 0; i < num_terminals; ++i) {
@@ -50,80 +52,84 @@ double SteinerTreeHeuristic::compute_steiner_tree(const CSR_Graph& g, int num_ve
 
 	heap::d_ary_heap<heap_data, heap::arity<4>> heap;
 
-	vector<weight_type> distances(num_vertices);
-	vector<int> predecessors(num_vertices);
-	predecessors[root] = root;
-	weight_type tree_cost = 0;
+	// this vector is used to store the info about predecessor and the respective
+	// edge together in order to avoid cache misses
+	vector<pair<int,weight_type>> preds(num_vertices);
+	preds[root] = std::make_pair(root, 0);
 
-	//initialization of heap, distances and treePredecessors. note: a -1 in
-	//treePredecessors means that the vertex is not connected to the tree yet
+	// we expect the tree vector to be filled with -1 already
 	for (int i = 0; i < num_vertices; ++i) {
-		if (i == root) {
-			heap.push(heap_data(i,0));
-
-			distances[i] = 0;
-			tree_predecessors[i] = root;
-		} else {
-			heap.push(heap_data(i, std::numeric_limits<weight_type>::infinity()));
-			distances[i] = std::numeric_limits<weight_type>::infinity();
-			tree_predecessors[i] = -1;
-		}
+		assert(tree_preds[i] == -1);
 	}
 
+	// initialization of distances. all but the root vertex have infinity
+	vector<weight_type> dist(num_vertices, std::numeric_limits<weight_type>::infinity());
+	dist[root] = 0;
+	tree_preds[root] = root;
 
-	//this is just boost syntax so that we can access weights and indices later
+	heap.push(heap_data(root, 0));
+
+
+	// this is just boost syntax so that we can access weights and indices later
 	property_map<CSR_Graph, edge_weight_t>::const_type weights = get(edge_weight, g);
 	property_map<CSR_Graph, vertex_index_t>::const_type index = get(vertex_index, g);
 
 	int connected_terminals = 1;
+	weight_type tree_cost = 0;
 
-	//here the actual algorithm starts
+	// here the actual algorithm starts
 	while (connected_terminals < num_terminals) {
+
 		assert(!heap.empty());	//heap should never be empty before tree contains all terminals
 
 		int min_idx = heap.top().index;
 		weight_type min_key = heap.top().key;
+
 		heap.pop();
 
+		if (dist[min_idx] < min_key) continue;
 
-		//if we scan a terminal, all vertices on shortest path to subtree
-		//are added to heap with weight 0 and included into the tree
-		if (min_idx != root && is_terminal[min_idx] && tree_predecessors[min_idx] == -1) {
+		// if we scan a terminal, all vertices on shortest path to subtree
+		// are added to heap with weight 0 and included into the tree
+		if (is_terminal[min_idx] && tree_preds[min_idx] == -1) {
+
 			++connected_terminals;
 
-			min_key = 0.;
-			int next_vertex = predecessors[min_idx];
-			tree_predecessors[min_idx] = next_vertex;
+			min_key = 0;
+			int next_vertex = preds[min_idx].first;
+			tree_preds[min_idx] = next_vertex;
 
-			auto edge_info = edge(vertex(next_vertex,g), vertex(min_idx,g), g);
-			assert(edge_info.second);
-			tree_cost += weights[edge_info.first];
+			tree_cost += preds[min_idx].second;
 
-			//here all vertices on path from new terminal to tree are added again with key=0
-			while (tree_predecessors[next_vertex] == -1) {
+			// here all vertices on path from new terminal to tree are added again with key=0
+			while (tree_preds[next_vertex] == -1) {
+
 				heap.push(heap_data(next_vertex, 0));
-				tree_predecessors[next_vertex] = predecessors[next_vertex];
+				dist[next_vertex] = 0;
+				tree_preds[next_vertex] = preds[next_vertex].first;
 
-				edge_info = edge(vertex(predecessors[min_idx],g), vertex(min_idx, g), g);
-				assert(edge_info.second);
-				tree_cost += weights[edge_info.first];
+				tree_cost += preds[next_vertex].second;
 
-				next_vertex = predecessors[next_vertex];
+				next_vertex = preds[next_vertex].first;
 			}
 		}
 
 		typename graph_traits<CSR_Graph>::out_edge_iterator it, it_end;
 
-		//this is basically dijkstra with pushes instead of decreasekey operations
+		// this is basically dijkstra with pushes instead of decreasekey operations
 		for (tie(it,it_end) = out_edges(*(vertices(g).first+min_idx),g); it != it_end; ++it) {
-			weight_type tmp = min_key + weights[*it];
-			int target_index = index[target(*it, g)];
 
-			//we only consider vertices which have not been added to the tree yet
-			if (tree_predecessors[target_index] == -1 && tmp < distances[target_index]) {
-				distances[target_index] = tmp;
-				predecessors[target_index] = min_idx;
-				heap.push(heap_data(target_index, tmp));
+			int v_target = index[target(*it, g)];
+
+			// we only consider vertices which have not been added to the tree yet
+			if (tree_preds[v_target] != -1) continue;
+
+			if (min_key + weights[*it] < dist[v_target]) {
+				// distance is updated
+				dist[v_target] = min_key + weights[*it];
+				preds[v_target].first = min_idx;
+				preds[v_target].second = weights[*it];
+				heap.push(heap_data(v_target, dist[v_target]));
 			}
 		}
 	}
@@ -132,28 +138,28 @@ double SteinerTreeHeuristic::compute_steiner_tree(const CSR_Graph& g, int num_ve
 }
 
 
-/* note: this method only works if tree_predecessors actually represents a tree.
+/* note: this method only works if tree_preds actually represents a tree.
  * If not sure, use function testTree(...)
  */
 string SteinerTreeHeuristic::print_tree(const CSR_Graph& g, int num_vertices, int root,
-		vector<int>& tree_predecessors, vector<int>& terminals) {
+		vector<int>& tree_preds, vector<int>& terminals) {
 
 	std::stringstream stream;
 	vector<bool> visited(num_vertices, false);
 
-	//we iterate through the tree going from each terminal until we arrive at root
+	// we iterate through the tree going from each terminal until we arrive at root
 	for (unsigned int i = 0; i < terminals.size(); ++i) {
 		int curr = terminals[i];
 		int edge_count = 0;
 		while (curr != root && !visited[curr]) {
 			++edge_count;
 
-			//every 50 lines a linebreak is added for the sake of readability
+			// every 50 lines a linebreak is added for the sake of readability
 			if (edge_count % 50 == 0) stream << std::endl;
-			stream << "(" << curr << "," << tree_predecessors[curr] << ") ";
+			stream << "(" << curr << "," << tree_preds[curr] << ") ";
 
 			visited[curr] = true;
-			curr = tree_predecessors[curr];
+			curr = tree_preds[curr];
 		}
 	}
 
@@ -163,25 +169,25 @@ string SteinerTreeHeuristic::print_tree(const CSR_Graph& g, int num_vertices, in
 
 
 bool SteinerTreeHeuristic::test_tree(const CSR_Graph& g, int num_vertices, int root,
-	vector<int>& tree_predecessors, vector<int>& terminals) {
+	vector<int>& tree_preds, vector<int>& terminals) {
 
 	vector<bool> visited(num_vertices, false);
 
-	//we iterate through the tree going from each terminal until we arrive at
+	// we iterate through the tree going from each terminal until we arrive at
 	// the root or a vertex that we already visited
 	for (unsigned int i = 0; i < terminals.size(); ++i) {
 		int curr = terminals[i];
 		int vertex_count = 1;
 
 		while (curr != root && !visited[curr] && vertex_count != num_vertices) {
-			//if one terminal is not connected to root, result is false
+			// if one terminal is not connected to root, result is false
 			if (curr == -1) return false;
 			visited[curr] = true;
-			curr = tree_predecessors[curr];
+			curr = tree_preds[curr];
 			++vertex_count;
 		}
 
-		//if a cycle is found, result is false
+		// if a cycle is found, result is false
 		if (vertex_count == num_vertices || curr == -1){
 			return false;
 		}

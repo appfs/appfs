@@ -24,7 +24,7 @@ GraphParser::GraphParser(string file) {
 bool GraphParser::read_first_line(int& num_vertices, int& num_edges) {
 
 	string line;
-	getline(input_file, line);	//first line is read
+	getline(input_file, line);	// first line is read
 
 	auto it = line.begin();
 	int n, m;
@@ -48,12 +48,12 @@ bool GraphParser::read_edge_data(Edge edges[], weight_type weights[]) {
 	assert(NULL != edges);
 	assert(NULL != weights);
 
-	//we use boost::spirit to parse each line
+	// we use boost::spirit to parse each line
 	string line;
 
 	int i = 0;
 
-	//read line by line
+	// read line by line
 	while (getline(input_file, line)) {
 
 		auto it = line.begin();
@@ -64,12 +64,15 @@ bool GraphParser::read_edge_data(Edge edges[], weight_type weights[]) {
 				int_[([&start](int j){ start = j; })]
 					 >> int_[([&end](int j){ end = j; })]
 							 >> double_[([&weight](weight_type j){ weight = j; })], space);
+
 		if (success && it == line.end()) {
-			//since graph is undirected we add both directions for each edge
+
+			// since graph is undirected we add both directions for each edge
 			edges[2*i] = Edge(start-1, end-1);
 			edges[2*i+1] = Edge(end-1, start-1);
 			weights[2*i] = weight;
 			weights[2*i+1] = weight;
+
 		} else {
 			return false;
 		}

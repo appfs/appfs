@@ -29,26 +29,27 @@ namespace SteinerTreeHeuristic {
 	 * of the shortest-path-heuristic based on Dijkstra.
 	 * @param g an undirected Graph (CSR-graph from boost)
 	 * @param numVertices the number of vertices in g
-	 * @param tree_predecessors the array in which the tree is stored implicitly
+	 * @param tree_preds the array in which the tree is stored implicitly.
+	 * It is expected to be filled with -1.
 	 * @param terminals a vector of vertex indices which are considered terminals
 	 * @param root the vertex from which to start the heuristic
 	 * @return the objective value of the constructed tree
 	 */
 	weight_type compute_steiner_tree(const CSR_Graph& g, int num_vertices, int root,
-			vector<int>& tree_predecessors, const vector<int>& terminals);
+			vector<int>& tree_preds, const vector<int>& terminals);
 
 	/**
 	 * Prints all edges in a tree which is represented by a predecessor array
 	 * to a string. This only works if the array actually represents a tree.
 	 * @param g the underlying undirected Graph (CSR-graph from boost)
 	 * @param numVertices the number of vertices in g
-	 * @param tree_predecessors the array which is to be printed
+	 * @param tree_preds the array which is to be printed
 	 * @param terminals the terminals of g
 	 * @param root the root vertex from which the tree was constructed
 	 * @return whether the array represents a Steiner Tree
 	 */
 	string print_tree(const CSR_Graph& g, int num_vertices, int root,
-			vector<int>& tree_predecessors, vector<int>& terminals);
+			vector<int>& tree_preds, vector<int>& terminals);
 
 	/**
 	 * Tests whether an array of integers implicitly represents a Steiner Tree
@@ -62,7 +63,7 @@ namespace SteinerTreeHeuristic {
 	 * @return whether the array represents a Steiner Tree
 	 */
 	bool test_tree(const CSR_Graph& g, int num_vertices, int root,
-			vector<int>& tree_predecessors, vector<int>& terminals);
+			vector<int>& tree_preds, vector<int>& terminals);
 
 }
 #endif /* SRC_STEINERTREEHEURISTIC_H_ */
