@@ -1,0 +1,137 @@
+\hypertarget{ex10_8h}{\section{ex10.\+h File Reference}
+\label{ex10_8h}\index{ex10.\+h@{ex10.\+h}}
+}
+
+
+Definitions for A\+P\+P\+F\+S ex10.  
+
+
+This graph shows which files directly or indirectly include this file\+:
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structgraph}{graph}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{ex10_8h_a33ab8fdf42577e4c056561c5194300a8}{error\+\_\+exit\+\_\+fun} (const char $\ast$const msg, const char $\ast$const file, const long long int lineno)
+\item 
+int \hyperlink{ex10_8h_a45da424150f32d30aaebda01170095b7}{sift\+\_\+up} (long long int $\ast$heap, long long int $\ast$distance, long long int $\ast$index, long long int current)
+\item 
+int \hyperlink{ex10_8h_a7bf8ddf4afbe79a95333b0758f34a147}{sift\+\_\+down} (long long int $\ast$heap, long long int $\ast$distance, long long int $\ast$index, long long int current, const long long int size)
+\item 
+int \hyperlink{ex10_8h_a1479d6cac692ed7086832e612a2a8e66}{steiner} (struct \hyperlink{structgraph}{graph} $\ast$G, struct \hyperlink{structgraph}{graph} $\ast$H, long long int $\ast$is\+\_\+prime, long long int source)
+\item 
+long long int \hyperlink{ex10_8h_a8595238d3902fbb4c6b82573acd8046a}{get\+\_\+primes} (long long int $\ast$is\+\_\+prime, long long int max)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Definitions for A\+P\+P\+F\+S ex10. 
+
+\begin{DoxyAuthor}{Author}
+Tri-\/\+Peter Shrive 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\hypertarget{ex10_8h_a33ab8fdf42577e4c056561c5194300a8}{\index{ex10.\+h@{ex10.\+h}!error\+\_\+exit\+\_\+fun@{error\+\_\+exit\+\_\+fun}}
+\index{error\+\_\+exit\+\_\+fun@{error\+\_\+exit\+\_\+fun}!ex10.\+h@{ex10.\+h}}
+\subsubsection[{error\+\_\+exit\+\_\+fun}]{\setlength{\rightskip}{0pt plus 5cm}void error\+\_\+exit\+\_\+fun (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$const}]{msg, }
+\item[{const char $\ast$const}]{file, }
+\item[{const long long int}]{lineno}
+\end{DoxyParamCaption}
+)}}\label{ex10_8h_a33ab8fdf42577e4c056561c5194300a8}
+
+\begin{DoxyParams}{Parameters}
+{\em msg} & message to be displayed \\
+\hline
+{\em file} & file name \\
+\hline
+{\em lineno} & line number \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex10_8h_a8595238d3902fbb4c6b82573acd8046a}{\index{ex10.\+h@{ex10.\+h}!get\+\_\+primes@{get\+\_\+primes}}
+\index{get\+\_\+primes@{get\+\_\+primes}!ex10.\+h@{ex10.\+h}}
+\subsubsection[{get\+\_\+primes}]{\setlength{\rightskip}{0pt plus 5cm}long long int get\+\_\+primes (
+\begin{DoxyParamCaption}
+\item[{long long int $\ast$}]{is\+\_\+prime, }
+\item[{long long int}]{max}
+\end{DoxyParamCaption}
+)}}\label{ex10_8h_a8595238d3902fbb4c6b82573acd8046a}
+sets entry at index of prime numbers to 1 
+\begin{DoxyParams}{Parameters}
+{\em is\+\_\+prime} & allocate memory for this array of size max and set the memory to zero \\
+\hline
+{\em max} & size of array is\+\_\+prime, the largest number to be assessed for primality \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex10_8h_a7bf8ddf4afbe79a95333b0758f34a147}{\index{ex10.\+h@{ex10.\+h}!sift\+\_\+down@{sift\+\_\+down}}
+\index{sift\+\_\+down@{sift\+\_\+down}!ex10.\+h@{ex10.\+h}}
+\subsubsection[{sift\+\_\+down}]{\setlength{\rightskip}{0pt plus 5cm}int sift\+\_\+down (
+\begin{DoxyParamCaption}
+\item[{long long int $\ast$}]{heap, }
+\item[{long long int $\ast$}]{distance, }
+\item[{long long int $\ast$}]{index, }
+\item[{long long int}]{current, }
+\item[{const long long int}]{size}
+\end{DoxyParamCaption}
+)}}\label{ex10_8h_a7bf8ddf4afbe79a95333b0758f34a147}
+sifts an entry down through binary heap 
+\begin{DoxyParams}{Parameters}
+{\em heap} & nodes in heap \\
+\hline
+{\em distance} & distance of nodes in heap \\
+\hline
+{\em index} & index of nodes in heap \\
+\hline
+{\em current} & current position of node in heap \\
+\hline
+{\em size} & size of heap \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex10_8h_a45da424150f32d30aaebda01170095b7}{\index{ex10.\+h@{ex10.\+h}!sift\+\_\+up@{sift\+\_\+up}}
+\index{sift\+\_\+up@{sift\+\_\+up}!ex10.\+h@{ex10.\+h}}
+\subsubsection[{sift\+\_\+up}]{\setlength{\rightskip}{0pt plus 5cm}int sift\+\_\+up (
+\begin{DoxyParamCaption}
+\item[{long long int $\ast$}]{heap, }
+\item[{long long int $\ast$}]{distance, }
+\item[{long long int $\ast$}]{index, }
+\item[{long long int}]{current}
+\end{DoxyParamCaption}
+)}}\label{ex10_8h_a45da424150f32d30aaebda01170095b7}
+sifts an entry up through binary heap 
+\begin{DoxyParams}{Parameters}
+{\em heap} & nodes in heap \\
+\hline
+{\em distance} & distance of nodes in heap \\
+\hline
+{\em index} & index of nodes in heap \\
+\hline
+{\em current} & current position of node in heap \\
+\hline
+\end{DoxyParams}
+\hypertarget{ex10_8h_a1479d6cac692ed7086832e612a2a8e66}{\index{ex10.\+h@{ex10.\+h}!steiner@{steiner}}
+\index{steiner@{steiner}!ex10.\+h@{ex10.\+h}}
+\subsubsection[{steiner}]{\setlength{\rightskip}{0pt plus 5cm}int steiner (
+\begin{DoxyParamCaption}
+\item[{struct {\bf graph} $\ast$}]{G, }
+\item[{struct {\bf graph} $\ast$}]{H, }
+\item[{long long int $\ast$}]{is\+\_\+prime, }
+\item[{long long int}]{source}
+\end{DoxyParamCaption}
+)}}\label{ex10_8h_a1479d6cac692ed7086832e612a2a8e66}
+calculates steiner tree for given graph and source terminal using dijkstra's algorithm 
+\begin{DoxyParams}{Parameters}
+{\em G} & static graph attributes \\
+\hline
+{\em H} & variable graph attributes \\
+\hline
+{\em is\+\_\+prime} & array where entries are 1 when index is prime \\
+\hline
+{\em source} & source node \\
+\hline
+\end{DoxyParams}
