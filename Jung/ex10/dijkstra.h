@@ -14,14 +14,10 @@
 #include <list>
 #include <climits>
 #include <cmath>
-
-//typedegs for edges
-typedef std::pair<int, int> Edge_wW;
+#include "utils.h"
 
 
-void bubbleDown(int* heap, int* whereInHeap, int* whichNode,int nodePos, int heapLength);
-void bubbleUp(int* heap, int* whereInHeap, int* whichNode,int nodePos);
-int dijkstra(std::vector<Edge_wW>* edges, bool* steinTree, bool* used, int* pre, int vertNumb, 
-			int restNodes, std::vector<int> &steinerNodes, int heapLength);
+void dijkstra(Edg &edges, bool* steinTree, int* pre, int &vertNumb,
+		int start, std::vector<std::pair<int,int>> &steinEdges, int &heapLength, bool* isPrime,int primeNumb, long long &weightST);
 
 #endif

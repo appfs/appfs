@@ -4,58 +4,51 @@
 #include "dijkstra.h"
 
 
+//typedegs for edges
+typedef std::pair<int, int> Edge;
 
-void bubbleDown(int* heap, int* whereInHeap, int* whichNode,int nodePos, int heapLength){
+
+void bubbleDown(int* heap, int* whereInHeap, long long* dist,int nodePos, int &heapLength){
 
 
-	int value= heap[nodePos];
-	int node= whichNode[nodePos];
-
+	int node= heap[nodePos];
+	int value= dist[node];
 	int smallChildPos;	
 
 	bool down=true;
 
 	while(down){
 
-
-
 			down=false;
 
-
-			if(heap[nodePos*2]<heap[nodePos*2+1]){
+			if(dist[heap[nodePos*2]]<dist[heap[nodePos*2+1]]){
 				smallChildPos=nodePos*2;
 			}
 			else{
 				smallChildPos=nodePos*2+1;
 			}
 
-			if(heap[smallChildPos]<value){
+			if(dist[heap[smallChildPos]]<value){
 
 				heap[nodePos]=heap[smallChildPos];
-				whichNode[nodePos]=whichNode[smallChildPos];
-				whereInHeap[whichNode[nodePos]]=nodePos;
-				nodePos=smallChildPos;	
+				whereInHeap[heap[smallChildPos]]=nodePos;
+				nodePos=smallChildPos;
 
-
-				if(smallChildPos*2<=heapLength){	//TODO to avoid that comparison (~O(nlogn) per dijkstra) implement heap with heaplength 2^i with 2^(i-1)<=numbNodes<=2^i
 					down=true;
-				}
 			}
-		
 	}
 
-	heap[nodePos]=value;
-	whichNode[nodePos]=node;
+	heap[nodePos]=node;
 	whereInHeap[node]=nodePos;
 
 }
 
 
+// Bubble up one entry in the heap until no smaller parent is there
+void bubbleUp(int* heap, int* whereInHeap, long long* dist,int &nodePos){
 
-void bubbleUp(int* heap, int* whereInHeap, int* whichNode,int nodePos){
-
-	int value= heap[nodePos];
-	int node= whichNode[nodePos];
+	int node= heap[nodePos];
+	int value= dist[node];
 	int bubblePos=nodePos;
 
 	bool up=true;
@@ -63,18 +56,16 @@ void bubbleUp(int* heap, int* whereInHeap, int* whichNode,int nodePos){
 	while(up){
 
 		int parentPos=bubblePos/2;
-		if(heap[parentPos]>value){
+		if(dist[heap[parentPos]]>value){
 
 			heap[bubblePos]=heap[parentPos];
-			whichNode[bubblePos]=whichNode[parentPos];
-			whereInHeap[whichNode[parentPos]]=bubblePos;
+			whereInHeap[heap[parentPos]]=bubblePos;
 			bubblePos=parentPos;
 
 		}
 		else{
 
-			heap[bubblePos]=value;
-			whichNode[bubblePos]=node;
+			heap[bubblePos]=node;
 			whereInHeap[node]=bubblePos;
 			up=false;
 		}
@@ -83,172 +74,163 @@ void bubbleUp(int* heap, int* whereInHeap, int* whichNode,int nodePos){
 }
 
 
+// Bubble down one entry in the heap until no smaller child is there
+void update(int* heap,int* whereInHeap,long long* dist, int* pre, std::vector<Edge> &steinEdges, bool* steinTree,int node,int &count){
 
-int dijkstra(std::vector<Edge_wW>* edges, bool* steinTree, bool* used, int* pre, int vertNumb, 
-			int restNodes, std::vector<int> &steinerNodes, int heapLength){
+	int parent=pre[node];
 
 
+	while(!steinTree[parent]){
 
-	#if BIG
-		int* heap=new int[heapLength]();
-		int* whereInHeap = new int[vertNumb]();		//determine from the node the position in the heap
-		int* whichNode = new int[heapLength]();		//determine from the position of the heap which node
-	#else
+		// save Edge
+		steinEdges.push_back(Edge(node,parent));
+		steinTree[parent]=true;
 
-		int heap[heapLength];
-		int whereInHeap[vertNumb];		//determine from the node the position in the heap
-		int whichNode[heapLength];		//determine from the position of the heap which node
-	#endif
+		// put node in heap with distance 0
+		dist[parent]=0;
+		heap[count]=parent;
+		whereInHeap[parent]=count;
+		count++;
+		bubbleUp(heap,whereInHeap, dist, whereInHeap[parent]);
+
+		node=parent;
+		parent=pre[node];
+
+	}
+
+		steinEdges.push_back(Edge(node,parent));
+
+
+}
+
+/**
+* \brief algorithm,to find the steiner Tree which is mostly the dijkstra algorithm
+*
+*
+*
+* @param edges: The Edges of the given graph
+* @param steinTree: the nodes of the graph
+* @param pre: The predecessor map
+* @param vertNumb: Number of vertexes
+* @param start: The start node
+* @param steinEdges: vector to write the edges of the steiner Tree
+* @isPrime: the Terminals
+* @primeNumb: number of terminals
+* @weightST: weight of the steiner Tree
+**/
+
+void dijkstra(Edg &edges, bool* steinTree, int* pre, int &vertNumb,
+			int start, std::vector<Edge> &steinEdges, int &heapLength, bool* isPrime,int primeNumb, long long &weightST){
+
+
+	int* heap= new int[heapLength]();
+	int* whereInHeap=new int[vertNumb]();		//determine from the node the position in the heap
+	long long *dist = new long long[vertNumb]();
 
 
 	for(int i=0;i<vertNumb;i++){
 
-		heap[i]=INT_MAX;
-		whereInHeap[i]=-1;
+		dist[i]=INT_MAX;
+		heap[i]=vertNumb-1;
+		whereInHeap[i]=0;
 	}
 
-	for(int i=restNodes+1;i<heapLength;i++){
-		heap[i]=INT_MAX;
+	for(int i=vertNumb;i<heapLength;i++){
+		heap[i]=vertNumb-1;
 		//heap[i]=INT_MAX;
 	}
 
+	////////// The start node
+	heap[0]=0;
+	heap[1]=start;
+	whereInHeap[start]=1;
+	dist[0]=-1;
+	dist[start]=0;
 
-
-	///////////////////// Fill in the heap
-
-	
-	int count=0;
-	whichNode[0]=-1;
-	heap[0]=-1;
-	count++;				// actual nodes in the heap
+	int count=2;				// points to the next free place in the heap
 
 	int node;
-	int end=steinerNodes.size();
 	int toNode;				// node has edge to toNode
-	int toWeight;			// the weight of the edge from node to toNode	
-	for(int i=1;i<end;i++){
-		
-		node=steinerNodes[i];
-		int size=edges[node].size();
-		for(int j=0;j<size;j++){
-
-
-			if(!steinTree[(edges[node])[j].first]){
-
-				toNode=edges[node][j].first;
-				toWeight= edges[node][j].second;
-
-
-				if(whereInHeap[toNode]==-1){
-
-					whereInHeap[toNode]=count;
-					heap[whereInHeap[toNode]]=toWeight;
-					whichNode[count]=toNode;
-					pre[toNode]=node;
-					count++;
-				}
-				else if( toWeight<heap[whereInHeap[toNode]]){
-
-					heap[whereInHeap[toNode]]=toWeight;
-					pre[toNode]=node;								//TODO omit?
-
-				}
-			}
-		}
-	}
-
-
-	///////////////////// Sort the heap
-
-	int where=count/2;
-	int value;
-
-
-
-	for(;where>0;where--){
-
-
-		bubbleDown(heap,whereInHeap,whichNode,where,restNodes);	//TODO vertNumb
-
-
-	}
-
+	int toWeight;				// the weight of the edge from node to toNode	
+	int pos;				// position in the edges array
+	int value;				// The distance of the first node in the Heap
+	int help;
 
 	//////////////////// Dijkstra
 
-	where=restNodes;
 
-	while(true){
+	for(int k=0;k<primeNumb;k++){
 
-		if(whichNode[1]==vertNumb-1){			
+		bool searchNext=true;
 
-			
-			#if BIG
-				int sol=heap[1];
-				delete[] heap;
-				delete[] whichNode;
-				delete[] whereInHeap;
-				return sol;
-			#endif
-				return heap[1];
+		while(searchNext){
 
-			
-		}
-		else{
+			node=heap[1];
 
-			node=whichNode[1];
-			value=heap[1];
-			used[node]=true;
-			count--;
+			// Found a Terminal
+			if(isPrime[node]){
 
-			heap[1]=heap[count];
-			whichNode[1]=whichNode[count];
-			whereInHeap[whichNode[count]]=1;
-			whichNode[count]=-1;
-			heap[count]=INT_MAX;
+				weightST=weightST+dist[heap[1]];
 
+				//set distance 0
+				dist[node]=0;
 
-			if( count>1){		//TODO improve
-				
-				bubbleDown(heap,whereInHeap,whichNode,1,restNodes);			//TODO why its not working for last argument=restNodes
-			}		
-			end=edges[node].size();
+				update(heap, whereInHeap, dist, pre, steinEdges, steinTree, node, count);
+				searchNext=false;
+				steinTree[node]=true;
+				isPrime[node]=false;
+			}
+			else{
 
+				value=dist[heap[1]];
+				count--;
 
+				//remove old node from the Heap
+				whereInHeap[node]=0;
 
-			for(int i=0; i<end; i++){
+				// We need this if count==1
+				help=heap[count];
+				whereInHeap[heap[count]]=1;
+				heap[count]=vertNumb-1;
+				heap[1]=help;
 
+				bubbleDown(heap,whereInHeap,dist,1,heapLength);
 
+				int end=edges.size(node);
+				pos=edges.nodes[node];
 
+				// update the Neighbors
+				for(int i=0; i<end; i++){
 
+					toNode=edges.edges[pos+i];
+					toWeight=edges.weights[pos+i];;
 
-				toNode=edges[node][i].first;			//TODO node is sometime -1
-				toWeight=edges[node][i].second;
+					if(toWeight+value<dist[toNode]){
 
+						dist[toNode]=toWeight+value;
 
-				if(!used[toNode]){
+						if(whereInHeap[toNode]==0){
 
-					if(whereInHeap[toNode]==-1){
+							heap[count]=toNode;
+							whereInHeap[toNode]=count;
+							count++;
+						}
 
+						bubbleUp(heap,whereInHeap,dist,whereInHeap[toNode]);
 						pre[toNode]=node;
-						whereInHeap[toNode]=count;
-						whichNode[count]=toNode;
-						heap[count]=toWeight+value;
 
-						bubbleUp(heap, whereInHeap, whichNode,count);
-						count++;
-
-					}
-					else if(toWeight+value<heap[whereInHeap[toNode]]){
-
-						pre[toNode]=node;
-						heap[whereInHeap[toNode]]=toWeight+value;
-						bubbleUp(heap, whereInHeap, whichNode, whereInHeap[toNode]);
 					}
 				}
 			}
 		}
 	}
+
+
+	delete[] heap;
+	delete[] dist;
+	delete[] whereInHeap;
+
+
 }
 
 
