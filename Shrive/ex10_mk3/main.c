@@ -265,7 +265,6 @@ int main(
 
 	unsigned int* temp_tree = NULL;	
 	unsigned int* prev_edge_index = NULL;
-	unsigned int* connected = NULL;
 
 #ifdef THREADS
 	#pragma omp parallel for default( none ) shared( prev, tree, obj_value, is_prime, terminals, num_terminals, max_num_start_terminals, first_neighbours_index, num_neighbours, num_nodes, num_edges, sorted_weights, sorted_heads, sorted_tails ) private( j, k, temp_tree, prev_edge_index ) num_threads( THREADS )
