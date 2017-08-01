@@ -1,13 +1,6 @@
 #!/bin/bash
 
 
-#for graph in "$graphDirdir"/*.gph ; do 
-#		  picname=$(basename "$graph")
-#		  echo "Bearbeite Bild:    $picname"
-#		  convert "$pic" -colorspace Gray "$outputDir/$picname"
-#	done
-
-
 # User - Variablendefinition
 #1) Directory of git
 gitDir=/home/michael/Dokumente/Studium/MA/Module/APfS/git/appfs
@@ -43,7 +36,7 @@ for member in $gitDir/*; do
         echo -e "run 'make' for ${member##*/}\n"
       	make >/dev/null
     else
-        echo -e "error for ${member##*/}\n"
+        echo -e "make-error for ${member##*/}\n"
     	continue
     fi
 
